@@ -1,0 +1,11 @@
+zone,n_nodes
+Workstations,127
+EHR,24
+Laboratory,19
+Pharmacy,15
+Imaging,16
+Medical devices,41
+Administration,22
+Identity/Auth,13
+Backup,11
+Internet-facing,11

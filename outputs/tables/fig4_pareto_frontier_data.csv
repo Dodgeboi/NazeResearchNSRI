@@ -1,0 +1,34 @@
+profile,portfolio,description,cost,mean_hours_lost,catastrophic_prob
+resource_constrained,seg-flat|patch+0|det0|iso0|bak-connected|idm0,segmentation=flat; backups=connected,0.0,244.623,1.0
+resource_constrained,seg-flat|patch+0|det0|iso0|bak-isolated|idm0,segmentation=flat; backups=isolated,2.0,190.261,0.88
+resource_constrained,seg-flat|patch+1|det0|iso0|bak-isolated|idm0,segmentation=flat; patch+1 levels; backups=isolated,4.0,181.904,0.84
+resource_constrained,seg-flat|patch+0|det1|iso0|bak-isolated|idm0,segmentation=flat; faster detection; backups=isolated,5.0,149.628,1.0
+resource_constrained,seg-basic|patch+0|det1|iso0|bak-isolated|idm0,segmentation=basic; faster detection; backups=isolated,8.0,132.666,0.92
+resource_constrained,seg-least_privilege|patch+2|det0|iso0|bak-connected|idm0,segmentation=least_privilege; patch+2 levels; backups=connected,9.0,129.685,0.8
+resource_constrained,seg-least_privilege|patch+1|det1|iso0|bak-connected|idm0,segmentation=least_privilege; patch+1 levels; faster detection; backups=connected,10.0,105.21500000000002,0.72
+resource_constrained,seg-least_privilege|patch+2|det1|iso0|bak-connected|idm0,segmentation=least_privilege; patch+2 levels; faster detection; backups=connected,12.0,74.075,0.6
+resource_constrained,seg-least_privilege|patch+2|det1|iso0|bak-isolated|idm0,segmentation=least_privilege; patch+2 levels; faster detection; backups=isolated,14.0,54.974,0.44
+resource_constrained,seg-least_privilege|patch+2|det1|iso0|bak-connected|idm1,segmentation=least_privilege; patch+2 levels; faster detection; backups=connected; identity controls,16.0,51.035,0.44
+resource_constrained,seg-least_privilege|patch+2|det1|iso1|bak-connected|idm0,segmentation=least_privilege; patch+2 levels; faster detection; rapid isolation; backups=connected,17.0,41.556,0.4
+resource_constrained,seg-least_privilege|patch+2|det1|iso0|bak-isolated|idm1,segmentation=least_privilege; patch+2 levels; faster detection; backups=isolated; identity controls,18.0,37.28,0.44
+resource_constrained,seg-least_privilege|patch+2|det1|iso1|bak-isolated|idm0,segmentation=least_privilege; patch+2 levels; faster detection; rapid isolation; backups=isolated,19.0,27.068,0.32
+resource_constrained,seg-least_privilege|patch+2|det1|iso1|bak-connected|idm1,segmentation=least_privilege; patch+2 levels; faster detection; rapid isolation; backups=connected; identity controls,21.0,25.72000000000001,0.28
+resource_constrained,seg-least_privilege|patch+2|det1|iso1|bak-isolated|idm1,segmentation=least_privilege; patch+2 levels; faster detection; rapid isolation; backups=isolated; identity controls,23.0,23.321000000000005,0.32
+intermediate_capacity,seg-flat|patch+0|det0|iso0|bak-connected|idm0,segmentation=flat; backups=connected,0.0,163.00799999999998,0.84
+intermediate_capacity,seg-flat|patch+0|det0|iso0|bak-isolated|idm0,segmentation=flat; backups=isolated,2.0,121.56,0.84
+intermediate_capacity,seg-flat|patch+0|det1|iso0|bak-isolated|idm0,segmentation=flat; faster detection; backups=isolated,5.0,68.83200000000001,0.8
+intermediate_capacity,seg-basic|patch+0|det1|iso0|bak-connected|idm0,segmentation=basic; faster detection; backups=connected,6.0,54.66800000000001,0.52
+intermediate_capacity,seg-least_privilege|patch+1|det0|iso0|bak-connected|idm0,segmentation=least_privilege; patch+1 levels; backups=connected,7.0,30.154000000000007,0.48
+intermediate_capacity,seg-least_privilege|patch+0|det1|iso0|bak-connected|idm0,segmentation=least_privilege; faster detection; backups=connected,8.0,15.954,0.24
+intermediate_capacity,seg-least_privilege|patch+2|det0|iso0|bak-connected|idm0,segmentation=least_privilege; patch+2 levels; backups=connected,9.0,6.461000000000001,0.16
+intermediate_capacity,seg-least_privilege|patch+1|det1|iso0|bak-connected|idm0,segmentation=least_privilege; patch+1 levels; faster detection; backups=connected,10.0,5.189000000000001,0.08
+intermediate_capacity,seg-least_privilege|patch+0|det1|iso1|bak-connected|idm0,segmentation=least_privilege; faster detection; rapid isolation; backups=connected,13.0,4.397,0.16
+intermediate_capacity,seg-least_privilege|patch+1|det1|iso0|bak-connected|idm1,segmentation=least_privilege; patch+1 levels; faster detection; backups=connected; identity controls,14.0,2.7,0.04
+high_capacity,seg-flat|patch+0|det0|iso0|bak-connected|idm0,segmentation=flat; backups=connected,0.0,10.665,0.32
+high_capacity,seg-flat|patch+2|det0|iso0|bak-connected|idm0,segmentation=flat; patch+2 levels; backups=connected,2.0,8.11,0.2
+high_capacity,seg-flat|patch+0|det1|iso0|bak-connected|idm0,segmentation=flat; faster detection; backups=connected,3.0,2.8560000000000003,0.0
+high_capacity,seg-flat|patch+2|det1|iso0|bak-connected|idm0,segmentation=flat; patch+2 levels; faster detection; backups=connected,5.0,2.128000000000001,0.0
+high_capacity,seg-least_privilege|patch+2|det0|iso0|bak-connected|idm0,segmentation=least_privilege; patch+2 levels; backups=connected,7.0,1.872,0.0
+high_capacity,seg-flat|patch+2|det0|iso1|bak-isolated|idm0,segmentation=flat; patch+2 levels; rapid isolation; backups=isolated,9.0,1.612,0.0
+high_capacity,seg-basic|patch+1|det1|iso1|bak-isolated|idm0,segmentation=basic; patch+1 levels; faster detection; rapid isolation; backups=isolated,15.0,1.5120000000000002,0.0
+high_capacity,seg-flat|patch+1|det1|iso1|bak-isolated|idm1,segmentation=flat; patch+1 levels; faster detection; rapid isolation; backups=isolated; identity controls,16.0,1.354,0.0

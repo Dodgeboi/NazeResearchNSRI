@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.venv/
+venv/
+
+# Large raw simulation outputs are reproducible from configs + seeds and are
+# therefore not versioned. Processed summaries and figures ARE committed so
+# that judges can inspect results without rerunning anything.
+data/raw/*.csv
+data/raw/*.parquet
+outputs/logs/*.log
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

@@ -1,0 +1,38 @@
+# QUICK MODE — smoke-test profile (~1-2 minutes on a normal laptop).
+# Reduced factorial: small/regional facilities, 7 portfolios, 3 entry
+# points, 2 trials per cell (~250 main trials + small sweep + optimizer
+# on the small clinic). Use for testing the pipeline, NOT for conclusions.
+mode: quick
+seed: 20260713
+
+experiment:
+  facilities: [small_clinic, regional_hospital]
+  profiles: [resource_constrained, intermediate_capacity, high_capacity]
+  portfolios:
+    - baseline_flat
+    - profile_baseline
+    - basic_segmentation
+    - patch_90
+    - fast_detection
+    - isolated_backups
+    - full_defense
+  entry_points: [workstation, internet_facing, vendor_connection]
+  trials_per_cell: 2
+  workers: 0          # 0 = use all CPU cores
+
+sweep:
+  enabled: true
+  facility: small_clinic
+  profile: intermediate_capacity
+  patch_levels: [0.25, 0.90]
+  detection_delays: [3, 24]
+  trials_per_cell: 5
+
+optimization:
+  enabled: true
+  facility: small_clinic
+  profiles: [resource_constrained, intermediate_capacity, high_capacity]
+  budgets: [5, 10, 15]
+  trials_per_portfolio: 2
+  cost_scale_factors: [0.5, 0.75, 1.0, 1.25, 1.5]
+  catastrophic_target: 0.05

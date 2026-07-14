@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "grrc"
+version = "1.0.0"
+description = "Global Ransomware Resilience under Constraint: Monte Carlo analysis of cybersecurity defense portfolios for simulated healthcare networks"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "NSRI Hackathon Team" }]
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.1",
+    "networkx>=3.2",
+    "scipy>=1.11",
+    "matplotlib>=3.8",
+    "pyyaml>=6.0",
+    "tqdm>=4.66",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4"]
+
+[project.scripts]
+grrc = "grrc.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

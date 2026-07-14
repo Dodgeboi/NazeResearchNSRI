@@ -1,0 +1,20 @@
+2026-07-13 20:55:50,361 | INFO    | grrc.experiments | main experiment: 252 trials (quick mode, seed=20260713)
+2026-07-13 20:55:52,910 | INFO    | grrc.experiments | wrote /home/user/NazeResearchNSRI/data/raw/quick_main_results.csv (252 rows)
+2026-07-13 20:55:52,910 | INFO    | grrc.experiments | sweep experiment: 20 trials
+2026-07-13 20:55:53,314 | INFO    | grrc.experiments | wrote /home/user/NazeResearchNSRI/data/raw/quick_sweep_results.csv (20 rows)
+2026-07-13 20:57:07,569 | INFO    | grrc.experiments | main experiment: 15750 trials (standard mode, seed=20260713)
+2026-07-13 21:02:13,162 | INFO    | grrc.experiments | wrote /home/user/NazeResearchNSRI/data/raw/standard_main_results.csv (15750 rows)
+2026-07-13 21:02:13,164 | INFO    | grrc.experiments | sweep experiment: 1000 trials
+2026-07-13 21:02:29,758 | INFO    | grrc.experiments | wrote /home/user/NazeResearchNSRI/data/raw/standard_sweep_results.csv (1000 rows)
+2026-07-13 21:08:40,014 | INFO    | grrc.experiments | main experiment: 252 trials (quick mode, seed=20260713)
+2026-07-13 21:08:42,690 | INFO    | grrc.experiments | wrote /home/user/NazeResearchNSRI/data/raw/quick_main_results.csv (252 rows)
+2026-07-13 21:08:42,690 | INFO    | grrc.experiments | sweep experiment: 20 trials
+2026-07-13 21:08:43,113 | INFO    | grrc.experiments | wrote /home/user/NazeResearchNSRI/data/raw/quick_sweep_results.csv (20 rows)
+2026-07-13 21:08:43,114 | INFO    | grrc.experiments | controlled backup experiment: 36 trials
+2026-07-13 21:08:43,645 | INFO    | grrc.experiments | wrote /home/user/NazeResearchNSRI/data/raw/quick_backup_results.csv (36 rows)
+2026-07-13 21:08:49,715 | INFO    | grrc.experiments | main experiment: 15750 trials (standard mode, seed=20260713)
+2026-07-13 21:13:57,478 | INFO    | grrc.experiments | wrote /home/user/NazeResearchNSRI/data/raw/standard_main_results.csv (15750 rows)
+2026-07-13 21:13:57,480 | INFO    | grrc.experiments | sweep experiment: 1000 trials
+2026-07-13 21:14:14,428 | INFO    | grrc.experiments | wrote /home/user/NazeResearchNSRI/data/raw/standard_sweep_results.csv (1000 rows)
+2026-07-13 21:14:14,430 | INFO    | grrc.experiments | controlled backup experiment: 675 trials
+2026-07-13 21:14:30,907 | INFO    | grrc.experiments | wrote /home/user/NazeResearchNSRI/data/raw/standard_backup_results.csv (675 rows)

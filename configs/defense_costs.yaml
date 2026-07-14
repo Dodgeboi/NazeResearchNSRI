@@ -1,0 +1,16 @@
+# Abstract defense costs in NORMALIZED MODEL POINTS.
+#
+# IMPORTANT: these are relative effort/expense weights chosen for the
+# simulation study — they are NOT dollar estimates and must never be
+# presented as real procurement costs (docs/assumptions.md, A16).
+# The cost-sensitivity analysis re-runs all optimization conclusions with
+# every value scaled by -50%, -25%, +25% and +50% to test whether the
+# preferred portfolios depend on these exact numbers.
+costs:
+  basic_segmentation: 3            # separate zones, restrict some access
+  least_privilege_segmentation: 5  # only required paths (includes basic)
+  patch_level_upgrade: 2           # one ladder step: 25->50->75->90 %
+  detection_improvement: 3         # one tier faster: 24->12->6->3->1 steps
+  rapid_isolation: 5               # automated same-step isolation, 95% success
+  protected_backups: 2             # offline / immutable backups
+  identity_controls: 4             # least-privilege accounts, protected auth

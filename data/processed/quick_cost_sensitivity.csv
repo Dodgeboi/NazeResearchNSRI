@@ -1,0 +1,4 @@
+profile,has_basic_segmentation,has_least_privilege,has_patch_upgrade,has_detection_improvement,has_rapid_isolation,has_protected_backups,has_identity_controls
+high_capacity,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+intermediate_capacity,0.0,0.0,0.0,1.0,0.0,0.0,0.0
+resource_constrained,0.26666666666666666,0.13333333333333333,0.6666666666666666,1.0,0.26666666666666666,0.6666666666666666,0.0

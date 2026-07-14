@@ -1,0 +1,8 @@
+2026-07-13 21:05:34,337 | WARNING | grrc.report | abstract.md: 1 unresolved tokens: ['TOKENS'] — these remain visible placeholders (values are never invented)
+2026-07-13 21:05:34,337 | WARNING | grrc.report | research_brief.md: 1 unresolved tokens: ['TOKEN'] — these remain visible placeholders (values are never invented)
+2026-07-13 21:06:02,589 | INFO    | grrc.report | rendered abstract.md (all tokens resolved)
+2026-07-13 21:06:02,590 | INFO    | grrc.report | rendered research_brief.md (all tokens resolved)
+2026-07-13 21:14:47,776 | INFO    | grrc.report | rendered abstract.md (all tokens resolved)
+2026-07-13 21:14:47,777 | INFO    | grrc.report | rendered research_brief.md (all tokens resolved)
+2026-07-13 21:15:43,341 | INFO    | grrc.report | rendered abstract.md (all tokens resolved)
+2026-07-13 21:15:43,342 | INFO    | grrc.report | rendered research_brief.md (all tokens resolved)

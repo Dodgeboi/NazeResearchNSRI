@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+title: >-
+  Global Ransomware Resilience under Constraint: A Monte Carlo Analysis
+  of Cybersecurity Defense Portfolios for Healthcare Networks
+message: >-
+  If you use this software or its results, please cite it and record the
+  exact commit hash used to generate your results.
+type: software
+authors:
+  - name: "NSRI Summer Research Hackathon 2026 Team"
+year: 2026
+license: MIT
+keywords:
+  - ransomware resilience
+  - healthcare cybersecurity
+  - Monte Carlo simulation
+  - defensive security
+  - budget-constrained optimization
+abstract: >-
+  A fully synthetic, defensive Monte Carlo simulation study of how
+  cybersecurity defense portfolios affect ransomware-style compromise
+  propagation and critical-service disruption in modeled healthcare
+  networks of different sizes and cyber-capacity levels, including a
+  budget-constrained defense optimizer with cost-sensitivity analysis.
+  Contains no malware, exploit code, or real-system interaction.
