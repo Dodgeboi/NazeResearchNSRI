@@ -1,0 +1,12 @@
+{
+  "mode": "standard",
+  "master_seed": 20260713,
+  "n_main_trials": 15750,
+  "n_sweep_trials": 1000,
+  "elapsed_seconds": 341.2,
+  "outputs": {
+    "main": "/home/user/NazeResearchNSRI/data/raw/standard_main_results.csv",
+    "sweep": "/home/user/NazeResearchNSRI/data/raw/standard_sweep_results.csv",
+    "backup": "/home/user/NazeResearchNSRI/data/raw/standard_backup_results.csv"
+  }
+}

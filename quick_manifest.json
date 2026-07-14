@@ -1,0 +1,12 @@
+{
+  "mode": "quick",
+  "master_seed": 20260713,
+  "n_main_trials": 252,
+  "n_sweep_trials": 20,
+  "elapsed_seconds": 3.6,
+  "outputs": {
+    "main": "/home/user/NazeResearchNSRI/data/raw/quick_main_results.csv",
+    "sweep": "/home/user/NazeResearchNSRI/data/raw/quick_sweep_results.csv",
+    "backup": "/home/user/NazeResearchNSRI/data/raw/quick_backup_results.csv"
+  }
+}

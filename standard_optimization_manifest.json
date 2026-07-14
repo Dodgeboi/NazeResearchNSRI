@@ -1,0 +1,22 @@
+{
+  "mode": "standard",
+  "master_seed": 20260713,
+  "n_trials": 10800,
+  "profiles": [
+    "resource_constrained",
+    "intermediate_capacity",
+    "high_capacity"
+  ],
+  "budgets": [
+    5,
+    10,
+    15
+  ],
+  "cost_scale_factors": [
+    0.5,
+    0.75,
+    1.0,
+    1.25,
+    1.5
+  ]
+}
