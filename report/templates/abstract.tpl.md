@@ -19,7 +19,7 @@ restrictions, and backup isolation — alone and combined — across
 {{N_TOTAL}} simulation runs, and searched 144 defense portfolios under
 fixed budgets, re-testing every conclusion under ±50% cost scaling.
 Relative to a flat, unsegmented baseline, the full defense portfolio
-reduced weighted clinical service-hours lost by {{REL_RED_FULL_IC}} in
+reduced weighted service-hours lost by {{REL_RED_FULL_IC}} in
 the intermediate-capacity regional hospital (Mann–Whitney
 {{FULL_MW_P_IC}}), and isolated backups cut the modeled probability of
 backup compromise from {{PBAK_CONNECTED}} to {{PBAK_ISOLATED}}. Under

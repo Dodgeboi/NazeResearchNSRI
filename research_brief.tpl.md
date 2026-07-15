@@ -101,7 +101,7 @@ evaluates 144 portfolios per profile ({{N_OPT}} trials). Total:
 **{{N_TOTAL}} trials**, master seed {{MASTER_SEED}}; identical seeds
 reproduce identical CSVs. Twelve automated validation checks
 (`docs/model_validation.md`) confirm the simulation behaves logically
-before any result is trusted. The primary outcome is **weighted clinical
+before any result is trusted. The primary outcome is **weighted
 service-hours lost**; the pre-registered **catastrophic-disruption**
 event is any clinical service down for more than {{CATASTROPHIC_STEPS}}
 consecutive steps (~{{CATASTROPHIC_HOURS}} modeled hours).

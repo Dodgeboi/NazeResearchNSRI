@@ -8,10 +8,9 @@ dist/
 .venv/
 venv/
 
-# Large raw simulation outputs are reproducible from configs + seeds and are
-# therefore not versioned. Processed summaries and figures ARE committed so
-# that judges can inspect results without rerunning anything.
-data/raw/*.csv
+# Raw simulation outputs are committed under data/raw/ so judges can open the
+# evidence directly; they also regenerate exactly from configs + seeds.
+# (Bulky parquet exports, if any, stay unversioned.)
 data/raw/*.parquet
 outputs/logs/*.log
 

@@ -119,7 +119,7 @@ def cmd_optimize(args) -> int:
 def cmd_analyze(args) -> int:
     from .statistics import analyze
     cfg = _load(args)
-    outputs = analyze(cfg, main_csv=args.input)
+    outputs = analyze(cfg, main_csv=getattr(args, "input", None))
     for name, path in outputs.items():
         print(f"  {name}: {path}")
     return 0
