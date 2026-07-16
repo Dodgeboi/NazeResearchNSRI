@@ -100,9 +100,11 @@ def test_cost_scaling_is_linear(cfg):
 
 
 def test_enumerated_space_size_and_uniqueness():
+    # 3 segmentation x 4 patch boosts (0..3, so 90% is reachable from the
+    # 25% baseline) x 2 detection x 2 isolation x 2 backup x 2 identity.
     space = list(enumerate_portfolios())
-    assert len(space) == 144
-    assert len({p.name for p in space}) == 144
+    assert len(space) == 192
+    assert len({p.name for p in space}) == 192
 
 
 def test_defense_costs_yaml_loads():

@@ -5,7 +5,7 @@
 One row per Monte Carlo trial. `<mode>` ∈ {quick, standard, full}.
 Files: `*_main_results.csv` (factorial experiment),
 `*_sweep_results.csv` (patch × detection grid),
-`*_optimization_results.csv` (144-portfolio evaluation).
+`*_optimization_results.csv` (deduplicated candidate-portfolio evaluation).
 A `*_manifest.json` records trial counts, seed, and elapsed time.
 
 ### Identification & configuration (sufficient to reproduce the row)
@@ -22,7 +22,8 @@ A `*_manifest.json` records trial counts, seed, and elapsed time.
 | `entry_node` | int | Node id of the initial foothold |
 | `n_nodes`, `n_edges` | int | Size of this trial's generated graph |
 | `segmentation` | str | Effective architecture (flat / basic / least_privilege) |
-| `patch_coverage` | float | Effective patch coverage in [0,1] |
+| `patch_coverage` | float | **Configured (target) patch probability** in [0,1] — the policy knob, not the realized fraction |
+| `realized_patch_fraction` | float | Fraction of this trial's nodes actually patched (lower than `patch_coverage` because legacy nodes get half the configured probability) |
 | `detection_delay` | int | Effective mean detection delay (steps) |
 | `isolation_success` | float | Per-step isolation success probability |
 | `backup_strategy` | str | connected / periodic / isolated |
@@ -75,7 +76,8 @@ A `*_manifest.json` records trial counts, seed, and elapsed time.
 | `<mode>_baseline_comparisons.csv` | Each portfolio vs. `baseline_flat` within facility × profile: relative reduction in mean weighted hours lost, absolute catastrophic-risk reduction, Cliff's delta, Mann–Whitney p (raw + Holm) |
 | `<mode>_kruskal_profiles.csv` | Kruskal–Wallis across profiles per facility × portfolio |
 | `<mode>_sweep_summary.csv` | Patch × delay grid: catastrophic probability, mean hours lost + CI (Figure 3 data) |
-| `<mode>_portfolio_summary.csv` | 144 portfolios × profiles: cost, mean/median/P90 hours lost + CI, catastrophic prob, control indicators |
+| `<mode>_portfolio_summary.csv` | Distinct candidate portfolios × profiles (192/144/96): cost, mean/median/P90 hours lost + CI, catastrophic prob + Wilson 95% CI, control indicators |
+| `<mode>_recovery_summary.csv` | Censoring-aware recovery per facility × profile × portfolio: outage rate, recovery probability given outage, median/P90 recovery time among recovered |
 | `<mode>_best_portfolios.csv` | Winner per profile × budget × cost-scale × criterion (4 criteria) |
 | `<mode>_pareto_frontier.csv` | Cost-nondominated portfolios per profile |
 | `<mode>_cost_sensitivity.csv` | Inclusion frequency of each control among winners across cost scales/budgets |

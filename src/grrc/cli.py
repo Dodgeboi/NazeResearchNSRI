@@ -48,8 +48,9 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--workers", type=int, default=None,
                    help="override worker process count (0=auto)")
 
-    p = sub.add_parser("optimize", help="evaluate 144 defense portfolios, "
-                       "budget selection, Pareto frontier, cost sensitivity")
+    p = sub.add_parser("optimize", help="evaluate the candidate defense "
+                       "portfolios, budget selection, Pareto frontier, "
+                       "cost sensitivity")
     _add_config_arg(p)
     p.add_argument("--workers", type=int, default=None)
 

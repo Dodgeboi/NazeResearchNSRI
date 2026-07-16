@@ -97,7 +97,9 @@ Main factorial: 3 facilities × 3 profiles × 14 portfolios × 5 entry
 points × 25 trials = 15,750 trials. A patch × detection
 sweep adds 1,000 trials (Figure 3), a controlled backup-strategy
 comparison adds 675 trials (Figure 6), and the budget optimizer
-evaluates 144 portfolios per profile (10,800 trials). Total:
+evaluates a 192-combination portfolio lattice per profile — deduplicated
+to the distinct configurations reachable from each baseline (10,800
+trials). Total:
 **28,225 trials**, master seed 20260713; identical seeds
 reproduce identical CSVs. Twelve automated validation checks
 (`docs/model_validation.md`) confirm the simulation behaves logically
@@ -112,81 +114,92 @@ consecutive steps (~2 modeled hours).
 
 **Effect of defenses vs. the flat baseline (regional hospital).** In the
 intermediate-capacity profile, the flat baseline lost a mean of
-187.6 weighted service-hours; the full defense portfolio
-lost 4.0, a relative reduction of 97.9%
-(Mann–Whitney p < 0.001, Cliff's δ = -0.95). The
-probability of catastrophic disruption fell from 95.2% to
-1.6%. In the resource-constrained profile the same portfolio
-moved catastrophic probability from 99.2% to 25.6%
-(relative service-hour reduction 93.1%).
+185.4 weighted service-hours; the full defense portfolio
+lost 3.6, a relative reduction of 98.0%
+(Mann–Whitney p < 0.001, Cliff's δ = -0.94). The
+probability of catastrophic disruption fell from 92.8% to
+2.4%. In the resource-constrained profile the same portfolio
+moved catastrophic probability from 99.2% to 17.6%
+(relative service-hour reduction 95.1%).
 
 **Single controls, ranked (mean reduction in weighted service-hours vs.
 flat baseline, regional hospital):**
 
 | Single defense | Mean reduction in weighted service-hours lost vs. flat baseline |
 |---|---|
-| Fast detect + isolate | 54.0% |
-| Least-privilege seg. | 49.6% |
-| Basic segmentation | 35.0% |
-| Patch 90% | 31.9% |
-| Isolated backups | 23.6% |
-| Identity controls | 10.7% |
+| Least-privilege seg. | 53.3% |
+| Basic segmentation | 36.0% |
+| Patch 90% | 35.3% |
+| Isolated backups | 28.6% |
+| Identity controls | 13.1% |
 
-The strongest single control was **Fast detect + isolate**
-(54.0% reduction), followed by Least-privilege seg.
-(49.6%). Figure 2 shows disruption probability by
-strategy and profile.
+The strongest single control was **Least-privilege seg.**
+(53.3% reduction), followed by Basic segmentation
+(36.0%). Figure 2 shows disruption probability by
+strategy and profile. (The "fast detect + isolate" condition is *not*
+listed here: it bundles two controls — faster detection **and** rapid
+automated isolation — so it is reported among the multi-control
+combinations rather than as a single control.)
 
 **Patch coverage vs. detection speed (Figure 3).** Catastrophic
 probability ranged from 100.0% at the worst cell
-(25% patch / 24-step delay) to 4.0% at the best
-(75% patch / 1-step delay), showing how the two controls trade off.
+(75% patch / 24-step delay) to 0.0% at the best
+(90% patch / 1-step delay), showing how the two controls trade off.
 
 **Backups (Figure 6).** In a controlled sub-experiment (675
 trials) that varied *only* the backup strategy on an otherwise identical
 flat network, modeled backup-compromise probability was
-76.4% for connected backups, 68.4% for
-periodically disconnected, and 0.0% for isolated/immutable
+75.1% for connected backups, 73.3% for
+periodically disconnected, and 0.4% for isolated/immutable
 backups — the mechanism by which isolated backups protect recoverability.
 
 ## 8. Budget optimization
 
-For each profile and budget we searched all 144 portfolios and selected
-the lowest expected disruption (Figure 4 shows the cost–resilience
+For each profile and budget we searched every candidate portfolio and
+selected the lowest expected disruption (Figure 4 shows the cost–resilience
 Pareto frontier; Figure 7 shows service-hours preserved per cost point).
 
 | Profile | Budget | Best portfolio (min expected disruption) | Mean hours lost | P(catastrophic) |
 |---|---|---|---|---|
-| High-capacity | 5 | segmentation=flat; patch+2 levels; faster detection; backups=connected | 2.1 | 0.0% |
-| High-capacity | 10 | segmentation=flat; patch+2 levels; rapid isolation; backups=isolated | 1.6 | 0.0% |
-| High-capacity | 15 | segmentation=basic; patch+1 levels; faster detection; rapid isolation; backups=isolated | 1.5 | 0.0% |
-| Intermediate-capacity | 5 | segmentation=flat; faster detection; backups=isolated | 68.8 | 80.0% |
-| Intermediate-capacity | 10 | segmentation=least_privilege; patch+1 levels; faster detection; backups=connected | 5.2 | 8.0% |
-| Intermediate-capacity | 15 | segmentation=least_privilege; patch+1 levels; faster detection; backups=connected; identity controls | 2.7 | 4.0% |
-| Resource-constrained | 5 | segmentation=flat; faster detection; backups=isolated | 149.6 | 100.0% |
-| Resource-constrained | 10 | segmentation=least_privilege; patch+1 levels; faster detection; backups=connected | 105.2 | 72.0% |
-| Resource-constrained | 15 | segmentation=least_privilege; patch+2 levels; faster detection; backups=isolated | 55.0 | 44.0% |
+| High-capacity | 5 | segmentation=flat; rapid isolation; backups=connected | 2.6 | 8.0% |
+| High-capacity | 10 | segmentation=flat; patch+1 levels; faster detection; backups=connected; identity controls | 2.4 | 0.0% |
+| High-capacity | 15 | segmentation=basic; patch+1 levels; faster detection; rapid isolation; backups=isolated | 1.0 | 0.0% |
+| Intermediate-capacity | 5 | segmentation=least_privilege; backups=connected | 74.8 | 64.0% |
+| Intermediate-capacity | 10 | segmentation=least_privilege; patch+1 levels; faster detection; backups=connected | 5.6 | 4.0% |
+| Intermediate-capacity | 15 | segmentation=least_privilege; patch+1 levels; faster detection; rapid isolation; backups=connected | 2.2 | 8.0% |
+| Resource-constrained | 5 | segmentation=flat; faster detection; backups=isolated | 153.5 | 96.0% |
+| Resource-constrained | 10 | segmentation=least_privilege; patch+1 levels; faster detection; backups=connected | 110.8 | 60.0% |
+| Resource-constrained | 15 | segmentation=least_privilege; patch+3 levels; faster detection; backups=connected | 28.9 | 40.0% |
 
 **Minimum budget to reach P(catastrophic) ≤ target:**
 
-| Profile | Minimum budget for P(catastrophic) <= 5% |
-|---|---|
-| Resource-constrained | not reachable in tested space |
-| Intermediate-capacity | 14 points |
-| High-capacity | 3 points |
+| Profile | Min budget (point estimate <= 5%) | Min budget (95% upper bound <= 5%) |
+|---|---|---|
+| Resource-constrained | not reached in tested space | not reached in tested space |
+| Intermediate-capacity | 10 points | not reached in tested space |
+| High-capacity | 3 points | not reached in tested space |
+
+The two columns separate a point estimate from a confidence-aware
+reading. At 25 trials per portfolio the point estimate is
+coarse (4-percentage-point granularity) and optimistic: a portfolio can
+post a point estimate at or below the 5% target while its Wilson 95%
+upper bound remains well above it. Only the second column supports a firm
+"below 5%" claim, and where it reads *not reached*, the target is not
+statistically established at this sample size even if a point estimate
+appears to meet it.
 
 **Cost sensitivity.** Re-running the optimization at ×0.5–×1.5 costs, we
 measured how often each control appears in the min-disruption winner:
 
 | Control | High-capacity | Intermediate-capacity | Resource-constrained |
 |---|---|---|---|
-| Basic segmentation | 6.7% | 13.3% | 6.7% |
-| Least-privilege segmentation | 6.7% | 66.7% | 60.0% |
-| Patch upgrade (any level) | 86.7% | 53.3% | 66.7% |
-| Detection improvement | 60.0% | 86.7% | 86.7% |
-| Rapid isolation | 60.0% | 6.7% | 20.0% |
-| Protected backups | 60.0% | 20.0% | 66.7% |
-| Identity controls | 20.0% | 26.7% | 6.7% |
+| Basic segmentation | 40.0% | 13.3% | 0.0% |
+| Least-privilege segmentation | 20.0% | 73.3% | 60.0% |
+| Patch upgrade (any level) | 60.0% | 66.7% | 73.3% |
+| Detection improvement | 66.7% | 73.3% | 93.3% |
+| Rapid isolation | 46.7% | 26.7% | 0.0% |
+| Protected backups | 40.0% | 13.3% | 53.3% |
+| Identity controls | 20.0% | 0.0% | 20.0% |
 
 The most consistently selected control across all cost scenarios was
 **Detection improvement** (77.8% of winning

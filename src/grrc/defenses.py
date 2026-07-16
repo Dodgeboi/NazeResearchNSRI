@@ -246,13 +246,20 @@ def portfolio_cost(portfolio: DefensePortfolio, profile: ProfileSpec,
 def enumerate_portfolios() -> Iterator[DefensePortfolio]:
     """All composable defense combinations searched by the optimizer.
 
-    3 segmentation tiers x 3 patch boosts x 2 detection x 2 isolation x
-    2 backup x 2 identity = 144 candidate portfolios. Each portfolio is
-    priced by :func:`portfolio_cost`; feasibility under a budget is
-    decided by the optimizer, not here.
+    3 segmentation tiers x 4 patch boosts x 2 detection x 2 isolation x
+    2 backup x 2 identity = 192 candidate portfolios. Patch boosts run
+    0..3 so that the ceiling (90%) is reachable from *every* profile's
+    baseline — including the resource-constrained profile (25% baseline,
+    which needs +3 rungs) — matching the 90%-patch conditions the main
+    experiment studies. Because a boost is capped at the top rung, several
+    of these resolve to the same effective configuration for higher-
+    baseline profiles; the optimizer evaluates each *distinct* resolved
+    configuration once per profile (see optimization.py) so no duplicate is
+    double-counted. Each portfolio is priced by :func:`portfolio_cost`;
+    feasibility under a budget is decided by the optimizer, not here.
     """
     for seg in (_FLAT, _BASIC, _LP):
-        for patch_boost in (0, 1, 2):
+        for patch_boost in (0, 1, 2, 3):
             for det in (False, True):
                 for iso in (False, True):
                     for bak in (_CONN, _ISO):

@@ -16,13 +16,13 @@ Damage is measured as disruption to seven interdependent critical
 services, not infected-machine counts. We compared network
 segmentation, patch coverage, detection and isolation speed, identity
 restrictions, and backup isolation — alone and combined — across
-28,225 simulation runs, and searched 144 defense portfolios under
-fixed budgets, re-testing every conclusion under ±50% cost scaling.
+28,225 simulation runs, and searched a 192-portfolio defense lattice
+under fixed budgets, re-testing every conclusion under ±50% cost scaling.
 Relative to a flat, unsegmented baseline, the full defense portfolio
-reduced weighted service-hours lost by 97.9% in
+reduced weighted service-hours lost by 98.0% in
 the intermediate-capacity regional hospital (Mann–Whitney
 p < 0.001), and isolated backups cut the modeled probability of
-backup compromise from 76.4% to 0.0%. Under
+backup compromise from 75.1% to 0.4%. Under
 the tightest budget, the most cost-effective portfolios combined
 Detection improvement with other low-cost controls rather than the
 single most expensive one. The main limitation is that networks, costs,

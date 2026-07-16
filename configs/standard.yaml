@@ -1,8 +1,11 @@
-# STANDARD MODE — the hackathon's main analysis (~27,500 total trials).
+# STANDARD MODE — the hackathon's main analysis (28,225 total trials).
 # Full factorial: 3 facility sizes x 3 capacity profiles x 14 portfolios
-# x 5 entry points x 25 trials  = 15,750 main trials
-# + patch x detection sweep      4 x 5 x 50   =  1,000 trials
-# + optimizer                    144 x 3 x 25 = 10,800 trials
+# x 5 entry points x 25 trials              = 15,750 main trials
+# + patch x detection sweep    4 x 5 x 50   =  1,000 sweep trials
+# + optimizer: distinct portfolios per profile (192 + 144 + 96 = 432,
+#   deduplicated from the 192-combination search space) x 25
+#                                           = 10,800 optimizer trials
+# + controlled backup experiment 3 x 3 x 3 x 25 = 675 backup trials
 # Runs in roughly 10-30 minutes on a typical 4-core laptop.
 mode: standard
 seed: 20260713

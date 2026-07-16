@@ -24,8 +24,9 @@ Damage is measured as **weighted service-hours lost** across seven critical serv
 not machines infected, because service disruption is what actually threatens patients.
 
 **28,225 Monte Carlo trials** (standard mode, master seed `20260713`) across four
-experiments: a main factorial, a patch × detection sweep, a 144-portfolio budget
-optimizer, and a controlled backup comparison. Every conclusion is re-tested under
+experiments: a main factorial, a patch × detection sweep, a budget optimizer over a
+192-combination portfolio lattice (deduplicated per profile to the distinct reachable
+configurations), and a controlled backup comparison. Every conclusion is re-tested under
 ±25%/±50% cost scaling.
 
 ## Quick start
@@ -51,7 +52,7 @@ seeds regenerate identical results — anyone can re-derive every number and fig
 |---|---|
 | `grrc validate` | Run the 12 behavioral validation checks → `docs/model_validation.md` |
 | `grrc simulate` | Main + sweep + controlled-backup experiments → `data/raw/` |
-| `grrc optimize` | Evaluate 144 portfolios, budget selection, Pareto frontier, cost sensitivity |
+| `grrc optimize` | Evaluate the candidate portfolios, budget selection, Pareto frontier, cost sensitivity |
 | `grrc analyze`  | Summary tables and statistics → `data/processed/` |
 | `grrc plot`     | All publication figures → `outputs/figures/` (+ underlying CSVs) |
 | `grrc report`   | Fill report templates from generated data (never invents numbers) |

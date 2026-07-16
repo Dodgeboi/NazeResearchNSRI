@@ -76,7 +76,13 @@ def run_trial(cfg: Config, spec: TrialSpec,
         "n_nodes": net.n_nodes,
         "n_edges": net.n_edges,
         "segmentation": eff.segmentation.value,
+        # Configured/target patch coverage (the policy knob) vs. the
+        # fraction of nodes actually patched. These differ because legacy
+        # nodes receive only half the configured probability, so a "90%"
+        # policy yields a lower realized fraction (more so for profiles
+        # with more legacy nodes). Both are recorded for transparency.
         "patch_coverage": round(eff.patch_coverage, 4),
+        "realized_patch_fraction": round(float(net.patched.mean()), 4),
         "detection_delay": eff.detection_delay,
         "isolation_success": round(eff.isolation_success, 4),
         "backup_strategy": eff.backup_strategy,

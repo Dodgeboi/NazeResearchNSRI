@@ -16,14 +16,21 @@ import pandas as pd
 from scipy import stats
 
 from .config import Config
-from .utilities import ensure_dirs, resolve_path, setup_logging
+from .utilities import ensure_dirs, resolve_path, setup_logging, write_csv
 
 #: Outcome columns summarized for every experimental cell.
+#: NOTE: ``recovery_step`` is deliberately NOT summarized here. It encodes
+#: "never recovered within the horizon" as -1 (a censored, worst-case
+#: outcome), so a plain mean/median would treat the worst runs as the
+#: best. Recovery is instead reported by :func:`recovery_summary` (recovery
+#: probability + median time among trials that actually recovered). The
+#: clean 0/1 indicator ``recovered_within_horizon`` is safe to average and
+#: is included below.
 KEY_METRICS = [
     "weighted_service_hours_lost", "pct_compromised", "catastrophic",
     "total_service_downtime_steps", "backup_compromised",
-    "identity_compromised", "recovery_step", "pct_clinical_capacity_lost",
-    "defensive_isolation_node_steps",
+    "identity_compromised", "recovered_within_horizon",
+    "pct_clinical_capacity_lost", "defensive_isolation_node_steps",
 ]
 
 BASELINE_PORTFOLIO = "baseline_flat"
@@ -42,6 +49,26 @@ def bootstrap_ci(values: np.ndarray, n_boot: int = 2000,
     means = values[idx].mean(axis=1)
     return (float(np.percentile(means, 100 * alpha / 2)),
             float(np.percentile(means, 100 * (1 - alpha / 2))))
+
+
+def wilson_ci(successes: int, n: int,
+              alpha: float = 0.05) -> tuple[float, float]:
+    """Wilson score confidence interval for a binomial proportion.
+
+    Used for probabilities estimated from a small number of Monte Carlo
+    trials (e.g. catastrophic-disruption probability at n=25 per cell),
+    where the normal approximation is unreliable and the point estimate
+    alone hides real sampling uncertainty. Returns (lo, hi), both clamped
+    to [0, 1].
+    """
+    if n <= 0:
+        return (float("nan"), float("nan"))
+    z = float(stats.norm.ppf(1 - alpha / 2))
+    p = successes / n
+    denom = 1 + z * z / n
+    center = (p + z * z / (2 * n)) / denom
+    half = (z / denom) * np.sqrt(p * (1 - p) / n + z * z / (4 * n * n))
+    return (float(max(0.0, center - half)), float(min(1.0, center + half)))
 
 
 def summarize(values: np.ndarray, seed: int = 0) -> dict[str, float]:
@@ -101,6 +128,48 @@ def group_summaries(df: pd.DataFrame, group_cols: list[str],
                 "metric": metric,
                 **summarize(grp[metric].to_numpy(), seed=seed),
             })
+    return pd.DataFrame(rows)
+
+
+def recovery_summary(df: pd.DataFrame, group_cols: list[str]) -> pd.DataFrame:
+    """Censoring-aware recovery analysis (replaces naive mean recovery_step).
+
+    ``recovery_step`` (propagation.py) is coded as:
+      * ``0``        — the trial never had a clinical outage;
+      * ``positive`` — the step at which clinical service was restored;
+      * ``-1``       — outage never recovered within the horizon (censored).
+
+    Averaging that column directly is invalid: the *worst* outcome (-1) is
+    numerically the smallest. Instead we report, per group, the outage
+    rate, the recovery probability among trials that had an outage, and the
+    median/P90 recovery time among trials that actually recovered.
+    """
+    rows = []
+    for keys, grp in df.groupby(group_cols):
+        keys = keys if isinstance(keys, tuple) else (keys,)
+        rs = grp["recovery_step"].to_numpy()
+        n = int(rs.size)
+        recovered = int((rs > 0).sum())
+        censored = int((rs == -1).sum())
+        had_outage = recovered + censored
+        rec_times = rs[rs > 0]
+        rows.append({
+            **dict(zip(group_cols, keys)),
+            "n": n,
+            "n_no_outage": int((rs == 0).sum()),
+            "n_recovered": recovered,
+            "n_censored_never_recovered": censored,
+            "outage_rate": had_outage / n if n else np.nan,
+            "recovery_prob_given_outage":
+                recovered / had_outage if had_outage else np.nan,
+            "median_recovery_step_recovered":
+                float(np.median(rec_times)) if rec_times.size else np.nan,
+            "p90_recovery_step_recovered":
+                float(np.percentile(rec_times, 90))
+                if rec_times.size else np.nan,
+            "share_recovered_within_horizon":
+                float((rs >= 0).mean()) if n else np.nan,
+        })
     return pd.DataFrame(rows)
 
 
@@ -214,7 +283,7 @@ def analyze(cfg: Config, main_csv: str | Path | None = None,
     cell = group_summaries(
         df, ["facility", "profile", "portfolio"], seed=cfg.seed)
     p = proc_dir / f"{cfg.mode}_summary_by_portfolio.csv"
-    cell.to_csv(p, index=False)
+    write_csv(cell, p)
     outputs["summary_by_portfolio"] = p
 
     entry = group_summaries(
@@ -222,17 +291,22 @@ def analyze(cfg: Config, main_csv: str | Path | None = None,
         metrics=["weighted_service_hours_lost", "catastrophic"],
         seed=cfg.seed)
     p = proc_dir / f"{cfg.mode}_summary_by_entry.csv"
-    entry.to_csv(p, index=False)
+    write_csv(entry, p)
     outputs["summary_by_entry"] = p
+
+    rec = recovery_summary(df, ["facility", "profile", "portfolio"])
+    p = proc_dir / f"{cfg.mode}_recovery_summary.csv"
+    write_csv(rec, p)
+    outputs["recovery_summary"] = p
 
     comps = baseline_comparisons(df, seed=cfg.seed)
     p = proc_dir / f"{cfg.mode}_baseline_comparisons.csv"
-    comps.to_csv(p, index=False)
+    write_csv(comps, p)
     outputs["baseline_comparisons"] = p
 
     kw = kruskal_across_profiles(df)
     p = proc_dir / f"{cfg.mode}_kruskal_profiles.csv"
-    kw.to_csv(p, index=False)
+    write_csv(kw, p)
     outputs["kruskal_profiles"] = p
 
     sweep_path = Path(sweep_csv) if sweep_csv else (
@@ -240,7 +314,7 @@ def analyze(cfg: Config, main_csv: str | Path | None = None,
     if sweep_path.exists():
         sw = sweep_summary(pd.read_csv(sweep_path), seed=cfg.seed)
         p = proc_dir / f"{cfg.mode}_sweep_summary.csv"
-        sw.to_csv(p, index=False)
+        write_csv(sw, p)
         outputs["sweep_summary"] = p
 
     log.info("analysis complete; %d tables in %s", len(outputs), proc_dir)

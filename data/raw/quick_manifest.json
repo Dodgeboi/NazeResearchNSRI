@@ -3,10 +3,10 @@
   "master_seed": 20260713,
   "n_main_trials": 252,
   "n_sweep_trials": 20,
-  "elapsed_seconds": 3.6,
+  "elapsed_seconds": 89.8,
   "outputs": {
-    "main": "/home/user/NazeResearchNSRI/data/raw/quick_main_results.csv",
-    "sweep": "/home/user/NazeResearchNSRI/data/raw/quick_sweep_results.csv",
-    "backup": "/home/user/NazeResearchNSRI/data/raw/quick_backup_results.csv"
+    "main": "C:\\Users\\mukil\\Cybersecurity project\\NazeResearchNSRI\\data\\raw\\quick_main_results.csv",
+    "sweep": "C:\\Users\\mukil\\Cybersecurity project\\NazeResearchNSRI\\data\\raw\\quick_sweep_results.csv",
+    "backup": "C:\\Users\\mukil\\Cybersecurity project\\NazeResearchNSRI\\data\\raw\\quick_backup_results.csv"
   }
 }

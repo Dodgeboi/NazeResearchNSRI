@@ -18,3 +18,15 @@
 2026-07-13 21:14:14,428 | INFO    | grrc.experiments | wrote /home/user/NazeResearchNSRI/data/raw/standard_sweep_results.csv (1000 rows)
 2026-07-13 21:14:14,430 | INFO    | grrc.experiments | controlled backup experiment: 675 trials
 2026-07-13 21:14:30,907 | INFO    | grrc.experiments | wrote /home/user/NazeResearchNSRI/data/raw/standard_backup_results.csv (675 rows)
+2026-07-15 20:25:34,281 | INFO    | grrc.experiments | main experiment: 252 trials (quick mode, seed=20260713)
+2026-07-15 20:26:31,015 | INFO    | grrc.experiments | wrote C:\Users\mukil\Cybersecurity project\NazeResearchNSRI\data\raw\quick_main_results.csv (252 rows)
+2026-07-15 20:26:31,037 | INFO    | grrc.experiments | sweep experiment: 20 trials
+2026-07-15 20:26:37,743 | INFO    | grrc.experiments | wrote C:\Users\mukil\Cybersecurity project\NazeResearchNSRI\data\raw\quick_sweep_results.csv (20 rows)
+2026-07-15 20:26:37,750 | INFO    | grrc.experiments | controlled backup experiment: 36 trials
+2026-07-15 20:27:04,069 | INFO    | grrc.experiments | wrote C:\Users\mukil\Cybersecurity project\NazeResearchNSRI\data\raw\quick_backup_results.csv (36 rows)
+2026-07-15 20:33:57,921 | INFO    | grrc.experiments | main experiment: 15750 trials (standard mode, seed=20260713)
+2026-07-15 21:04:33,542 | INFO    | grrc.experiments | wrote C:\Users\mukil\Cybersecurity project\NazeResearchNSRI\data\raw\standard_main_results.csv (15750 rows)
+2026-07-15 21:04:33,561 | INFO    | grrc.experiments | sweep experiment: 1000 trials
+2026-07-15 21:06:47,803 | INFO    | grrc.experiments | wrote C:\Users\mukil\Cybersecurity project\NazeResearchNSRI\data\raw\standard_sweep_results.csv (1000 rows)
+2026-07-15 21:06:47,834 | INFO    | grrc.experiments | controlled backup experiment: 675 trials
+2026-07-15 21:09:05,296 | INFO    | grrc.experiments | wrote C:\Users\mukil\Cybersecurity project\NazeResearchNSRI\data\raw\standard_backup_results.csv (675 rows)

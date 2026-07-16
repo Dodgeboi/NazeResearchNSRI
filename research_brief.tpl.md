@@ -97,7 +97,9 @@ Main factorial: 3 facilities × 3 profiles × 14 portfolios × 5 entry
 points × {{N_PER_CELL}} trials = {{N_MAIN}} trials. A patch × detection
 sweep adds {{N_SWEEP}} trials (Figure 3), a controlled backup-strategy
 comparison adds {{N_BACKUP}} trials (Figure 6), and the budget optimizer
-evaluates 144 portfolios per profile ({{N_OPT}} trials). Total:
+evaluates a 192-combination portfolio lattice per profile — deduplicated
+to the distinct configurations reachable from each baseline ({{N_OPT}}
+trials). Total:
 **{{N_TOTAL}} trials**, master seed {{MASTER_SEED}}; identical seeds
 reproduce identical CSVs. Twelve automated validation checks
 (`docs/model_validation.md`) confirm the simulation behaves logically
@@ -128,7 +130,10 @@ flat baseline, regional hospital):**
 The strongest single control was **{{BEST_SINGLE_NAME}}**
 ({{BEST_SINGLE_RED}} reduction), followed by {{SECOND_SINGLE_NAME}}
 ({{SECOND_SINGLE_RED}}). Figure 2 shows disruption probability by
-strategy and profile.
+strategy and profile. (The "fast detect + isolate" condition is *not*
+listed here: it bundles two controls — faster detection **and** rapid
+automated isolation — so it is reported among the multi-control
+combinations rather than as a single control.)
 
 **Patch coverage vs. detection speed (Figure 3).** Catastrophic
 probability ranged from {{SWEEP_WORST_CAT}} at the worst cell
@@ -144,8 +149,8 @@ backups — the mechanism by which isolated backups protect recoverability.
 
 ## 8. Budget optimization
 
-For each profile and budget we searched all 144 portfolios and selected
-the lowest expected disruption (Figure 4 shows the cost–resilience
+For each profile and budget we searched every candidate portfolio and
+selected the lowest expected disruption (Figure 4 shows the cost–resilience
 Pareto frontier; Figure 7 shows service-hours preserved per cost point).
 
 {{TABLE_BEST_BUDGET}}
@@ -153,6 +158,15 @@ Pareto frontier; Figure 7 shows service-hours preserved per cost point).
 **Minimum budget to reach P(catastrophic) ≤ target:**
 
 {{TABLE_MIN_BUDGET}}
+
+The two columns separate a point estimate from a confidence-aware
+reading. At {{N_PER_CELL}} trials per portfolio the point estimate is
+coarse (4-percentage-point granularity) and optimistic: a portfolio can
+post a point estimate at or below the 5% target while its Wilson 95%
+upper bound remains well above it. Only the second column supports a firm
+"below 5%" claim, and where it reads *not reached*, the target is not
+statistically established at this sample size even if a point estimate
+appears to meet it.
 
 **Cost sensitivity.** Re-running the optimization at ×0.5–×1.5 costs, we
 measured how often each control appears in the min-disruption winner:

@@ -117,13 +117,18 @@ group.
    repeated trials. Standard mode: 25 trials/cell = 15,750 trials.
 2. **Patch × detection sweep** — 4 coverage levels × 5 delay tiers on
    the regional hospital (Figure 3). Standard: 1,000 trials.
-3. **Budget optimization** — all 144 composable portfolios (3
-   segmentation tiers × 3 patch boosts × detection × rapid isolation ×
-   backup protection × identity controls) evaluated per profile, then
-   filtered by budgets 5/10/15 and re-ranked under cost scalings ±25%,
-   ±50% (A16). Standard: 10,800 trials. Outputs: best portfolio per
-   budget × criterion, Pareto frontier, minimum budget to reach
-   P(catastrophic) ≤ 5%, and defense-inclusion stability.
+3. **Budget optimization** — a 192-combination upgrade lattice (3
+   segmentation tiers × 4 patch rungs × detection × rapid isolation ×
+   backup protection × identity controls), evaluated per profile as the
+   behaviorally-distinct configurations reachable from that profile's
+   baseline (192 / 144 / 96 for the three profiles; patch rungs run high
+   enough that every profile can reach 90%, and combinations that resolve
+   identically are scored once). Portfolios are then filtered by budgets
+   5/10/15 and re-ranked under cost scalings ±25%, ±50% (A16). Standard:
+   10,800 trials. Outputs: best portfolio per budget × criterion, Pareto
+   frontier, minimum budget to reach P(catastrophic) ≤ 5% (as a point
+   estimate and a Wilson-95%-upper-bound value), and defense-inclusion
+   stability.
 
 Every output row carries `(master_seed, trial_id)` plus all condition
 fields, so any row can be regenerated exactly.

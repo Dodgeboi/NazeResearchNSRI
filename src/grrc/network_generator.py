@@ -197,11 +197,18 @@ def generate_network(
     strength_l: list[float] = []
     cross_l: list[bool] = []
     trav_l: list[float] = []
+    # A directed edge (s, d) is stored at most once. Propagation makes one
+    # independent infection attempt per stored edge, so a duplicated edge
+    # would silently multiply the transmission probability between two
+    # nodes. Deduplicating here keeps every pair a single channel and
+    # removes a facility-size-dependent bias (smaller zones collide more).
+    edge_seen: set[tuple[int, int]] = set()
 
     def add_edge(s: int, d: int, access: float, traversal: float,
                  cross: bool) -> None:
-        if s == d:
+        if s == d or (s, d) in edge_seen:
             return
+        edge_seen.add((s, d))
         src_l.append(s)
         dst_l.append(d)
         access_l.append(access)
@@ -224,7 +231,7 @@ def generate_network(
 
     # Cross-zone edges: for each permitted pair, a number of random links
     # proportional to zone sizes and the profile's complexity factor.
-    pair_seen: set[tuple[int, int]] = set()
+    # (De-duplication is handled centrally by add_edge.)
     for (za, zb) in pairs:
         a_nodes, b_nodes = zone_nodes[za], zone_nodes[zb]
         n_links = max(1, int(round(
@@ -243,9 +250,6 @@ def generate_network(
         for _ in range(n_links):
             s = int(rng.choice(a_nodes))
             d = int(rng.choice(b_nodes))
-            if (s, d) in pair_seen:
-                continue
-            pair_seen.add((s, d))
             add_edge(s, d, float(rng.uniform(0.6, 1.0)), traversal, True)
 
     # Vendor gateway support paths.

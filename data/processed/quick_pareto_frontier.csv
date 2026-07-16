@@ -1,12 +1,11 @@
 profile,portfolio,description,cost,mean_hours_lost,catastrophic_prob
-resource_constrained,seg-flat|patch+0|det0|iso0|bak-connected|idm0,segmentation=flat; backups=connected,0.0,249.5125,1.0
-resource_constrained,seg-flat|patch+0|det0|iso0|bak-isolated|idm0,segmentation=flat; backups=isolated,2.0,171.0875,1.0
-resource_constrained,seg-flat|patch+0|det1|iso0|bak-connected|idm0,segmentation=flat; faster detection; backups=connected,3.0,70.5,0.5
-resource_constrained,seg-flat|patch+1|det1|iso0|bak-isolated|idm0,segmentation=flat; patch+1 levels; faster detection; backups=isolated,7.0,0.7,0.0
-resource_constrained,seg-least_privilege|patch+1|det1|iso0|bak-isolated|idm0,segmentation=least_privilege; patch+1 levels; faster detection; backups=isolated,12.0,0.4,0.0
-resource_constrained,seg-basic|patch+1|det1|iso1|bak-isolated|idm0,segmentation=basic; patch+1 levels; faster detection; rapid isolation; backups=isolated,15.0,0.0,0.0
-intermediate_capacity,seg-flat|patch+0|det0|iso0|bak-connected|idm0,segmentation=flat; backups=connected,0.0,202.05,1.0
-intermediate_capacity,seg-flat|patch+1|det0|iso0|bak-connected|idm0,segmentation=flat; patch+1 levels; backups=connected,2.0,92.8375,1.0
-intermediate_capacity,seg-flat|patch+0|det1|iso0|bak-connected|idm0,segmentation=flat; faster detection; backups=connected,3.0,0.0,0.0
-high_capacity,seg-flat|patch+0|det0|iso0|bak-connected|idm0,segmentation=flat; backups=connected,0.0,0.6749999999999999,0.0
-high_capacity,seg-flat|patch+2|det0|iso0|bak-connected|idm0,segmentation=flat; patch+2 levels; backups=connected,2.0,0.0,0.0
+resource_constrained,seg-flat|patch+0|det0|iso0|bak-connected|idm0,segmentation=flat; backups=connected,0,242.05,1
+resource_constrained,seg-flat|patch+0|det0|iso0|bak-isolated|idm0,segmentation=flat; backups=isolated,2,185.7375,1
+resource_constrained,seg-flat|patch+0|det1|iso0|bak-connected|idm0,segmentation=flat; faster detection; backups=connected,3,109.2,0.5
+resource_constrained,seg-flat|patch+0|det1|iso0|bak-isolated|idm0,segmentation=flat; faster detection; backups=isolated,5,72.3125,0.5
+resource_constrained,seg-basic|patch+0|det1|iso0|bak-connected|idm0,segmentation=basic; faster detection; backups=connected,6,0,0
+intermediate_capacity,seg-flat|patch+0|det0|iso0|bak-connected|idm0,segmentation=flat; backups=connected,0,146.3125,1
+intermediate_capacity,seg-flat|patch+1|det0|iso0|bak-connected|idm0,segmentation=flat; patch+1 levels; backups=connected,2,92.0875,0.5
+intermediate_capacity,seg-basic|patch+0|det0|iso0|bak-connected|idm0,segmentation=basic; backups=connected,3,0.9,0
+intermediate_capacity,seg-basic|patch+1|det0|iso0|bak-connected|idm0,segmentation=basic; patch+1 levels; backups=connected,5,0,0
+high_capacity,seg-flat|patch+0|det0|iso0|bak-connected|idm0,segmentation=flat; backups=connected,0,0,0

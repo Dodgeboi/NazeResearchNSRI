@@ -351,8 +351,9 @@ def check_convergence(sample_sizes: tuple[int, ...] = (100, 250, 500, 1000)
 def check_budget_respected() -> ValidationResult:
     """11. The optimizer never selects a portfolio exceeding its budget.
 
-    Uses a synthetic performance table over the full 144-portfolio space,
-    so the check is exact and covers every budget/cost-scale combination.
+    Uses a synthetic performance table over the full enumerated portfolio
+    space, so the check is exact and covers every budget/cost-scale
+    combination.
     """
     cfg = default_config()
     costs = {"basic_segmentation": 3, "least_privilege_segmentation": 5,

@@ -2,6 +2,11 @@
   "mode": "quick",
   "master_seed": 20260713,
   "n_trials": 864,
+  "distinct_candidates_per_profile": {
+    "resource_constrained": 192,
+    "intermediate_capacity": 144,
+    "high_capacity": 96
+  },
   "profiles": [
     "resource_constrained",
     "intermediate_capacity",

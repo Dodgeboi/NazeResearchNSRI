@@ -36,7 +36,7 @@ showed.
 | Entry point | workstation, internet_facing, privileged_system, medical_device, vendor_connection |
 | Patch sweep | 25%, 50%, 75%, 90% coverage |
 | Detection sweep | 1, 3, 6, 12, 24 steps mean delay |
-| Optimizer space | 144 composable portfolios (3 seg × 3 patch × 2 det × 2 iso × 2 backup × 2 identity) |
+| Optimizer space | 192-combination lattice (3 seg × 4 patch rungs × 2 det × 2 iso × 2 backup × 2 identity), deduplicated per profile to the distinct reachable configurations (192 / 144 / 96) |
 | Budgets | 5, 10, 15 points |
 | Cost scaling | ×0.50, ×0.75, ×1.00, ×1.25, ×1.50 |
 | Random seed | master 20260713; per-trial streams via SeedSequence(master, trial_id) |

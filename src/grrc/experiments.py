@@ -27,7 +27,7 @@ from .defenses import (DefensePortfolio, get_portfolio, portfolio_cost)
 from .enums import BackupStrategy, SegmentationLevel
 from .models import TrialSpec
 from .simulation import run_trial
-from .utilities import ensure_dirs, resolve_path, setup_logging
+from .utilities import ensure_dirs, resolve_path, setup_logging, write_csv
 
 SWEEP_ID_OFFSET = 1_000_000
 OPT_ID_OFFSET = 10_000_000
@@ -198,7 +198,7 @@ def run_experiments(cfg: Config,
     main_df = run_specs(cfg, main_specs, desc=f"{cfg.mode}:main")
     main_df = _annotate_costs(main_df, cfg, costs)
     main_path = raw_dir / f"{cfg.mode}_main_results.csv"
-    main_df.to_csv(main_path, index=False)
+    write_csv(main_df, main_path)
     outputs["main"] = main_path
     log.info("wrote %s (%d rows)", main_path, len(main_df))
 
@@ -208,7 +208,7 @@ def run_experiments(cfg: Config,
         sweep_df = run_specs(cfg, sweep_specs, desc=f"{cfg.mode}:sweep")
         sweep_df["portfolio_cost"] = float("nan")
         sweep_path = raw_dir / f"{cfg.mode}_sweep_results.csv"
-        sweep_df.to_csv(sweep_path, index=False)
+        write_csv(sweep_df, sweep_path)
         outputs["sweep"] = sweep_path
         log.info("wrote %s (%d rows)", sweep_path, len(sweep_df))
 
@@ -218,7 +218,7 @@ def run_experiments(cfg: Config,
                           desc=f"{cfg.mode}:backup")
     backup_df["portfolio_cost"] = float("nan")
     backup_path = raw_dir / f"{cfg.mode}_backup_results.csv"
-    backup_df.to_csv(backup_path, index=False)
+    write_csv(backup_df, backup_path)
     outputs["backup"] = backup_path
     log.info("wrote %s (%d rows)", backup_path, len(backup_df))
 

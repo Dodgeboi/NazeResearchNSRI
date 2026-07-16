@@ -7,6 +7,13 @@ import sys
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
+
+#: Canonical float format for every CSV the study writes. Fixing the
+#: precision here (10 significant figures) makes outputs byte-for-byte
+#: identical across platforms and pandas versions, so reproducibility does
+#: not depend on a library's default float repr (see docs/limitations.md).
+CSV_FLOAT_FORMAT = "%.10g"
 
 #: Repository root (two levels above this file's package directory).
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -53,3 +60,16 @@ def resolve_path(path_str: str) -> Path:
     """Resolve a config path relative to the repository root."""
     p = Path(path_str)
     return p if p.is_absolute() else REPO_ROOT / p
+
+
+def write_csv(df: "pd.DataFrame", path: Path) -> Path:
+    """Write a DataFrame to CSV with the study's canonical float format.
+
+    Using a fixed ``float_format`` (rather than pandas' default repr) is
+    what makes the committed CSVs reproduce byte-for-byte on any machine
+    or library version, so the "bit-identical" reproducibility claim holds
+    beyond the exact environment that first generated them.
+    """
+    path = Path(path)
+    df.to_csv(path, index=False, float_format=CSV_FLOAT_FORMAT)
+    return path

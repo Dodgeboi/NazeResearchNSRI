@@ -1,11 +1,11 @@
 """Budget-constrained defense-portfolio optimization + cost sensitivity.
 
 Approach: the simulator's outcomes do not depend on what a defense
-*costs*, only on what it *does*. So each of the 144 candidate portfolios
-is evaluated ONCE per capacity profile with Monte Carlo trials; budgets
-and cost-scaling scenarios then just re-filter and re-rank the same
-measured performance. This makes the +/-50% cost sensitivity analysis
-essentially free.
+*costs*, only on what it *does*. So each behaviorally-distinct candidate
+portfolio is evaluated ONCE per capacity profile with Monte Carlo trials;
+budgets and cost-scaling scenarios then just re-filter and re-rank the
+same measured performance. This makes the +/-50% cost sensitivity
+analysis essentially free.
 
 All costs are normalized model points (configs/defense_costs.yaml),
 explicitly NOT dollar estimates.
@@ -20,16 +20,50 @@ import numpy as np
 import pandas as pd
 
 from .config import Config, load_defense_costs
-from .defenses import (DefensePortfolio, enumerate_portfolios,
-                       portfolio_cost, describe_portfolio)
+from .defenses import (DefensePortfolio, effective_settings,
+                       enumerate_portfolios, portfolio_cost,
+                       describe_portfolio)
 from .enums import BackupStrategy, SegmentationLevel
 from .experiments import OPT_ID_OFFSET, run_specs
 from .models import TrialSpec
-from .statistics import bootstrap_ci
-from .utilities import ensure_dirs, resolve_path, setup_logging
+from .statistics import bootstrap_ci, wilson_ci
+from .utilities import ensure_dirs, resolve_path, setup_logging, write_csv
 
 #: Metric minimized as 'expected service disruption'.
 DISRUPTION_METRIC = "weighted_service_hours_lost"
+
+
+def _resolved_key(eff) -> tuple:
+    """Canonical key for a behaviorally-distinct simulator configuration."""
+    return (
+        eff.segmentation.value,
+        round(eff.patch_coverage, 6),
+        int(eff.detection_delay),
+        round(eff.isolation_success, 6),
+        bool(eff.isolate_same_step),
+        eff.backup_strategy,
+        bool(eff.identity_controls),
+    )
+
+
+def distinct_portfolios_for_profile(
+        cfg: Config, profile: str) -> list[DefensePortfolio]:
+    """Candidate portfolios that are behaviorally distinct for one profile.
+
+    The enumerated search space contains upgrade combinations that resolve
+    to the *same* effective settings once clamped to a profile's baseline
+    (e.g. patch+1 and patch+2 both cap at 90% for a high-baseline profile).
+    Evaluating such duplicates separately would waste trials and, worse,
+    give each a different random network so that noise — not the defense —
+    could decide the 'winner'. We therefore keep exactly one representative
+    per distinct resolved configuration, per profile.
+    """
+    prof = cfg.profiles[profile]
+    seen: dict[tuple, DefensePortfolio] = {}
+    for p in enumerate_portfolios():
+        key = _resolved_key(effective_settings(prof, p))
+        seen.setdefault(key, p)
+    return list(seen.values())
 
 
 def _portfolio_components(p: DefensePortfolio) -> dict[str, int]:
@@ -57,22 +91,27 @@ CONTROL_COLUMNS = [
 
 
 def evaluate_candidate_portfolios(cfg: Config) -> pd.DataFrame:
-    """Monte Carlo evaluation of every candidate portfolio per profile.
+    """Monte Carlo evaluation of every *distinct* candidate per profile.
+
+    Duplicate configurations (same resolved settings under a profile) are
+    collapsed to one representative before evaluation, so no configuration
+    is double-counted or compared against itself on a different network.
 
     Returns the raw per-trial DataFrame (also exported by ``optimize``).
     """
     opt = cfg.optimization
-    portfolios = {p.name: p for p in enumerate_portfolios()}
     entries = cfg.experiment.entry_points
     specs: list[TrialSpec] = []
+    portfolios: dict[str, DefensePortfolio] = {}
     tid = OPT_ID_OFFSET
     for profile in opt.profiles:
-        for name in portfolios:
+        for p in distinct_portfolios_for_profile(cfg, profile):
+            portfolios.setdefault(p.name, p)
             for k in range(opt.trials_per_portfolio):
                 specs.append(TrialSpec(
                     trial_id=tid, experiment="optimization",
                     facility=opt.facility, profile=profile,
-                    portfolio=name, entry_point=entries[k % len(entries)],
+                    portfolio=p.name, entry_point=entries[k % len(entries)],
                     master_seed=cfg.seed))
                 tid += 1
     return run_specs(cfg, specs, portfolios=portfolios,
@@ -88,18 +127,25 @@ def summarize_portfolios(raw: pd.DataFrame, cfg: Config,
         p = portfolios[name]
         hours = grp[DISRUPTION_METRIC].to_numpy()
         lo, hi = bootstrap_ci(hours, seed=cfg.seed)
+        n = len(grp)
+        cat_events = int(grp["catastrophic"].sum())
+        cat_lo, cat_hi = wilson_ci(cat_events, n)
         rows.append({
             "profile": profile,
             "portfolio": name,
             "description": describe_portfolio(p),
             "base_cost": portfolio_cost(p, cfg.profiles[profile], costs),
-            "n_trials": len(grp),
+            "n_trials": n,
             "mean_hours_lost": float(hours.mean()),
             "hours_lost_ci_lo": lo,
             "hours_lost_ci_hi": hi,
             "median_hours_lost": float(np.median(hours)),
             "p90_hours_lost": float(np.percentile(hours, 90)),
             "catastrophic_prob": float(grp["catastrophic"].mean()),
+            # Wilson 95% CI: at n=25 the point estimate alone is coarse
+            # (4-point granularity) and its upper bound is far higher.
+            "catastrophic_prob_ci_lo": cat_lo,
+            "catastrophic_prob_ci_hi": cat_hi,
             "mean_pct_compromised": float(grp["pct_compromised"].mean()),
             "backup_compromise_prob":
                 float(grp["backup_compromised"].mean()),
@@ -193,24 +239,50 @@ def pareto_frontier(summary: pd.DataFrame, profile: str) -> pd.DataFrame:
 def minimum_budget_table(summary: pd.DataFrame, cfg: Config,
                          max_budget: int = 25) -> pd.DataFrame:
     """Smallest integer budget whose best portfolio meets the
-    catastrophic-probability target, per profile (base costs)."""
+    catastrophic-probability target, per profile (base costs).
+
+    Two answers are reported per profile:
+      * ``min_budget`` — smallest budget whose best portfolio's *point*
+        estimate of P(catastrophic) is <= target;
+      * ``min_budget_ci95_upper`` — smallest budget at which some feasible
+        portfolio's Wilson 95% *upper* bound is <= target, i.e. where the
+        target is met with 95% confidence rather than as a coarse point
+        estimate. At n=25 trials the two can differ sharply, and the
+        confidence-aware column is the honest basis for any claim that a
+        budget "reaches" the target.
+    """
     target = cfg.optimization.catastrophic_target
     rows = []
     for profile in cfg.optimization.profiles:
         sub = summary[summary["profile"] == profile]
-        found = None
+        found = found_ci = None
+        sel_prob = sel_lo = sel_hi = np.nan
         for budget in range(0, max_budget + 1):
             feasible = sub[sub["base_cost"] <= budget]
             if feasible.empty:
                 continue
-            if feasible["catastrophic_prob"].min() <= target:
+            if found is None and feasible["catastrophic_prob"].min() <= target:
                 found = budget
+                best = feasible.loc[feasible["catastrophic_prob"].idxmin()]
+                sel_prob = float(best["catastrophic_prob"])
+                sel_lo = float(best["catastrophic_prob_ci_lo"])
+                sel_hi = float(best["catastrophic_prob_ci_hi"])
+            if (found_ci is None
+                    and feasible["catastrophic_prob_ci_hi"].min() <= target):
+                found_ci = budget
+            if found is not None and found_ci is not None:
                 break
         rows.append({
             "profile": profile,
             "catastrophic_target": target,
             "min_budget": found if found is not None else np.nan,
             "reachable": int(found is not None),
+            "selected_catastrophic_prob": sel_prob,
+            "selected_cat_prob_ci_lo": sel_lo,
+            "selected_cat_prob_ci_hi": sel_hi,
+            "min_budget_ci95_upper":
+                found_ci if found_ci is not None else np.nan,
+            "reachable_ci95_upper": int(found_ci is not None),
         })
     return pd.DataFrame(rows)
 
@@ -225,16 +297,19 @@ def optimize(cfg: Config,
     costs = load_defense_costs(
         defense_costs_path or resolve_path("configs/defense_costs.yaml"))
 
-    log.info("evaluating %d candidate portfolios x %d profiles "
-             "(%d trials each)", 144, len(cfg.optimization.profiles),
+    distinct_counts = {
+        profile: len(distinct_portfolios_for_profile(cfg, profile))
+        for profile in cfg.optimization.profiles}
+    log.info("evaluating distinct candidate portfolios per profile %s "
+             "(%d trials each)", distinct_counts,
              cfg.optimization.trials_per_portfolio)
     raw = evaluate_candidate_portfolios(cfg)
     raw_path = raw_dir / f"{cfg.mode}_optimization_results.csv"
-    raw.to_csv(raw_path, index=False)
+    write_csv(raw, raw_path)
 
     summary = summarize_portfolios(raw, cfg, costs)
     summary_path = proc_dir / f"{cfg.mode}_portfolio_summary.csv"
-    summary.to_csv(summary_path, index=False)
+    write_csv(summary, summary_path)
 
     best_rows: list[dict] = []
     for profile in cfg.optimization.profiles:
@@ -246,28 +321,29 @@ def optimize(cfg: Config,
                     summary, profile, budget, scale, baseline_hours))
     best = pd.DataFrame(best_rows)
     best_path = proc_dir / f"{cfg.mode}_best_portfolios.csv"
-    best.to_csv(best_path, index=False)
+    write_csv(best, best_path)
 
     pareto = pd.concat([pareto_frontier(summary, p)
                         for p in cfg.optimization.profiles],
                        ignore_index=True)
     pareto_path = proc_dir / f"{cfg.mode}_pareto_frontier.csv"
-    pareto.to_csv(pareto_path, index=False)
+    write_csv(pareto, pareto_path)
 
     # Defense-inclusion stability across cost scenarios (min-disruption
     # criterion): how often does each control appear in the winner?
     stab = (best[best["criterion"] == "min_expected_disruption"]
             .groupby("profile")[CONTROL_COLUMNS].mean().reset_index())
     stab_path = proc_dir / f"{cfg.mode}_cost_sensitivity.csv"
-    stab.to_csv(stab_path, index=False)
+    write_csv(stab, stab_path)
 
     min_budget = minimum_budget_table(summary, cfg)
     min_budget_path = proc_dir / f"{cfg.mode}_minimum_budget.csv"
-    min_budget.to_csv(min_budget_path, index=False)
+    write_csv(min_budget, min_budget_path)
 
     manifest = {
         "mode": cfg.mode, "master_seed": cfg.seed,
         "n_trials": len(raw),
+        "distinct_candidates_per_profile": distinct_counts,
         "profiles": cfg.optimization.profiles,
         "budgets": cfg.optimization.budgets,
         "cost_scale_factors": cfg.optimization.cost_scale_factors,

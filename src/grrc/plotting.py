@@ -24,7 +24,8 @@ from matplotlib.colors import LinearSegmentedColormap
 from .config import Config
 from .enums import Zone
 from .statistics import bootstrap_ci
-from .utilities import ensure_dirs, resolve_path, setup_logging, trial_rng
+from .utilities import (ensure_dirs, resolve_path, setup_logging, trial_rng,
+                        write_csv)
 
 # --- validated palette (reference instance, light mode) -------------------
 INK = "#0b0b0b"
@@ -128,7 +129,7 @@ def _save(fig, figures_dir: Path, tables_dir: Path, name: str,
     fig.savefig(figures_dir / f"{name}.png", dpi=300, bbox_inches="tight")
     fig.savefig(figures_dir / f"{name}.pdf", bbox_inches="tight")
     plt.close(fig)
-    data.to_csv(tables_dir / f"{name}_data.csv", index=False)
+    write_csv(data, tables_dir / f"{name}_data.csv")
     captions.append(f"**{name}** — {caption}\n")
 
 
@@ -284,7 +285,7 @@ def fig3_heatmap(cfg: Config, sweep_summary: pd.DataFrame, figures_dir: Path,
     ax.set_yticks(range(len(patches)))
     ax.set_yticklabels([f"{p:.0%}" for p in patches])
     ax.set_xlabel("Mean detection delay (steps; 1 step = 15 modeled min)")
-    ax.set_ylabel("Patch coverage")
+    ax.set_ylabel("Target patch coverage")
     ax.set_title("Figure 3. Catastrophic-disruption probability:\n"
                  "patch coverage vs. detection delay")
     ax.grid(False)
@@ -303,7 +304,10 @@ def fig3_heatmap(cfg: Config, sweep_summary: pd.DataFrame, figures_dir: Path,
           "Probability that at least one clinical service stays down for "
           "more than 8 consecutive steps (2 modeled hours), across the "
           "patch-coverage x detection-delay grid (regional hospital, "
-          "intermediate profile, flat architecture, entry points pooled).",
+          "intermediate profile, flat architecture, entry points pooled). "
+          "The patch axis is the CONFIGURED (target) coverage; legacy nodes "
+          "receive half that probability, so the realized patched fraction "
+          "is somewhat lower (see data_dictionary: realized_patch_fraction).",
           captions)
 
 
@@ -323,7 +327,7 @@ def fig4_pareto(cfg: Config, portfolio_summary: pd.DataFrame,
         sub = portfolio_summary[portfolio_summary["profile"] == prof]
         front = pareto[pareto["profile"] == prof].sort_values("cost")
         ax.scatter(sub["base_cost"], sub["mean_hours_lost"], s=14,
-                   color=MUTED, alpha=0.45, label="All 144 portfolios",
+                   color=MUTED, alpha=0.45, label="All candidate portfolios",
                    zorder=2)
         ax.plot(front["cost"], front["mean_hours_lost"], "-o",
                 color=PROFILE_COLORS[prof], linewidth=2, markersize=5,
@@ -342,8 +346,9 @@ def fig4_pareto(cfg: Config, portfolio_summary: pd.DataFrame,
                  fontweight="bold", y=1.03)
     _save(fig, figures_dir, tables_dir, "fig4_pareto_frontier",
           pareto,
-          "Each gray dot is one of 144 candidate defense portfolios "
-          "evaluated by Monte Carlo simulation; the line joins "
+          "Each gray dot is one candidate defense portfolio evaluated by "
+          "Monte Carlo simulation (the behaviorally-distinct portfolios "
+          "reachable from each profile's baseline); the line joins "
           "cost-nondominated portfolios. Dashed lines mark the studied "
           "budget levels. Costs are normalized model points, not dollars.",
           captions)

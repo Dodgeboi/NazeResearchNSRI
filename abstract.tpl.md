@@ -16,8 +16,8 @@ Damage is measured as disruption to seven interdependent critical
 services, not infected-machine counts. We compared network
 segmentation, patch coverage, detection and isolation speed, identity
 restrictions, and backup isolation — alone and combined — across
-{{N_TOTAL}} simulation runs, and searched 144 defense portfolios under
-fixed budgets, re-testing every conclusion under ±50% cost scaling.
+{{N_TOTAL}} simulation runs, and searched a 192-portfolio defense lattice
+under fixed budgets, re-testing every conclusion under ±50% cost scaling.
 Relative to a flat, unsegmented baseline, the full defense portfolio
 reduced weighted service-hours lost by {{REL_RED_FULL_IC}} in
 the intermediate-capacity regional hospital (Mann–Whitney

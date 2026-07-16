@@ -22,8 +22,13 @@ from .config import Config
 from .plotting import PORTFOLIO_LABELS, PROFILE_LABELS
 from .utilities import REPO_ROOT, resolve_path, setup_logging
 
+# Genuinely single-control conditions. NOTE: "fast_detection" is
+# deliberately excluded — it bundles detection improvement AND rapid
+# automated isolation, so ranking it among "single controls" overstates
+# what one control buys. It is reported separately as a two-control
+# combination.
 SINGLE_CONTROL_PORTFOLIOS = [
-    "basic_segmentation", "least_privilege", "patch_90", "fast_detection",
+    "basic_segmentation", "least_privilege", "patch_90",
     "isolated_backups", "identity_controls",
 ]
 
@@ -173,14 +178,20 @@ def compute_tokens(cfg: Config) -> dict[str, str]:
     minb_path = proc_dir / f"{mode}_minimum_budget.csv"
     if minb_path.exists():
         minb = pd.read_csv(minb_path)
-        lines = [f"| Profile | Minimum budget for P(catastrophic) <= "
-                 f"{cfg.optimization.catastrophic_target:.0%} |", "|---|---|"]
+        tgt = cfg.optimization.catastrophic_target
+        lines = [
+            f"| Profile | Min budget (point estimate <= {tgt:.0%}) | "
+            f"Min budget (95% upper bound <= {tgt:.0%}) |",
+            "|---|---|---|"]
         for _, r in minb.iterrows():
-            val = ("not reachable in tested space"
-                   if not r["reachable"] else f"{int(r['min_budget'])} points")
+            pt = ("not reached in tested space" if not r["reachable"]
+                  else f"{int(r['min_budget'])} points")
+            ci = ("not reached in tested space"
+                  if not r.get("reachable_ci95_upper", 0)
+                  else f"{int(r['min_budget_ci95_upper'])} points")
             lines.append(
                 f"| {PROFILE_LABELS.get(r['profile'], r['profile'])} | "
-                f"{val} |")
+                f"{pt} | {ci} |")
         tokens["TABLE_MIN_BUDGET"] = "\n".join(lines)
 
     return tokens

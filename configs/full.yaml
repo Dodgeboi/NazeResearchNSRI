@@ -1,8 +1,9 @@
-# FULL MODE — expanded analysis (~103,000 total trials).
+# FULL MODE — expanded analysis (105,330 total trials).
 # Same design as standard with more repetitions per cell:
-#   main:  3 x 3 x 14 x 5 x 90  = 56,700 trials
-#   sweep: 4 x 5 x 150          =  3,000 trials
-#   opt:   144 x 3 x 100        = 43,200 trials
+#   main:   3 x 3 x 14 x 5 x 90          = 56,700 trials
+#   sweep:  4 x 5 x 150                  =  3,000 trials
+#   opt:    (192 + 144 + 96 = 432 distinct portfolios) x 100 = 43,200 trials
+#   backup: 3 x 3 x 3 x 90               =  2,430 trials
 # Uses all CPU cores; expect roughly 1-2 hours on a 4-core laptop.
 mode: full
 seed: 20260713

@@ -106,8 +106,14 @@ def test_false_positive_isolation_expires():
     sim._false_positives(1, rng)
     assert sim.fp_isolated.any(), "with rate 0.5 some FP should occur"
     frozen = sim.fp_isolated.copy()
+    # Disable new false positives, then step far past every release time so
+    # we test the *release* semantics in isolation: no re-flagging can mask
+    # a failure to release. (Previously this assertion was `... or True`,
+    # which could never fail.)
+    cfg.simulation.false_positive_rate = 0.0
     sim._false_positives(10, rng)  # far past every release time
-    assert not (sim.fp_isolated & frozen).any() or True
+    assert not (sim.fp_isolated & frozen).any(), \
+        "all step-1 false-positive isolations should have been released"
     # released nodes are functional again unless re-flagged this step
     released = frozen & ~sim.fp_isolated
     assert not sim.isolated[released].any()
