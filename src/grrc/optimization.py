@@ -201,6 +201,19 @@ def select_best(summary: pd.DataFrame, profile: str, budget: float,
         "best_balanced":
             feasible.sort_values(["balanced_score", "cost"]).iloc[0],
     }
+    def _n_tied(row) -> int:
+        """Feasible portfolios whose mean-hours CI overlaps the winner's.
+
+        The selection ranks on point estimates, so a winner with many
+        overlapping rivals is not meaningfully 'the best' — it is one of
+        several statistically indistinguishable options. Reported so the
+        pick is never over-read.
+        """
+        lo, hi = row["hours_lost_ci_lo"], row["hours_lost_ci_hi"]
+        overlap = ((feasible["hours_lost_ci_lo"] <= hi)
+                   & (feasible["hours_lost_ci_hi"] >= lo))
+        return int(overlap.sum())
+
     rows = []
     for criterion, row in picks.items():
         rows.append({
@@ -208,6 +221,10 @@ def select_best(summary: pd.DataFrame, profile: str, budget: float,
             "criterion": criterion, "portfolio": row["portfolio"],
             "description": row["description"], "cost": float(row["cost"]),
             "mean_hours_lost": float(row["mean_hours_lost"]),
+            "hours_lost_ci_lo": float(row["hours_lost_ci_lo"]),
+            "hours_lost_ci_hi": float(row["hours_lost_ci_hi"]),
+            "n_tied_within_ci": _n_tied(row),
+            "n_feasible_candidates": int(len(feasible)),
             "catastrophic_prob": float(row["catastrophic_prob"]),
             "hours_preserved_per_point":
                 float(row["hours_preserved_per_point"])
@@ -218,21 +235,37 @@ def select_best(summary: pd.DataFrame, profile: str, budget: float,
 
 
 def pareto_frontier(summary: pd.DataFrame, profile: str) -> pd.DataFrame:
-    """Non-dominated (cost, mean hours lost) portfolios for one profile."""
+    """Non-dominated (cost, mean hours lost) portfolios for one profile.
+
+    The frontier is built on point estimates (the standard definition), so a
+    step of any size counts as an improvement and sampling noise alone can
+    create a frontier point. Rather than silently hide that, each point
+    carries ``improvement_exceeds_noise``: 1 when its mean falls below the
+    previous frontier point's 95% bootstrap *lower* bound, i.e. the gain is
+    larger than the incumbent's sampling uncertainty. Points flagged 0 are
+    within noise of the portfolio they displace and should not be read as
+    genuinely better.
+    """
     sub = (summary[summary["profile"] == profile]
            .sort_values(["base_cost", "mean_hours_lost"]))
     frontier = []
     best = np.inf
+    best_ci_lo = np.inf
     for _, row in sub.iterrows():
         if row["mean_hours_lost"] < best - 1e-12:
-            best = row["mean_hours_lost"]
+            beyond = bool(row["mean_hours_lost"] < best_ci_lo)
             frontier.append({
                 "profile": profile, "portfolio": row["portfolio"],
                 "description": row["description"],
                 "cost": float(row["base_cost"]),
                 "mean_hours_lost": float(row["mean_hours_lost"]),
+                "hours_lost_ci_lo": float(row["hours_lost_ci_lo"]),
+                "hours_lost_ci_hi": float(row["hours_lost_ci_hi"]),
                 "catastrophic_prob": float(row["catastrophic_prob"]),
+                "improvement_exceeds_noise": int(beyond),
             })
+            best = row["mean_hours_lost"]
+            best_ci_lo = row["hours_lost_ci_lo"]
     return pd.DataFrame(frontier)
 
 
@@ -241,22 +274,32 @@ def minimum_budget_table(summary: pd.DataFrame, cfg: Config,
     """Smallest integer budget whose best portfolio meets the
     catastrophic-probability target, per profile (base costs).
 
-    Two answers are reported per profile:
+    Three answers are reported per profile, because the honest one depends
+    on how the number was obtained:
+
       * ``min_budget`` — smallest budget whose best portfolio's *point*
-        estimate of P(catastrophic) is <= target;
-      * ``min_budget_ci95_upper`` — smallest budget at which some feasible
-        portfolio's Wilson 95% *upper* bound is <= target, i.e. where the
-        target is met with 95% confidence rather than as a coarse point
-        estimate. At n=25 trials the two can differ sharply, and the
-        confidence-aware column is the honest basis for any claim that a
-        budget "reaches" the target.
+        estimate of P(catastrophic) is <= target. Coarse (4-point steps at
+        n=25) and optimistic, because it is the minimum over many noisy
+        candidates.
+      * ``min_budget_ci95_marginal`` — smallest budget at which some feasible
+        portfolio's *marginal* Wilson 95% upper bound is <= target. NOTE: this
+        is **not** selection-aware. Taking the most favourable of up to 192
+        candidates measured on the same trials does not retain 95% coverage,
+        so this column must not be quoted as "95% confident".
+      * ``min_budget_ci95_simultaneous`` — the defensible one. Each feasible
+        candidate's interval is computed at ``alpha/m`` (Bonferroni over the
+        m candidates actually searched at that budget), so the statement
+        "this portfolio's P(catastrophic) <= target" holds *simultaneously*
+        across the whole search at 95%. Quote this column for any claim that
+        a budget reaches the target.
     """
     target = cfg.optimization.catastrophic_target
     rows = []
     for profile in cfg.optimization.profiles:
         sub = summary[summary["profile"] == profile]
-        found = found_ci = None
+        found = found_marg = found_simul = None
         sel_prob = sel_lo = sel_hi = np.nan
+        n_candidates_at_found = np.nan
         for budget in range(0, max_budget + 1):
             feasible = sub[sub["base_cost"] <= budget]
             if feasible.empty:
@@ -267,23 +310,91 @@ def minimum_budget_table(summary: pd.DataFrame, cfg: Config,
                 sel_prob = float(best["catastrophic_prob"])
                 sel_lo = float(best["catastrophic_prob_ci_lo"])
                 sel_hi = float(best["catastrophic_prob_ci_hi"])
-            if (found_ci is None
+                n_candidates_at_found = int(len(feasible))
+            if (found_marg is None
                     and feasible["catastrophic_prob_ci_hi"].min() <= target):
-                found_ci = budget
-            if found is not None and found_ci is not None:
+                found_marg = budget
+            if found_simul is None:
+                m = max(1, len(feasible))
+                alpha_adj = 0.05 / m          # Bonferroni over the search
+                uppers = []
+                for _, r in feasible.iterrows():
+                    n = int(r["n_trials"])
+                    k = int(round(float(r["catastrophic_prob"]) * n))
+                    uppers.append(wilson_ci(k, n, alpha=alpha_adj)[1])
+                if uppers and min(uppers) <= target:
+                    found_simul = budget
+            if (found is not None and found_marg is not None
+                    and found_simul is not None):
                 break
         rows.append({
             "profile": profile,
             "catastrophic_target": target,
             "min_budget": found if found is not None else np.nan,
             "reachable": int(found is not None),
+            "n_candidates_searched_at_min_budget": n_candidates_at_found,
             "selected_catastrophic_prob": sel_prob,
             "selected_cat_prob_ci_lo": sel_lo,
             "selected_cat_prob_ci_hi": sel_hi,
-            "min_budget_ci95_upper":
-                found_ci if found_ci is not None else np.nan,
-            "reachable_ci95_upper": int(found_ci is not None),
+            "min_budget_ci95_marginal":
+                found_marg if found_marg is not None else np.nan,
+            "reachable_ci95_marginal": int(found_marg is not None),
+            "min_budget_ci95_simultaneous":
+                found_simul if found_simul is not None else np.nan,
+            "reachable_ci95_simultaneous": int(found_simul is not None),
         })
+    return pd.DataFrame(rows)
+
+
+def selection_stability(raw: pd.DataFrame, summary: pd.DataFrame,
+                        cfg: Config, n_boot: int = 500) -> pd.DataFrame:
+    """Measure how identifiable the selected 'best portfolio' actually is.
+
+    For each profile x budget we resample each candidate's own trials with
+    replacement (a stratified bootstrap), re-run the same
+    min-expected-disruption selection, and record how often the originally
+    selected portfolio wins again — plus how many distinct portfolios ever
+    win.
+
+    Why this exists: the optimizer takes the minimum sample mean over up to
+    192 candidates at 25 trials each. That is a classic winner's-curse
+    setup — the winner's score is biased optimistic and its *identity* can be
+    mostly noise. A low ``reselection_rate`` means the specific best
+    portfolio is not identifiable at this sample size and must not be
+    presented as a firm recommendation, even when the ranking of control
+    *types* (segmentation, detection, backups) is stable. Publishing the
+    number is more honest than implying a precision the design cannot
+    deliver.
+    """
+    rng = np.random.default_rng(cfg.seed)
+    rows = []
+    for profile in cfg.optimization.profiles:
+        sub = summary[summary["profile"] == profile]
+        rawp = raw[raw["profile"] == profile]
+        hours = {name: g[DISRUPTION_METRIC].to_numpy(dtype=float)
+                 for name, g in rawp.groupby("portfolio")}
+        for budget in cfg.optimization.budgets:
+            feasible = sub[sub["base_cost"] <= budget]
+            names = [n for n in feasible["portfolio"].tolist() if n in hours]
+            if len(names) < 2:
+                continue
+            n_trials = min(len(hours[n]) for n in names)
+            H = np.array([hours[n][:n_trials] for n in names])   # (P, T)
+            n_cand = H.shape[0]
+            orig = int(H.mean(axis=1).argmin())
+            idx = rng.integers(0, n_trials, size=(n_boot, n_cand, n_trials))
+            means = np.take_along_axis(H[None, :, :], idx, axis=2).mean(axis=2)
+            winners = means.argmin(axis=1)
+            rows.append({
+                "profile": profile,
+                "budget": budget,
+                "n_candidates": n_cand,
+                "trials_per_candidate": n_trials,
+                "selected_portfolio": names[orig],
+                "reselection_rate": float((winners == orig).mean()),
+                "n_distinct_bootstrap_winners": int(np.unique(winners).size),
+                "n_bootstrap_samples": n_boot,
+            })
     return pd.DataFrame(rows)
 
 
@@ -340,6 +451,15 @@ def optimize(cfg: Config,
     min_budget_path = proc_dir / f"{cfg.mode}_minimum_budget.csv"
     write_csv(min_budget, min_budget_path)
 
+    stability = selection_stability(raw, summary, cfg)
+    stability_sel_path = proc_dir / f"{cfg.mode}_selection_stability.csv"
+    write_csv(stability, stability_sel_path)
+    if not stability.empty:
+        log.info("selection stability (reselection rate of the chosen "
+                 "winner): min=%.1f%% max=%.1f%%",
+                 100 * stability["reselection_rate"].min(),
+                 100 * stability["reselection_rate"].max())
+
     manifest = {
         "mode": cfg.mode, "master_seed": cfg.seed,
         "n_trials": len(raw),
@@ -355,4 +475,5 @@ def optimize(cfg: Config,
              len(raw), proc_dir)
     return {"raw": raw_path, "summary": summary_path, "best": best_path,
             "pareto": pareto_path, "cost_sensitivity": stab_path,
-            "min_budget": min_budget_path}
+            "min_budget": min_budget_path,
+            "selection_stability": stability_sel_path}

@@ -5,7 +5,7 @@ documents the twelve automated behavioral checks that must pass
 before any experiment results are trusted. Each check is also
 enforced by the pytest suite (`tests/test_validation_cases.py`).
 
-Generated: 2026-07-16T02:28:53+00:00
+Generated: 2026-07-16T19:21:05+00:00
 
 | # | Check | Result | Details |
 |---|-------|--------|---------|

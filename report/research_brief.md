@@ -171,22 +171,40 @@ Pareto frontier; Figure 7 shows service-hours preserved per cost point).
 | Resource-constrained | 10 | segmentation=least_privilege; patch+1 levels; faster detection; backups=connected | 110.8 | 60.0% |
 | Resource-constrained | 15 | segmentation=least_privilege; patch+3 levels; faster detection; backups=connected | 28.9 | 40.0% |
 
-**Minimum budget to reach P(catastrophic) ≤ target:**
+**Minimum budget at which the point estimate meets P(catastrophic) ≤
+5% — and why we do not claim the target is *reached*:**
 
-| Profile | Min budget (point estimate <= 5%) | Min budget (95% upper bound <= 5%) |
+| Profile | Min budget (point estimate <= 5%) | Min budget (95% confident, selection-corrected) |
 |---|---|---|
 | Resource-constrained | not reached in tested space | not reached in tested space |
 | Intermediate-capacity | 10 points | not reached in tested space |
 | High-capacity | 3 points | not reached in tested space |
 
-The two columns separate a point estimate from a confidence-aware
-reading. At 25 trials per portfolio the point estimate is
-coarse (4-percentage-point granularity) and optimistic: a portfolio can
-post a point estimate at or below the 5% target while its Wilson 95%
-upper bound remains well above it. Only the second column supports a firm
-"below 5%" claim, and where it reads *not reached*, the target is not
-statistically established at this sample size even if a point estimate
-appears to meet it.
+**This design cannot certify the 5% target at any budget, and
+that is a property of the sample size rather than of the defenses.** With
+25 trials per portfolio, even a *perfect* zero-event
+result yields a Wilson 95% upper bound of 13.3% — already
+above 5%. Certifying P(catastrophic) ≤ 5% would
+require roughly **73 trials per portfolio**, or about
+**254** once the 192-candidate search
+is accounted for (a marginal interval does not retain 95% coverage when you
+report the most favourable of many candidates measured on the same trials).
+Both are beyond this study's compute budget. The left column is therefore a
+*point estimate only*: it is coarse (granularity 1/25) and
+optimistically biased by selection. We report it as "the point estimate
+meets the target", never as "the target is reached", and the
+selection-corrected column is *not reached* everywhere.
+
+**How identifiable is the "best" portfolio? (selection stability).** The
+optimizer takes the minimum sample mean over up to 192 candidates at
+25 trials each — a setup in which the winner's score is
+optimistically biased and its *identity* can be largely noise. Re-running
+the same selection on stratified bootstrap resamples, the originally
+selected portfolio wins again only 10.6%–96.0%
+of the time, with up to 27 different portfolios winning
+across resamples. We therefore report which *kinds* of control the strong
+portfolios contain, and do not claim that any one named portfolio is
+uniquely optimal.
 
 **Cost sensitivity.** Re-running the optimization at ×0.5–×1.5 costs, we
 measured how often each control appears in the min-disruption winner:
@@ -200,6 +218,12 @@ measured how often each control appears in the min-disruption winner:
 | Rapid isolation | 46.7% | 26.7% | 0.0% |
 | Protected backups | 40.0% | 13.3% | 53.3% |
 | Identity controls | 20.0% | 0.0% | 20.0% |
+
+These percentages are **not** independent confirmations: all 15 selections
+per profile (5 cost scales × 3 budgets) re-rank the *same* measured
+performance with only the prices rescaled, so they are highly correlated.
+They show that a pick is insensitive to the exact **prices** — not that it
+has been replicated 15 times.
 
 The most consistently selected control across all cost scenarios was
 **Detection improvement** (77.8% of winning

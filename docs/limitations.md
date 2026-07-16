@@ -85,31 +85,63 @@ disclosed as genuine caveats a reader should weigh.
     float format (`grrc.utilities.CSV_FLOAT_FORMAT`), so committed outputs
     regenerate byte-for-byte across machines — not only inside the exact
     library environment that first produced them.
-17. **Catastrophic probabilities carry confidence intervals.** Each
+17. **Catastrophic probabilities carry selection-corrected intervals.** Each
     catastrophic probability is reported with a Wilson 95% interval, and
-    "minimum budget to reach the 5% target" is given both as a point
-    estimate and as a confidence-aware value (smallest budget whose best
-    portfolio's 95% *upper* bound is <= 5%). At 25 trials per portfolio the
-    two can differ sharply: even a 0/25 (0%) point estimate has a 95%
-    upper bound near 13%, so a firm sub-5% claim is not supported at this
-    sample size. Threshold claims should cite the confidence-aware column.
+    "minimum budget to reach the 5% target" is given three ways: the point
+    estimate; a *marginal* 95% upper bound; and a *simultaneous* bound that
+    Bonferroni-corrects across the candidates actually searched at that
+    budget. The correction matters — a marginal 95% interval does **not**
+    retain 95% coverage once you take the most favourable of up to 192
+    candidates measured on the same trials — so only the simultaneous column
+    may be quoted as "95% confident". **The 5% target is uncertifiable by
+    construction at this sample size**: with 25 trials per portfolio even a
+    perfect 0/25 result gives a marginal 95% upper bound of 13.3%, so no
+    outcome could ever certify 5%. Certifying it would need about n=73 per
+    portfolio (marginal) or n=254 (selection-corrected across the
+    192-candidate search) — both beyond this study's compute budget. The
+    brief therefore states "the point estimate meets the target" and never
+    "the target is reached", and the selection-corrected column reads *not
+    reached* for every profile. This is a limitation of the design, not a
+    finding about the defenses.
+18. **Selection instability is measured, not assumed.** Because the
+    optimizer takes the minimum sample mean over up to 192 candidates at
+    n=25, `*_selection_stability.csv` reports how often a stratified
+    bootstrap reselects the published winner. The result is informative:
+    reselection ranges from **96%** (resource-constrained at the lowest
+    budget, where options differ sharply) down to **10.6%** with 27 distinct
+    bootstrap winners (high-capacity at budget 10, where dozens of
+    portfolios land within a fraction of an hour of each other). The
+    instability is therefore concentrated exactly where the choice matters
+    least — among near-equivalent good options — while the picks are stable
+    where the stakes are high. We report which *kinds* of control the strong
+    portfolios share, and never claim a single named portfolio is uniquely
+    optimal.
+
+18a. **Pareto frontier points can be noise.** The frontier is built on point
+    estimates, so any improvement — however small — creates a frontier point.
+    Each point now carries `improvement_exceeds_noise`, set only when its
+    mean falls below the previous point's 95% bootstrap lower bound. By that
+    test only 2 of 9 high-capacity frontier points, 5 of 11 intermediate, and
+    5 of 14 resource-constrained represent gains larger than sampling noise.
+    Read the frontier as a cost-resilience *envelope*, not as a ranking of
+    individually distinguishable portfolios.
+18b. **Best-portfolio selection still ranks on point estimates.** `select_best`
+    and `pareto_frontier` order candidates by sample mean, not by a
+    selection-aware criterion. They now report `n_tied_within_ci` (how many
+    feasible candidates' confidence intervals overlap the winner's) so a pick
+    with many statistical ties is visible as such. A held-out confirmation
+    run for the selected winner remains the proper fix and is future work.
 
 **Disclosed caveats (not changed).**
 
-18. **No common random numbers.** Each trial draws its own network and
+19. **No common random numbers.** Each trial draws its own network and
     entry node, so portfolios within a cell are compared on different
     random topologies. This is unbiased but less efficient than a paired
     design (same network, swap the defense); with heavy-tailed outcomes it
-    widens intervals and makes the specific Pareto/best-portfolio picks
-    noisier than a paired design would. A common-random-numbers redesign
-    is the most valuable next methodological step.
-19. **Selection over many candidates is optimistic.** "Best portfolio"
-    and minimum-budget results take an extremum over many noisy estimates
-    (up to 192 per profile) at n=25, so the selected winner's point
-    estimate is biased low (a winner's-curse effect) and the exact winner
-    can change between seeds. The reported confidence intervals are the
-    honest guide; the single best portfolio should be read as "one of the
-    strong portfolios", not an exact ranking.
+    widens intervals and is a direct contributor to the selection
+    instability measured in item 18. A common-random-numbers redesign —
+    or a held-out confirmation run for the selected winner — is the most
+    valuable next methodological step, and would tighten both.
 20. **Cost-sensitivity "stability" is correlated.** The stability
     percentages reuse the same measured performance across 5 cost scales ×
     3 budgets and only rescale prices, so the 15 selections per profile

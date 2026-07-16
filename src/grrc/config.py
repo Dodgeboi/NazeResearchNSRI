@@ -189,6 +189,14 @@ class ExperimentSpec:
 
     def validate(self) -> None:
         _check(self.trials_per_cell >= 1, "trials_per_cell must be >= 1")
+        # Entry points are cycled with `entries[k % len(entries)]`, so an
+        # empty list is a ZeroDivisionError later rather than a clear error.
+        _check(len(self.entry_points) > 0,
+               "experiment.entry_points must not be empty")
+        _check(len(self.facilities) > 0,
+               "experiment.facilities must not be empty")
+        _check(len(self.profiles) > 0,
+               "experiment.profiles must not be empty")
         valid_entries = {e.value for e in EntryPoint}
         for e in self.entry_points:
             _check(e in valid_entries, f"unknown entry point '{e}'")
@@ -208,6 +216,11 @@ class SweepSpec:
     trials_per_cell: int = 10
 
     def validate(self) -> None:
+        _check(self.trials_per_cell >= 1, "sweep.trials_per_cell must be >= 1")
+        _check(len(self.patch_levels) > 0,
+               "sweep.patch_levels must not be empty")
+        _check(len(self.detection_delays) > 0,
+               "sweep.detection_delays must not be empty")
         for p in self.patch_levels:
             _check(0.0 <= p <= 1.0, "patch levels must be in [0,1]")
         for d in self.detection_delays:
@@ -229,10 +242,20 @@ class OptimizationSpec:
     catastrophic_target: float = 0.05  # for 'minimum budget to reach' metric
 
     def validate(self) -> None:
+        _check(len(self.budgets) > 0, "optimization.budgets must not be empty")
         for b in self.budgets:
             _check(b >= 0, "budgets must be >= 0")
         _check(self.trials_per_portfolio >= 1,
                "trials_per_portfolio must be >= 1")
+        _check(len(self.profiles) > 0,
+               "optimization.profiles must not be empty")
+        _check(0.0 <= self.catastrophic_target <= 1.0,
+               "optimization.catastrophic_target must be a probability "
+               "in [0,1]")
+        _check(len(self.cost_scale_factors) > 0,
+               "optimization.cost_scale_factors must not be empty")
+        for s in self.cost_scale_factors:
+            _check(s > 0, "cost_scale_factors must be > 0")
 
 
 @dataclass
@@ -319,6 +342,23 @@ class Config:
         for name in self.experiment.facilities:
             _check(name in self.facilities,
                    f"experiment references unknown facility '{name}'")
+        # The sweep and optimizer index into profiles/facilities by name; an
+        # unknown name is a KeyError deep in a worker process rather than a
+        # readable config error here.
+        _check(self.sweep.profile in self.profiles,
+               f"sweep references unknown profile '{self.sweep.profile}'")
+        _check(self.sweep.facility in self.facilities,
+               f"sweep references unknown facility '{self.sweep.facility}'")
+        _check(self.optimization.facility in self.facilities,
+               f"optimization references unknown facility "
+               f"'{self.optimization.facility}'")
+        for name in self.optimization.profiles:
+            _check(name in self.profiles,
+                   f"optimization references unknown profile '{name}'")
+        for name in self.experiment.portfolios:
+            from .defenses import PORTFOLIO_CATALOG
+            _check(name in PORTFOLIO_CATALOG,
+                   f"experiment references unknown portfolio '{name}'")
 
 
 def _update_dataclass(obj: Any, values: dict[str, Any], where: str) -> None:

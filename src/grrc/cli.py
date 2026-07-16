@@ -135,9 +135,15 @@ def cmd_plot(args) -> int:
 
 
 def cmd_report(args) -> int:
-    from .report import populate_reports
+    from .report import populate_reports, NoTemplatesError
     cfg = _load(args)
-    unresolved = populate_reports(cfg)
+    try:
+        unresolved = populate_reports(cfg)
+    except NoTemplatesError as exc:
+        # Never report success while writing nothing. ASCII only: this goes to
+        # consoles that may not encode typographic dashes (Windows cp1252).
+        print(f"  SKIPPED - {exc}", file=sys.stderr)
+        return 3
     ok = True
     for name, missing in unresolved.items():
         marker = "OK " if not missing else "!! "
@@ -157,7 +163,10 @@ def cmd_reproduce(args) -> int:
                  cmd_report):
         print(f"\n=== {step.__name__.removeprefix('cmd_')} ===")
         rc = step(args)
-        if rc not in (0, 2):  # 2 = report tokens unresolved (non-fatal)
+        # 2 = report tokens unresolved (non-fatal);
+        # 3 = no report templates in this checkout (code+data bundle) —
+        #     announced by the step itself, not silently ignored.
+        if rc not in (0, 2, 3):
             return rc
     print("\nreproduction pipeline complete")
     return 0

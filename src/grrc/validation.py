@@ -365,10 +365,15 @@ def check_budget_respected() -> ValidationResult:
     profile = cfg.profiles["resource_constrained"]
     for p in enumerate_portfolios():
         cost = portfolio_cost(p, profile, costs)
+        mean_hours = float(rng.uniform(5, 100))
+        half_width = float(rng.uniform(1, 8))
         rows.append({
             "profile": "resource_constrained", "portfolio": p.name,
             "description": p.name, "base_cost": cost,
-            "mean_hours_lost": float(rng.uniform(5, 100)),
+            "mean_hours_lost": mean_hours,
+            # A real summary always carries these; the fixture must too.
+            "hours_lost_ci_lo": mean_hours - half_width,
+            "hours_lost_ci_hi": mean_hours + half_width,
             "catastrophic_prob": float(rng.uniform(0, 1)),
             **{c: 0 for c in ("has_basic_segmentation",
                               "has_least_privilege", "has_patch_upgrade",
@@ -509,5 +514,9 @@ def write_validation_report(results: list[ValidationResult],
         "    field with values in valid ranges.",
         "",
     ]
+    # Create the parent directory if it does not exist: a clean checkout that
+    # ships without docs/ (e.g. the code+data bundle) must still be able to run
+    # `validate` — and `reproduce` starts with it.
+    path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("\n".join(lines))
     return path

@@ -6,3 +6,6 @@
 2026-07-15 20:29:33,001 | INFO    | grrc.optimize | optimization complete: 864 trials, outputs in C:\Users\mukil\Cybersecurity project\NazeResearchNSRI\data\processed
 2026-07-15 21:09:06,392 | INFO    | grrc.optimize | evaluating distinct candidate portfolios per profile {'resource_constrained': 192, 'intermediate_capacity': 144, 'high_capacity': 96} (25 trials each)
 2026-07-15 21:19:00,334 | INFO    | grrc.optimize | optimization complete: 10800 trials, outputs in C:\Users\mukil\Cybersecurity project\NazeResearchNSRI\data\processed
+2026-07-16 13:55:43,287 | INFO    | grrc.optimize | evaluating distinct candidate portfolios per profile {'resource_constrained': 192, 'intermediate_capacity': 144, 'high_capacity': 96} (25 trials each)
+2026-07-16 14:11:05,287 | INFO    | grrc.optimize | selection stability (reselection rate of the chosen winner): min=10.6% max=96.0%
+2026-07-16 14:11:05,310 | INFO    | grrc.optimize | optimization complete: 10800 trials, outputs in C:\Users\mukil\Cybersecurity project\NazeResearchNSRI\data\processed

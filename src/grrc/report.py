@@ -58,10 +58,34 @@ def compute_tokens(cfg: Config) -> dict[str, str]:
         "MASTER_SEED": str(cfg.seed),
         "DATE": date.today().isoformat(),
         "N_PER_CELL": str(cfg.experiment.trials_per_cell),
+        "N_PER_PORTFOLIO": str(cfg.optimization.trials_per_portfolio),
+        "CAT_TARGET": f"{cfg.optimization.catastrophic_target:.0%}",
         "HORIZON_HOURS": f"{cfg.simulation.max_steps * cfg.simulation.step_minutes / 60:.0f}",
         "CATASTROPHIC_STEPS": str(cfg.simulation.catastrophic_service_steps),
         "CATASTROPHIC_HOURS": f"{cfg.simulation.catastrophic_service_steps * cfg.simulation.step_minutes / 60:.0f}",
     }
+
+    # --- What sample size would it take to certify the target at all? -----
+    # At small n a binomial upper bound cannot fall below the target even for
+    # a perfect zero-event result, so the threshold is unverifiable by
+    # construction. These are computed, never hand-typed.
+    from .optimization import distinct_portfolios_for_profile
+    from .statistics import wilson_ci
+    tgt = cfg.optimization.catastrophic_target
+    n_port = cfg.optimization.trials_per_portfolio
+    tokens["CERT_UPPER_AT_ZERO"] = _fmt_pct(wilson_ci(0, n_port)[1])
+    m_cand = max((len(distinct_portfolios_for_profile(cfg, p))
+                  for p in cfg.optimization.profiles), default=1)
+    tokens["N_CANDIDATES_MAX"] = str(m_cand)
+
+    def _needed_n(alpha: float) -> str:
+        for n in range(2, 20001):
+            if wilson_ci(0, n, alpha=alpha)[1] <= tgt:
+                return str(n)
+        return "n/a"
+
+    tokens["CERT_N_MARGINAL"] = _needed_n(0.05)
+    tokens["CERT_N_SIMULTANEOUS"] = _needed_n(0.05 / max(1, m_cand))
 
     main = pd.read_csv(raw_dir / f"{mode}_main_results.csv")
     tokens["N_MAIN"] = f"{len(main):,}"
@@ -181,18 +205,29 @@ def compute_tokens(cfg: Config) -> dict[str, str]:
         tgt = cfg.optimization.catastrophic_target
         lines = [
             f"| Profile | Min budget (point estimate <= {tgt:.0%}) | "
-            f"Min budget (95% upper bound <= {tgt:.0%}) |",
+            f"Min budget (95% confident, selection-corrected) |",
             "|---|---|---|"]
         for _, r in minb.iterrows():
             pt = ("not reached in tested space" if not r["reachable"]
                   else f"{int(r['min_budget'])} points")
+            # The selection-corrected (Bonferroni) column is the only one that
+            # supports a "95% confident" claim after searching many candidates.
             ci = ("not reached in tested space"
-                  if not r.get("reachable_ci95_upper", 0)
-                  else f"{int(r['min_budget_ci95_upper'])} points")
+                  if not r.get("reachable_ci95_simultaneous", 0)
+                  else f"{int(r['min_budget_ci95_simultaneous'])} points")
             lines.append(
                 f"| {PROFILE_LABELS.get(r['profile'], r['profile'])} | "
                 f"{pt} | {ci} |")
         tokens["TABLE_MIN_BUDGET"] = "\n".join(lines)
+
+    stab_sel_path = proc_dir / f"{mode}_selection_stability.csv"
+    if stab_sel_path.exists():
+        ss = pd.read_csv(stab_sel_path)
+        if not ss.empty:
+            tokens["SEL_RESELECT_MIN"] = _fmt_pct(ss["reselection_rate"].min())
+            tokens["SEL_RESELECT_MAX"] = _fmt_pct(ss["reselection_rate"].max())
+            tokens["SEL_DISTINCT_MAX"] = str(
+                int(ss["n_distinct_bootstrap_winners"].max()))
 
     return tokens
 
@@ -217,13 +252,31 @@ def render_template(template: Path, out: Path,
     return missing
 
 
+class NoTemplatesError(FileNotFoundError):
+    """Raised when the report stage has no templates to render."""
+
+
 def populate_reports(cfg: Config) -> dict[str, list[str]]:
-    """Render every report template; returns unresolved tokens per file."""
+    """Render every report template; returns unresolved tokens per file.
+
+    Raises :class:`NoTemplatesError` if there is nothing to render, rather
+    than reporting success while writing no files. Distributions that ship
+    only code+data (no ``report/templates/``) should skip this stage rather
+    than call it — see ``cli.cmd_report``.
+    """
     log = setup_logging(resolve_path(cfg.output.logs_dir), "grrc.report")
-    tokens = compute_tokens(cfg)
     tpl_dir = REPO_ROOT / "report" / "templates"
+    templates = sorted(tpl_dir.glob("*.tpl.md")) if tpl_dir.is_dir() else []
+    if not templates:
+        # ASCII only: this message is printed to consoles whose default
+        # encoding (e.g. Windows cp1252) cannot represent typographic dashes.
+        raise NoTemplatesError(
+            f"no report templates found in {tpl_dir} - nothing to render. "
+            f"(This checkout ships without report/templates/; run the report "
+            f"stage from the full project repository instead.)")
+    tokens = compute_tokens(cfg)
     unresolved: dict[str, list[str]] = {}
-    for tpl in sorted(tpl_dir.glob("*.tpl.md")):
+    for tpl in templates:
         out = REPO_ROOT / "report" / tpl.name.replace(".tpl.md", ".md")
         missing = render_template(tpl, out, tokens)
         unresolved[out.name] = missing
