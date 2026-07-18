@@ -78,6 +78,9 @@ A `*_manifest.json` records trial counts, seed, and elapsed time.
 | `<mode>_sweep_summary.csv` | Patch × delay grid: catastrophic probability, mean hours lost + CI (Figure 3 data) |
 | `<mode>_portfolio_summary.csv` | Distinct candidate portfolios × profiles (192/144/96): cost, mean/median/P90 hours lost + CI, catastrophic prob + Wilson 95% CI, control indicators |
 | `<mode>_recovery_summary.csv` | Censoring-aware recovery per facility × profile × portfolio: outage rate, recovery probability given outage, median/P90 recovery time among recovered |
+| `<mode>_sensitivity_runs.csv` | One row per (OAT setting × portfolio): mean/median hours lost, catastrophic prob + Wilson upper bound, cost, and Pareto-frontier membership (`grrc sensitivity`) |
+| `<mode>_sensitivity_summary.csv` | One row per OAT setting: full-defense reduction, strongest single control, catastrophic probs, number of Pareto-efficient portfolios |
+| `<mode>_sensitivity_pareto.csv` | Per portfolio: share of sensitivity settings in which it remained cost-vs-loss Pareto-efficient (robustness of efficient strategies across assumptions) |
 | `<mode>_best_portfolios.csv` | Winner per profile × budget × cost-scale × criterion (4 criteria) |
 | `<mode>_pareto_frontier.csv` | Cost-nondominated portfolios per profile |
 | `<mode>_cost_sensitivity.csv` | Inclusion frequency of each control among winners across cost scales/budgets |

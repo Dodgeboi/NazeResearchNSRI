@@ -134,6 +134,18 @@ disclosed as genuine caveats a reader should weigh.
 
 **Disclosed caveats (not changed).**
 
+18c. **Sensitivity is local (one-at-a-time), not global.** `grrc sensitivity`
+    moves each of nine key parameters (transition probability, defense
+    effects, recovery timing, outcome definitions) to the low and high ends
+    of a plausible range, one at a time, on the primary scenario. Across all
+    19 settings the full-defense portfolio stayed strongest (90.6-100%
+    reduction), least-privilege stayed the top single control (19/19), and
+    least-privilege, patch+least-privilege, and full defense stayed
+    Pareto-efficient in every setting — though the absolute catastrophic
+    *rate* is sensitive to the threshold definition (58% at 6 steps vs 2% at
+    12). Being local, it does not capture parameter interactions; global
+    variance-based methods (Sobol, Latin-hypercube) remain future work.
+
 19. **No common random numbers.** Each trial draws its own network and
     entry node, so portfolios within a cell are compared on different
     random topologies. This is unbiased but less efficient than a paired

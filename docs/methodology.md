@@ -129,6 +129,19 @@ group.
    frontier, minimum budget to reach P(catastrophic) ≤ 5% (as a point
    estimate and a Wilson-95%-upper-bound value), and defense-inclusion
    stability.
+4. **Parameter sensitivity (one-at-a-time)** — `grrc sensitivity` re-runs the
+   14 named portfolios on the primary scenario (intermediate-capacity regional
+   hospital) while moving each of nine key parameters — transition probability
+   (base spread rate, identity-breach multiplier), defense effects (patch
+   effectiveness, least-privilege traversal modifier, false-positive rate),
+   recovery timing (restore duration and throughput), and outcome definitions
+   (service-availability threshold, catastrophic-outage threshold) — to the low
+   and high ends of a plausible range (all others held at their documented
+   defaults). It reports, per setting, the full-defense reduction, the strongest
+   single control, and cost-vs-loss Pareto-frontier membership, and aggregates
+   how often each portfolio stays Pareto-efficient across settings
+   (`*_sensitivity_*.csv`). This is a local analysis; global variance-based
+   methods (Sobol, Latin-hypercube) remain future work.
 
 Every output row carries `(master_seed, trial_id)` plus all condition
 fields, so any row can be regenerated exactly.

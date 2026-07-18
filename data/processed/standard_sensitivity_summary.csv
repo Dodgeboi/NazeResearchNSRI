@@ -1,0 +1,20 @@
+setting,description,param_kind,baseline_mean_hours,full_defense_mean_hours,full_defense_reduction,baseline_catastrophic_prob,full_defense_catastrophic_prob,top_single_control,top_single_reduction,n_pareto_portfolios
+baseline,All parameters at documented defaults,-,179.4095,3.71,0.9793210504,0.92,0,least_privilege,0.5330486959,5
+base_spread_rate_low,Base spread rate (transition prob.) = 0.25,transition,169.703,3.562,0.9790103887,0.86,0.04,least_privilege,0.8013382203,5
+base_spread_rate_high,Base spread rate (transition prob.) = 0.45,transition,177.58,4.8855,0.9724884559,0.9,0.1,least_privilege,0.4752252506,6
+patch_effectiveness_low,Patch effectiveness (defense effect) = 0.7,defense,184.843,6.878,0.9627900434,0.9,0.08,least_privilege,0.5017880039,7
+patch_effectiveness_high,Patch effectiveness (defense effect) = 0.95,defense,174.312,4.169,0.9760831153,0.9,0.02,least_privilege,0.7620272844,6
+least_privilege_modifier_low,Least-privilege traversal modifier = 0.15,defense,163.865,3.2885,0.9799316511,0.84,0.08,least_privilege,0.7239434901,5
+least_privilege_modifier_high,Least-privilege traversal modifier = 0.35,defense,183.769,3.575,0.9805462292,0.9,0.04,least_privilege,0.56084813,7
+identity_breach_multiplier_low,Identity-breach spread multiplier = 1.25,transition,168.9085,4.0465,0.9760432423,0.86,0.08,least_privilege,0.6144510193,7
+identity_breach_multiplier_high,Identity-breach spread multiplier = 2.0,transition,174.45,5.6885,0.9673918028,0.86,0.06,least_privilege,0.4638607051,6
+false_positive_rate_low,False-positive isolation rate = 0.0,defense,187.975,0.024,0.9998723234,0.92,0,least_privilege,0.7240031919,6
+false_positive_rate_high,False-positive isolation rate = 0.005,defense,185.7185,17.536,0.9055775273,0.92,0.3,least_privilege,0.6776815449,4
+restore_duration_low,Restore duration per node (recovery time) = 1,recovery,187.347,4.3265,0.976906489,0.92,0.08,least_privilege,0.5859287846,5
+restore_duration_high,Restore duration per node (recovery time) = 4,recovery,184.012,5.7805,0.9685862879,0.88,0.08,least_privilege,0.6499548942,8
+restore_rate_fraction_low,Restore throughput (recovery speed) = 0.01,recovery,206.85,4.818,0.9767077592,0.92,0.04,least_privilege,0.6865240512,6
+restore_rate_fraction_high,Restore throughput (recovery speed) = 0.04,recovery,161.4365,3.5105,0.9782546078,0.9,0.06,least_privilege,0.6165148526,6
+service_functional_fraction_low,Service-up node threshold = 0.5,outcome,182.1605,3.9975,0.9780550668,0.9,0.06,least_privilege,0.594275378,6
+service_functional_fraction_high,Service-up node threshold = 0.7,outcome,181.698,4.475,0.9753712204,0.9,0.08,least_privilege,0.5736799524,7
+catastrophic_service_steps_low,Catastrophic-outage threshold (steps) = 6,outcome,192.249,3.9715,0.9793418951,1,0.58,least_privilege,0.6812805268,7
+catastrophic_service_steps_high,Catastrophic-outage threshold (steps) = 12,outcome,172.3545,4.8945,0.971602134,0.88,0.02,least_privilege,0.7191631202,5

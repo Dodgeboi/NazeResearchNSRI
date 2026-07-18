@@ -1,0 +1,15 @@
+portfolio,settings_on_frontier,n_settings,pareto_robustness
+profile_baseline,19,19,1
+least_privilege,19,19,1
+patch_plus_least_privilege,19,19,1
+full_defense,19,19,1
+seg_plus_patch,15,19,0.7894736842
+isolated_backups,14,19,0.7368421053
+basic_segmentation,4,19,0.2105263158
+seg_detect_backup,3,19,0.1578947368
+patch_90,2,19,0.1052631579
+baseline_flat,0,19,0
+fast_detection,0,19,0
+identity_controls,0,19,0
+seg_plus_detection,0,19,0
+detection_plus_backups,0,19,0

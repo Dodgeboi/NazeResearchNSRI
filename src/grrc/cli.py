@@ -67,6 +67,11 @@ def build_parser() -> argparse.ArgumentParser:
                        "generated results (never invents numbers)")
     _add_config_arg(p)
 
+    p = sub.add_parser("sensitivity", help="one-at-a-time sensitivity of the "
+                       "conclusions to key model parameters (plausible ranges)")
+    _add_config_arg(p)
+    p.add_argument("--workers", type=int, default=None)
+
     p = sub.add_parser("reproduce", help="full pipeline: validate -> "
                        "simulate -> optimize -> analyze -> plot -> report")
     _add_config_arg(p)
@@ -153,6 +158,15 @@ def cmd_report(args) -> int:
     return 0 if ok else 2
 
 
+def cmd_sensitivity(args) -> int:
+    from .sensitivity import run_sensitivity
+    cfg = _load(args)
+    outputs = run_sensitivity(cfg)
+    for name, path in outputs.items():
+        print(f"  {name}: {path}")
+    return 0
+
+
 def cmd_reproduce(args) -> int:
     rc = cmd_validate(argparse.Namespace(fast=True, no_report=False))
     if rc:
@@ -175,7 +189,8 @@ def cmd_reproduce(args) -> int:
 COMMANDS = {
     "validate": cmd_validate, "simulate": cmd_simulate,
     "optimize": cmd_optimize, "analyze": cmd_analyze, "plot": cmd_plot,
-    "report": cmd_report, "reproduce": cmd_reproduce,
+    "report": cmd_report, "sensitivity": cmd_sensitivity,
+    "reproduce": cmd_reproduce,
 }
 
 
