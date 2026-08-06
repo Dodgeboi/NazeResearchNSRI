@@ -1,0 +1,13 @@
+{
+  "analysis": "prespecified public-evidence validation summaries",
+  "primary_success": true,
+  "robustness_success": true,
+  "figures": [
+    "C:\\Users\\naman\\Documents\\Codex\\2026-08-02\\referenced-chatgpt-conversation-this-is-untrusted\\work\\repo\\outputs\\public_validation\\figures\\validation_paired_effect_distribution.pdf",
+    "C:\\Users\\naman\\Documents\\Codex\\2026-08-02\\referenced-chatgpt-conversation-this-is-untrusted\\work\\repo\\outputs\\public_validation\\figures\\validation_paired_effect_distribution.png",
+    "C:\\Users\\naman\\Documents\\Codex\\2026-08-02\\referenced-chatgpt-conversation-this-is-untrusted\\work\\repo\\outputs\\public_validation\\figures\\validation_joint_stress_distribution.pdf",
+    "C:\\Users\\naman\\Documents\\Codex\\2026-08-02\\referenced-chatgpt-conversation-this-is-untrusted\\work\\repo\\outputs\\public_validation\\figures\\validation_joint_stress_distribution.png",
+    "C:\\Users\\naman\\Documents\\Codex\\2026-08-02\\referenced-chatgpt-conversation-this-is-untrusted\\work\\repo\\outputs\\public_validation\\figures\\validation_recovery_horizon.pdf",
+    "C:\\Users\\naman\\Documents\\Codex\\2026-08-02\\referenced-chatgpt-conversation-this-is-untrusted\\work\\repo\\outputs\\public_validation\\figures\\validation_recovery_horizon.png"
+  ]
+}

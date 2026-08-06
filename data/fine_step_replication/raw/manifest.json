@@ -1,0 +1,22 @@
+{
+  "design": "post-diagnostic five-minute paired replication",
+  "status": "local protocol; not externally preregistered",
+  "prior_information_disclosed": true,
+  "seeds": [
+    5701001,
+    5701002,
+    5701003,
+    5701004,
+    5701005
+  ],
+  "config": "C:/Users/naman/Documents/Codex/2026-08-02/referenced-chatgpt-conversation-this-is-untrusted/work/repo/configs/fine_step_replication.yaml",
+  "config_sha256_at_run_start": "da61291340fc21a9eff496f93b2d1f49cea6c7eff2b98531c13c139cd593c347",
+  "protocol": "study/FINE_STEP_REPLICATION_PROTOCOL.md",
+  "protocol_sha256_at_run_start": "f374988a2b9745ce1f82f91edf326d2648cccc3b6a75fd34ebcb0ada8134737b",
+  "counts": {
+    "primary": 1000,
+    "joint_stress": 2560,
+    "total": 3560
+  },
+  "elapsed_seconds": 195.7
+}

@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "grrc"
+version = "3.0.0"
+description = "Paired Monte Carlo analysis of layered controls and digital-service disruption in synthetic hospital networks"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+    { name = "Ashish Agrawal" },
+    { name = "Mukil Dharanidharan" },
+    { name = "Naman Upadhyay" },
+]
+# Bounded ranges for installation. For byte-for-byte reproduction of the
+# committed results, install the exact pins in requirements.txt instead —
+# upper bounds here only guard against silently pulling an untested major
+# release.
+dependencies = [
+    "numpy>=1.26,<3",
+    "pandas>=2.1,<4",
+    "networkx>=3.2,<4",
+    "scipy>=1.11,<2",
+    "matplotlib>=3.8,<4",
+    "pyyaml>=6.0,<7",
+    "tqdm>=4.66,<5",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4,<10"]
+
+[project.scripts]
+grrc = "grrc.cli:main"
+
+[project.urls]
+Repository = "https://github.com/Dodgeboi/NazeResearchNSRI"
+Issues = "https://github.com/Dodgeboi/NazeResearchNSRI/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

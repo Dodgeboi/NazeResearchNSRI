@@ -1,0 +1,10 @@
+file,rows,max_abs_diff_ever_compromised_fraction,max_abs_diff_weighted_clinical_unavailability,max_abs_diff_final_service_availability,terminal_metric_status,status,tolerance,reason
+cross_setting_replication.csv,2700,4.98721064446e-11,4.96733765232e-11,4.28571622635e-11,row-recomputed,pass,1e-09,
+fine_step_pilot.csv,300,4.95412599832e-11,4.98910912583e-11,4.28571622635e-11,row-recomputed,pass,1e-09,
+joint_stress.csv,7680,4.98293628581e-11,4.96733765232e-11,4.28571622635e-11,row-recomputed,pass,1e-09,
+joint_stress_parameters.csv,128,,,,,skipped,,required historical metric columns absent
+primary_paired.csv,1500,4.98328045495e-11,4.96732655009e-11,4.28571622635e-11,row-recomputed,pass,1e-09,
+recovery_horizon.csv,900,4.97975827241e-11,4.98600605248e-11,4.28571622635e-11,row-recomputed,pass,1e-09,
+recovery_horizon_initial_design_error.csv,900,4.97975827241e-11,4.98598939913e-11,4.28571622635e-11,row-recomputed,pass,1e-09,
+time_step_convergence.csv,900,4.97716312609e-11,4.96732655009e-11,4.28571622635e-11,row-recomputed,pass,1e-09,
+time_step_convergence_initial_design_error.csv,900,4.98168728491e-11,4.96733765232e-11,4.28571622635e-11,row-recomputed,pass,1e-09,

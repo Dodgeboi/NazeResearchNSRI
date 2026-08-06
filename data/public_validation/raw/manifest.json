@@ -1,0 +1,34 @@
+{
+  "design": "fresh paired public-evidence validation",
+  "status": "local protocol; not externally preregistered",
+  "validation_seeds": [
+    3701001,
+    3701002,
+    3701003,
+    3701004,
+    3701005
+  ],
+  "config": "C:/Users/naman/Documents/Codex/2026-08-02/referenced-chatgpt-conversation-this-is-untrusted/work/repo/configs/public_evidence_validation.yaml",
+  "config_sha256_at_run_start": "354e67bd3d3671db8df48c340e1bfd17f9556dd28f32a937d9d05aa985c3e31e",
+  "protocol": "study/PUBLIC_EVIDENCE_VALIDATION_PROTOCOL.md",
+  "protocol_sha256_at_run_start": "3b925b2667cbe00f224d78ca157a6253e2940b47e1c5a6690021548bfbdf1050",
+  "counts": {
+    "primary": 1500,
+    "cross_setting": 2700,
+    "joint_stress": 7680,
+    "time_step_convergence": 900,
+    "recovery_horizon": 900,
+    "total": 13680
+  },
+  "elapsed_seconds": 455.7,
+  "claim_boundary": "All outputs are conditional synthetic-model results; no real-hospital probability or causal control efficacy is estimated.",
+  "post_run_diagnostic_correction": {
+    "date": "2026-08-03",
+    "reason": "Initial time-step and horizon diagnostics used different scenario banks; the 5-minute rapid-response detection ladder also failed to preserve a 90-minute delay.",
+    "scope": "Only time-step and recovery-horizon diagnostics were rerun. Primary, cross-setting, and joint-stress outputs are unchanged.",
+    "preserved_initial_files": [
+      "time_step_convergence_initial_design_error.csv",
+      "recovery_horizon_initial_design_error.csv"
+    ]
+  }
+}

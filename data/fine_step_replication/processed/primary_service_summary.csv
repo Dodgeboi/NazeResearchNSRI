@@ -1,0 +1,15 @@
+portfolio,service,n,mean_downtime_hours,median_downtime_hours,scenarios_with_any_downtime_fraction,downtime_hours_p95
+baseline_flat,ehr,500,32.875,34.41666667,0.932,48.45
+baseline_flat,laboratory,500,36.78166667,38.95833333,0.936,53.00416667
+baseline_flat,pharmacy,500,34.66333333,36.41666667,0.936,50.85
+baseline_flat,imaging,500,40.65116667,43.125,0.942,57.50833333
+baseline_flat,scheduling,500,49.34716667,53,0.932,67.08333333
+baseline_flat,identity,500,32.135,33.70833333,0.92,48.09583333
+baseline_flat,backup_recovery,500,37.97116667,40.33333333,0.918,54.51666667
+seg_detect_backup,ehr,500,7.350833333,2,0.578,26.00833333
+seg_detect_backup,laboratory,500,7.340333333,2,0.58,25.41666667
+seg_detect_backup,pharmacy,500,6.935166667,2,0.56,24.91666667
+seg_detect_backup,imaging,500,7.5985,2,0.596,25.85
+seg_detect_backup,scheduling,500,7.9705,2,0.596,27.3375
+seg_detect_backup,identity,500,6.230666667,0,0.494,24.00833333
+seg_detect_backup,backup_recovery,500,0.568,0,0.238,2

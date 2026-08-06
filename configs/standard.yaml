@@ -1,0 +1,55 @@
+# STANDARD MODE — the hackathon's main analysis (28,225 total trials).
+# Full factorial: 3 facility sizes x 3 capacity profiles x 14 portfolios
+# x 5 entry points x 25 trials              = 15,750 main trials
+# + patch x detection sweep    4 x 5 x 50   =  1,000 sweep trials
+# + optimizer: distinct portfolios per profile (192 + 144 + 96 = 432,
+#   deduplicated from the 192-combination search space) x 25
+#                                           = 10,800 optimizer trials
+# + controlled backup experiment 3 x 3 x 3 x 25 = 675 backup trials
+# Runs in roughly 10-30 minutes on a typical 4-core laptop.
+mode: standard
+seed: 20260713
+
+experiment:
+  facilities: [small_clinic, regional_hospital, large_hospital]
+  profiles: [resource_constrained, intermediate_capacity, high_capacity]
+  portfolios:
+    - baseline_flat
+    - profile_baseline
+    - basic_segmentation
+    - least_privilege
+    - patch_90
+    - fast_detection
+    - isolated_backups
+    - identity_controls
+    - seg_plus_patch
+    - seg_plus_detection
+    - detection_plus_backups
+    - patch_plus_least_privilege
+    - seg_detect_backup
+    - full_defense
+  entry_points:
+    - workstation
+    - internet_facing
+    - privileged_system
+    - medical_device
+    - vendor_connection
+  trials_per_cell: 25
+  workers: 0
+
+sweep:
+  enabled: true
+  facility: regional_hospital
+  profile: intermediate_capacity
+  patch_levels: [0.25, 0.50, 0.75, 0.90]
+  detection_delays: [1, 3, 6, 12, 24]
+  trials_per_cell: 50
+
+optimization:
+  enabled: true
+  facility: regional_hospital
+  profiles: [resource_constrained, intermediate_capacity, high_capacity]
+  budgets: [5, 10, 15]
+  trials_per_portfolio: 25
+  cost_scale_factors: [0.5, 0.75, 1.0, 1.25, 1.5]
+  catastrophic_target: 0.05

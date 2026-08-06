@@ -1,0 +1,105 @@
+# PUBLIC-EVIDENCE VALIDATION PHASE
+#
+# This configuration is a prospective local replication of the earlier study.
+# It was frozen before the outputs in data/public_validation were generated.
+# Public incident evidence supports the 72-hour acute-phase horizon and the
+# need to examine longer recovery horizons. It does NOT identify universal
+# values for the transition probabilities below; those values remain explicit
+# stress-test assumptions and are varied jointly by public_validation.py.
+mode: public_evidence_validation
+seed: 3701001
+
+facilities:
+  scale_1:
+    min_nodes: 40
+    max_nodes: 60
+  scale_2:
+    min_nodes: 200
+    max_nodes: 300
+  scale_3:
+    min_nodes: 750
+    max_nodes: 1000
+
+profiles:
+  limited_posture:
+    patch_coverage: 0.25
+    detection_delay_steps: 24
+    isolation_success: 0.50
+    legacy_fraction: 0.35
+    base_segmentation: flat
+    backup_strategy: connected
+    budget: 5
+    complexity_factor: 1.0
+  intermediate_posture:
+    patch_coverage: 0.50
+    detection_delay_steps: 12
+    isolation_success: 0.70
+    legacy_fraction: 0.15
+    base_segmentation: basic
+    backup_strategy: periodic
+    budget: 10
+    complexity_factor: 1.1
+  stronger_posture:
+    patch_coverage: 0.75
+    detection_delay_steps: 3
+    isolation_success: 0.90
+    legacy_fraction: 0.05
+    base_segmentation: least_privilege
+    backup_strategy: isolated
+    budget: 15
+    complexity_factor: 1.25
+
+simulation:
+  max_steps: 288
+  step_minutes: 15
+  base_spread_rate: 0.35
+  patch_effectiveness: 0.85
+  detection_model: geometric
+  false_positive_rate: 0.002
+  false_positive_duration: 8
+  rapid_isolation_success: 0.95
+  identity_breach_multiplier: 1.5
+  restore_rate_fraction: 0.02
+  restore_rate_min: 1.0
+  restore_duration: 2
+  no_backup_restore_penalty: 0.25
+  service_functional_fraction: 0.60
+  catastrophic_service_steps: 8
+  early_stop: true
+
+experiment:
+  facilities: [scale_1, scale_2, scale_3]
+  profiles: [limited_posture, intermediate_posture, stronger_posture]
+  portfolios: [baseline_flat, seg_detect_backup, full_defense]
+  entry_points:
+    - workstation
+    - internet_facing
+    - privileged_system
+    - medical_device
+    - vendor_connection
+  trials_per_cell: 100
+  workers: 0
+
+sweep:
+  enabled: false
+  facility: scale_2
+  profile: intermediate_posture
+  patch_levels: [0.25, 0.50, 0.75, 0.90]
+  detection_delays: [3, 6, 12, 24]
+  trials_per_cell: 10
+
+optimization:
+  enabled: false
+  facility: scale_2
+  profiles: [limited_posture, intermediate_posture, stronger_posture]
+  budgets: [5, 10, 15]
+  trials_per_portfolio: 10
+  cost_scale_factors: [0.5, 0.75, 1.0, 1.25, 1.5]
+  catastrophic_target: 0.05
+
+output:
+  raw_dir: data/public_validation/raw
+  processed_dir: data/public_validation/processed
+  figures_dir: outputs/public_validation/figures
+  tables_dir: outputs/public_validation/tables
+  logs_dir: outputs/public_validation/logs
