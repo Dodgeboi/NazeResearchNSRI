@@ -8,7 +8,6 @@ Our model compares a flat reference configuration with a layered portfolio that 
 
 That is the encouraging part. The important warning is that the size of the benefit changed when we shortened the simulation time step. The direction survived every joint stress setting we tested; the percentage reduction did not. This repository includes that failed numerical check because it changed what we believe the study can honestly claim.
 
-> **Our conclusion:** layered controls were directionally favorable inside this synthetic model. The reported hours and percentages are not estimates of real hospital risk or real control effectiveness.
 
 ![Distribution of paired effects. Negative values favor the layered portfolio.](results/figures/fine_step_paired_effect_distribution.png)
 
