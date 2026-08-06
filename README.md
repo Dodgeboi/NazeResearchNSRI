@@ -79,7 +79,7 @@ The manuscript compares the closest studies directly and avoids claiming to be t
 
 ## Run the checks
 
-Python 3.11 or newer is required.
+Python 3.12 or newer is required.
 
 ```bash
 python -m venv .venv
