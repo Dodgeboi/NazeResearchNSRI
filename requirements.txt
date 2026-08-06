@@ -1,0 +1,17 @@
+# Exact-pinned scientific stack — the versions the committed results were
+# generated with. Pinning (instead of ">=" floors) is what lets `reproduce`
+# regenerate the CSVs byte-for-byte on another machine; combined with the
+# canonical CSV float format (grrc.utilities.CSV_FLOAT_FORMAT), numeric
+# outputs no longer depend on a library's default float repr.
+#
+# Install with:  pip install -r requirements.txt
+numpy==2.5.1
+pandas==3.0.3
+networkx==3.6.1
+scipy==1.18.0
+matplotlib==3.11.0
+pyyaml==6.0.3
+tqdm==4.68.4
+
+# Testing only.
+pytest==9.1.1

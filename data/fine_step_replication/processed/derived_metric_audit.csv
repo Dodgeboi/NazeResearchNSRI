@@ -1,0 +1,4 @@
+file,rows,max_abs_diff_ever_compromised_fraction,max_abs_diff_weighted_clinical_unavailability,max_abs_diff_final_service_availability,terminal_metric_status,status,tolerance,reason
+joint_stress.csv,2560,4.98293628581e-11,4.98910912583e-11,4.28571622635e-11,row-recomputed,pass,1e-09,
+joint_stress_parameters.csv,128,,,,,skipped,,required historical metric columns absent
+primary_paired.csv,1000,4.98098784441e-11,4.98910912583e-11,4.28571622635e-11,row-recomputed,pass,1e-09,

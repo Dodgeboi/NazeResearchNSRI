@@ -1,0 +1,3 @@
+treatment,n_pairs,baseline_mean_hours,treatment_mean_hours,paired_mean_difference_hours,paired_median_difference_hours,paired_difference_ci95_lo,paired_difference_ci95_hi,relative_reduction_of_means,scenarios_with_lower_loss_fraction,difference_p05,difference_p95,baseline_sustained_outage_fraction,treatment_sustained_outage_fraction,paired_sustained_outage_risk_difference,paired_difference_sd,monte_carlo_standard_error,protocol_mcse_target
+seg_detect_backup,500,189.83405,21.97135,-167.8627,-179.3625,-174.2550887,-161.5625763,0.8842602262,0.902,-263.8875,0,0.902,0.348,-0.554,72.50553376,3.242546045,3.796681
+full_defense,500,189.83405,4.6434,-185.19065,-195.45,-191.1401212,-178.985795,0.9755396885,0.902,-272.4275,0,0.902,0.044,-0.858,69.96905673,3.129111343,3.796681

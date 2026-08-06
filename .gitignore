@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local environments and editor state
+.venv/
+venv/
+.idea/
+.vscode/
+
+# Generated logs and caches
+*.log
+.matplotlib/
+
+# LaTeX build products (the reviewed PDF is intentionally committed)
+*.aux
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.out
+*.synctex.gz
+
+# Local or potentially sensitive material
+.env
+*.key
+*.pem
+private/
+sensitive/
+hospital_data/

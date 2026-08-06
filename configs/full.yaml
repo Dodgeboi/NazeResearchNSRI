@@ -1,0 +1,53 @@
+# FULL MODE — expanded analysis (105,330 total trials).
+# Same design as standard with more repetitions per cell:
+#   main:   3 x 3 x 14 x 5 x 90          = 56,700 trials
+#   sweep:  4 x 5 x 150                  =  3,000 trials
+#   opt:    (192 + 144 + 96 = 432 distinct portfolios) x 100 = 43,200 trials
+#   backup: 3 x 3 x 3 x 90               =  2,430 trials
+# Uses all CPU cores; expect roughly 1-2 hours on a 4-core laptop.
+mode: full
+seed: 20260713
+
+experiment:
+  facilities: [small_clinic, regional_hospital, large_hospital]
+  profiles: [resource_constrained, intermediate_capacity, high_capacity]
+  portfolios:
+    - baseline_flat
+    - profile_baseline
+    - basic_segmentation
+    - least_privilege
+    - patch_90
+    - fast_detection
+    - isolated_backups
+    - identity_controls
+    - seg_plus_patch
+    - seg_plus_detection
+    - detection_plus_backups
+    - patch_plus_least_privilege
+    - seg_detect_backup
+    - full_defense
+  entry_points:
+    - workstation
+    - internet_facing
+    - privileged_system
+    - medical_device
+    - vendor_connection
+  trials_per_cell: 90
+  workers: 0
+
+sweep:
+  enabled: true
+  facility: regional_hospital
+  profile: intermediate_capacity
+  patch_levels: [0.25, 0.50, 0.75, 0.90]
+  detection_delays: [1, 3, 6, 12, 24]
+  trials_per_cell: 150
+
+optimization:
+  enabled: true
+  facility: regional_hospital
+  profiles: [resource_constrained, intermediate_capacity, high_capacity]
+  budgets: [5, 10, 15]
+  trials_per_portfolio: 100
+  cost_scale_factors: [0.5, 0.75, 1.0, 1.25, 1.5]
+  catastrophic_target: 0.05

@@ -1,0 +1,10 @@
+horizon_hours_variant,portfolio,n,mean_hours_lost,median_hours_lost,sustained_outage_fraction,recovery_within_horizon_fraction,mean_steps_simulated
+72,baseline_flat,100,190.75325,194.175,0.92,0.95,276.15
+72,full_defense,100,4.46125,1.3,0.04,0.98,115.54
+72,seg_detect_backup,100,19.77875,4.5875,0.33,0.98,136.82
+168,baseline_flat,100,195.07125,200.975,0.93,1,392.32
+168,full_defense,100,4.98075,1.4,0.06,1,133.77
+168,seg_detect_backup,100,20.35825,5.2625,0.35,1,157.86
+504,baseline_flat,100,195.48125,200.975,0.93,1,405.41
+504,full_defense,100,5.30275,1.4,0.06,1,139.2
+504,seg_detect_backup,100,20.68025,5.2625,0.35,1,163.29

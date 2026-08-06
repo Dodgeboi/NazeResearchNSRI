@@ -1,0 +1,3 @@
+treatment,n_parameter_settings,settings_favoring_treatment,fraction_settings_favoring_treatment,favoring_fraction_wilson_ci95_lo,favoring_fraction_wilson_ci95_hi,median_relative_reduction,relative_reduction_p05,relative_reduction_p95
+seg_detect_backup,128,128,1,0.9708630437,1,0.6654936199,0.3900728743,0.9919102835
+full_defense,128,128,1,0.9708630437,1,0.9711620511,0.6636226027,0.9983432352
