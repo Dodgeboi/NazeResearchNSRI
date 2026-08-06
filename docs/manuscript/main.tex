@@ -4,9 +4,6 @@
 \usepackage{newpxtext,newpxmath}
 \usepackage{microtype}
 \usepackage{graphicx}
-\usepackage{booktabs}
-\usepackage{tabularx}
-\usepackage{array}
 \usepackage{enumitem}
 \usepackage{xcolor}
 \usepackage{caption}
@@ -76,8 +73,9 @@ that the size of the effect changed with the simulation step. We therefore
 froze a new five-minute protocol and ran 500 fresh pairs. Mean weighted
 service-hours lost fell from 193.4 in the reference runs to 33.9 with basic
 segmentation, faster detection and isolation, and protected backups. The mean
-paired change was $-159.5$ hours (95\% bootstrap interval, $-166.1$ to
-$-152.7$). Loss was lower in 451 pairs, unchanged in 48, and higher in one.
+paired change was $-159.5$ hours. The 95\% bootstrap interval ran from
+$-166.1$ to $-152.7$. Loss was lower in 451 pairs, unchanged in 48, and
+higher in one.
 The layered portfolio also had a lower mean in all 128 joint stress settings,
 although the median reduction was 28.7\% and the fifth percentile was 3.1\%.
 The model did not reproduce the multi-week disruptions reported in public
@@ -102,7 +100,7 @@ long. In 374 publicly reported attacks on U.S. healthcare delivery
 organizations from 2016 through 2021, 44.4\% mentioned disruption to care and
 41.7\% mentioned electronic-system downtime. For incidents with a reported
 duration, the mean was 15.8 days \citep{neprash2022}. Those numbers describe a
-selected set of visible attacks; they are not a hospital's probability of being
+selected set of visible attacks. They are not a hospital's probability of being
 attacked.
 
 The operational record is becoming clearer. WannaCry was associated with lost
@@ -112,7 +110,7 @@ departments handled more patients and ambulances and experienced longer waits
 and stroke-care delays across 19,857 visits \citep{dameff2023}. Later work
 reported changes in cardiac-arrest incidence and outcomes at nearby,
 unaffected hospitals \citep{pham2024}. Using a national attack database linked
-to Medicare claims, \citet{neprash2026} estimated a 17--24\% decline in hospital
+to Medicare claims, \citet{neprash2026} estimated a 17\% to 24\% decline in hospital
 volume during the first attack week, with recovery over roughly three weeks.
 The studies differ in design and outcome, but they agree on one practical
 point: digital outages can become clinical and regional operating problems.
@@ -129,7 +127,7 @@ flat reference posture and a feasible layered portfolio, does the layered
 portfolio preserve more modeled service availability across new scenarios,
 joint parameter changes, and different time steps?} We expected the answer to
 be yes. The useful test was whether that answer survived less favorable
-assumptions and whether its size remained stable. It did survive; its size did
+assumptions and whether its size remained stable. It did survive. Its size did
 not. The model is not an estimate of hospital risk, patient harm, or the causal
 effect of deployed controls.
 
@@ -137,7 +135,7 @@ effect of deployed controls.
 
 Downtime research helps connect unavailable software to work on the hospital
 floor. Among 80,381 patient-safety reports, \citet{larsen2018} found 76 that
-described EHR downtime; laboratory and medication processes appeared often,
+described EHR downtime. Laboratory and medication processes appeared often,
 and downtime procedures were not used consistently. A mixed-methods study of a
 roughly 48-hour outage found delays in staff accounts that were not fully
 visible in electronic timestamps \citep{larsen2019}. Related AHRQ work used
@@ -158,82 +156,21 @@ role of hospital IT segmentation. That paper is especially relevant: it means
 we cannot claim to be the first to simulate ransomware, hospital resilience,
 or segmentation.
 
-Table \ref{tab:closest} states the remaining distinction without a priority
-claim. Our model stays inside one synthetic hospital and links directed digital
-propagation to seven service dependencies. It compares portfolios with stable,
-event-indexed random values, varies 13 assumptions together, checks the result
-at several time steps, and retains a failed diagnostic. No single item is new
-on its own. The contribution is the combination and its auditable execution.
+Our model stays inside one synthetic hospital. It connects digital
+propagation to seven service dependencies, then compares the same incident
+under two control portfolios. We do not model patient flow, financial loss, or
+regional demand. Our narrower contribution is an auditable pairing method, a
+joint test of 13 assumptions, and a documented time-step failure.
 
-\begin{table*}[t]
-\centering
-\caption{Closest simulation research and the scope of the present study. The
-comparison identifies differences in modeled layer and outcome; it is not a
-claim that earlier studies are incomplete.}
-\label{tab:closest}
-\small
-\begin{tabularx}{\textwidth}{>{\bfseries}p{.17\textwidth} p{.24\textwidth} p{.24\textwidth} X}
-\toprule
-Study & Modeled layer & Main comparison or outcome & Difference from this study \\
-\midrule
-Ghayoomi et al. \citep{ghayoomi2021} & Patient flow and constrained hospital
-resources & Ransom payment versus restoration strategies & We model digital
-asset propagation and service availability, not patient throughput. \\
-Willing et al. \citep{willing2025} & Trauma-room process and device failures &
-Security measures and emergency plans & We compare network-control portfolios
-across synthetic hospital services. \\
-Chiaradonna et al. \citep{chiaradonna2023} & Mixed random graphs & Aggregate
-cyber-loss distributions & Our endpoint is time-varying digital-service loss,
-not financial loss. \\
-Carrami\~nana et al. \citep{carraminana2025} & Interdependent infrastructure
-agents & Node availability and quality of service & We use paired
-within-scenario portfolio differences and explicit numerical diagnostics. \\
-Arsalani et al. \citep{arsalani2026} & Regional hospitals and ambulance
-operations & EMS impact and hospital IT segmentation & We model within-hospital
-propagation; regional demand and ambulance operations are absent. \\
-Present study & Directed synthetic assets and seven dependent services & Flat
-reference versus layered controls under joint uncertainty & Event-indexed
-pairing, metric reconciliation, and time-step failure are reported together. \\
-\bottomrule
-\end{tabularx}
-\end{table*}
-
-Table \ref{tab:evidence} shows how public evidence was used without converting
-observed operational outcomes into unsupported cyber-transition rates.
-
-\begin{table*}[t]
-\centering
-\caption{Evidence used to define the study boundary. Operational studies
-support outcomes, time windows, and validation patterns; they do not identify
-the model's universal transition probabilities.}
-\label{tab:evidence}
-\small
-\begin{tabularx}{\textwidth}{>{\bfseries}p{.19\textwidth} p{.29\textwidth} X}
-\toprule
-Evidence & Observation used & Permitted modeling use \\
-\midrule
-Reported U.S. incidents \citep{neprash2022} & Disruption was common among
-reported attacks and sometimes lasted weeks. & Test multi-day horizons and
-avoid treating a 48- or 72-hour run as complete recovery evidence. \\
-WannaCry impact \citep{ghafur2019} & Admissions, appointments, and activity
-changed at affected trusts. & Prefer service and operations outcomes over
-machine counts. \\
-Adjacent-hospital studies \citep{dameff2023,abouk2024} & Disruption can shift
-demand to neighboring facilities. & Identify regional spillover as missing
-model structure, not as a fitted parameter. \\
-Downtime case research \citep{larsen2018,larsen2019,wernz2018} & Manual
-workarounds, reporting gaps, and process delays matter. & Report binary service
-availability as a simplification and preserve service-specific outcomes. \\
-Hospital simulation studies \citep{ghayoomi2021,willing2025} & Patient flow and
-resource constraints can connect digital outages to care processes. & Define a
-future patient-flow layer; do not claim the present asset model measures patient
-harm. \\
-Government guidance \citep{cisa2023,hhs2026,nist2026} & Layered controls and
-recoverability are recommended. & Define relevant portfolios and failure modes,
-not numerical efficacy. \\
-\bottomrule
-\end{tabularx}
-\end{table*}
+We kept a firm boundary between observations and assumptions. Incident
+studies justified multi-day checks and service-based outcomes
+\citep{neprash2022,ghafur2019}. Work on neighboring hospitals showed that our
+single-hospital model misses regional spillover \citep{dameff2023,abouk2024}.
+Downtime research showed why manual workarounds and process delays matter
+\citep{larsen2018,larsen2019,wernz2018}. Government guidance helped us choose
+relevant controls and failure modes \citep{cisa2023,hhs2026,nist2026}. None of
+those sources supplies a universal ransomware spread probability or a measured
+isolation-success rate, so we did not treat them as if they did.
 
 \section{Methods}
 
@@ -249,8 +186,9 @@ along a directed edge and is modified by vulnerability, patch status,
 privilege, segmentation, identity compromise, backup access, and the selected
 portfolio.
 
-Three neutral network scales (40--60, 200--300, and 750--1,000 nodes) and three
-synthetic postures were used in a cross-setting replication. These labels do
+Three neutral network scales were used in a cross-setting replication. Their
+node counts were 40 to 60, 200 to 300, and 750 to 1,000. Three synthetic
+postures were also tested. These labels do
 not correspond to real hospital size, geography, or maturity. Entry types were
 a workstation, internet-facing service, privileged system, medical device, or
 vendor connection.
@@ -284,16 +222,15 @@ throughput, false-positive isolation, legacy fraction, and residual backup
 access were not identifiable from those studies. They remained synthetic
 stress variables.
 
-The final joint design varied 13 assumptions with Latin-hypercube sampling:
-15-minute-equivalent spread 0.05--0.50; patch effectiveness 0.30--0.95;
-within-zone degree 2--5; cross-zone degree 1--4; identity multiplier 1--2;
-restoration rate 0.25\%--4\% of nodes per 15 minutes; no-backup restoration
-multiplier 0.10--0.50; service threshold 0.45--0.75; false-positive isolation
-0--0.002 per node per 15 minutes; legacy fraction 0.05--0.35; isolation success
-0.25--0.95; detection delay 0.75--24 hours; and residual isolated-backup
-traversal 0--0.10. Clock-time hazards and durations were converted for the
-five-minute replication. None of these ranges is an estimate of a sector-wide
-hospital parameter.
+The final joint design varied 13 assumptions with Latin-hypercube sampling.
+The range for 15-minute-equivalent spread was 0.05 to 0.50. Patch effectiveness
+ran from 0.30 to 0.95. Within-zone degree ranged from 2 to 5, while cross-zone
+degree ranged from 1 to 4. We also varied identity escalation, restoration,
+backup access, the service threshold, false isolation, legacy assets,
+containment, and detection time. The complete ranges are recorded in the
+parameter register. Clock-time hazards and durations were converted for the
+five-minute replication. These are stress ranges, not estimates for the
+hospital sector.
 
 \subsection{Portfolios and pairing}
 
@@ -302,7 +239,7 @@ values, and connected backups. The layered portfolio combined basic
 segmentation, a one-tier detection improvement, rapid same-step isolation
 attempts, and protected backups. ``Protected backup'' is an abstraction that
 compresses credential separation, management-plane access, immutability,
-testing, reconnection, and reinfection into a small set of paths; residual
+testing, reconnection, and reinfection into a small set of paths. Residual
 access was explicitly stressed.
 
 All comparisons used common random numbers, but not by simply restarting a
@@ -322,7 +259,7 @@ pooled with the new study. Before generating the 15-minute validation, we
 froze a local protocol, configuration, seeds, and file hashes. Planning data
 gave a paired-difference standard deviation of 73.90 service-hours and a
 reference mean of 169.97. Requiring Monte Carlo standard error no greater than
-2\% of that reference mean gave 473 pairs; we rounded to 500.
+2\% of that reference mean gave 473 pairs. We rounded to 500.
 
 The 15-minute phase contained 500 primary pairs, 100 scenarios in each of nine
 scale-by-posture combinations, and 128 joint stress settings with 20 scenarios
@@ -334,30 +271,12 @@ exploratory 1-, 2-, and 5-minute pilot was run. Finally, a post-diagnostic
 five-minute protocol was frozen before 500 new primary pairs and 128 new stress
 settings with 10 scenarios each. It used fresh seeds and scenario identifiers.
 
-Table \ref{tab:runs} accounts for every new execution, including superseded
-diagnostics. A run is one portfolio under one synthetic scenario, not a
-hospital or incident.
-
-\begin{table}[htbp]
-\centering
-\caption{Fresh execution accounting. Superseded diagnostic rows remain in the
-archive and are never pooled with corrected results.}
-\label{tab:runs}
-\small
-\begin{tabularx}{\columnwidth}{X r}
-\toprule
-Phase & Runs \\
-\midrule
-15-minute primary, cross-setting, joint stress & 11,880 \\
-Initial diagnostics (retained) & 1,800 \\
-Corrected diagnostics & 1,800 \\
-Exploratory fine-step pilot & 300 \\
-Frozen five-minute replication & 3,560 \\
-\midrule
-\textbf{Total} & \textbf{19,340} \\
-\bottomrule
-\end{tabularx}
-\end{table}
+The new study contains 19,340 executions. This total includes 11,880 runs in
+the 15-minute study, 1,800 retained runs from the flawed diagnostic, 1,800
+corrected diagnostic runs, 300 exploratory pilot runs, and 3,560 runs in the
+frozen five-minute replication. Superseded rows remain in the archive and were
+never pooled with corrected results. Here, a run means one portfolio under one
+synthetic scenario. It does not mean one hospital or one real incident.
 
 \subsection{Analysis and verification}
 
@@ -365,7 +284,7 @@ The primary statistic was the within-scenario difference (layered minus
 reference) in weighted service-hours. We report means, medians, the distribution
 of paired changes, and 95\% percentile bootstrap intervals that resample
 complete scenarios. Joint-stress results were first averaged within parameter
-setting; robustness required a negative primary interval, lower mean loss in at
+setting. Robustness required a negative primary interval, lower mean loss in at
 least 95\% of settings, and a positive fifth percentile of setting-specific
 relative reduction. This success rule concerns model behavior only.
 
@@ -374,43 +293,36 @@ covered transitions, pairing, seed reproduction, segmentation, patching,
 isolation, backup behavior, dependencies, budgets, and export. An independent
 script recomputed all three derived ratios from raw numerators, denominators,
 and final-service flags. The study follows the transparency intent of the
-STRESS reporting guideline \citep{monks2019}; protocols, parameter registers,
-deviations, raw outputs, and analysis manifests are retained.
+STRESS reporting guideline \citep{monks2019}. We retained the protocols,
+parameter registers, deviations, raw outputs, and analysis manifests.
 
 \section{Results}
 
 \subsection{Five-minute paired replication}
 
 Across 500 fresh pairs, reference scenarios averaged 193.4 weighted
-service-hours lost and layered scenarios averaged 33.9 (Table
-\ref{tab:primary}). The paired mean change was $-159.5$ hours (95\% bootstrap
-interval, $-166.1$ to $-152.7$), and its Monte Carlo standard error was 3.42,
-below the protocol target of 3.87. The layered portfolio produced lower loss in
-451 scenarios, tied in 48, and produced 11.35 more hours in one scenario. The
-mean-of-groups reduction was 82.5\% \modelonly; this percentage is not a real
-control-effectiveness estimate.
+service-hours lost. Layered scenarios averaged 33.9. The paired mean change was
+$-159.5$ hours, with a 95\% bootstrap interval from $-166.1$ to $-152.7$.
+Its Monte Carlo standard error was 3.42, below the protocol target of 3.87.
+Loss was lower in 451 scenarios and tied in 48. One scenario was worse by
+11.35 hours. The mean-of-groups reduction was 82.5\% \modelonly. It is not a
+real control-effectiveness estimate.
 
 The reference sustained-outage indicator was positive in 90.2\% of scenarios
 and the layered indicator in 41.2\%, a paired difference of $-49.0$ percentage
 points. These are conditional model frequencies under a deliberately severe
 scenario bank, not incident probabilities.
 
-\begin{table*}[t]
+\begin{figure*}[t]
 \centering
-\caption{Primary five-minute replication. The paired interval and scenario
-counts support the direction of the comparison; absolute hours and the 82.5\%
-ratio remain conditional on the model and time step.}
-\label{tab:primary}
-\small
-\begin{tabularx}{.93\textwidth}{>{\bfseries}X r r r r r}
-\toprule
-Comparison & Pairs & Reference mean & Layered mean & Paired change (95\% CI) & Lower / tie / higher \\
-\midrule
-Weighted service-hours & 500 & 193.4 & 33.9 & $-159.5$ ($-166.1$, $-152.7$) & 451 / 48 / 1 \\
-Sustained-outage indicator & 500 & 90.2\% & 41.2\% & $-49.0$ percentage points & -- \\
-\bottomrule
-\end{tabularx}
-\end{table*}
+\includegraphics[width=.96\textwidth]{primary_outcomes.pdf}
+\caption{Primary five-minute results. The first two panels compare the group
+means. The third shows the direction of all 500 paired comparisons. The mean
+paired change was $-159.5$ weighted service-hours, and its 95\% bootstrap
+interval ran from $-166.1$ to $-152.7$. All values are conditional on the
+synthetic model and its five-minute step.}
+\label{fig:primary}
+\end{figure*}
 
 Service-specific results did not depend on weights for their direction. Mean
 EHR downtime changed from 32.9 to 7.4 hours, laboratory from 36.8 to 7.3,
@@ -421,24 +333,35 @@ complete clinical shutdown.
 
 \begin{figure}[htbp]
 \centering
+\includegraphics[width=\columnwidth]{service_downtime.pdf}
+\caption{Mean modeled downtime for each service in the 500 fresh pairs. Every
+service had a lower mean under the layered portfolio. These are binary service
+states in a synthetic model, not measured hours of hospital shutdown.}
+\label{fig:services}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
 \includegraphics[width=\columnwidth]{fine_step_paired_effect_distribution.pdf}
 \caption{Distribution of paired five-minute effects. Negative values favor
 the layered portfolio. Most scenarios improved substantially, 48 tied at zero,
-and one was worse; reporting the complete distribution prevents the mean from
-hiding that exception.}
+and one was worse. The complete distribution keeps the mean from hiding that
+exception.}
 \label{fig:paired}
 \end{figure}
 
 \subsection{Joint uncertainty}
 
 The layered portfolio had lower mean loss in all 128 five-minute joint stress
-settings (Wilson 95\% interval for the favorable fraction, 97.1\%--100\%). The
+settings. The Wilson 95\% interval for that fraction ran from 97.1\% to 100\%.
+The
 median setting-specific reduction was 28.7\%, the fifth percentile was 3.1\%,
-and the 95th percentile was 96.4\% (Figure \ref{fig:stress}). The success rule
+and the 95th percentile was 96.4\%. Figure \ref{fig:stress} shows the full
+distribution. The success rule
 was met, but the low fifth percentile means the advantage was small in some
 plausible stress combinations. In the earlier 15-minute stress bank, the median
 and fifth percentile were 66.5\% and 39.0\%, respectively. The direction
-replicated; the magnitude did not.
+replicated. The magnitude did not.
 
 \begin{figure}[htbp]
 \centering
@@ -455,7 +378,7 @@ In the independent 15-minute cross-setting bank, the layered mean was below the
 reference mean in all nine scale-by-posture cells. Reductions of the cell means
 ranged from 55.2\% to 94.2\%. Scenario-level improvement fractions were lower
 in stronger-posture cells because many reference scenarios had little or no
-loss, creating ties. These labels remain synthetic; the result does not show
+loss, creating ties. These labels remain synthetic. The result does not show
 that a particular real hospital category would benefit by those percentages.
 
 The corrected coarse-step diagnostic produced layered/reference reductions of
@@ -467,6 +390,16 @@ similar comparative answer, but neither absolute values nor exact percentages
 were numerically invariant. The 30-minute step was especially optimistic for
 the layered portfolio because fewer propagation generations can occur before a
 fixed clock-time response.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=.92\textwidth]{time_step_sensitivity.pdf}
+\caption{The estimated reduction changed with the simulation step. Values
+within each panel share a scenario bank, but the exploratory pilot and the
+corrected diagnostic use different scenario banks. The direction stayed the
+same while the size changed.}
+\label{fig:timestep}
+\end{figure*}
 
 At the 15-minute reference settings, 95\% of flat-reference scenarios recovered
 within 72 hours and 100\% within seven days. This is shorter than the multi-week
@@ -483,11 +416,11 @@ nodes, and \codefield{pct_clinical_capacity_lost} equals time-averaged weighted
 unavailability of four clinical services. Both agreed across all 15 archived
 CSV files to within $5.0\times10^{-11}$.
 
-The third name, \codefield{pct_services_restored}, was misleading: it measured
+The third name, \codefield{pct_services_restored}, was misleading. It measured
 the fraction of all seven services available at the final step, including
 services never disrupted. Legacy rows did not store the seven final flags, so
-the field was not independently row-auditable; exact reruns of sampled archived
-rows nevertheless matched. New rows retain the historical alias for
+the field was not independently row-auditable. Exact reruns of sampled archived
+rows still matched. New rows retain the historical alias for
 compatibility but add explicit final flags,
 \codefield{final_service_availability_fraction}, and
 \codefield{disrupted_service_recovery_fraction}. Independent recomputation of
@@ -500,9 +433,9 @@ analysis uses the ambiguous legacy names.
 
 Our first result looked almost too clean. At a 15-minute step, the layered
 portfolio's median reduction across stress settings was 66.5\%. Repeating the
-study at five minutes left the direction unchanged---all 128 settings still
-favored the layered portfolio---but reduced the median to 28.7\%, with the
-lower tail close to zero. That diagnostic changed how we interpret the paper.
+study at five minutes left the direction unchanged. All 128 settings still
+favored the layered portfolio. The median fell to 28.7\%, and the lower tail
+was close to zero. That diagnostic changed how we interpret the paper.
 The 82.5\% reduction in the primary scenario bank is a description of those
 runs, not a stable estimate of control effectiveness.
 
@@ -511,7 +444,7 @@ remove paths, faster response to shorten the time available for spread, and
 protected backups to preserve a recovery route. The useful observation is that
 their combined advantage remained after 13 assumptions were varied together
 and after the simulation step was shortened. This agrees with layered-defense
-guidance \citep{cisa2023,hhs2026,nist2026}; it does not show that our numerical
+guidance \citep{cisa2023,hhs2026,nist2026}. It does not show that our numerical
 multipliers match controls deployed in a hospital.
 
 \subsection{How the workflow could be used}
@@ -595,35 +528,32 @@ are needed before using the framework for a real decision.
 \textbf{Ethics.} The study used synthetic networks, simulated trajectories, and
 public literature. It involved no participants, patient records, private
 organizational data, malware, or intervention. External interviews have not
-been conducted. Appropriate school, competition, institutional, consent, and
-privacy requirements should be checked before collecting reviewer data.
+been conducted. Consent, privacy, and institutional requirements must be
+checked before collecting information from outside reviewers.
 
-\textbf{Data and code.} The earlier development repository is at
-\url{https://github.com/Binded-Person/NazeResearchNSRI64}. The revised code,
-protocols, configurations, manifests, raw outputs, processed summaries, tests,
-and figures are included in the accompanying local research package. At the
-authors' request, this revision has not been pushed or published. A versioned
-public release should accompany any submission.
+\textbf{Data and code.} The revised code, protocols, configurations, manifests,
+raw outputs, processed summaries, tests, figures, and manuscript source are at
+\url{https://github.com/Dodgeboi/NazeResearchNSRI}. The development history is
+retained in that repository. Any submitted version should cite a fixed release
+or archived commit.
 
 \textbf{Artificial-intelligence use.} We used Claude, ChatGPT, and Codex
-substantially while developing and revising this project. Their roles included
-code suggestions, debugging, search assistance, analysis checks, organization,
-and sentence-level editing. We did not use their output as a source. Numerical
-claims were regenerated from code and CSV files, and literature claims were
-checked against the cited papers or official documents. The tools also helped
-us find the time-step diagnostic error, which we retained in the study record.
-Before submission, each author must be able to explain the model, reproduce the
-main analysis, and approve the wording. The authors remain responsible for the
-study and for any errors that remain.
+throughout the project. We asked them for coding help, debugging ideas,
+literature search terms, analysis checks, organization, and editing suggestions.
+We did not use their responses as evidence. We checked numerical claims against
+the code and CSV files, and we checked literature claims against the cited
+sources. This process helped us find the time-step problem. We kept that problem
+in the study record instead of hiding it. Each author is responsible for the
+final analysis and wording.
 
-\textbf{Author contributions.} A final CRediT contribution statement has not
-been assigned in this draft and must be completed by the authors without
-inflating any person's role.
+\textbf{Author contributions.} Ashish Agrawal, Mukil Dharanidharan, and Naman
+Upadhyay worked together on the project and reviewed this manuscript. The
+authors will agree on detailed CRediT roles before a formal submission.
 
 \textbf{Funding.} The authors report no specific funding for this work.
 
 \textbf{Conflicts of interest.} The authors report no known competing
-interests; all authors should reconfirm this statement before submission.
+interests. All authors should reconfirm this statement before submission.
 
 \balance
 \bibliographystyle{unsrtnat}
