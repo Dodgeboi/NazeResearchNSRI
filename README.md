@@ -89,16 +89,6 @@ Before rerunning a frozen study, read the matching protocol and [`study/DEVIATIO
 - [Review the bibliography](docs/manuscript/references.bib)
 - [Read the originality and author-voice audit](docs/manuscript/ORIGINALITY_AND_VOICE_AUDIT.md)
 
-## Data and privacy boundary
-
-All networks and trajectories in this repository are synthetic. The project does not need patient data, credentials, IP addresses, vulnerability details, network diagrams, security logs, or active-incident information. Future expert review should remain at a high level unless an organization independently approves a formal, privacy-protected data-sharing process.
-
-## Authors
-
-Ashish Agrawal, Mukil Dharanidharan, and Naman Upadhyay developed this project together. A detailed contribution statement will be added only after the authors agree on wording that accurately reflects the work.
-
-This is an independent student research project. The repository does not represent or speak for a hospital, employer, or school.
-
 ## AI use
 
 Claude, and Codex were used for code suggestions, debugging, organization, and language revision. Their output was not used as evidence. Numerical claims were regenerated from code and CSV files, and literature claims were checked against the cited sources. The authors remain responsible for understanding the model, approving the text, and correcting errors.
