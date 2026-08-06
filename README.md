@@ -26,42 +26,6 @@ We measure disruption as service-hours lost across seven modeled services:
 - identity
 - backup and recovery
 
-This is a defensive research model. It contains no malware, exploit code, scanning, credentials, or connection to a real network. A “compromised” node is only a state inside a generated graph.
-
-## Main result
-
-| Result | Flat reference | Layered controls |
-|---|---:|---:|
-| Mean weighted service-hours lost | 193.4 | 33.9 |
-| Sustained-outage indicator | 90.2% | 41.2% |
-| Paired scenarios | 500 | 500 |
-
-The paired mean change was **-159.5 weighted service-hours** with a 95% bootstrap interval from **-166.1 to -152.7**. These are conditional simulation results. The scenario bank was deliberately severe, and the service thresholds and weights are modeling choices rather than clinical standards.
-
-Across 128 joint stress settings, the layered portfolio had the lower mean every time. The median setting-specific reduction was 28.7%, but the fifth percentile was only 3.1%. That lower tail is one reason we describe the result as directional instead of advertising the largest percentage.
-
-## What went wrong—and why it is included
-
-Our original 15-minute diagnostic contained two design mistakes: time-step variants did not share the same scenario identifiers, and the five-minute rapid-response configuration did not preserve the intended clock time. We retained those files, documented the problem, and reran only the affected diagnostics.
-
-The corrected analysis exposed a deeper issue. Coarser steps gave the layered portfolio fewer propagation rounds before a fixed response time and made the defense look more effective. A new five-minute replication reduced this problem but did not eliminate it. We would move to an event-driven continuous-time model before treating exact hours or percentages as operational estimates.
-
-The reference recovery model also recovered much faster than the multi-week disruptions reported in public studies. We report that mismatch as an external-validity failure.
-
-## How this differs from related work
-
-Hospital ransomware simulation is not a new field, and layered defense is not a new idea. Previous studies have modeled patient flow and recovery strategies, trauma-room processes, financial loss, infrastructure interdependencies, and regional ambulance operations.
-
-Our narrower contribution is the combination of:
-
-- directed within-hospital asset propagation;
-- dependencies for seven digital services;
-- paired scenarios with event-indexed random values;
-- simultaneous stress testing of 13 assumptions;
-- independent reconstruction of derived metrics; and
-- explicit reporting of the time-step and recovery-duration failures.
-
-The manuscript compares the closest studies directly and avoids claiming to be the first ransomware, hospital-resilience, or segmentation simulation.
 
 ## Repository guide
 
