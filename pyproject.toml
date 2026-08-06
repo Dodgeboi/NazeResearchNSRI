@@ -7,7 +7,7 @@ name = "grrc"
 version = "3.0.0"
 description = "Paired Monte Carlo analysis of layered controls and digital-service disruption in synthetic hospital networks"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 license = { text = "MIT" }
 authors = [
     { name = "Ashish Agrawal" },
