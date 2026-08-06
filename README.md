@@ -126,8 +126,6 @@ Before rerunning a frozen study, read the matching protocol and [`study/DEVIATIO
 - [Review the bibliography](docs/manuscript/references.bib)
 - [Read the originality and author-voice audit](docs/manuscript/ORIGINALITY_AND_VOICE_AUDIT.md)
 
-The manuscript is labeled **pre-external-validation**. Hospital IT, clinical-operations, and simulation reviewers have not yet evaluated the model.
-
 ## Data and privacy boundary
 
 All networks and trajectories in this repository are synthetic. The project does not need patient data, credentials, IP addresses, vulnerability details, network diagrams, security logs, or active-incident information. Future expert review should remain at a high level unless an organization independently approves a formal, privacy-protected data-sharing process.
@@ -140,12 +138,5 @@ This is an independent student research project. The repository does not represe
 
 ## AI use
 
-Claude, ChatGPT, and Codex were used substantially for code suggestions, debugging, literature-search assistance, analysis checks, organization, and language revision. Their output was not used as evidence. Numerical claims were regenerated from code and CSV files, and literature claims were checked against the cited sources. The authors remain responsible for understanding the model, approving the text, and correcting errors.
+Claude, ChatGPT, and Codex were used for code suggestions, debugging, organization, and language revision. Their output was not used as evidence. Numerical claims were regenerated from code and CSV files, and literature claims were checked against the cited sources. The authors remain responsible for understanding the model, approving the text, and correcting errors.
 
-## Questions and corrections
-
-You do not need a special project email to contact us. Open a [GitHub issue](https://github.com/Dodgeboi/NazeResearchNSRI/issues) for reproducibility problems, suspected errors, or public methodological questions. Please do not post sensitive hospital or security information.
-
-## License
-
-The software is released under the [MIT License](LICENSE). The manuscript and cited publications retain their respective rights.
