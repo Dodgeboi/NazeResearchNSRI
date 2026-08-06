@@ -15,7 +15,7 @@ authors = [
     { name = "Naman Upadhyay" },
 ]
 # Bounded ranges for installation. For byte-for-byte reproduction of the
-# committed results, install the exact pins in requirements.txt instead —
+# committed results, install the exact pins in requirements.txt instead -
 # upper bounds here only guard against silently pulling an untested major
 # release.
 dependencies = [
