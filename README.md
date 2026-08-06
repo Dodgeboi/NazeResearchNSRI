@@ -102,5 +102,5 @@ This is an independent student research project. The repository does not represe
 
 ## AI use
 
-Claude, ChatGPT, and Codex were used for code suggestions, debugging, organization, and language revision. Their output was not used as evidence. Numerical claims were regenerated from code and CSV files, and literature claims were checked against the cited sources. The authors remain responsible for understanding the model, approving the text, and correcting errors.
+Claude, and Codex were used for code suggestions, debugging, organization, and language revision. Their output was not used as evidence. Numerical claims were regenerated from code and CSV files, and literature claims were checked against the cited sources. The authors remain responsible for understanding the model, approving the text, and correcting errors.
 
