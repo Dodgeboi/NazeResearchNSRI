@@ -1,0 +1,80 @@
+vendor_project,ransomware_linked_cves,products
+Microsoft,114,29
+Fortinet,14,6
+Oracle,13,6
+SonicWall,13,7
+Ivanti,12,9
+Adobe,10,5
+QNAP,9,3
+VMware,9,5
+Apache,8,6
+Atlassian,8,6
+Citrix,7,6
+Cisco,6,4
+Palo Alto Networks,6,1
+Mitel,5,2
+Synacor,5,2
+Accellion,4,1
+F5,4,3
+GIGABYTE,4,1
+Progress,4,4
+RARLAB,4,2
+Red Hat,4,3
+Veeam,4,1
+JetBrains,3,1
+Kaseya,3,1
+Qlik,3,1
+SAP,3,2
+SimpleHelp ,3,1
+SmarterTools,3,1
+Veritas,3,1
+Check Point,2,2
+Cleo,2,1
+ConnectWise,2,1
+CyberPersons,2,1
+D-Link,2,2
+Drupal,2,2
+Fortra,2,1
+IBM,2,2
+Linux,2,1
+PaperCut,2,2
+SolarWinds,2,2
+Sophos,2,2
+Zoho,2,1
+Zyxel,2,2
+Array Networks ,1,1
+BQE,1,1
+BeyondTrust,1,1
+CrushFTP,1,1
+Dasan,1,1
+DotNetNuke (DNN),1,1
+Exim,1,1
+ForgeRock,1,1
+GitLab,1,1
+Intel,1,1
+Jenkins,1,1
+Langflow,1,1
+Laravel,1,1
+Meta,1,1
+Mozilla,1,1
+Netwrix,1,1
+NextGen Healthcare,1,1
+Nx,1,1
+PHP,1,1
+PHP Group,1,1
+PTC,1,1
+Quest,1,1
+Rejetto,1,1
+Samba,1,1
+Sitecore,1,1
+SysAid,1,1
+TanStack,1,1
+Telerik,1,1
+TerraMaster,1,1
+VMware Tanzu,1,1
+WSO2,1,1
+WebPros,1,1
+WebRTC,1,1
+Webmin,1,1
+ZK Framework,1,1
+dotCMS,1,1

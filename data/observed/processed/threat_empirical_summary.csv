@@ -1,0 +1,15 @@
+metric,value,unit,numerator,denominator,interpretation
+source_rows,1999,rows,,,
+unique_source_rows,1988,rows,,,
+attacked_hospital_event_records,149,records,,,
+unique_attacked_hospitals,148,hospitals,,,
+unique_attack_events,74,events,,,
+attack_date_min,2016-01-01,date,,,
+attack_date_max,2021-12-17,date,,,
+er_diversion_fraction,0.3087248322147651,fraction of attacked hospital-events with observed flag,46,149,Observed operational endpoint; not equivalent to modeled downtime.
+cancel_or_delay_fraction,0.4899328859060403,fraction of attacked hospital-events with observed flag,73,149,Observed operational endpoint; not equivalent to modeled downtime.
+either_diversion_or_cancel_delay_fraction,0.5704697986577181,fraction of jointly observed attacked hospital-events,85,149,
+both_diversion_and_cancel_delay_fraction,0.22818791946308725,fraction of jointly observed attacked hospital-events,34,149,
+multi_hospital_event_fraction,0.25675675675675674,fraction of attack events,19,74,Directly exposes the single-facility model's missing event breadth.
+median_attacked_hospitals_per_event,1.0,hospitals per event,,,
+max_attacked_hospitals_per_event,22,hospitals per event,,,

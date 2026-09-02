@@ -8,6 +8,8 @@ Our model compares a flat reference configuration with a layered portfolio that 
 
 That is the encouraging part. The important warning is that the size of the benefit changed when we shortened the simulation time step. The direction survived every joint stress setting we tested; the percentage reduction did not. This repository includes that failed numerical check because it changed what we believe the study can honestly claim.
 
+The repository now also contains a separate observed-data layer. It analyzes the public THREAT hospital ransomware event file and a frozen CISA Known Exploited Vulnerabilities catalog. Those records establish real event breadth, operational outcomes, and documented ransomware-linked vulnerabilities. They do **not** identify per-edge spread, detection, containment, or control efficacy. The bridge analysis therefore reports construct mismatches and model failures instead of tuning the simulation until it resembles the observations.
+
 
 ![Distribution of paired effects. Negative values favor the layered portfolio.](results/figures/fine_step_paired_effect_distribution.png)
 
@@ -36,6 +38,7 @@ We measure disruption as service-hours lost across seven modeled services:
 | [`study`](study) | Protocols, parameter register, and retained deviations |
 | [`data/public_validation`](data/public_validation) | Fifteen-minute validation data and corrected diagnostics |
 | [`data/fine_step_replication`](data/fine_step_replication) | Frozen five-minute primary and joint-stress data |
+| [`data/observed`](data/observed) | Public hospital-event and vulnerability records, provenance, deterministic summaries, and the observed-to-simulation bridge |
 | [`results`](results) | Compact result summaries and figures |
 | [`docs/manuscript`](docs/manuscript) | Compiled paper, editable LaTeX, bibliography, and figures |
 | [`docs/evidence`](docs/evidence) | Source map, literature-search record, and assumption audit |
@@ -59,7 +62,7 @@ pytest
 python -m grrc.cli validate --no-report
 ```
 
-The expected result is **56 passing tests** and **12/12 behavioral validation checks**.
+The expected result is **59 passing tests** and **12/12 behavioral validation checks**.
 
 ## Reproduce the fresh studies
 
@@ -69,6 +72,9 @@ The full study takes considerably longer than the test suite. The configurations
 # Frozen five-minute replication
 python scripts/run_fine_step_replication.py
 python scripts/analyze_fine_step_replication.py
+
+# Real-world evidence layer; this does not run new simulations
+python scripts/analyze_observed_data.py
 
 # Public-evidence validation and diagnostics
 python scripts/run_public_validation.py
@@ -81,6 +87,8 @@ python scripts/audit_derived_metrics.py \
 ```
 
 Before rerunning a frozen study, read the matching protocol and [`study/DEVIATIONS.md`](study/DEVIATIONS.md). Do not overwrite retained diagnostic files or combine development, corrected, and replication results.
+
+The observed-data analysis is deterministic and uses the frozen public snapshots already committed under `data/observed/raw`.
 
 ## Manuscript
 

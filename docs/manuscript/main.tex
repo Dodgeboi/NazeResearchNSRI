@@ -7,6 +7,8 @@
 \usepackage{enumitem}
 \usepackage{xcolor}
 \usepackage{caption}
+\usepackage{booktabs}
+\usepackage{tabularx}
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage{fancyhdr}
 \usepackage{balance}
@@ -15,7 +17,7 @@
 \definecolor{linkblue}{HTML}{244E6B}
 \hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=linkblue,
   pdfauthor={Ashish Agrawal; Mukil Dharanidharan; Naman Upadhyay},
-  pdftitle={Layered Controls and Service Disruption in a Synthetic Hospital Network}}
+  pdftitle={Layered Controls and Service Disruption in a Synthetic Hospital Network with Observational Benchmarks}}
 \captionsetup{font=footnotesize,labelfont=bf,justification=raggedright,
   singlelinecheck=false,skip=4pt}
 \setlength{\parindent}{1em}
@@ -44,13 +46,14 @@
 
 \twocolumn[
 \begin{minipage}{\textwidth}
-\small\sffamily\MakeUppercase{Original computational study}\hfill
-Pre-external-validation manuscript
+\small\sffamily\MakeUppercase{Empirically benchmarked computational study}\hfill
+Pre-predictive-validation manuscript
 \vspace{5pt}
 \hrule
 \vspace{12pt}
 {\fontsize{20}{23}\selectfont\bfseries Layered Controls and Service
-Disruption in a Synthetic Hospital Network: A Paired Monte Carlo Analysis\par}
+Disruption in a Synthetic Hospital Network: A Paired Monte Carlo Analysis
+with Observational Benchmarks\par}
 \vspace{8pt}
 {\normalsize Ashish Agrawal\textsuperscript{1} \quad
 Mukil Dharanidharan\textsuperscript{1} \quad
@@ -62,32 +65,36 @@ Naman Upadhyay\textsuperscript{1}\par}
 \vspace{8pt}
 \small
 \noindent\textbf{Abstract}\quad
-Public ransomware studies show what happened to hospitals, but they cannot show
-how the same disruption would have unfolded under a different set of controls.
-We built a Monte Carlo model of ransomware-like movement through a synthetic
-hospital network and measured the resulting loss of seven digital services.
-Baseline and layered-control runs shared the same topology, entry point, and
-event-level random values, so each scenario served as its own comparison. Our
-first 15-minute analysis favored the layered portfolio, but a diagnostic showed
-that the size of the effect changed with the simulation step. We therefore
-froze a new five-minute protocol and ran 500 fresh pairs. Mean weighted
-service-hours lost fell from 193.4 in the reference runs to 33.9 with basic
-segmentation, faster detection and isolation, and protected backups. The mean
-paired change was $-159.5$ hours. The 95\% bootstrap interval ran from
-$-166.1$ to $-152.7$. Loss was lower in 451 pairs, unchanged in 48, and
-higher in one.
-The layered portfolio also had a lower mean in all 128 joint stress settings,
-although the median reduction was 28.7\% and the fifth percentile was 3.1\%.
-The model did not reproduce the multi-week disruptions reported in public
-studies. Our result is therefore about the direction of a synthetic comparison,
-not the real-world effectiveness of these controls. Hospital IT and clinical
-operations review would be needed before the model could support a local
-decision.
+Public ransomware studies document hospital disruption but cannot replay the
+same event under different controls. We built a Monte Carlo model of
+ransomware-like movement through a synthetic hospital network and compared a
+flat reference with basic segmentation, faster detection and isolation, and
+protected backups. Paired runs shared topology, entry point, and event-level
+random values. A time-step diagnostic changed the size of the initial effect,
+so we froze a five-minute protocol and ran 500 fresh pairs. Mean weighted
+service-hours lost fell from 193.4 to 33.9; the mean paired change was
+$-159.5$ hours (95\% bootstrap interval, $-166.1$ to $-152.7$). Loss was lower
+in 451 pairs, tied in 48, and higher in one. All 128 joint stress settings
+favored the layered portfolio on their mean, but the median reduction was
+28.7\% and the fifth percentile was 3.1\%.
+
+We then added a non-calibrating bridge to real data. The public THREAT deposit
+yielded 149 attacked hospital-event records across 74 ransomware events;
+30.9\% carried an emergency-diversion flag, 49.0\% carried a
+cancellation/delay flag, and 19 events involved multiple hospitals. A frozen
+CISA catalog contained 1,687 vulnerabilities exploited in the wild, including
+352 tagged for known ransomware use. These observations did not identify a
+spread hazard or control effect. Instead, they exposed construct and structural
+failures: operational flags are not equivalent to binary modeled service-hours,
+the simulator cannot represent multi-hospital events, and its reference cases
+recovered faster than the roughly three-week hospital-volume pattern. The
+simulation result is therefore a directional within-model comparison, not a
+real-world effectiveness estimate.
 \vspace{5pt}
 
 \noindent\textbf{Keywords}\quad healthcare cybersecurity; ransomware;
 Monte Carlo simulation; common random numbers; service continuity; model
-verification; sensitivity analysis
+verification; observational benchmarking; external validity
 \vspace{12pt}
 \end{minipage}
 ]
@@ -232,6 +239,38 @@ parameter register. Clock-time hazards and durations were converted for the
 five-minute replication. These are stress ranges, not estimates for the
 hospital sector.
 
+\subsection{Observed datasets and linkage rules}
+
+We kept observed records outside the synthetic scenario banks. The first source
+was the public THREAT hospital/market event file deposited with the replication
+materials for \citet{neprash2026} \citep{neprashdata2025}. It contains Medicare
+identifiers, attack dates, event identifiers, emergency-diversion and
+cancellation/delay flags, nearest-neighbor indicators, and up to seven origin
+event identifiers. The public preview contained 1,999 rows. We trimmed display
+whitespace, retained all 14 columns, and collapsed duplicate attacked
+hospital-event rows by Medicare identifier, THREAT identifier, and attack date,
+taking the maximum of duplicate operational flags. The resulting analysis set
+contained 149 attacked hospital-event records, 148 distinct hospitals, and 74
+events from 2016 through 2021. This is organization-level public information,
+not patient-level data.
+
+The second source was CISA's Known Exploited Vulnerabilities catalog, frozen at
+version 2026.09.01 \citep{cisakev2026}. We retained the catalog metadata and
+all 1,687 records, then selected the 352 entries whose
+\codefield{knownRansomwareCampaignUse} field was \codefield{Known}. Vendor,
+product, CVE, date, and required-action fields provide auditable provenance for
+future entry scenarios. Catalog membership does not measure hospital exposure,
+attack frequency, exploit success, patch effectiveness, or the probability
+that ransomware caused a healthcare incident.
+
+Before looking for numerical similarity, we classified each observed-to-model
+mapping as a direct structural check, a low-comparability operational proxy, a
+construct bridge, a duration-pattern check, or scenario provenance only. We did
+not fit any transition, detection, containment, or recovery parameter to these
+records, and we did not generate new simulations. The purpose was to identify
+where an existing output has a defensible observational interpretation and
+where the model lacks the construct entirely.
+
 \subsection{Portfolios and pairing}
 
 The reference used a flat graph, the posture's baseline patch and response
@@ -288,9 +327,10 @@ setting. Robustness required a negative primary interval, lower mean loss in at
 least 95\% of settings, and a positive fifth percentile of setting-specific
 relative reduction. This success rule concerns model behavior only.
 
-Fifty-six unit and invariant tests and twelve behavioral validation cases
+Fifty-nine unit and invariant tests and twelve behavioral validation cases
 covered transitions, pairing, seed reproduction, segmentation, patching,
-isolation, backup behavior, dependencies, budgets, and export. An independent
+isolation, backup behavior, dependencies, budgets, export, observed-data
+deduplication, and source-count consistency. An independent
 script recomputed all three derived ratios from raw numerators, denominators,
 and final-service flags. The study follows the transparency intent of the
 STRESS reporting guideline \citep{monks2019}. We retained the protocols,
@@ -407,6 +447,55 @@ disruptions documented in public incident reports \citep{neprash2022}. The
 model therefore fails that empirical duration pattern under its reference
 recovery values. We do not interpret modeled recovery time as a prediction.
 
+\subsection{Observed-data benchmark}
+
+The 149 deduplicated attacked hospital-event records included 46 with an
+emergency-diversion flag (30.9\%), 73 with a cancellation/delay flag (49.0\%),
+and 85 with either flag (57.0\%). Nineteen of 74 events (25.7\%) affected more
+than one Medicare hospital in the file; the largest event covered 22. These
+descriptive results apply to the observed, publicly documented and
+Medicare-linkable event set. They are not sector probabilities.
+
+Table \ref{tab:bridge} records the external checks. The diversion and
+cancellation fields support the decision to measure services rather than only
+compromised assets, but they cannot calibrate the sustained-outage indicator.
+The event-breadth comparison is stronger: one facility per run is structurally
+incapable of reproducing the multi-hospital events in the data. The published
+hospital-volume result supplies another direct warning about duration: volume
+fell 17\% to 24\% in the first attack week and recovered over roughly three
+weeks \citep{neprash2026}, whereas every reference case in our 7-day diagnostic
+had technically recovered. These are different recovery constructs, and the
+modeled process is too fast even before that distinction is considered.
+
+\begin{table*}[t]
+\centering
+\caption{Observed-to-simulation bridge. Observational percentages describe
+the public source records, not hospital-sector incidence. ``Fail'' denotes a
+missing or contradicted structure, not a failed statistical goodness-of-fit
+test.}
+\label{tab:bridge}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}p{.25\textwidth}p{.28\textwidth}X@{}}
+\toprule
+Observed record & Existing model output & Interpretation \\
+\midrule
+Emergency diversion: 46/149 (30.9\%) & Sustained outage: 90.2\% reference,
+41.2\% layered & Low comparability; demand, staffing, policy, and regional
+capacity are absent, so no calibration was performed. \\
+Cancellation/delay: 73/149 (49.0\%) & Seven binary service-downtime outputs &
+Construct bridge only; modeled hours cannot be converted to canceled cases. \\
+Multi-hospital events: 19/74 (25.7\%) & Exactly one facility per run & Direct
+structural fail; multi-facility spread and regional spillover are impossible. \\
+Volume down 17--24\% in week 1; recovery about 3 weeks & 100\% reference
+recovery within 7 days & Duration-pattern fail; technical and operational
+recovery also differ in definition. \\
+CISA: 352/1,687 KEVs tagged for ransomware use & Generic vulnerability and
+patch scalars & Scenario provenance only; the catalog share is neither an
+attack probability nor patch efficacy. \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
 \subsection{Derived-metric reconciliation}
 
 Anne Lee's review noted that three secondary ratios had been excluded without a
@@ -460,11 +549,26 @@ incident-response plan, regulatory obligation, or procurement process.
 
 \subsection{Where the model breaks down}
 
-We do not have a dataset that measures hospital topology, permitted paths,
-attack transitions, detection and containment, restoration capacity, service
-dependencies, and control costs in the same incidents. As a result, the
-confidence intervals cover Monte Carlo variation inside our model and nothing
-more. They do not quantify structural error or transferability to a hospital.
+The real-data layer measures event timing and breadth, two operational flags,
+and ransomware-linked vulnerability identities. It does not measure hospital
+topology, permitted paths, attack transitions, detection and containment,
+restoration capacity, service dependencies, deployed control state, or control
+costs in the same incidents. It therefore reduces unsupported statements about
+what was observed but does not identify the model's mechanistic parameters. The
+confidence intervals cover Monte Carlo variation inside the model and nothing
+more. They do not quantify measurement error, selection, structural error, or
+transferability to a hospital.
+
+The THREAT file contains publicly documented, Medicare-linkable records rather
+than a random hospital sample. A zero flag can mean that diversion or
+cancellation was not reported, not necessarily that it did not occur. The
+committed CSV is normalized from the public preview because original-file
+download requires an ICPSR sign-in. Before submission, the depositor's original
+CSV and codebook should replace it, with row and value reconciliation retained
+as a documented transformation. The CISA catalog is also curated: it contains
+known exploited vulnerabilities, not the denominator of vulnerabilities on a
+hospital's assets. Its 20.9\% ransomware-tagged share must not be interpreted as
+a base rate.
 
 The time-step diagnostic is the clearest technical weakness. Finer steps allow
 more rounds of propagation before the same clock-time response, and they change
@@ -515,6 +619,12 @@ reference. The ranking survived every joint stress setting at both 15- and
 settings showed only a small advantage, and absolute outcomes still changed
 with numerical resolution.
 
+The observed-data bridge narrows what that result can mean. It shows that the
+current model cannot represent multi-hospital events, cannot turn digital
+downtime into diversion or canceled care, and recovers too quickly relative to
+the published hospital-volume pattern. CISA records give future entry scenarios
+real vulnerability identities but do not supply probabilities or effect sizes.
+
 We are therefore confident about one result inside this model: the layered
 portfolio was directionally robust over the uncertainty we tested. We are not
 confident that the hours or percentages transfer to a hospital. The metric
@@ -525,14 +635,17 @@ are needed before using the framework for a real decision.
 
 \section*{Research integrity and declarations}
 
-\textbf{Ethics.} The study used synthetic networks, simulated trajectories, and
-public literature. It involved no participants, patient records, private
-organizational data, malware, or intervention. External interviews have not
+\textbf{Ethics.} The study used synthetic networks, simulated trajectories,
+public organization-level hospital-event records, a public vulnerability
+catalog, and published aggregate findings. It involved no participants,
+patient-level records, private organizational data, malware, or intervention.
+External interviews have not
 been conducted. Consent, privacy, and institutional requirements must be
 checked before collecting information from outside reviewers.
 
 \textbf{Data and code.} The revised code, protocols, configurations, manifests,
-raw outputs, processed summaries, tests, figures, and manuscript source are at
+raw simulation outputs, public observed-data snapshots, processed summaries,
+source hashes, tests, figures, and manuscript source are at
 \url{https://github.com/Dodgeboi/NazeResearchNSRI}. The development history is
 retained in that repository. Any submitted version should cite a fixed release
 or archived commit.

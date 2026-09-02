@@ -1,0 +1,9 @@
+metric,value,unit
+catalog_version,2026.09.01,version
+date_released,2026-09-01T19:22:46.2162Z,timestamp
+catalog_vulnerability_count,1687,vulnerabilities
+known_ransomware_use_count,352,vulnerabilities
+known_ransomware_use_fraction,0.2086544161232958,fraction of KEV catalog
+unique_ransomware_linked_vendors,79,vendors
+unique_ransomware_linked_products,178,vendor-product pairs
+median_remediation_window_days,21.0,days

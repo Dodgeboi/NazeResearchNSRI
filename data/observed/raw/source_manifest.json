@@ -1,0 +1,28 @@
+{
+  "created_at": "2026-09-01T20:30:00-05:00",
+  "sources": [
+    {
+      "id": "threat_openicpsr_v1",
+      "title": "Data and Code for: Hacked to Pieces? The Effect of Ransomware Attacks on Hospitals and Patients",
+      "authors": ["Hannah Neprash", "Claire McGlave", "Sayeh Nikpay"],
+      "repository": "openICPSR",
+      "version": "V1",
+      "doi": "10.3886/E235483V1",
+      "source_url": "https://www.openicpsr.org/openicpsr/project/235483/version/V1/view?path=/openicpsr/235483/fcr:versions/V1/Data/threat_database.csv&type=file",
+      "license": "CC BY 4.0",
+      "local_file": "threat_database.csv",
+      "local_representation": "The public browser preview was exported as normalized UTF-8 CSV: surrounding cell whitespace was removed, values were unchanged, and all 1,999 displayed records and 14 columns were retained.",
+      "sha256": "a78291e0b4acd35ef2048230f614f79a83747c043c28b57c05638069da27b536"
+    },
+    {
+      "id": "cisa_kev_2026_09_01",
+      "title": "CISA Catalog of Known Exploited Vulnerabilities",
+      "publisher": "Cybersecurity and Infrastructure Security Agency",
+      "catalog_version": "2026.09.01",
+      "date_released": "2026-09-01T19:22:46.2162Z",
+      "source_url": "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+      "local_file": "cisa_known_exploited_vulnerabilities.json",
+      "sha256": "c4560f429889b75a2010996b95d592498c4bdb8d88f4e3307cc4316ef4db675e"
+    }
+  ]
+}

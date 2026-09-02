@@ -16,8 +16,16 @@ The study protocols were written before their corresponding frozen runs. Manifes
 
 The current repository is expected to produce:
 
-- 56 passing unit and invariant tests;
+- 59 passing unit and invariant tests;
 - 12/12 behavioral validation checks; and
 - zero failures when the derived metrics are reconstructed from fresh raw files.
+
+The observed-data products can be rebuilt without running a simulation:
+
+```bash
+python scripts/analyze_observed_data.py
+```
+
+`data/observed/raw/source_manifest.json` records the source version and SHA-256 hash for each public snapshot. CISA's live feed changes over time, so reproduction must use the committed snapshot unless a refresh is explicitly treated as a new data release. The THREAT file is a normalized export of the public openICPSR preview; replacing it with the depositor's original download is a presubmission verification task, not an invisible overwrite.
 
 Confidence intervals describe Monte Carlo uncertainty conditional on the model. They do not include uncertainty from missing mechanisms, incorrect assumptions, or transfer to real hospitals.

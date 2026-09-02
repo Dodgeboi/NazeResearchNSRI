@@ -2,6 +2,18 @@
 
 This directory contains the fresh public-evidence studies used in the current manuscript. Each study keeps raw simulation rows separate from processed summaries.
 
+## `observed`
+
+This is the non-simulation evidence layer. It contains:
+
+- the public THREAT hospital/market ransomware event file from openICPSR V1;
+- CISA's 2026-09-01 Known Exploited Vulnerabilities catalog;
+- hashes, source URLs, version and license information;
+- deterministic hospital-event and ransomware-linked-CVE summaries; and
+- a bridge table that states whether each observational endpoint is comparable to an existing simulation output.
+
+The bridge is deliberately non-calibrating. Emergency-department diversion, canceled or delayed care, hospital volume, binary modeled service downtime, and technical recovery are different constructs. The analysis records those differences instead of converting one into another without data.
+
 ## `public_validation`
 
 The 15-minute validation phase contains:

@@ -14,3 +14,5 @@ In the 128-setting joint stress analysis, every setting favored the layered port
 The figures in this directory are generated from committed CSV files. Negative values in the paired-effect plot favor the layered portfolio.
 
 These are conditional model results, not measurements of real hospitals or estimates of clinical harm.
+
+Real-world records and their summaries are stored under `data/observed`, not mixed into this simulation-results directory. The main empirical findings used as external checks are 74 ransomware events covering 149 attacked hospital-event records; 30.9% had an emergency-diversion flag, 49.0% had a cancellation/delay flag, and 25.7% of events affected more than one hospital. These endpoints are not numerically interchangeable with modeled service-hours.
