@@ -1,0 +1,13 @@
+profile,preference_scenario,portfolio,budget_points,within_budget,augmented_chebyshev_score,mean_hours_lost,tail_hours_lost_cvar90,catastrophic_probability,nonrecovery_probability,implementation_cost_points,operational_burden_points,weight_mean_hours_lost,weight_tail_hours_lost_cvar90,weight_catastrophic_probability,weight_nonrecovery_probability,weight_implementation_cost_points,weight_operational_burden_points
+high_capacity,balanced,seg-flat|patch+0|det1|iso0|bak-connected|idm0,15,1,0.0850062588,2.823333333,17.42222222,0.06666666667,0,3,2,0.1666666667,0.1666666667,0.1666666667,0.1666666667,0.1666666667,0.1666666667
+high_capacity,continuity_first,seg-flat|patch+0|det1|iso0|bak-connected|idm0,15,1,0.02551126584,2.823333333,17.42222222,0.06666666667,0,3,2,0.3,0.25,0.2,0.15,0.05,0.05
+high_capacity,tail_risk_averse,seg-flat|patch+0|det1|iso0|bak-connected|idm0,15,1,0.02550375528,2.823333333,17.42222222,0.06666666667,0,3,2,0.1,0.35,0.3,0.15,0.05,0.05
+high_capacity,resource_constrained,seg-flat|patch+0|det0|iso0|bak-isolated|idm0,15,1,0.1294847761,6.739444444,38.64722222,0.2,0,2,2,0.15,0.1,0.1,0.1,0.3,0.25
+intermediate_capacity,balanced,seg-basic|patch+0|det1|iso0|bak-connected|idm0,10,1,0.1040663543,72.94499999,157.4527778,0.6,0.03333333333,6,4,0.1666666667,0.1666666667,0.1666666667,0.1666666667,0.1666666667,0.1666666667
+intermediate_capacity,continuity_first,seg-least_privilege|patch+1|det1|iso0|bak-connected|idm0,10,1,0.05095,5.884166667,23.97222222,0.1,0.03333333333,10,9,0.3,0.25,0.2,0.15,0.05,0.05
+intermediate_capacity,tail_risk_averse,seg-least_privilege|patch+1|det1|iso0|bak-connected|idm0,10,1,0.05095,5.884166667,23.97222222,0.1,0.03333333333,10,9,0.1,0.35,0.3,0.15,0.05,0.05
+intermediate_capacity,resource_constrained,seg-flat|patch+0|det1|iso0|bak-connected|idm0,10,1,0.09354053334,107.1702778,165.6416666,0.8,0.03333333333,3,2,0.15,0.1,0.1,0.1,0.3,0.25
+resource_constrained,balanced,seg-flat|patch+0|det1|iso0|bak-connected|idm0,5,1,0.1038880947,185.5977778,253.3361111,0.9,0.03333333333,3,2,0.1666666667,0.1666666667,0.1666666667,0.1666666667,0.1666666667,0.1666666667
+resource_constrained,continuity_first,seg-flat|patch+0|det1|iso0|bak-isolated|idm0,5,1,0.102,131.7105556,186.6888889,0.9,0,5,4,0.3,0.25,0.2,0.15,0.05,0.05
+resource_constrained,tail_risk_averse,seg-flat|patch+0|det1|iso0|bak-isolated|idm0,5,1,0.1525,131.7105556,186.6888889,0.9,0,5,4,0.1,0.35,0.3,0.15,0.05,0.05
+resource_constrained,resource_constrained,seg-flat|patch+0|det0|iso0|bak-isolated|idm0,5,1,0.1303866253,241.5669444,333.9222222,0.9333333333,0.1,2,2,0.15,0.1,0.1,0.1,0.3,0.25

@@ -1,0 +1,14 @@
+# Normalized operational-burden scenario points.
+#
+# These weights encode implementation and workflow burden for decision
+# analysis. They are NOT measured hospital staffing hours, dollar costs, or
+# clinical-effect estimates. Conclusions must be repeated across alternative
+# weights and reviewed by hospital IT/security and clinical-operations staff.
+burdens:
+  basic_segmentation: 2
+  least_privilege_segmentation: 4
+  patch_level_upgrade: 3
+  detection_improvement: 2
+  rapid_isolation: 3
+  protected_backups: 2
+  identity_controls: 3

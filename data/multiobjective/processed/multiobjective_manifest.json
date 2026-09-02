@@ -1,0 +1,15 @@
+{
+  "design": "six-objective Pareto analysis of paired scenario replays",
+  "raw_results": "data\\multiobjective\\raw\\multiobjective_portfolio_optimization_results.csv",
+  "config": "configs\\multiobjective_portfolio.yaml",
+  "bootstrap_samples": 500,
+  "costs": "normalized scenario points; not dollars",
+  "operational_burdens": "normalized scenario points; not measured staffing burden",
+  "outputs": {
+    "objective_summary": "data\\multiobjective\\processed\\portfolio_objective_summary.csv",
+    "pareto_frontier": "data\\multiobjective\\processed\\portfolio_pareto_frontier.csv",
+    "preference_scenarios": "data\\multiobjective\\processed\\portfolio_preference_scenarios.csv",
+    "pareto_stability": "data\\multiobjective\\processed\\portfolio_pareto_stability.csv",
+    "benchmark_comparison": "data\\multiobjective\\processed\\portfolio_benchmark_comparison.csv"
+  }
+}

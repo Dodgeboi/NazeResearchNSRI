@@ -1,0 +1,13 @@
+profile,budget,n_candidates,trials_per_candidate,selected_portfolio,reselection_rate,n_distinct_bootstrap_winners,n_bootstrap_samples
+resource_constrained,5,14,30,seg-flat|patch+0|det1|iso0|bak-isolated|idm0,1,1,500
+resource_constrained,10,63,30,seg-least_privilege|patch+0|det1|iso0|bak-isolated|idm0,0.484,11,500
+resource_constrained,15,136,30,seg-least_privilege|patch+3|det1|iso0|bak-connected|idm0,0.678,7,500
+resource_constrained,20,182,30,seg-least_privilege|patch+3|det1|iso0|bak-isolated|idm1,0.33,11,500
+intermediate_capacity,5,14,30,seg-flat|patch+0|det1|iso0|bak-isolated|idm0,0.858,4,500
+intermediate_capacity,10,58,30,seg-least_privilege|patch+1|det1|iso0|bak-connected|idm0,0.818,8,500
+intermediate_capacity,15,113,30,seg-least_privilege|patch+2|det1|iso0|bak-connected|idm0,0.262,16,500
+intermediate_capacity,20,140,30,seg-least_privilege|patch+2|det1|iso1|bak-connected|idm0,0.072,21,500
+high_capacity,5,13,30,seg-flat|patch+0|det1|iso0|bak-connected|idm0,0.164,11,500
+high_capacity,10,47,30,seg-basic|patch+0|det1|iso0|bak-connected|idm0,0.032,44,500
+high_capacity,15,82,30,seg-basic|patch+0|det1|iso0|bak-connected|idm0,0.014,74,500
+high_capacity,20,95,30,seg-basic|patch+0|det1|iso0|bak-connected|idm0,0.014,86,500

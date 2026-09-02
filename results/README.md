@@ -1,5 +1,13 @@
 # Results
 
+## Primary multi-objective study
+
+The paired discovery bank contains 12,960 executions across 432 profile-candidates. Fifty-five candidates were on a point-estimate discovery frontier. The frozen rule admitted 57 finalists to 8,550 fresh paired holdout executions. Forty-nine finalists were non-dominated in holdout, and 46 of 52 tested discovery-frontier candidates survived: 22/28 resource-constrained, 19/19 intermediate-capacity, and 5/5 high-capacity.
+
+No candidate minimized all six objectives. Figures prefixed `multiobjective_` show the held-out frontier, declared benchmark strategies, and discovery-to-holdout survival. Cost and burden are normalized scenario points, not observed economic or staffing quantities.
+
+## Earlier paired replication
+
 The manuscript's main result comes from the frozen five-minute replication:
 
 - 500 paired scenarios;

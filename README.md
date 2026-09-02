@@ -1,17 +1,15 @@
-# Modeling hospital service disruption during ransomware
+# Multi-objective hospital ransomware defense portfolios
 
-We started this project with a question that sounded simple: if the same synthetic hospital network is exposed to the same ransomware-like event, how much difference does a layered set of defenses make?
+This repository asks a decision question: which synthetic defense portfolios remain efficient when average disruption, tail disruption, sustained outage, recovery, implementation cost, and operational burden are all reported separately?
 
-The answer turned out to be less simple than the first results suggested.
+The primary study exactly enumerates 192 composable portfolios, resolves behaviorally identical configurations within three capacity profiles, and compares every candidate on common latent scenarios. Discovery used 12,960 executions. A finalist rule was frozen before 57 candidates were evaluated on 8,550 fresh paired holdout executions. Forty-six of 52 discovery-frontier finalists remained non-dominated on holdout data. There was no universal winner.
 
-Our model compares a flat reference configuration with a layered portfolio that combines basic segmentation, faster detection and isolation, and protected backups. In a fresh bank of 500 paired scenarios, the layered portfolio produced less modeled service disruption in 451 cases, tied in 48, and performed worse in one. The mean fell from 193.4 to 33.9 weighted service-hours lost.
-
-That is the encouraging part. The important warning is that the size of the benefit changed when we shortened the simulation time step. The direction survived every joint stress setting we tested; the percentage reduction did not. This repository includes that failed numerical check because it changed what we believe the study can honestly claim.
+The result is deliberately not a procurement recommendation. Cost and burden are normalized scenario points, and all simulated outcomes are conditional on an uncalibrated synthetic model. The useful product is an auditable way to expose trade-offs, budget infeasibility, and selection instability.
 
 The repository now also contains a separate observed-data layer. It analyzes the public THREAT hospital ransomware event file and a frozen CISA Known Exploited Vulnerabilities catalog. Those records establish real event breadth, operational outcomes, and documented ransomware-linked vulnerabilities. They do **not** identify per-edge spread, detection, containment, or control efficacy. The bridge analysis therefore reports construct mismatches and model failures instead of tuning the simulation until it resembles the observations.
 
 
-![Distribution of paired effects. Negative values favor the layered portfolio.](results/figures/fine_step_paired_effect_distribution.png)
+![Held-out cost and disruption trade-offs by profile.](results/figures/multiobjective_holdout_frontier.png)
 
 ## What is being modeled
 
@@ -38,6 +36,7 @@ We measure disruption as service-hours lost across seven modeled services:
 | [`study`](study) | Protocols, parameter register, and retained deviations |
 | [`data/public_validation`](data/public_validation) | Fifteen-minute validation data and corrected diagnostics |
 | [`data/fine_step_replication`](data/fine_step_replication) | Frozen five-minute primary and joint-stress data |
+| [`data/multiobjective`](data/multiobjective) | Paired discovery and fresh holdout portfolio data, frozen selection protocol, frontiers, and stability estimates |
 | [`data/observed`](data/observed) | Public hospital-event and vulnerability records, provenance, deterministic summaries, and the observed-to-simulation bridge |
 | [`results`](results) | Compact result summaries and figures |
 | [`docs/manuscript`](docs/manuscript) | Compiled paper, editable LaTeX, bibliography, and figures |
@@ -62,7 +61,7 @@ pytest
 python -m grrc.cli validate --no-report
 ```
 
-The expected result is **59 passing tests** and **12/12 behavioral validation checks**.
+The expected result is **70 passing tests** and **12/12 behavioral validation checks**.
 
 ## Reproduce the fresh studies
 
@@ -75,6 +74,20 @@ python scripts/analyze_fine_step_replication.py
 
 # Real-world evidence layer; this does not run new simulations
 python scripts/analyze_observed_data.py
+
+# Multi-objective discovery analysis from committed raw data
+python scripts/analyze_multiobjective_portfolios.py \
+  --raw data/multiobjective/raw/multiobjective_portfolio_optimization_results.csv \
+  --out data/multiobjective/processed \
+  --bootstrap 500
+
+# Holdout analysis is regenerated from the committed holdout trials
+python scripts/analyze_multiobjective_portfolios.py \
+  --raw data/multiobjective/raw/multiobjective_holdout_results.csv \
+  --out data/multiobjective/holdout_processed \
+  --bootstrap 1000
+
+python scripts/generate_multiobjective_figures.py
 
 # Public-evidence validation and diagnostics
 python scripts/run_public_validation.py
@@ -99,5 +112,5 @@ The observed-data analysis is deterministic and uses the frozen public snapshots
 
 ## AI use
 
-Claude, and Codex were used for code suggestions, debugging, organization, and language revision. Their output was not used as evidence. Numerical claims were regenerated from code and CSV files, and literature claims were checked against the cited sources. The authors remain responsible for understanding the model, approving the text, and correcting errors.
+Claude, ChatGPT, and Codex were used for code suggestions, debugging, organization, literature-search terms, and language revision. Their output was not used as evidence. Numerical claims were regenerated from code and CSV files, and literature claims were checked against the cited sources. The authors remain responsible for understanding the model, approving the text, and correcting errors.
 

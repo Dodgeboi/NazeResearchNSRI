@@ -1,0 +1,13 @@
+profile,benchmark_strategy,portfolio,profile_budget_points,within_profile_budget,mean_hours_lost,tail_hours_lost_cvar90,catastrophic_probability,nonrecovery_probability,implementation_cost_points,operational_burden_points
+high_capacity,flat_reference,seg-flat|patch+0|det0|iso0|bak-connected|idm0,15,1,12.96766667,71.40055556,0.24,0,0,0
+high_capacity,layered_heuristic,seg-basic|patch+0|det1|iso1|bak-isolated|idm0,15,1,3.557666667,17.49,0.02666666667,0,13,9
+high_capacity,maximum_control_stack,seg-least_privilege|patch+1|det1|iso1|bak-isolated|idm1,15,0,3.317277778,16.04166667,0.02666666667,0,21,17
+high_capacity,budget_efficiency_heuristic,seg-flat|patch+1|det0|iso0|bak-connected|idm0,15,1,5.507888889,25.37277778,0.1133333333,0.006666666667,2,3
+intermediate_capacity,flat_reference,seg-flat|patch+0|det0|iso0|bak-connected|idm0,10,1,191.4801111,288.1761111,0.9,0.05333333333,0,0
+intermediate_capacity,layered_heuristic,seg-basic|patch+0|det1|iso1|bak-isolated|idm0,10,0,41.86266667,141.65,0.5066666667,0.01333333333,13,9
+intermediate_capacity,maximum_control_stack,seg-least_privilege|patch+2|det1|iso1|bak-isolated|idm1,10,0,4.877277778,21.56444444,0.08666666667,0.006666666667,23,20
+intermediate_capacity,budget_efficiency_heuristic,seg-flat|patch+0|det0|iso0|bak-isolated|idm0,10,1,135.7578333,219.735,0.9,0.02666666667,2,2
+resource_constrained,flat_reference,seg-flat|patch+0|det0|iso0|bak-connected|idm0,5,1,317.9123889,377.3427778,0.9733333333,0.4266666667,0,0
+resource_constrained,layered_heuristic,seg-basic|patch+0|det1|iso1|bak-isolated|idm0,5,0,133.597,208.8627778,0.88,0.03333333333,13,9
+resource_constrained,maximum_control_stack,seg-least_privilege|patch+3|det1|iso1|bak-isolated|idm1,5,0,29.23277778,155.5311111,0.3,0.01333333333,25,23
+resource_constrained,budget_efficiency_heuristic,seg-flat|patch+0|det1|iso0|bak-connected|idm0,5,1,198.9170556,287.9022222,0.9533333333,0.09333333333,3,2

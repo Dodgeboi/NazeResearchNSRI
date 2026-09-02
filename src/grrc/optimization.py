@@ -90,30 +90,48 @@ CONTROL_COLUMNS = [
 ]
 
 
-def evaluate_candidate_portfolios(cfg: Config) -> pd.DataFrame:
-    """Monte Carlo evaluation of every *distinct* candidate per profile.
-
-    Duplicate configurations (same resolved settings under a profile) are
-    collapsed to one representative before evaluation, so no configuration
-    is double-counted or compared against itself on a different network.
-
-    Returns the raw per-trial DataFrame (also exported by ``optimize``).
-    """
+def build_candidate_specs(
+        cfg: Config) -> tuple[list[TrialSpec], dict[str, DefensePortfolio]]:
+    """Build the paired scenario bank for optimizer discovery."""
     opt = cfg.optimization
     entries = cfg.experiment.entry_points
     specs: list[TrialSpec] = []
     portfolios: dict[str, DefensePortfolio] = {}
     tid = OPT_ID_OFFSET
-    for profile in opt.profiles:
-        for p in distinct_portfolios_for_profile(cfg, profile):
+    scenario_id = OPT_ID_OFFSET
+    for profile_index, profile in enumerate(opt.profiles):
+        candidates = distinct_portfolios_for_profile(cfg, profile)
+        for p in candidates:
             portfolios.setdefault(p.name, p)
-            for k in range(opt.trials_per_portfolio):
+        for k in range(opt.trials_per_portfolio):
+            sid = scenario_id + profile_index * opt.trials_per_portfolio + k
+            entry = entries[k % len(entries)]
+            for p in candidates:
                 specs.append(TrialSpec(
                     trial_id=tid, experiment="optimization",
                     facility=opt.facility, profile=profile,
-                    portfolio=p.name, entry_point=entries[k % len(entries)],
-                    master_seed=cfg.seed))
+                    portfolio=p.name, entry_point=entry,
+                    master_seed=cfg.seed, scenario_id=sid, paired=True))
                 tid += 1
+    return specs, portfolios
+
+
+def evaluate_candidate_portfolios(cfg: Config) -> pd.DataFrame:
+    """Paired Monte Carlo evaluation of every distinct candidate per profile.
+
+    Duplicate configurations (same resolved settings under a profile) are
+    collapsed to one representative before evaluation, so no configuration
+    is double-counted or compared against itself on a different network.
+
+    Every candidate within a profile is replayed on the same scenario bank.
+    Topology, patch draws, entry node, and event-level random fields therefore
+    remain aligned across portfolios.  Earlier exploratory optimizer runs used
+    separate trial-id streams for every candidate; those files remain useful
+    for discovery but must not be used for final portfolio rankings.
+
+    Returns the raw per-trial DataFrame (also exported by ``optimize``).
+    """
+    specs, portfolios = build_candidate_specs(cfg)
     return run_specs(cfg, specs, portfolios=portfolios,
                      desc=f"{cfg.mode}:optimize")
 

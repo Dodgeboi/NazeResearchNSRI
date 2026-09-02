@@ -1,0 +1,28 @@
+{
+  "mode": "multiobjective_portfolio",
+  "master_seed": 5726001,
+  "n_trials": 12960,
+  "distinct_candidates_per_profile": {
+    "resource_constrained": 192,
+    "intermediate_capacity": 144,
+    "high_capacity": 96
+  },
+  "profiles": [
+    "resource_constrained",
+    "intermediate_capacity",
+    "high_capacity"
+  ],
+  "budgets": [
+    5,
+    10,
+    15,
+    20
+  ],
+  "cost_scale_factors": [
+    0.5,
+    0.75,
+    1.0,
+    1.25,
+    1.5
+  ]
+}

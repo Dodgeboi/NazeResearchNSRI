@@ -16,7 +16,7 @@ The study protocols were written before their corresponding frozen runs. Manifes
 
 The current repository is expected to produce:
 
-- 59 passing unit and invariant tests;
+- 70 passing unit and invariant tests;
 - 12/12 behavioral validation checks; and
 - zero failures when the derived metrics are reconstructed from fresh raw files.
 
@@ -29,3 +29,9 @@ python scripts/analyze_observed_data.py
 `data/observed/raw/source_manifest.json` records the source version and SHA-256 hash for each public snapshot. CISA's live feed changes over time, so reproduction must use the committed snapshot unless a refresh is explicitly treated as a new data release. The THREAT file is a normalized export of the public openICPSR preview; replacing it with the depositor's original download is a presubmission verification task, not an invisible overwrite.
 
 Confidence intervals describe Monte Carlo uncertainty conditional on the model. They do not include uncertainty from missing mechanisms, incorrect assumptions, or transfer to real hospitals.
+
+## Multi-objective portfolio study
+
+Discovery used 30 common scenarios for every resolved candidate within each profile. The frozen finalist protocol is `data/multiobjective/processed/multiobjective_holdout_protocol.json`; it records the rule, seed, sample size, and all 57 candidate identities before holdout outcomes were generated. Holdout uses 150 fresh common scenarios per finalist and 1,000 paired bootstrap resamples.
+
+Cost and burden values in this study are normalized scenario points. They are versioned in `configs/multiobjective_portfolio.yaml` and `configs/defense_burdens.yaml`; they are not observed dollars, staffing hours, or estimates of implementation difficulty.
