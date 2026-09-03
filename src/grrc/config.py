@@ -17,7 +17,9 @@ from typing import Any
 
 import yaml
 
-from .enums import BackupStrategy, EntryPoint, SegmentationLevel
+from .endpoints import DEFAULT_SUSTAINED_OUTAGE_MIN_SERVICES
+from .enums import (BackupStrategy, CLINICAL_SERVICES, EntryPoint,
+                    SegmentationLevel)
 
 
 class ConfigError(ValueError):
@@ -158,7 +160,16 @@ class SimulationSpec:
     restore_duration: int = 2           # steps a node spends RESTORING
     no_backup_restore_penalty: float = 0.25  # rate multiplier w/o backups
     service_functional_fraction: float = 0.60  # supporting-node threshold
-    catastrophic_service_steps: int = 8  # continuous clinical outage > this
+    # Sustained clinical-outage endpoint, defined once in grrc.endpoints and
+    # frozen in study/MODEL_SPECIFICATION.md. A clinical service qualifies
+    # when its longest continuous outage strictly exceeds
+    # ``sustained_outage_service_steps``; a trial meets the endpoint when at
+    # least ``sustained_outage_min_services`` of the four clinical services
+    # qualify. Formerly ``catastrophic_service_steps`` with an implicit,
+    # undocumented k = 1 that contradicted the manuscript (audit ISSUE-001).
+    # ``load_config`` still accepts the legacy key.
+    sustained_outage_service_steps: int = 8
+    sustained_outage_min_services: int = DEFAULT_SUSTAINED_OUTAGE_MIN_SERVICES
     early_stop: bool = True
 
     def validate(self) -> None:
@@ -180,8 +191,12 @@ class SimulationSpec:
                "identity_breach_multiplier must be >= 1")
         _check(0.0 < self.service_functional_fraction <= 1.0,
                "service_functional_fraction must be in (0,1]")
-        _check(self.catastrophic_service_steps >= 1,
-               "catastrophic_service_steps must be >= 1")
+        _check(self.sustained_outage_service_steps >= 1,
+               "sustained_outage_service_steps must be >= 1")
+        _check(1 <= self.sustained_outage_min_services
+               <= len(CLINICAL_SERVICES),
+               "sustained_outage_min_services must be in "
+               f"1..{len(CLINICAL_SERVICES)}")
 
 
 @dataclass
@@ -405,6 +420,18 @@ def load_config(path: str | Path) -> Config:
             name: ProfileSpec(**vals) for name, vals in
             raw["profiles"].items()
         }
+    # Legacy key mapping. Archived configs name the sustained-outage
+    # duration ``catastrophic_service_steps``. Accept it so frozen protocols
+    # stay loadable, but never write it back out.
+    sim_raw = raw.get("simulation")
+    if isinstance(sim_raw, dict) and "catastrophic_service_steps" in sim_raw:
+        if "sustained_outage_service_steps" in sim_raw:
+            raise ConfigError(
+                "config sets both 'catastrophic_service_steps' and "
+                "'sustained_outage_service_steps'; keep only the latter")
+        sim_raw["sustained_outage_service_steps"] = sim_raw.pop(
+            "catastrophic_service_steps")
+
     for section, attr in (
         ("network", cfg.network), ("simulation", cfg.simulation),
         ("experiment", cfg.experiment), ("sweep", cfg.sweep),
@@ -426,7 +453,8 @@ def load_defense_costs(path: str | Path) -> dict[str, float]:
     required = {
         "basic_segmentation", "least_privilege_segmentation",
         "patch_level_upgrade", "detection_improvement",
-        "rapid_isolation", "protected_backups", "identity_controls",
+        "rapid_isolation", "periodic_backups", "protected_backups",
+        "identity_controls",
     }
     missing = required - set(costs)
     if missing:

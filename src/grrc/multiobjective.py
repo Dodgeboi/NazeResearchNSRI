@@ -19,28 +19,27 @@ import yaml
 
 from .config import Config
 from .defenses import (DefensePortfolio, PATCH_LADDER, _ladder_index,
-                       enumerate_portfolios, portfolio_cost)
+                       backup_increment_points, enumerate_portfolios,
+                       portfolio_cost, segmentation_increment_points)
+from .endpoints import (PARETO_OBJECTIVES,
+                        SUSTAINED_OUTAGE_K_LADDER,
+                        sustained_outage_column)
 from .enums import BackupStrategy, SegmentationLevel
 from .experiments import run_specs
 from .models import TrialSpec
 from .utilities import ensure_dirs, write_csv
 
 
-OBJECTIVES: tuple[str, ...] = (
-    "mean_hours_lost",
-    "tail_hours_lost_cvar90",
-    "catastrophic_probability",
-    "nonrecovery_probability",
-    "implementation_cost_points",
-    "operational_burden_points",
-)
+#: The six minimized objectives, read from the endpoint registry so the
+#: optimizer cannot keep a private list that drifts from the manuscript.
+OBJECTIVES: tuple[str, ...] = PARETO_OBJECTIVES
 
 PREFERENCE_WEIGHTS: dict[str, dict[str, float]] = {
     "balanced": {name: 1 / len(OBJECTIVES) for name in OBJECTIVES},
     "continuity_first": {
         "mean_hours_lost": 0.30,
         "tail_hours_lost_cvar90": 0.25,
-        "catastrophic_probability": 0.20,
+        "sustained_outage_probability": 0.20,
         "nonrecovery_probability": 0.15,
         "implementation_cost_points": 0.05,
         "operational_burden_points": 0.05,
@@ -48,7 +47,7 @@ PREFERENCE_WEIGHTS: dict[str, dict[str, float]] = {
     "tail_risk_averse": {
         "mean_hours_lost": 0.10,
         "tail_hours_lost_cvar90": 0.35,
-        "catastrophic_probability": 0.30,
+        "sustained_outage_probability": 0.30,
         "nonrecovery_probability": 0.15,
         "implementation_cost_points": 0.05,
         "operational_burden_points": 0.05,
@@ -56,7 +55,7 @@ PREFERENCE_WEIGHTS: dict[str, dict[str, float]] = {
     "resource_constrained": {
         "mean_hours_lost": 0.15,
         "tail_hours_lost_cvar90": 0.10,
-        "catastrophic_probability": 0.10,
+        "sustained_outage_probability": 0.10,
         "nonrecovery_probability": 0.10,
         "implementation_cost_points": 0.30,
         "operational_burden_points": 0.25,
@@ -75,7 +74,8 @@ def load_operational_burdens(path: str | Path) -> dict[str, float]:
     required = {
         "basic_segmentation", "least_privilege_segmentation",
         "patch_level_upgrade", "detection_improvement",
-        "rapid_isolation", "protected_backups", "identity_controls",
+        "rapid_isolation", "periodic_backups", "protected_backups",
+        "identity_controls",
     }
     missing = required - set(burdens)
     if missing:
@@ -91,10 +91,8 @@ def portfolio_operational_burden(
         ) -> float:
     """Return normalized workflow/implementation burden scenario points."""
     total = 0.0
-    if portfolio.segmentation == SegmentationLevel.BASIC:
-        total += burdens["basic_segmentation"]
-    elif portfolio.segmentation == SegmentationLevel.LEAST_PRIVILEGE:
-        total += burdens["least_privilege_segmentation"]
+    total += segmentation_increment_points(profile, portfolio, dict(burdens))
+    total += backup_increment_points(profile, portfolio, dict(burdens))
 
     target_patch = None
     if portfolio.patch_coverage_override is not None:
@@ -111,8 +109,6 @@ def portfolio_operational_burden(
         total += burdens["detection_improvement"]
     if portfolio.rapid_isolation:
         total += burdens["rapid_isolation"]
-    if portfolio.backup_override == BackupStrategy.ISOLATED:
-        total += burdens["protected_backups"]
     if portfolio.identity_controls:
         total += burdens["identity_controls"]
     return float(total)
@@ -135,10 +131,12 @@ def aggregate_objectives(raw: pd.DataFrame, cfg: Config,
                          burdens: Mapping[str, float],
                          *, cvar_alpha: float = 0.90) -> pd.DataFrame:
     """Aggregate trial rows into six-objective candidate summaries."""
+    outage_column = sustained_outage_column(
+        cfg.simulation.sustained_outage_min_services)
     required = {
         "profile", "portfolio", "weighted_service_hours_lost",
-        "catastrophic", "recovered_within_horizon", "step_minutes",
-        "n_nodes", "defensive_isolation_node_steps",
+        "recovered_within_horizon", "step_minutes",
+        "n_nodes", "defensive_isolation_node_steps", outage_column,
     }
     missing = required - set(raw.columns)
     if missing:
@@ -167,7 +165,16 @@ def aggregate_objectives(raw: pd.DataFrame, cfg: Config,
             "mean_hours_lost": float(loss.mean()),
             "tail_hours_lost_cvar90": conditional_value_at_risk(
                 loss, cvar_alpha),
-            "catastrophic_probability": float(group["catastrophic"].mean()),
+            "sustained_outage_probability": float(
+                group[outage_column].mean()),
+            # Prespecified sensitivity: every k is reported alongside the
+            # primary one, so a reader who prefers a different service count
+            # can read their own number off the same table without rerunning
+            # anything.
+            **{f"sustained_outage_probability_k{k}": float(
+                   group[sustained_outage_column(k)].mean())
+               for k in SUSTAINED_OUTAGE_K_LADDER
+               if sustained_outage_column(k) in group.columns},
             "nonrecovery_probability": float(
                 1.0 - group["recovered_within_horizon"].mean()),
             "implementation_cost_points": portfolio_cost(
@@ -417,7 +424,9 @@ def bootstrap_pareto_stability(raw: pd.DataFrame, cfg: Config,
                                n_boot: int = 500,
                                seed: int = 20260718) -> pd.DataFrame:
     """Estimate Pareto-inclusion frequency using paired scenario resampling."""
-    required = {"profile", "portfolio", "scenario_id", "paired"}
+    outage_column = sustained_outage_column(
+        cfg.simulation.sustained_outage_min_services)
+    required = {"profile", "portfolio", "scenario_id", "paired", outage_column}
     missing = required - set(raw.columns)
     if missing:
         raise ValueError(f"raw results missing pairing fields: {sorted(missing)}")
@@ -442,7 +451,7 @@ def bootstrap_pareto_stability(raw: pd.DataFrame, cfg: Config,
             raise ValueError("paired scenario matrix contains missing cells")
         shape = (len(names), expected)
         loss = indexed["weighted_service_hours_lost"].to_numpy(float).reshape(shape)
-        catastrophic = indexed["catastrophic"].to_numpy(float).reshape(shape)
+        outage = indexed[outage_column].to_numpy(float).reshape(shape)
         recovered = indexed["recovered_within_horizon"].to_numpy(float).reshape(shape)
         static = (aggregate_objectives(group, cfg, costs, burdens)
                   .set_index("portfolio").loc[names])
@@ -463,7 +472,7 @@ def bootstrap_pareto_stability(raw: pd.DataFrame, cfg: Config,
             objective_matrix = np.column_stack((
                 sampled_loss.mean(axis=1),
                 cvar,
-                catastrophic[:, draw].mean(axis=1),
+                outage[:, draw].mean(axis=1),
                 1.0 - recovered[:, draw].mean(axis=1),
                 implementation_cost,
                 operational_burden,

@@ -61,8 +61,8 @@ def compute_tokens(cfg: Config) -> dict[str, str]:
         "N_PER_PORTFOLIO": str(cfg.optimization.trials_per_portfolio),
         "CAT_TARGET": f"{cfg.optimization.catastrophic_target:.0%}",
         "HORIZON_HOURS": f"{cfg.simulation.max_steps * cfg.simulation.step_minutes / 60:.0f}",
-        "CATASTROPHIC_STEPS": str(cfg.simulation.catastrophic_service_steps),
-        "CATASTROPHIC_HOURS": f"{cfg.simulation.catastrophic_service_steps * cfg.simulation.step_minutes / 60:.0f}",
+        "CATASTROPHIC_STEPS": str(cfg.simulation.sustained_outage_service_steps),
+        "CATASTROPHIC_HOURS": f"{cfg.simulation.sustained_outage_service_steps * cfg.simulation.step_minutes / 60:.0f}",
     }
 
     # --- What sample size would it take to certify the target at all? -----

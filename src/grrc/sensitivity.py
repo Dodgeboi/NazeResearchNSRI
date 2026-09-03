@@ -71,8 +71,8 @@ PARAM_GRID = [
      ("simulation", "restore_rate_fraction"), 0.01, 0.04, 0.02, "recovery"),
     ("service_functional_fraction", "Service-up node threshold",
      ("simulation", "service_functional_fraction"), 0.5, 0.7, 0.6, "outcome"),
-    ("catastrophic_service_steps", "Catastrophic-outage threshold (steps)",
-     ("simulation", "catastrophic_service_steps"), 6, 12, 8, "outcome"),
+    ("sustained_outage_service_steps", "Catastrophic-outage threshold (steps)",
+     ("simulation", "sustained_outage_service_steps"), 6, 12, 8, "outcome"),
 ]
 
 

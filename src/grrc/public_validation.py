@@ -116,8 +116,8 @@ def _clock_time_config(cfg: Config, step_minutes: int,
     sim.restore_rate_fraction *= scale
     sim.restore_rate_min *= scale
     sim.restore_duration = max(1, int(round(sim.restore_duration / scale)))
-    sim.catastrophic_service_steps = max(1, int(round(
-        sim.catastrophic_service_steps / scale)))
+    sim.sustained_outage_service_steps = max(1, int(round(
+        sim.sustained_outage_service_steps / scale)))
     for profile in out.profiles.values():
         profile.detection_delay_steps = max(1, int(round(
             profile.detection_delay_steps / scale)))

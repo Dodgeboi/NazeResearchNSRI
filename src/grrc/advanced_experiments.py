@@ -250,8 +250,8 @@ def run_structural_stress(cfg: Config, n_scenarios: int = 100
         ("fixed_detection", {"detection_model": "fixed"}),
         ("horizon_24h", {"max_steps": 96}),
         ("horizon_72h", {"max_steps": 288}),
-        ("catastrophic_threshold_1h", {"catastrophic_service_steps": 4}),
-        ("catastrophic_threshold_4h", {"catastrophic_service_steps": 16}),
+        ("catastrophic_threshold_1h", {"sustained_outage_service_steps": 4}),
+        ("catastrophic_threshold_4h", {"sustained_outage_service_steps": 16}),
         ("equal_service_weights", {"service_weights": "equal"}),
         ("clinical_priority_weights", {"service_weights": "clinical"}),
         ("recovery_priority_weights", {"service_weights": "recovery"}),
@@ -267,9 +267,9 @@ def run_structural_stress(cfg: Config, n_scenarios: int = 100
                 changes["detection_model"])
         if "max_steps" in changes:
             setting_cfg.simulation.max_steps = int(changes["max_steps"])
-        if "catastrophic_service_steps" in changes:
-            setting_cfg.simulation.catastrophic_service_steps = int(
-                changes["catastrophic_service_steps"])
+        if "sustained_outage_service_steps" in changes:
+            setting_cfg.simulation.sustained_outage_service_steps = int(
+                changes["sustained_outage_service_steps"])
         weights = changes.get("service_weights")
         if weights == "equal":
             for name in vars(setting_cfg.service_weights):
@@ -291,7 +291,7 @@ def run_structural_stress(cfg: Config, n_scenarios: int = 100
             "detection_model_variant": setting_cfg.simulation.detection_model,
             "horizon_steps_variant": setting_cfg.simulation.max_steps,
             "catastrophic_threshold_steps_variant":
-                setting_cfg.simulation.catastrophic_service_steps,
+                setting_cfg.simulation.sustained_outage_service_steps,
             "service_weight_variant": str(weights or "reference"),
         }
         groups.append(SettingGroup(

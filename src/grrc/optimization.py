@@ -20,7 +20,8 @@ import numpy as np
 import pandas as pd
 
 from .config import Config, load_defense_costs
-from .defenses import (DefensePortfolio, effective_settings,
+from .defenses import (BACKUP_ORDER, SEGMENTATION_ORDER, _rung,
+                       DefensePortfolio, effective_settings,
                        enumerate_portfolios, portfolio_cost,
                        describe_portfolio)
 from .enums import BackupStrategy, SegmentationLevel
@@ -57,13 +58,68 @@ def distinct_portfolios_for_profile(
     give each a different random network so that noise — not the defense —
     could decide the 'winner'. We therefore keep exactly one representative
     per distinct resolved configuration, per profile.
+
+    Two correctness requirements, both of which the pre-rebuild version
+    missed:
+
+    * The resolution used for deduplication must be **identical** to the one
+      used when the trial actually runs, so the config's
+      ``rapid_isolation_success`` and ``detection_improvement_factor`` are
+      passed through exactly as :func:`grrc.simulation.run_trial` passes
+      them. Deduplicating under library defaults while executing under
+      config values can merge or split the wrong candidates.
+    * The surviving representative must be **named for what it does**. Under
+      upgrade-only precedence a strong profile clamps many declared postures
+      up to its own baseline, so ``seg-flat|...|bak-connected`` and
+      ``seg-least_privilege|...|bak-isolated`` can resolve identically in the
+      high-capacity profile. Keeping whichever came first in enumeration
+      order would label a least-privilege, isolated-backup configuration
+      "seg-flat ... bak-connected" in every table and figure. We therefore
+      prefer the candidate whose *declared* posture already equals the
+      resolved posture, then the cheapest, then lexicographic order, so the
+      choice is deterministic and the label is honest.
     """
     prof = cfg.profiles[profile]
-    seen: dict[tuple, DefensePortfolio] = {}
+
+    def preference(portfolio: DefensePortfolio, eff) -> tuple:
+        """Rank candidates that resolve identically; lowest tuple wins.
+
+        Ranked on (1) whether the declared segmentation is honest about the
+        resolved one, (2) the same for backup, (3) how many ladder rungs the
+        candidate *claims* to buy — fewer is better, so a clamped-away
+        upgrade is not advertised — and (4) name, purely for determinism.
+        No cost table is consulted, so this ordering is stable under the
+        cost-sensitivity scenarios.
+        """
+        declared_seg = portfolio.segmentation
+        declared_bak = portfolio.backup_override
+        claimed_rungs = (
+            _rung(SEGMENTATION_ORDER, declared_seg)
+            if declared_seg is not None else 0)
+        claimed_rungs += (
+            _rung(BACKUP_ORDER, declared_bak)
+            if declared_bak is not None else 0)
+        claimed_rungs += portfolio.patch_boost_levels
+        return (
+            int(declared_seg is not None and declared_seg != eff.segmentation),
+            int(declared_bak is not None
+                and declared_bak.value != eff.backup_strategy),
+            claimed_rungs,
+            portfolio.name,
+        )
+
+    seen: dict[tuple, tuple] = {}
     for p in enumerate_portfolios():
-        key = _resolved_key(effective_settings(prof, p))
-        seen.setdefault(key, p)
-    return list(seen.values())
+        eff = effective_settings(
+            prof, p,
+            rapid_isolation_success=cfg.simulation.rapid_isolation_success,
+            detection_improvement_factor=(
+                cfg.simulation.detection_improvement_factor))
+        key = _resolved_key(eff)
+        rank = preference(p, eff)
+        if key not in seen or rank < seen[key][0]:
+            seen[key] = (rank, p)
+    return [portfolio for _, portfolio in seen.values()]
 
 
 def _portfolio_components(p: DefensePortfolio) -> dict[str, int]:

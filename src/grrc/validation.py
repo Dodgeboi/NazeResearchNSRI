@@ -358,8 +358,8 @@ def check_budget_respected() -> ValidationResult:
     cfg = default_config()
     costs = {"basic_segmentation": 3, "least_privilege_segmentation": 5,
              "patch_level_upgrade": 2, "detection_improvement": 3,
-             "rapid_isolation": 5, "protected_backups": 2,
-             "identity_controls": 4}
+             "rapid_isolation": 5, "periodic_backups": 1,
+             "protected_backups": 2, "identity_controls": 4}
     rng = np.random.default_rng(11)
     rows = []
     profile = cfg.profiles["resource_constrained"]

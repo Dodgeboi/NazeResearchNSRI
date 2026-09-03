@@ -32,6 +32,7 @@ COSTS = {
     "patch_level_upgrade": 2,
     "detection_improvement": 3,
     "rapid_isolation": 5,
+    "periodic_backups": 1,
     "protected_backups": 2,
     "identity_controls": 4,
 }
@@ -57,6 +58,13 @@ def _raw_two_portfolios() -> pd.DataFrame:
                 "scenario_id": scenario_id,
                 "paired": 1,
                 "weighted_service_hours_lost": loss,
+                # k-of-n sustained-outage indicators. The fixture makes the
+                # k = 2 primary indicator the discriminating one and keeps the
+                # ladder monotone, as grrc.endpoints guarantees.
+                "sustained_clinical_outage_k1": int(loss >= 10),
+                "sustained_clinical_outage_k2": int(loss >= 20),
+                "sustained_clinical_outage_k3": int(loss >= 30),
+                "sustained_clinical_outage_k4": 0,
                 "catastrophic": int(loss >= 20),
                 "recovered_within_horizon": int(loss < 30),
                 "step_minutes": 5,

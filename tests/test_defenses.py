@@ -12,8 +12,8 @@ from grrc.utilities import REPO_ROOT
 
 COSTS = {"basic_segmentation": 3, "least_privilege_segmentation": 5,
          "patch_level_upgrade": 2, "detection_improvement": 3,
-         "rapid_isolation": 5, "protected_backups": 2,
-         "identity_controls": 4}
+         "rapid_isolation": 5, "periodic_backups": 1,
+         "protected_backups": 2, "identity_controls": 4}
 
 
 @pytest.fixture
@@ -118,10 +118,13 @@ def test_cost_scaling_is_linear(cfg):
 
 def test_enumerated_space_size_and_uniqueness():
     # 3 segmentation x 4 patch boosts (0..3, so 90% is reachable from the
-    # 25% baseline) x 2 detection x 2 isolation x 2 backup x 2 identity.
+    # 25% baseline) x 2 detection x 2 isolation x 3 backup rungs x 2 identity.
+    # The backup dimension enumerates the full connected/periodic/isolated
+    # ladder so that every resolved posture can be named honestly under
+    # upgrade-only precedence (audit ISSUE-005).
     space = list(enumerate_portfolios())
-    assert len(space) == 192
-    assert len({p.name for p in space}) == 192
+    assert len(space) == 288
+    assert len({p.name for p in space}) == 288
 
 
 def test_defense_costs_yaml_loads():

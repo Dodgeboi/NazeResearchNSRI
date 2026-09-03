@@ -30,6 +30,8 @@ import numpy as np
 
 from .config import Config
 from .defenses import EffectiveSettings
+from .endpoints import (max_streak_column, sustained_outage_column,
+                        sustained_outage_ladder)
 from .enums import (CLINICAL_SERVICES, NodeState, Privilege, Service, Zone)
 from .models import HospitalNetwork
 from .service_dependencies import service_availability
@@ -329,9 +331,14 @@ class RansomwareSimulation:
         functional = self.functional()
         final_avail = service_availability(
             net, functional, sim.service_functional_fraction)
-        catastrophic = any(
-            rec.max_streak[s] > sim.catastrophic_service_steps
-            for s in CLINICAL_SERVICES)
+        # Sustained clinical outage. The k-of-n rule is defined once in
+        # grrc.endpoints and evaluated here at every k, so a reader can read
+        # any k off the results without rerunning anything. The primary k is
+        # a config value, frozen in study/MODEL_SPECIFICATION.md.
+        outage_ladder = sustained_outage_ladder(
+            rec.max_streak, sim.sustained_outage_service_steps)
+        sustained_outage_primary = outage_ladder[
+            sim.sustained_outage_min_services]
         if last_clinical_unavail < 0:
             recovery_step = 0
         elif clinical_avail_at_end:
@@ -397,7 +404,21 @@ class RansomwareSimulation:
             # of clinical capacity.
             "pct_clinical_capacity_lost":
                 time_averaged_weighted_clinical_unavailability,
-            "catastrophic": int(catastrophic),
+            # Longest continuous outage per service. Persisted so the
+            # sustained-outage endpoint is recomputable offline at any k and
+            # any duration threshold, which the pre-rebuild schema made
+            # impossible (audit ISSUE-002).
+            **{max_streak_column(s): rec.max_streak[s] for s in Service},
+            **{sustained_outage_column(k): int(value)
+               for k, value in outage_ladder.items()},
+            "sustained_outage_min_services": sim.sustained_outage_min_services,
+            "sustained_outage_service_steps":
+                sim.sustained_outage_service_steps,
+            # Deprecated compatibility alias for the primary-k indicator. Old
+            # analyses read ``catastrophic``; it silently meant k = 1 before
+            # the rebuild. Prefer the explicit ``sustained_clinical_outage_k*``
+            # columns in new work.
+            "catastrophic": int(sustained_outage_primary),
             "defensive_isolation_node_steps":
                 self.defensive_isolation_node_steps,
             # --- recovery metrics ---

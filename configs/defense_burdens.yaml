@@ -10,5 +10,6 @@ burdens:
   patch_level_upgrade: 3
   detection_improvement: 2
   rapid_isolation: 3
+  periodic_backups: 1
   protected_backups: 2
   identity_controls: 3
