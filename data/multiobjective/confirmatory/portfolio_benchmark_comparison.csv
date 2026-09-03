@@ -1,0 +1,8 @@
+profile,benchmark_strategy,portfolio,profile_budget_points,within_profile_budget,mean_hours_lost,tail_hours_lost_cvar90,sustained_outage_probability,nonrecovery_probability,implementation_cost_points,operational_burden_points
+high_capacity,maximum_control_stack,seg-least_privilege|patch+1|det1|iso1|bak-isolated|idm1,15,1,3.214916667,16.40751029,0,0.00125,14,11
+intermediate_capacity,layered_heuristic,seg-basic|patch+0|det1|iso1|bak-isolated|idm0,10,1,31.169,120.107,0.332,0.016,9,6
+intermediate_capacity,maximum_control_stack,seg-least_privilege|patch+2|det1|iso1|bak-isolated|idm1,10,0,4.775633333,22.12166667,0.024,0.004,19,17
+resource_constrained,flat_reference,seg-flat|patch+0|det0|iso0|bak-connected|idm0,5,1,322.7111905,377.4511905,0.9657142857,0.4914285714,0,0
+resource_constrained,layered_heuristic,seg-basic|patch+0|det1|iso1|bak-isolated|idm0,5,0,133.4047381,221.3119048,0.8457142857,0.03142857143,13,9
+resource_constrained,maximum_control_stack,seg-least_privilege|patch+3|det1|iso1|bak-isolated|idm1,5,0,27.18971429,148.8104762,0.14,0.01142857143,25,23
+resource_constrained,budget_efficiency_heuristic,seg-flat|patch+0|det1|iso0|bak-connected|idm0,5,1,201.5099524,291.8159524,0.9342857143,0.07142857143,3,2

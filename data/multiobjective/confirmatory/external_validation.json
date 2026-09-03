@@ -1,0 +1,132 @@
+{
+  "registry_version": 1,
+  "registry_frozen_at": "2026-09-03T02:40:00+00:00",
+  "raw_results": "data/multiobjective/confirmatory/multiobjective_confirmatory_results.csv",
+  "benchmarks_total": 9,
+  "verdict_counts": {
+    "not_addressable": 2,
+    "not_scored": 3,
+    "fail": 2,
+    "scored": 2
+  },
+  "computed_verdicts_for_scored_benchmarks": {
+    "crowdstrike_short_outage": "fail",
+    "attack_stopped_before_encryption": "consistent"
+  },
+  "headline": "Of 9 frozen external benchmarks, 2 could be scored numerically. The rest are unaddressable or unscoreable because the model has no output of that construct: it runs one facility, over a 72-hour horizon, with binary per-step service availability. That ratio is the validation result, and it bounds what any conclusion in this study can claim. Of the benchmarks that could be scored or compared at all, none passes cleanly: the model's recovery behaviour is anchored to neither the technical-outage reference nor the ransomware incident record, and it assigns probability zero to the quarter of observed events that affected more than one hospital.",
+  "benchmarks": [
+    {
+      "id": "recovery_duration_bins",
+      "name": "Incident recovery-duration distribution",
+      "used_for": "validation",
+      "verdict": "not_addressable",
+      "population": "374 publicly reported ransomware attacks on U.S. health care delivery organizations, 2016-2021. Not hospitals only.",
+      "structural_reason": "The simulation horizon is 72 hours and the restoration rate implies a few-hundred-node estate recovers within hours once contained. The model cannot place ANY mass beyond one week, so it cannot be compared against a distribution whose mass is mostly beyond one week. This is a failure boundary of the current design, not a passing or failing score. Addressing it requires the layered recovery endpoints (72 h, 21 d, 90 d, 180 d tail) that the model specification requires and this version does not implement.",
+      "observed_model_behaviour": ""
+    },
+    {
+      "id": "week_one_activity_loss",
+      "name": "Attacked-hospital activity decline in the first week",
+      "used_for": "validation",
+      "verdict": "not_scored",
+      "population": "U.S. hospitals with ransomware attacks, Medicare claims based",
+      "structural_reason": "Construct mismatch, and it is not a close one. The model reports weighted service-hours lost with binary per-step availability; the target is a change in patient volume. A hospital with a degraded but functioning EHR still admits patients, and the model has no representation of degraded operation, downtime procedures, or manual workarounds. Converting service-hours into volume would require exactly the patient-flow layer the model does not have. Reporting a number here would be manufacturing a validation.",
+      "observed_model_behaviour": ""
+    },
+    {
+      "id": "recovery_trajectory_three_weeks",
+      "name": "Return toward baseline volume over roughly three weeks",
+      "used_for": "validation",
+      "verdict": "fail",
+      "population": "U.S. hospitals with ransomware attacks",
+      "structural_reason": "Same horizon limitation as recovery_duration_bins. This is recorded as a fail rather than not_addressable because the direction of the discrepancy is unambiguous and informative: the model recovers optimistically fast relative to the public record, and any decision read off its recovery objective inherits that optimism.",
+      "observed_model_behaviour": "Technical recovery in the model completes far earlier than the observed three-week trajectory, and the horizon cannot represent the comparison window at all."
+    },
+    {
+      "id": "california_ed_and_admissions",
+      "name": "ED visits and inpatient admissions at attacked California hospitals",
+      "used_for": "validation",
+      "verdict": "not_scored",
+      "population": "attacked California hospitals",
+      "structural_reason": "Same construct mismatch as week_one_activity_loss, plus a horizon that ends before week 1 does.",
+      "observed_model_behaviour": ""
+    },
+    {
+      "id": "adjacent_ed_spillover",
+      "name": "Burden at emergency departments adjacent to an attacked hospital",
+      "used_for": "validation",
+      "verdict": "not_addressable",
+      "population": "one month-long U.S. attack and its neighboring EDs. A single regional case, not a national average.",
+      "structural_reason": "The simulator runs exactly one facility per trial and has no representation of a neighboring hospital, patient transfer, or diversion. There is no output of this construct at any parameter setting. This is the single clearest statement of the model's scope limit.",
+      "observed_model_behaviour": ""
+    },
+    {
+      "id": "multi_facility_breadth",
+      "name": "Share of attacks affecting more than one hospital",
+      "used_for": "validation",
+      "verdict": "fail",
+      "population": "74 hospital-linked events, 149 deduplicated hospital-event records. Publicly reported and Medicare-linkable events only; not a probability sample.",
+      "structural_reason": "A single-facility simulator cannot produce a multi-facility incident. Reported as an unambiguous fail rather than not_addressable because the target is directly comparable and the discrepancy is total: the model assigns probability zero to a quarter of the observed events.",
+      "observed_model_behaviour": "The model places all mass on exactly one facility, against a target of 25.7% multi-hospital events with a maximum of 22."
+    },
+    {
+      "id": "crowdstrike_short_outage",
+      "name": "Short-duration technical outage and recovery",
+      "used_for": "validation",
+      "verdict": "scored",
+      "population": "2,232 hospitals with observable data during a non-malicious global update failure; 759 with detected disruption",
+      "scoring": {
+        "computable": true,
+        "computed_verdict": "fail",
+        "model_median_outage_hours": 42.5,
+        "target_median_hours": 5.1,
+        "target_iqr_hours": [
+          2.5,
+          8.1
+        ],
+        "median_within_target_iqr": false,
+        "model_share_within_six_hours": 0.2533,
+        "target_share_within_six_hours": 0.581,
+        "share_absolute_error": 0.3277,
+        "trials_with_any_clinical_outage": 114150,
+        "trials_total": 137600,
+        "interpretation": "Read alongside recovery_trajectory_three_weeks, this is a two-sided failure and the more informative for it. Against the one directly observed large-scale technical outage the model is far too SLOW: its median clinical outage is several times the observed median and its six-hour recovery share is well below the observed one. Against the ransomware incident record the same restoration engine is far too FAST, finishing within a 72-hour horizon where the public distribution has most of its mass beyond a week. The model's recovery behaviour is therefore anchored to neither reference, and its non-recovery objective should be read as a within-model ordering device rather than a duration estimate."
+      },
+      "scoring_note": "This is the ONE benchmark the model's horizon can actually address, which is why it is scored numerically. It is a non-malicious update failure, so it validates the short-duration technical-restoration engine and nothing else. It is not a ransomware recovery distribution and must never be presented as one."
+    },
+    {
+      "id": "attack_stopped_before_encryption",
+      "name": "Share of attacks stopped before encryption",
+      "used_for": "validation",
+      "verdict": "scored",
+      "population": "self-reported healthcare ransomware victims across 17 countries, organizations of 100-5,000 employees",
+      "scoring": {
+        "computable": true,
+        "computed_verdict": "consistent",
+        "profile_spread": [
+          0.2115,
+          0.9691
+        ],
+        "model_share_contained_overall": 0.3642,
+        "model_share_contained_by_profile": {
+          "high_capacity": 0.9691,
+          "intermediate_capacity": 0.683,
+          "resource_constrained": 0.2115
+        },
+        "target_share": 0.53,
+        "absolute_error": 0.1658,
+        "note": "The model's spread across profiles is far wider than a single survey figure, because the profiles are declared scenarios rather than a sample of hospitals. Only gross inconsistency would be informative here."
+      },
+      "scoring_note": "Graded below administrative and peer-reviewed evidence, and reported as a loose consistency check rather than a target. A survey of victims across 17 countries and all organization sizes is not a U.S. hospital denominator. The comparison is informative only if the model is wildly outside the range."
+    },
+    {
+      "id": "control_adoption_prevalence",
+      "name": "Hospital control adoption prevalence",
+      "used_for": "scenario_design",
+      "verdict": "not_scored",
+      "population": "CHIME data from 377 hospitals, a 59-organization Censinet/AHA/KLAS study, and 20 hospital interviews",
+      "structural_reason": "This is adoption prevalence, not control effectiveness, and it is used to argue that the three declared profiles span a plausible range of real postures. It is deliberately NOT used as an effect size, and it is not a validation target. It is listed here so that a reader can see it was used for scenario design and nothing else.",
+      "observed_model_behaviour": ""
+    }
+  ]
+}

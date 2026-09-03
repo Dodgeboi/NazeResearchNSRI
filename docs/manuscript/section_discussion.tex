@@ -54,9 +54,10 @@ wrong answer exactly. What it does is make the wrongness locatable.
 \emph{Reporting bias.} Public ransomware incident data record what was
 publicly reported and linkable. A zero operational flag may mean ``not
 reported'' rather than ``did not occur'', and 67 of 374 events in the
-incident cohort have known disruption of unknown duration --- missingness
-that is plausibly informative, since longer or more severe incidents may be
-less likely to have a cleanly reported end date.
+incident cohort have known disruption of unknown duration
+\citep{neprash2022} --- missingness that is plausibly informative, since
+longer or more severe incidents may be less likely to have a cleanly
+reported end date.
 
 \emph{Vendor surveys.} Entry-vector and backup figures come from
 self-reported surveys spanning many countries and organization sizes, with
@@ -124,7 +125,9 @@ comparisons are seen, using the same freezing mechanism this study applies to
 its confirmatory protocol.
 
 Three model changes are prerequisites rather than refinements, and are named
-in the specification: layered recovery endpoints over 72 hours, 21 days, 90
-days and a 180-day tail; nonzero residual failure for isolated backups; and
+in the specification: layered recovery endpoints over \AcuteHorizonHours{}
+hours, \MinimumViableHorizonDays{} days and \FullRecoveryHorizonDays{} days
+with a \TailHorizonDays-day tail; nonzero residual failure for isolated
+backups; and
 either multi-facility structure or an explicit narrowing of the paper's scope
 to a single synthetic facility.

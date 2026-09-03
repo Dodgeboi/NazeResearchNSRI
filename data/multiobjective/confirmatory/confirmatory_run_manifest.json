@@ -1,0 +1,79 @@
+{
+  "code": {
+    "available": true,
+    "branch": "rebuild/wp0-wp2",
+    "commit": "95cd5ac7ebb15d815e7db964f80930bcf533211c",
+    "dirty": true,
+    "dirty_paths": [
+      "data/multiobjective/confirmatory/"
+    ]
+  },
+  "created_at": "2026-09-03T04:40:29+00:00",
+  "description": "Full-space confirmatory evaluation of every resolved candidate portfolio on a fresh paired scenario bank.",
+  "environment": {
+    "implementation": "CPython",
+    "machine": "x86_64",
+    "packages": {
+      "matplotlib": "3.11.0",
+      "networkx": "3.6.1",
+      "numpy": "2.5.1",
+      "pandas": "3.0.3",
+      "scipy": "1.18.0",
+      "yaml": "6.0.3"
+    },
+    "platform": "Linux-6.18.44-fc-v24-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "inputs": [
+    {
+      "bytes": 561,
+      "path": "configs/defense_burdens.yaml",
+      "sha256": "70647c2c1cc3d0a260ff06660c69c31b29fcffd743b16c4db40a18394730515a"
+    },
+    {
+      "bytes": 1057,
+      "path": "configs/defense_costs.yaml",
+      "sha256": "66e66f192c5e44cacd099ef747262639379006084819569353306517cc30e3e5"
+    },
+    {
+      "bytes": 2628,
+      "path": "configs/multiobjective_portfolio.yaml",
+      "sha256": "8b4ce785a8163925bab99b8a108d6b13ebee7c3a47cc90648355001d6fdb03d6"
+    },
+    {
+      "bytes": 20951,
+      "path": "study/protocols/multiobjective_confirmatory_v1.protocol.json",
+      "sha256": "ce22775ee8178db5d2420e5d380dde1ed7bfdd908c8bca70fdd0d82d171a2ed2"
+    }
+  ],
+  "outputs": [
+    {
+      "bytes": 70312592,
+      "path": "data/multiobjective/confirmatory/multiobjective_confirmatory_results.csv",
+      "sha256": "d7d1c1830b6c26079c5ac5326e1f422a8113b657be234c3e41c406b71f93006b"
+    }
+  ],
+  "parameters": {
+    "candidate_counts_by_profile": {
+      "high_capacity": 16,
+      "intermediate_capacity": 96,
+      "resource_constrained": 288
+    },
+    "master_seed": 4915337,
+    "sustained_outage_primary_k": 4,
+    "total_executions": 137600,
+    "trials_per_candidate": {
+      "high_capacity": 800,
+      "intermediate_capacity": 250,
+      "resource_constrained": 350
+    }
+  },
+  "protocol": {
+    "frozen_at": "2026-09-03T01:49:25+00:00",
+    "name": "multiobjective_confirmatory_v1",
+    "path": "study/protocols/multiobjective_confirmatory_v1.protocol.json",
+    "sha256": "fdf6777e4ba6b0886623ed6aecc64e6a808212547be6ee4ec40b4c8fbb66649e"
+  },
+  "run_id": "multiobjective_confirmatory_v1:fdf6777e4ba6",
+  "stage": "confirmation"
+}

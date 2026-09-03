@@ -2,19 +2,22 @@
   "code": {
     "available": true,
     "branch": "rebuild/wp0-wp2",
-    "commit": "1099ac7a79b53b0453297d3d280644771a3e2992",
+    "commit": "95cd5ac7ebb15d815e7db964f80930bcf533211c",
     "dirty": true,
     "dirty_paths": [
-      "docs/manuscript/main.tex",
+      "data/multiobjective/confirmatory/",
+      "docs/manuscript/generated_numbers_manifest.json",
+      "docs/manuscript/section_abstract.tex",
+      "docs/manuscript/section_conclusion.tex",
       "docs/manuscript/section_discussion.tex",
+      "docs/manuscript/section_discussion_finding.tex",
+      "docs/manuscript/section_results.tex",
       "ocs/manuscript/generated_numbers.tex",
       "scripts/audit_manuscript_claims.py",
-      "scripts/generate_manuscript_numbers.py",
-      "scripts/run_full_audit.py",
-      "study/external_validation_benchmarks.json"
+      "scripts/generate_manuscript_numbers.py"
     ]
   },
-  "created_at": "2026-09-03T03:19:35+00:00",
+  "created_at": "2026-09-03T04:51:19+00:00",
   "description": "LaTeX macros for every number the manuscript quotes, generated from committed result tables so that no result value is hand-typed in the manuscript.",
   "environment": {
     "implementation": "CPython",
@@ -35,6 +38,46 @@
       "bytes": 2628,
       "path": "configs/multiobjective_portfolio.yaml",
       "sha256": "8b4ce785a8163925bab99b8a108d6b13ebee7c3a47cc90648355001d6fdb03d6"
+    },
+    {
+      "bytes": 9435,
+      "path": "data/multiobjective/confirmatory/external_validation.json",
+      "sha256": "004daa44237326237c20fd4aefcf77a3a6a3a2e65d4e9ea23d828934ce452c8d"
+    },
+    {
+      "bytes": 1223,
+      "path": "data/multiobjective/confirmatory/portfolio_benchmark_comparison.csv",
+      "sha256": "3c0e57d6625df2680f5a316bd77fa8dafecb31bb47573cd840516fa79355eaac"
+    },
+    {
+      "bytes": 488,
+      "path": "data/multiobjective/confirmatory/portfolio_frontier_resolution.csv",
+      "sha256": "0b279a0fd752abb1a9a00787d137a4b05dcb41ec214a7d69f08567dabc7ef16d"
+    },
+    {
+      "bytes": 75411,
+      "path": "data/multiobjective/confirmatory/portfolio_full_space_vs_finalist.csv",
+      "sha256": "364bbb4f413046d4c20c144b3d06145bbae230cc790f20959cc6a7d49e1c8d1d"
+    },
+    {
+      "bytes": 52630,
+      "path": "data/multiobjective/confirmatory/portfolio_monte_carlo_error.csv",
+      "sha256": "48ce1ab131a021e9d31c58b17a317f48c74f78876f55b55578555a9c083c5b41"
+    },
+    {
+      "bytes": 71539,
+      "path": "data/multiobjective/confirmatory/portfolio_objective_summary.csv",
+      "sha256": "6c6a53ad88109a2c2de79d341be9a00538404e7287d99a24c8532c16a042ea46"
+    },
+    {
+      "bytes": 72356,
+      "path": "data/multiobjective/confirmatory/portfolio_pareto_frontier.csv",
+      "sha256": "3018d4b5fd868439c0eeae4d5e50c7df1635a88409e9eb589a21b2b1a993e0a7"
+    },
+    {
+      "bytes": 31736,
+      "path": "data/multiobjective/confirmatory/portfolio_pareto_stability.csv",
+      "sha256": "31f293b3c8a77493b0295d236c6f13dbcbcf974be40fe8a2fb2831cbeaffb952"
     },
     {
       "bytes": 4735560,
@@ -79,15 +122,20 @@
   ],
   "outputs": [
     {
-      "bytes": 4498,
+      "bytes": 12128,
       "path": "docs/manuscript/generated_numbers.tex",
-      "sha256": "84b4dcffa3eaaa683dbe9002018162bcec2f4415ab8d1fd4ef4725c4f94b8bd4"
+      "sha256": "74b1562273ef6b89beb957048a714944750de4d1c0f4ecd5ef0e195462610566"
     }
   ],
   "parameters": {
-    "macros_defined": 79
+    "macros_defined": 215
   },
-  "protocol": null,
+  "protocol": {
+    "frozen_at": "2026-09-03T01:49:25+00:00",
+    "name": "multiobjective_confirmatory_v1",
+    "path": "study/protocols/multiobjective_confirmatory_v1.protocol.json",
+    "sha256": "fdf6777e4ba6b0886623ed6aecc64e6a808212547be6ee4ec40b4c8fbb66649e"
+  },
   "run_id": "manuscript-numbers",
   "stage": "analysis"
 }

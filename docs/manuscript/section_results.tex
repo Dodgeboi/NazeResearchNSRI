@@ -1,2 +1,265 @@
-% Placeholder. Written from the confirmatory tables once the run completes.
-Placeholder section.
+\subsection{Candidate space}
+
+The confirmatory bank evaluated every resolved candidate in each profile ---
+\ConfirmResourceConstrainedCandidates{}, \ConfirmIntermediateCandidates{},
+and \ConfirmHighCapacityCandidates{} in the resource-constrained,
+intermediate-capacity, and high-capacity profiles --- on
+\ConfirmResourceConstrainedScenarios{}, \ConfirmIntermediateScenarios{}, and
+\ConfirmHighCapacityScenarios{} fresh paired scenarios each, for
+\ConfirmTotalExecutions{} executions in total.
+
+The candidate counts fall sharply with profile strength, and that is the
+first substantive consequence of separating capacity from controls. A
+high-capacity environment already owns least-privilege segmentation and
+isolated backups, so those are not decisions it can make. What remains is
+patching, detection, isolation, and identity controls:
+\ConfirmHighCapacityCandidates{} distinct configurations rather than the
+\EnumeratedPortfolios{} the enumeration nominally contains. Under the
+previous version's precedence rule the same profile appeared to face far
+more choices, many of them cheaper than doing nothing, because a candidate
+could sell back the segmentation and backup architecture the profile already
+had.
+
+Exactly one candidate per profile costs nothing: the profile's own untouched
+posture. Its mean weighted service-hours lost are
+\ConfirmResourceConstrainedFreeBaselineMeanLoss{},
+\ConfirmIntermediateFreeBaselineMeanLoss{}, and
+\ConfirmHighCapacityFreeBaselineMeanLoss{} respectively, and these are the
+reference points against which every purchase should be read.
+
+\subsection{Full-space versus finalist-only frontiers}
+
+Over the full space, \ConfirmFullSpaceFrontier{} candidates are
+non-dominated: \ConfirmResourceConstrainedNonDominated{},
+\ConfirmIntermediateNonDominated{}, and \ConfirmHighCapacityNonDominated{} by
+profile. Restricting attention to the \ConfirmFinalistLabelled{} candidates
+that the frozen discovery rule labels as finalists, and recomputing dominance
+within that subset alone, gives a frontier of \ConfirmFinalistOnlyFrontier{}.
+
+The two views disagree in both directions, and the disagreement is the point
+(Figure~\ref{fig:fullspace}).
+
+\textbf{\ConfirmFinalistOnlyArtifacts{} candidates are efficient only in the
+restricted view.} They appear non-dominated among the finalists and are
+dominated once the full space is present. In each case the dominating
+candidate is instructive rather than exotic. In the high-capacity profile the
+displaced candidate is dominated by the portfolio identical to it except for
+dropping identity controls: within this model, in that environment, identity
+controls cost four points and buy nothing detectable. Two
+intermediate-capacity candidates are displaced by portfolios that retain the
+profile's own periodic backup architecture instead of upgrading it.
+
+\textbf{\ConfirmNonFinalistsOnFrontier{} non-dominated candidates were never
+labelled as finalists at all.} A design that evaluated only the finalist set
+could not have shown them to a reader under any circumstances, and could not
+have reported that they existed. Of the \ConfirmFinalistLabelled{} labelled
+finalists, \ConfirmFinalistsSurviving{} remain non-dominated over the full
+space and \ConfirmFinalistsDisplaced{} do not.
+
+We report these magnitudes as modest, because they are. The discovery rule is
+not badly wrong: most of what it selects survives, and most of the frontier
+it would have shown is genuinely efficient. What it cannot do is tell a
+reader which of those two statements is true, because a restricted comparison
+contains no evidence about the candidates it excluded. That is a structural
+property of the design rather than a property of this dataset, and it is why
+the count is worth having at all.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{full_space_vs_finalist.pdf}
+\caption{Candidate counts at each stage. The gap between the third and fourth
+bars is an effect of the candidate set on the reported frontier, not an
+effect of the data. Panel subtitles give the number of candidates that appear
+efficient within the finalist subset but are dominated once every resolved
+candidate is present.}
+\label{fig:fullspace}
+\end{figure*}
+
+\subsection{Where the decision is live, and where it is not}
+
+The three profiles do not merely differ in degree; they pose different kinds
+of decision (Figure~\ref{fig:frontier}).
+
+\textbf{High-capacity: nothing worth buying.} Every one of the
+\ConfirmHighCapacityCandidates{} resolved candidates falls between
+\ConfirmHighCapacityMeanLossMin{} and \ConfirmHighCapacityMeanLossMax{}
+weighted service-hours. The entire purchasable improvement in this profile is
+\ConfirmHighCapacityMaxPurchasableImprovement{} weighted service-hours, and
+the best candidate within the \ConfirmHighCapacityBudget-point budget spends
+\ConfirmHighCapacityBestAffordableCost{} points to reach
+\ConfirmHighCapacityBestAffordableMeanLoss{} hours from a free baseline of
+\ConfirmHighCapacityFreeBaselineMeanLoss{}. Against a Monte Carlo standard
+error of \ConfirmHighCapacityWorstMeanLossStandardError{} hours, that
+improvement sits at the edge of what \ConfirmHighCapacityScenarios{} paired
+scenarios can resolve:
+\ConfirmHighCapacityIndistinguishablePairs{} of
+\ConfirmHighCapacityCandidatePairs{} candidate pairs
+(\ConfirmHighCapacityIndistinguishableShare\%) are separated by less than one
+combined standard error on every stochastic objective. The defensible reading
+is that in this modeled environment no purchasable control makes a detectable
+difference to disruption, and the frontier is driven by cost and burden
+alone.
+
+\textbf{Intermediate-capacity: the decision that matters.} The free baseline
+loses \ConfirmIntermediateFreeBaselineMeanLoss{} hours and the best candidate
+within the \ConfirmIntermediateBudget-point budget loses
+\ConfirmIntermediateBestAffordableMeanLoss{} at a cost of
+\ConfirmIntermediateBestAffordableCost{} points --- a modeled improvement of
+more than an order of magnitude, with sustained-outage probability at
+\ConfirmIntermediateBestAffordableOutage\%. This is the profile in which the
+six objectives genuinely trade against one another and in which a preference
+statement changes the answer.
+
+\textbf{Resource-constrained: the budget does not reach.} The free baseline
+loses \ConfirmResourceConstrainedFreeBaselineMeanLoss{} hours. The best
+candidate anywhere in the space reaches
+\ConfirmResourceConstrainedMeanLossMin{}, but the best candidate that fits
+the declared \ConfirmResourceConstrainedBudget-point budget reaches only
+\ConfirmResourceConstrainedBestAffordableMeanLoss{}, and its sustained-outage
+probability is \ConfirmResourceConstrainedBestAffordableOutage\%. Within
+budget that endpoint is close to immovable: the affordable options change
+mean disruption substantially while leaving multi-service clinical outage
+nearly certain. The honest statement is not that some affordable portfolio is
+adequate. It is that in this modeled environment the declared budget does not
+buy the outcome the endpoint measures.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{confirmatory_frontier.pdf}
+\caption{Cost against mean weighted service-hours lost, with Monte Carlo
+standard errors. Lines connect full-space non-dominated candidates in this
+two-objective projection; dominance is evaluated in all six. Note the
+vertical scales: the high-capacity panel spans under one service-hour.}
+\label{fig:frontier}
+\end{figure*}
+
+\subsection{Uncertainty and resolution}
+
+Worst-case Monte Carlo standard error on mean disruption is
+\ConfirmResourceConstrainedWorstMeanLossStandardError{},
+\ConfirmIntermediateWorstMeanLossStandardError{}, and
+\ConfirmHighCapacityWorstMeanLossStandardError{} weighted service-hours in
+the three profiles.
+
+The share of candidate pairs the scenario bank cannot reliably order is
+\ConfirmResourceConstrainedIndistinguishableShare\%,
+\ConfirmIntermediateIndistinguishableShare\%, and
+\ConfirmHighCapacityIndistinguishableShare\%. The per-profile scenario
+allocation was chosen precisely to attack this. At the
+\DiscoveryHighCapacityScenarios{} scenarios used in discovery, every one of
+the \DiscoveryHighCapacityCandidatePairs{} high-capacity pairs was
+indistinguishable; raising that profile alone to
+\ConfirmHighCapacityScenarios{} scenarios reduced it to
+\ConfirmHighCapacityIndistinguishablePairs{}. A uniform allocation would have
+spent scenarios where they were already ample and withheld them where they
+were scarce.
+
+Bootstrap Pareto inclusion is at least \StabilityThreshold{} for
+\ConfirmResourceConstrainedStableAtEighty{},
+\ConfirmIntermediateStableAtEighty{}, and
+\ConfirmHighCapacityStableAtEighty{} candidates respectively.
+
+\subsection{The sustained-outage endpoint at every $k$}
+
+Table~\ref{tab:kladder} reports the endpoint at every clinical service count.
+The values move by roughly three percentage points across the whole range of
+$k$, for the reason given in the methods: within this model the clinical
+estate is close to all-or-nothing (Figure~\ref{fig:bimodal}). A reader who
+disagrees with the primary $k = \PrimaryK$ can substitute any other and reach
+substantially the same conclusion. That is a statement about the model's
+behaviour, not a defence of the choice.
+
+\begin{table}[t]
+\centering
+\caption{Mean sustained-outage probability across candidates, at every
+clinical service count $k$. The primary analysis uses $k = \PrimaryK$.}
+\label{tab:kladder}
+\small
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Profile & $k=1$ & $k=2$ & $k=3$ & $k=4$ \\
+\midrule
+Resource-constrained & \ConfirmResourceConstrainedOutageKOneMean\% & \ConfirmResourceConstrainedOutageKTwoMean\% & \ConfirmResourceConstrainedOutageKThreeMean\% & \ConfirmResourceConstrainedOutageKFourMean\% \\
+Intermediate & \ConfirmIntermediateOutageKOneMean\% & \ConfirmIntermediateOutageKTwoMean\% & \ConfirmIntermediateOutageKThreeMean\% & \ConfirmIntermediateOutageKFourMean\% \\
+High-capacity & \ConfirmHighCapacityOutageKOneMean\% & \ConfirmHighCapacityOutageKTwoMean\% & \ConfirmHighCapacityOutageKThreeMean\% & \ConfirmHighCapacityOutageKFourMean\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{clinical_outage_bimodality.pdf}
+\caption{Number of clinical services sustaining a qualifying outage across
+the discovery bank. The near-binary shape is why the choice of $k$ is not
+load-bearing --- and it is an artifact of binary per-step service
+availability, not a property of real incidents.}
+\label{fig:bimodal}
+\end{figure}
+
+\subsection{External validation}
+
+Of \ValidationBenchmarks{} frozen external benchmarks, \ValidationScored{}
+could be scored numerically. \ValidationNotAddressable{} are not addressable
+because the model has no output of that construct at any parameter setting,
+and \ValidationNotScored{} cannot be scored because the model's quantity and
+the target's quantity are not the same thing. \ValidationFailed{} benchmarks
+fail. None passes.
+
+That ratio is the headline validation result and it bounds every conclusion
+above. Three failures are worth stating individually.
+
+\textbf{The restoration engine is anchored to neither reference.} Against the
+one directly observed large-scale technical hospital outage the model is far
+too slow: its median clinical outage is
+\ValidationOutageModelMedianHours{} modeled hours against an observed median
+of \ValidationOutageTargetMedianHours{}, and
+\ValidationOutageModelSixHourShare\% of disrupted trials recover within six
+hours against an observed \ValidationOutageTargetSixHourShare\%
+\citep{tully2025}. Against the ransomware incident record the same engine is
+far too fast, completing inside a \HorizonHours-hour horizon where the public
+duration distribution has most of its mass beyond a week
+\citep{neprash2022}. A model simultaneously too slow for a technical outage
+and too fast for a ransomware incident is anchored to neither, and its
+non-recovery objective should be read as a within-model ordering device
+rather than a duration estimate.
+
+\textbf{Multi-facility breadth fails outright.} The simulator runs one
+facility, so it assigns probability zero to roughly a quarter of publicly
+reported hospital-linked events --- those that affected more than one
+Medicare-certified hospital. This is a total discrepancy on a directly
+comparable target.
+
+\textbf{Regional spillover cannot be addressed at all.} The model has no
+representation of a neighboring hospital, patient transfer, or diversion, so
+the documented burden at adjacent emergency departments
+\citep{dameff2023,abouk2024} has no counterpart output to compare against.
+
+The one benchmark the model is not obviously wrong on is the share of
+incidents contained before clinical service loss, where the model's spread
+across profiles brackets the surveyed figure. We report that as consistency
+rather than a pass: a self-reported vendor survey spanning many countries and
+organization sizes is not a U.S. hospital denominator, and bracketing a point
+estimate with a range that wide is weak evidence.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{external_validation_scorecard.pdf}
+\caption{Verdicts against the frozen benchmark registry. Targets and criteria
+were fixed before any comparison was run, and failures are reported rather
+than corrected.}
+\label{fig:validation}
+\end{figure}
+
+\subsection{Structural sensitivity}
+
+Assumption S1 --- that restoration begins only once the estate is contained
+--- was varied on the candidates carrying the conclusions above. Of
+\StructuralCandidatesTested{} candidates evaluated under both structures,
+\StructuralPreserved{} keep their frontier membership;
+\StructuralOnlyGated{} are non-dominated only under the primary structure and
+\StructuralOnlyParallel{} only under the alternative. The worst per-profile
+agreement is \StructuralWorstAgreement\%.
+
+Structural uncertainty is not expressible as an interval, and this comparison
+is the substitute: the conclusions above are conditional on S1, and the
+magnitude of that conditionality is measured rather than assumed away.

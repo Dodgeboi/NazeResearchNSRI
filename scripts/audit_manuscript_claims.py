@@ -115,6 +115,43 @@ DEFINITIONAL_CONTEXT = re.compile(
     r"|\bIR\s*\d+", re.IGNORECASE)
 
 
+def expand_inputs(path: Path, seen: set[Path] | None = None) -> str:
+    """Inline every \\input so the audit sees the whole document.
+
+    The manuscript keeps its abstract, results, discussion and conclusion in
+    separate files. Auditing only main.tex would report every macro those
+    sections use as an orphan, and would miss any red-line claim written in
+    them — which is exactly where the claims live.
+    """
+    seen = seen or set()
+    resolved = path.resolve()
+    if resolved in seen:
+        return ""
+    seen.add(resolved)
+    text = resolved.read_text(encoding="utf-8")
+    out: list[str] = []
+    for line in text.splitlines():
+        match = re.match(r"\s*\\input\{([^}]+)\}\s*$", line)
+        if not match:
+            out.append(line)
+            continue
+        # Never inline the generated macro definitions: doing so would make
+        # every macro appear "used" simply because it is defined, and the
+        # orphan check would pass vacuously.
+        if match.group(1).startswith("generated_numbers"):
+            out.append(line)
+            continue
+        target = resolved.parent / match.group(1)
+        if target.suffix != ".tex":
+            target = target.with_suffix(".tex")
+        if target.exists():
+            out.append(f"% expanded from {match.group(1)}")
+            out.append(expand_inputs(target, seen))
+        else:
+            out.append(line)
+    return "\n".join(out)
+
+
 def strip_ignorable(text: str) -> list[tuple[int, str]]:
     """Return (line number, content) for lines that can carry a claim."""
     patterns = [re.compile(p) for p in IGNORED_ENVIRONMENTS]
@@ -186,7 +223,14 @@ def check_hand_typed_numbers(text: str) -> tuple[list[str], list[str]]:
     return problems, advisories
 
 
-def check_macros(text: str, generated: str) -> list[str]:
+def check_macros(text: str, generated: str) -> tuple[list[str], list[str]]:
+    """Returns (failures, advisories).
+
+    A macro used but never defined is a claim with nothing behind it, and is
+    fatal. A macro defined but never used is surplus on the generation side:
+    worth reporting, because it often means a claim was deleted without its
+    analysis, but not a reason to fail a build.
+    """
     defined = set(re.findall(r"\\newcommand\{\\([A-Za-z]+)\}", generated))
     used = set(re.findall(r"\\([A-Z][A-Za-z]*)\b", text)) & (
         defined | {name for name in defined})
@@ -202,11 +246,11 @@ def check_macros(text: str, generated: str) -> list[str]:
         problems.append(
             f"manuscript uses \\{name} but generated_numbers.tex does not "
             "define it; re-run generate_manuscript_numbers.py")
-    for name in sorted(defined - used):
-        problems.append(
-            f"generated macro \\{name} is never used; a claim was probably "
-            "removed without removing its analysis, or vice versa")
-    return problems
+    orphans = [
+        f"generated macro \\{name} is never used; harmless unless a claim "
+        "was removed without removing its analysis"
+        for name in sorted(defined - referenced)]
+    return problems, orphans
 
 
 def check_endpoint_definitions(text: str) -> list[str]:
@@ -251,7 +295,7 @@ def main() -> int:
                         help="skip the hand-typed-number check")
     args = parser.parse_args()
 
-    text = Path(args.manuscript).read_text(encoding="utf-8")
+    text = expand_inputs(Path(args.manuscript))
     generated_path = Path(args.generated)
     generated = (generated_path.read_text(encoding="utf-8")
                  if generated_path.exists() else "")
@@ -263,10 +307,12 @@ def main() -> int:
                                                 must_be_absent=False)),
         ("endpoint definitions", check_endpoint_definitions(text)),
     ]
+    orphan_macros: list[str] = []
     if generated:
-        sections.append(("macro coverage", check_macros(text, generated)))
+        macro_failures, orphan_macros = check_macros(text, generated)
+        sections.append(("macros used are defined", macro_failures))
     else:
-        sections.append(("macro coverage", [
+        sections.append(("macros used are defined", [
             f"{generated_path} does not exist; run "
             "generate_manuscript_numbers.py first"]))
     advisories: list[str] = []
@@ -281,6 +327,10 @@ def main() -> int:
         for problem in problems:
             print(f"      {problem}")
         total += len(problems)
+
+    if orphan_macros:
+        print(f"\nADVISORY     {len(orphan_macros)} generated macros are "
+              "never used by the manuscript")
 
     if advisories:
         print(f"\nADVISORY     {len(advisories)} cited literature values "

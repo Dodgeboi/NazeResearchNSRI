@@ -1,0 +1,62 @@
+{
+  "code": {
+    "available": true,
+    "branch": "rebuild/wp0-wp2",
+    "commit": "95cd5ac7ebb15d815e7db964f80930bcf533211c",
+    "dirty": true,
+    "dirty_paths": [
+      "data/multiobjective/confirmatory/"
+    ]
+  },
+  "created_at": "2026-09-03T04:43:02+00:00",
+  "description": "Comparison against the frozen external benchmark registry. Failures are reported, not corrected.",
+  "environment": {
+    "implementation": "CPython",
+    "machine": "x86_64",
+    "packages": {
+      "matplotlib": "3.11.0",
+      "networkx": "3.6.1",
+      "numpy": "2.5.1",
+      "pandas": "3.0.3",
+      "scipy": "1.18.0",
+      "yaml": "6.0.3"
+    },
+    "platform": "Linux-6.18.44-fc-v24-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "inputs": [
+    {
+      "bytes": 2628,
+      "path": "configs/multiobjective_portfolio.yaml",
+      "sha256": "8b4ce785a8163925bab99b8a108d6b13ebee7c3a47cc90648355001d6fdb03d6"
+    },
+    {
+      "bytes": 70312592,
+      "path": "data/multiobjective/confirmatory/multiobjective_confirmatory_results.csv",
+      "sha256": "d7d1c1830b6c26079c5ac5326e1f422a8113b657be234c3e41c406b71f93006b"
+    },
+    {
+      "bytes": 16159,
+      "path": "study/external_validation_benchmarks.json",
+      "sha256": "c6a98b6ae5305649c9d86d2c52a68dabfbd4fe9ae2480418a14436a807d28f35"
+    }
+  ],
+  "outputs": [
+    {
+      "bytes": 9435,
+      "path": "data/multiobjective/confirmatory/external_validation.json",
+      "sha256": "004daa44237326237c20fd4aefcf77a3a6a3a2e65d4e9ea23d828934ce452c8d"
+    }
+  ],
+  "parameters": {
+    "verdict_counts": {
+      "fail": 2,
+      "not_addressable": 2,
+      "not_scored": 3,
+      "scored": 2
+    }
+  },
+  "protocol": null,
+  "run_id": "external-validation",
+  "stage": "validation"
+}

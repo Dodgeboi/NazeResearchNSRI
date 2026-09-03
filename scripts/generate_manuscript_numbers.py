@@ -41,6 +41,9 @@ PROFILE_MACRO = {
 }
 K_WORD = {1: "One", 2: "Two", 3: "Three", 4: "Four"}
 
+#: Filled from the config in main(); module-level so add_stage can see it.
+_BUDGETS: dict[str, float] = {}
+
 
 class Macros:
     """Collect macros, refusing duplicates so a typo cannot shadow a value."""
@@ -158,6 +161,41 @@ def add_stage(macros: Macros, prefix: str, directory: Path, cfg) -> list[Path]:
 
     worst_se = errors["mean_hours_lost_se"].max()
     macros.one_dp(f"{prefix}WorstMeanLossStandardError", worst_se)
+    for profile, group in errors.groupby("profile"):
+        tag = PROFILE_MACRO[profile]
+        macros.one_dp(f"{prefix}{tag}WorstMeanLossStandardError",
+                      group["mean_hours_lost_se"].max())
+
+    # The profile's own untouched posture: the single zero-cost candidate.
+    for profile, group in summary.groupby("profile"):
+        tag = PROFILE_MACRO[profile]
+        free = group[group["implementation_cost_points"] == 0]
+        if len(free) == 1:
+            macros.one_dp(f"{prefix}{tag}FreeBaselineMeanLoss",
+                          free["mean_hours_lost"].iloc[0])
+            # The whole purchasable improvement available in this profile.
+            macros.one_dp(
+                f"{prefix}{tag}MaxPurchasableImprovement",
+                free["mean_hours_lost"].iloc[0] - group["mean_hours_lost"].min())
+
+    # Best affordable candidate under the declared budget, per profile.
+    for profile, group in summary.groupby("profile"):
+        tag = PROFILE_MACRO[profile]
+        budget = _BUDGETS.get(profile)
+        if budget is None:
+            continue
+        affordable = group[group["implementation_cost_points"] <= budget]
+        if affordable.empty:
+            continue
+        best = affordable.loc[affordable["mean_hours_lost"].idxmin()]
+        macros.one_dp(f"{prefix}{tag}BestAffordableMeanLoss",
+                      best["mean_hours_lost"])
+        macros.integer(f"{prefix}{tag}BestAffordableCost",
+                       best["implementation_cost_points"])
+        macros.percent(f"{prefix}{tag}BestAffordableOutage",
+                       best["sustained_outage_probability"])
+        macros.integer(f"{prefix}{tag}Budget", budget)
+        macros.integer(f"{prefix}{tag}AffordableCandidates", len(affordable))
     return consumed
 
 
@@ -183,6 +221,13 @@ def add_full_space_comparison(macros: Macros, directory: Path) -> list[Path]:
     survived = comparison[(comparison["is_frozen_finalist"] == 1)
                           & (comparison["pareto_full_space"] == 1)]
     macros.integer("ConfirmFinalistsSurviving", len(survived))
+    macros.integer("ConfirmFinalistsDisplaced",
+                   int(comparison["is_frozen_finalist"].sum()) - len(survived))
+    # Candidates the previous design would never have evaluated at all, yet
+    # which are non-dominated over the full space.
+    unseen = comparison[(comparison["is_frozen_finalist"] == 0)
+                        & (comparison["pareto_full_space"] == 1)]
+    macros.integer("ConfirmNonFinalistsOnFrontier", len(unseen))
     return [path]
 
 
@@ -219,6 +264,8 @@ def main() -> None:
     args = parser.parse_args()
 
     cfg = load_config(args.config)
+    _BUDGETS.update({name: profile.budget
+                     for name, profile in cfg.profiles.items()})
     macros = Macros()
     consumed: list[Path] = []
 
@@ -241,6 +288,8 @@ def main() -> None:
     macros.integer("MinimumViableHorizonDays", 21)
     macros.integer("FullRecoveryHorizonDays", 90)
     macros.integer("TailHorizonDays", 180)
+    # The bootstrap-inclusion threshold the stability counts are reported at.
+    macros.add("StabilityThreshold", "0.80")
 
     consumed += add_stage(macros, "Discovery", DISCOVERY, cfg)
     consumed += add_bimodality(
@@ -255,6 +304,46 @@ def main() -> None:
         macros.add("ProtocolFrozenAt", protocol["frozen_at"].replace("+00:00", "Z"))
         macros.integer("ConfirmTotalExecutions",
                        protocol["body"]["design"]["total_executions"])
+
+    validation = CONFIRM / "external_validation.json"
+    if validation.exists():
+        report = json.loads(validation.read_text(encoding="utf-8"))
+        macros.integer("ValidationBenchmarks", report["benchmarks_total"])
+        scored = report.get("computed_verdicts_for_scored_benchmarks", {})
+        macros.integer("ValidationScored", len(scored))
+        counts = report.get("verdict_counts", {})
+        macros.integer("ValidationNotAddressable",
+                       counts.get("not_addressable", 0))
+        macros.integer("ValidationNotScored", counts.get("not_scored", 0))
+        macros.integer("ValidationFailed",
+                       counts.get("fail", 0)
+                       + sum(1 for v in scored.values() if v == "fail"))
+        for entry in report["benchmarks"]:
+            scoring = entry.get("scoring") or {}
+            if entry["id"] == "crowdstrike_short_outage" and scoring:
+                macros.one_dp("ValidationOutageModelMedianHours",
+                              scoring["model_median_outage_hours"])
+                macros.one_dp("ValidationOutageTargetMedianHours",
+                              scoring["target_median_hours"])
+                macros.percent("ValidationOutageModelSixHourShare",
+                               scoring["model_share_within_six_hours"])
+                macros.percent("ValidationOutageTargetSixHourShare",
+                               scoring["target_share_within_six_hours"])
+        consumed.append(validation)
+
+    structural = Path("data/multiobjective/structural_sensitivity/"
+                      "structural_frontier_agreement.csv")
+    if structural.exists():
+        frame = pd.read_csv(structural)
+        macros.integer("StructuralCandidatesTested",
+                       frame["candidates_tested"].sum())
+        macros.integer("StructuralPreserved", frame["preserved"].sum())
+        macros.integer("StructuralOnlyGated", frame["only_under_gated"].sum())
+        macros.integer("StructuralOnlyParallel",
+                       frame["only_under_parallel"].sum())
+        macros.percent("StructuralWorstAgreement",
+                       frame["jaccard_agreement"].min())
+        consumed.append(structural)
 
     precision = DISCOVERY / "precision_analysis.json"
     if precision.exists():
