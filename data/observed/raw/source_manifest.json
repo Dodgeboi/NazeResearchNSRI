@@ -1,5 +1,14 @@
 {
-  "created_at": "2026-09-01T20:30:00-05:00",
+  "schema_version": 2,
+  "created_at": "2026-09-03T02:05:00+00:00",
+  "supersedes": "schema_version 1, created 2026-09-01T20:30:00-05:00",
+  "purpose": "Registry of every external source archived in this repository. Schema 2 adds retrieval metadata, mutability class, reuse terms, byte size, and an explicit statement of what each source may and may not be used for, so a reader can tell calibration evidence from scenario evidence without reading the manuscript.",
+  "verification": "scripts/verify_sources.py recomputes every sha256 and size and fails loudly on mismatch. A source whose hash does not match is not usable evidence.",
+  "mutability_classes": {
+    "immutable_archived_snapshot": "A frozen copy of a source that changes at the origin. The origin URL will not reproduce this file; only the archived copy and its hash are citable.",
+    "immutable_versioned_deposit": "A versioned scholarly deposit. The origin is expected to reproduce this content at the stated version.",
+    "mutable_web_feed": "A live feed. Never cite the origin without an archived snapshot and a retrieval timestamp."
+  },
   "sources": [
     {
       "id": "threat_openicpsr_v1",
@@ -9,10 +18,41 @@
       "version": "V1",
       "doi": "10.3886/E235483V1",
       "source_url": "https://www.openicpsr.org/openicpsr/project/235483/version/V1/view?path=/openicpsr/235483/fcr:versions/V1/Data/threat_database.csv&type=file",
+      "retrieved_at": "2026-09-01",
+      "mutability": "immutable_versioned_deposit",
       "license": "CC BY 4.0",
+      "reuse_terms": "Attribution required. Redistribution of the archived copy is permitted under CC BY 4.0.",
       "local_file": "threat_database.csv",
+      "bytes": 45851,
+      "sha256": "a78291e0b4acd35ef2048230f614f79a83747c043c28b57c05638069da27b536",
       "local_representation": "The public browser preview was exported as normalized UTF-8 CSV: surrounding cell whitespace was removed, values were unchanged, and all 1,999 displayed records and 14 columns were retained.",
-      "sha256": "a78291e0b4acd35ef2048230f614f79a83747c043c28b57c05638069da27b536"
+      "fidelity_caveat": "This is a normalized export of the browser preview, not the original deposited file, because download requires ICPSR sign-in. The original file and codebook should replace it before submission and the reconciliation should be re-run. The sha256 pins exactly what was analyzed in the meantime, so a substitution is detectable.",
+      "supports": [
+        "hospital-linked event breadth, as a structural check on the single-facility model",
+        "operational flag prevalence (ambulance diversion, cancellation or delay) among linked hospital records",
+        "the reconciliation in docs/evidence/THREAT_RECONCILIATION.md"
+      ],
+      "does_not_support": [
+        "a representative national distribution of hospital attack breadth; the file contains publicly reported, Medicare-linkable events only",
+        "any per-edge spread, detection, containment, or control-effect parameter",
+        "reading a zero operational flag as evidence the event did not occur, rather than that it was not reported"
+      ],
+      "identification_class": "evidence-constrained",
+      "derived_counts": {
+        "attacked_rows": 160,
+        "records_after_deduplication": 149,
+        "distinct_medicare_ids": 148,
+        "events": 74,
+        "single_hospital_events": 55,
+        "multi_hospital_events": 19,
+        "events_with_at_least_four_hospitals": 7,
+        "median_hospitals_per_event": 1,
+        "mean_hospitals_per_event": 2.014,
+        "max_hospitals_per_event": 22,
+        "er_diversion_records": 46,
+        "cancel_delay_records": 73,
+        "note": "Deduplication key is (medicare_id, threat_id, attack_date). Twenty duplicated rows collapse to nine triples, removing eleven surplus rows: 160 - 11 = 149. The published article's 'approximately 160 affected hospitals' is the pre-deduplication row count. See docs/evidence/THREAT_RECONCILIATION.md."
+      }
     },
     {
       "id": "cisa_kev_2026_09_01",
@@ -21,8 +61,30 @@
       "catalog_version": "2026.09.01",
       "date_released": "2026-09-01T19:22:46.2162Z",
       "source_url": "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+      "retrieved_at": "2026-09-01",
+      "mutability": "mutable_web_feed",
+      "mutability_note": "The origin URL serves a live feed updated continuously. It will not reproduce this file. Only the archived snapshot and its catalog version are citable.",
+      "license": "U.S. Government work; CISA states the catalog is free to use and redistribute.",
+      "reuse_terms": "Public domain in the United States. Attribution to CISA is given as a courtesy.",
       "local_file": "cisa_known_exploited_vulnerabilities.json",
-      "sha256": "c4560f429889b75a2010996b95d592498c4bdb8d88f4e3307cc4316ef4db675e"
+      "bytes": 1682475,
+      "sha256": "c4560f429889b75a2010996b95d592498c4bdb8d88f4e3307cc4316ef4db675e",
+      "supports": [
+        "the identity and existence of exploited vulnerabilities, as provenance for the model's exploit mechanism",
+        "the structural claim that ransomware campaigns are associated with a documented subset of known exploited vulnerabilities"
+      ],
+      "does_not_support": [
+        "any hospital exposure denominator; the catalog has none",
+        "a base rate of ransomware entry via vulnerability exploitation; the ransomware-tagged share of a curated catalog is not a prevalence",
+        "any estimate of how patching changes whole-incident propagation"
+      ],
+      "identification_class": "declared-assumption",
+      "derived_counts": {
+        "records": 1687,
+        "ransomware_tagged": 352,
+        "verified_at": "2026-09-03",
+        "note": "Both counts recomputed directly from the archived file; the file's own 'count' field agrees at 1687."
+      }
     }
   ]
 }
