@@ -71,6 +71,17 @@ python scripts/audit_manuscript_claims.py
 cd docs/manuscript && latexmk -pdf main.tex
 ```
 
+Building the PDF needs more than a minimal TeX install. On a Debian or
+Ubuntu machine:
+
+```bash
+apt-get install texlive-latex-extra texlive-fonts-extra texlive-plain-generic
+```
+
+`newpxtext` lives in `texlive-fonts-extra` and `binhex.tex`, which `newpx`
+pulls in, lives in `texlive-plain-generic`. Without them the build stops with
+a "file not found" error that does not name the package.
+
 A smoke run that exercises the whole pipeline in a few minutes:
 
 ```bash
