@@ -1,0 +1,150 @@
+{
+  "code": {
+    "available": true,
+    "branch": "rebuild/wp0-wp2",
+    "commit": "771b0a818ed6be81d9c4280ae04dcdd817a0f59f",
+    "dirty": true,
+    "dirty_paths": [
+      "configs/multiobjective_portfolio.yaml",
+      "configs/public_evidence_validation.yaml",
+      "data/multiobjective/archive_pre_rebuild/",
+      "data/multiobjective/discovery/",
+      "data/multiobjective/holdout_processed/multiobjective_manifest.json",
+      "data/multiobjective/holdout_processed/portfolio_benchmark_comparison.csv",
+      "data/multiobjective/holdout_processed/portfolio_objective_summary.csv",
+      "data/multiobjective/holdout_processed/portfolio_pareto_frontier.csv",
+      "data/multiobjective/holdout_processed/portfolio_pareto_stability.csv",
+      "data/multiobjective/holdout_processed/portfolio_preference_scenarios.csv",
+      "data/multiobjective/processed/multiobjective_holdout_protocol.json",
+      "data/multiobjective/processed/multiobjective_manifest.json",
+      "data/multiobjective/processed/multiobjective_portfolio_best_portfolios.csv",
+      "data/multiobjective/processed/multiobjective_portfolio_cost_sensitivity.csv",
+      "data/multiobjective/processed/multiobjective_portfolio_minimum_budget.csv",
+      "data/multiobjective/processed/multiobjective_portfolio_pareto_frontier.csv",
+      "data/multiobjective/processed/multiobjective_portfolio_portfolio_summary.csv",
+      "data/multiobjective/processed/multiobjective_portfolio_selection_stability.csv",
+      "data/multiobjective/processed/portfolio_benchmark_comparison.csv",
+      "data/multiobjective/processed/portfolio_objective_summary.csv",
+      "data/multiobjective/processed/portfolio_pareto_frontier.csv",
+      "data/multiobjective/processed/portfolio_pareto_stability.csv",
+      "data/multiobjective/processed/portfolio_preference_scenarios.csv",
+      "data/multiobjective/raw/multiobjective_holdout_results.csv -> data/multiobjective/archive_pre_rebuild_raw/multiobjective_holdout_results.csv",
+      "data/multiobjective/raw/multiobjective_portfolio_optimization_manifest.json -> data/multiobjective/archive_pre_rebuild_raw/multiobjective_portfolio_optimization_manifest.json",
+      "data/multiobjective/raw/multiobjective_portfolio_optimization_results.csv -> data/multiobjective/archive_pre_rebuild_raw/multiobjective_portfolio_optimization_results.csv",
+      "onfigs/fine_step_replication.yaml",
+      "scripts/analyze_discovery_precision.py",
+      "scripts/analyze_portfolio_stage.py",
+      "scripts/freeze_confirmatory_protocol.py",
+      "scripts/run_confirmatory_frontier.py",
+      "scripts/run_discovery.py",
+      "src/grrc/endpoints.py",
+      "src/grrc/multiobjective.py",
+      "src/grrc/provenance.py",
+      "study/DEVIATIONS.md",
+      "study/MODEL_SPECIFICATION.md",
+      "tests/test_falsification.py",
+      "tests/test_provenance.py"
+    ]
+  },
+  "created_at": "2026-09-03T01:48:29+00:00",
+  "description": "Six-objective analysis of the discovery bank. Cost and burden are normalized scenario points, not dollars or measured staffing burden.",
+  "environment": {
+    "implementation": "CPython",
+    "machine": "x86_64",
+    "packages": {
+      "matplotlib": "3.11.0",
+      "networkx": "3.6.1",
+      "numpy": "2.5.1",
+      "pandas": "3.0.3",
+      "scipy": "1.18.0",
+      "yaml": "6.0.3"
+    },
+    "platform": "Linux-6.18.44-fc-v24-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "inputs": [
+    {
+      "bytes": 561,
+      "path": "configs/defense_burdens.yaml",
+      "sha256": "70647c2c1cc3d0a260ff06660c69c31b29fcffd743b16c4db40a18394730515a"
+    },
+    {
+      "bytes": 1057,
+      "path": "configs/defense_costs.yaml",
+      "sha256": "66e66f192c5e44cacd099ef747262639379006084819569353306517cc30e3e5"
+    },
+    {
+      "bytes": 2628,
+      "path": "configs/multiobjective_portfolio.yaml",
+      "sha256": "8b4ce785a8163925bab99b8a108d6b13ebee7c3a47cc90648355001d6fdb03d6"
+    },
+    {
+      "bytes": 4735560,
+      "path": "data/multiobjective/discovery/discovery_results.csv",
+      "sha256": "dd5e87479f27e2b6f59e5ba236c6142902eebc08271d1baa18b929a2410b8834"
+    }
+  ],
+  "outputs": [
+    {
+      "bytes": 1193,
+      "path": "data/multiobjective/discovery/portfolio_benchmark_comparison.csv",
+      "sha256": "947142d9051138ba1d52ef4970830a0b2e6674ab69babb619a7430426e606245"
+    },
+    {
+      "bytes": 478,
+      "path": "data/multiobjective/discovery/portfolio_frontier_resolution.csv",
+      "sha256": "911c78253469ad7db5f2950364f81b4acb0495ed975a2fa4e95c96d5dea8cfc0"
+    },
+    {
+      "bytes": 50477,
+      "path": "data/multiobjective/discovery/portfolio_monte_carlo_error.csv",
+      "sha256": "5a5ba933168232382125030b2fa435fd2b25c8dd785981229142dcc41341269d"
+    },
+    {
+      "bytes": 69323,
+      "path": "data/multiobjective/discovery/portfolio_objective_summary.csv",
+      "sha256": "872001a4dffb0a0f23ff312a8d049923cd890b87a3d68aca961200138326eb9c"
+    },
+    {
+      "bytes": 70140,
+      "path": "data/multiobjective/discovery/portfolio_pareto_frontier.csv",
+      "sha256": "b04af4dbd4e97a728d5964aa1ff3611ff71ef8db3cb702a7618833b46bd62940"
+    },
+    {
+      "bytes": 31362,
+      "path": "data/multiobjective/discovery/portfolio_pareto_stability.csv",
+      "sha256": "fda865bc14e716b0dc2a262d930eb972076a17b5088070893ec532960c2818ca"
+    },
+    {
+      "bytes": 2620,
+      "path": "data/multiobjective/discovery/portfolio_preference_scenarios.csv",
+      "sha256": "ff5b87c30a36432ac4dc2b87b8ec00664d1ae21b3e2d489eb394fce52b6288ee"
+    }
+  ],
+  "parameters": {
+    "analyzed_stage": "discovery",
+    "bootstrap_samples": 500,
+    "counts": {
+      "evaluated_candidates_by_profile": {
+        "high_capacity": 16,
+        "intermediate_capacity": 96,
+        "resource_constrained": 288
+      },
+      "non_dominated_by_profile": {
+        "high_capacity": 2,
+        "intermediate_capacity": 14,
+        "resource_constrained": 42
+      },
+      "scenarios_by_profile": {
+        "high_capacity": 30,
+        "intermediate_capacity": 30,
+        "resource_constrained": 30
+      },
+      "total_executions": 12000
+    },
+    "sustained_outage_primary_k": 4
+  },
+  "protocol": null,
+  "run_id": "discovery-analysis",
+  "stage": "analysis"
+}

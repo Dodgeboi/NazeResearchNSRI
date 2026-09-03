@@ -1,0 +1,95 @@
+{
+  "code": {
+    "available": true,
+    "branch": "rebuild/wp0-wp2",
+    "commit": "771b0a818ed6be81d9c4280ae04dcdd817a0f59f",
+    "dirty": true,
+    "dirty_paths": [
+      "data/multiobjective/archive_pre_rebuild/",
+      "data/multiobjective/discovery/",
+      "data/multiobjective/holdout_processed/multiobjective_manifest.json",
+      "data/multiobjective/holdout_processed/portfolio_benchmark_comparison.csv",
+      "data/multiobjective/holdout_processed/portfolio_objective_summary.csv",
+      "data/multiobjective/holdout_processed/portfolio_pareto_frontier.csv",
+      "data/multiobjective/holdout_processed/portfolio_pareto_stability.csv",
+      "data/multiobjective/holdout_processed/portfolio_preference_scenarios.csv",
+      "data/multiobjective/processed/multiobjective_holdout_protocol.json",
+      "data/multiobjective/processed/multiobjective_manifest.json",
+      "data/multiobjective/processed/multiobjective_portfolio_best_portfolios.csv",
+      "data/multiobjective/processed/multiobjective_portfolio_cost_sensitivity.csv",
+      "data/multiobjective/processed/multiobjective_portfolio_minimum_budget.csv",
+      "data/multiobjective/processed/multiobjective_portfolio_pareto_frontier.csv",
+      "data/multiobjective/processed/multiobjective_portfolio_portfolio_summary.csv",
+      "data/multiobjective/processed/multiobjective_portfolio_selection_stability.csv",
+      "data/multiobjective/processed/portfolio_benchmark_comparison.csv",
+      "data/multiobjective/processed/portfolio_objective_summary.csv",
+      "data/multiobjective/processed/portfolio_pareto_frontier.csv",
+      "data/multiobjective/processed/portfolio_pareto_stability.csv",
+      "data/multiobjective/processed/portfolio_preference_scenarios.csv",
+      "data/multiobjective/raw/multiobjective_holdout_results.csv -> data/multiobjective/archive_pre_rebuild_raw/multiobjective_holdout_results.csv",
+      "data/multiobjective/raw/multiobjective_portfolio_optimization_manifest.json -> data/multiobjective/archive_pre_rebuild_raw/multiobjective_portfolio_optimization_manifest.json",
+      "data/multiobjective/raw/multiobjective_portfolio_optimization_results.csv -> data/multiobjective/archive_pre_rebuild_raw/multiobjective_portfolio_optimization_results.csv",
+      "scripts/analyze_discovery_precision.py",
+      "scripts/analyze_portfolio_stage.py",
+      "scripts/freeze_confirmatory_protocol.py",
+      "scripts/run_confirmatory_frontier.py",
+      "scripts/run_discovery.py",
+      "src/grrc/multiobjective.py",
+      "src/grrc/provenance.py",
+      "study/DEVIATIONS.md",
+      "study/MODEL_SPECIFICATION.md",
+      "tests/test_falsification.py",
+      "tests/test_provenance.py"
+    ]
+  },
+  "created_at": "2026-09-03T01:43:16+00:00",
+  "description": "Exploratory full-space paired evaluation. Not confirmatory.",
+  "environment": {
+    "implementation": "CPython",
+    "machine": "x86_64",
+    "packages": {
+      "matplotlib": "3.11.0",
+      "networkx": "3.6.1",
+      "numpy": "2.5.1",
+      "pandas": "3.0.3",
+      "scipy": "1.18.0",
+      "yaml": "6.0.3"
+    },
+    "platform": "Linux-6.18.44-fc-v24-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "inputs": [
+    {
+      "bytes": 561,
+      "path": "configs/defense_burdens.yaml",
+      "sha256": "70647c2c1cc3d0a260ff06660c69c31b29fcffd743b16c4db40a18394730515a"
+    },
+    {
+      "bytes": 1057,
+      "path": "configs/defense_costs.yaml",
+      "sha256": "66e66f192c5e44cacd099ef747262639379006084819569353306517cc30e3e5"
+    },
+    {
+      "bytes": 2628,
+      "path": "configs/multiobjective_portfolio.yaml",
+      "sha256": "a5d0e64a659bd87bfa7f73d6d6f7b2472338e405ec7a593ab202f8a9d4b7a4bf"
+    }
+  ],
+  "outputs": [
+    {
+      "bytes": 4735560,
+      "path": "data/multiobjective/discovery/discovery_results.csv",
+      "sha256": "dd5e87479f27e2b6f59e5ba236c6142902eebc08271d1baa18b929a2410b8834"
+    }
+  ],
+  "parameters": {
+    "distinct_portfolios": 288,
+    "master_seed": 5726001,
+    "sustained_outage_primary_k": 2,
+    "total_executions": 12000,
+    "trials_per_portfolio": 30
+  },
+  "protocol": null,
+  "run_id": "discovery:seed5726001",
+  "stage": "discovery"
+}

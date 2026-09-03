@@ -56,7 +56,7 @@ simulation:
   sustained_outage_service_steps: 24
   # Primary k for the sustained-outage endpoint; the full k = 1..4
   # ladder is reported alongside it. Frozen in study/MODEL_SPECIFICATION.md.
-  sustained_outage_min_services: 2
+  sustained_outage_min_services: 4
   early_stop: true
 
 experiment:

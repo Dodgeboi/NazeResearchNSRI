@@ -1,0 +1,150 @@
+{
+  "method": "Pilot precision analysis: justify the confirmatory scenario count.\n\nThe handoff requires that the number of simulations be justified by a\nprecision target rather than by a round number. This script reads the\ndiscovery bank and answers one question per objective: **how many paired\nscenarios per candidate are needed for the Monte Carlo standard error to be\nsmall relative to the spread the frontier has to resolve?**",
+  "resolution_fraction_of_iqr": 0.1,
+  "scenarios_per_candidate_in_pilot": 30,
+  "profiles": {
+    "high_capacity": {
+      "candidates": 16,
+      "pilot_scenarios": 30,
+      "objectives": {
+        "mean_hours_lost": {
+          "per_scenario_sd": 5.601982065924067,
+          "candidate_mean_iqr": 0.1933333333333329,
+          "resolution_target": 0.019333333333333293,
+          "mean_within_scenario_correlation": 0.9952596571358168,
+          "paired_difference_sd": 0.545458343726987,
+          "required_scenarios_unpaired": 83960,
+          "required_scenarios_paired": 796,
+          "achieved_mc_se_at_pilot_n": 1.0227773147486678
+        },
+        "tail_hours_lost_cvar90": {
+          "per_scenario_sd": 5.601982065924067,
+          "candidate_mean_iqr": 0.0,
+          "resolution_target": 0.0,
+          "mean_within_scenario_correlation": 0.9952596571358168,
+          "paired_difference_sd": 0.545458343726987,
+          "required_scenarios_unpaired": null,
+          "required_scenarios_paired": null,
+          "achieved_mc_se_at_pilot_n": 1.0227773147486678
+        },
+        "sustained_outage_probability": {
+          "per_scenario_sd": 0.0,
+          "candidate_mean_iqr": 0.0,
+          "resolution_target": 0.0,
+          "mean_within_scenario_correlation": 0.0,
+          "paired_difference_sd": 0.0,
+          "required_scenarios_unpaired": null,
+          "required_scenarios_paired": null,
+          "achieved_mc_se_at_pilot_n": 0.0
+        },
+        "nonrecovery_probability": {
+          "per_scenario_sd": 0.0,
+          "candidate_mean_iqr": 0.0,
+          "resolution_target": 0.0,
+          "mean_within_scenario_correlation": 0.0,
+          "paired_difference_sd": 0.0,
+          "required_scenarios_unpaired": null,
+          "required_scenarios_paired": null,
+          "achieved_mc_se_at_pilot_n": 0.0
+        }
+      }
+    },
+    "intermediate_capacity": {
+      "candidates": 96,
+      "pilot_scenarios": 30,
+      "objectives": {
+        "mean_hours_lost": {
+          "per_scenario_sd": 55.22342084301174,
+          "candidate_mean_iqr": 51.978750002516676,
+          "resolution_target": 5.197875000251668,
+          "mean_within_scenario_correlation": 0.39235486645715656,
+          "paired_difference_sd": 60.8784120257881,
+          "required_scenarios_unpaired": 113,
+          "required_scenarios_paired": 138,
+          "achieved_mc_se_at_pilot_n": 10.082371099439495
+        },
+        "tail_hours_lost_cvar90": {
+          "per_scenario_sd": 55.22342084301174,
+          "candidate_mean_iqr": 175.47152777999997,
+          "resolution_target": 17.547152777999997,
+          "mean_within_scenario_correlation": 0.39235486645715656,
+          "paired_difference_sd": 60.8784120257881,
+          "required_scenarios_unpaired": 10,
+          "required_scenarios_paired": 13,
+          "achieved_mc_se_at_pilot_n": 10.082371099439495
+        },
+        "sustained_outage_probability": {
+          "per_scenario_sd": 0.3643934234447823,
+          "candidate_mean_iqr": 0.30833333333333335,
+          "resolution_target": 0.030833333333333338,
+          "mean_within_scenario_correlation": 0.40158971636009666,
+          "paired_difference_sd": 0.398643835047553,
+          "required_scenarios_unpaired": 140,
+          "required_scenarios_paired": 168,
+          "achieved_mc_se_at_pilot_n": 0.06652883260907971
+        },
+        "nonrecovery_probability": {
+          "per_scenario_sd": 0.1949739642703482,
+          "candidate_mean_iqr": 0.0,
+          "resolution_target": 0.0,
+          "mean_within_scenario_correlation": 0.9295177666971731,
+          "paired_difference_sd": 0.07320343294043152,
+          "required_scenarios_unpaired": null,
+          "required_scenarios_paired": null,
+          "achieved_mc_se_at_pilot_n": 0.035597212785691994
+        }
+      }
+    },
+    "resource_constrained": {
+      "candidates": 288,
+      "pilot_scenarios": 30,
+      "objectives": {
+        "mean_hours_lost": {
+          "per_scenario_sd": 94.4538431558827,
+          "candidate_mean_iqr": 117.40291667083332,
+          "resolution_target": 11.740291667083333,
+          "mean_within_scenario_correlation": 0.48456467304814843,
+          "paired_difference_sd": 95.90068771978491,
+          "required_scenarios_unpaired": 65,
+          "required_scenarios_paired": 67,
+          "achieved_mc_se_at_pilot_n": 17.2448335131773
+        },
+        "tail_hours_lost_cvar90": {
+          "per_scenario_sd": 94.4538431558827,
+          "candidate_mean_iqr": 111.97222220833339,
+          "resolution_target": 11.19722222083334,
+          "mean_within_scenario_correlation": 0.48456467304814843,
+          "paired_difference_sd": 95.90068771978491,
+          "required_scenarios_unpaired": 72,
+          "required_scenarios_paired": 74,
+          "achieved_mc_se_at_pilot_n": 17.2448335131773
+        },
+        "sustained_outage_probability": {
+          "per_scenario_sd": 0.38570294586910703,
+          "candidate_mean_iqr": 0.20000000000000007,
+          "resolution_target": 0.020000000000000007,
+          "mean_within_scenario_correlation": 0.5328833874766168,
+          "paired_difference_sd": 0.3728040400336327,
+          "required_scenarios_unpaired": 372,
+          "required_scenarios_paired": 348,
+          "achieved_mc_se_at_pilot_n": 0.07041940131623464
+        },
+        "nonrecovery_probability": {
+          "per_scenario_sd": 0.3523377954385653,
+          "candidate_mean_iqr": 0.5,
+          "resolution_target": 0.05,
+          "mean_within_scenario_correlation": 0.25806557299841665,
+          "paired_difference_sd": 0.42919731088641316,
+          "required_scenarios_unpaired": 50,
+          "required_scenarios_paired": 74,
+          "achieved_mc_se_at_pilot_n": 0.06432778614111434
+        }
+      }
+    }
+  },
+  "binding_requirement": {
+    "paired_max": 796,
+    "unpaired_max": 83960,
+    "interpretation": "The paired figure governs frontier comparisons, which are what the study reports; the unpaired figure governs any standalone mean quoted on its own. Where the chosen scenario count is below a requirement, the affected objective is under-resolved and the manuscript must say so rather than presenting its differences as established."
+  }
+}

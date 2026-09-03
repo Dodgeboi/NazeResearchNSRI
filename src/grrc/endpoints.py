@@ -107,7 +107,7 @@ class EndpointSpec:
 
 #: Number of clinical services that must each sustain a qualifying outage.
 #: Declared in config as ``simulation.sustained_outage_min_services``.
-DEFAULT_SUSTAINED_OUTAGE_MIN_SERVICES: int = 2
+DEFAULT_SUSTAINED_OUTAGE_MIN_SERVICES: int = 4
 
 #: The full sensitivity ladder reported alongside the primary value. Every
 #: results table carries all of these, so a reader who disagrees with the
@@ -239,8 +239,8 @@ ENDPOINTS: dict[str, EndpointSpec] = {spec.id: spec for spec in (
             "Fraction of trials in which at least k of the four clinical "
             f"services ({_CLINICAL_NAMES}) each experienced a continuous "
             "unavailability run of more than two modeled hours, with the "
-            "primary analysis fixing k = 2 and every results table also "
-            "reporting k = 1, 3, and 4."),
+            "primary analysis fixing k = 4 and every results table also "
+            "reporting k = 1, 2, and 3."),
         units="probability",
         direction="minimize",
         interpretation_boundary=(
@@ -252,21 +252,39 @@ ENDPOINTS: dict[str, EndpointSpec] = {spec.id: spec for spec in (
             max_streak_column(s) for s in CLINICAL_SERVICES),
         identification="declared-assumption",
         threshold_rationale=(
-            "k = 2 is a declared modeling choice, frozen in "
-            "study/MODEL_SPECIFICATION.md before confirmatory runs, on two "
-            "stated grounds. (i) Construct: a single clinical service down "
-            "for two hours is a routine IT incident rather than the "
-            "multi-service disruption that the public evidence base "
-            "describes, while requiring all four conflates a severe event "
-            "with a total one. (ii) Estimability: at k = 1 the indicator "
-            "saturates near 0.95-0.97 in the weaker profiles and carries "
-            "almost no dominance information as a Pareto objective, while at "
-            "k = 4 it becomes rare enough that its Monte Carlo error "
-            "dominates at the study's scenario counts. Neither ground is a "
-            "clinical validation and neither is claimed as one. Because the "
-            "full k ladder is reported everywhere, the choice of primary k "
-            "changes which number is emphasized, not which numbers exist."),
-    ),
+            "k = 4 restores the definition the manuscript always stated: "
+            "more than two modeled hours of continuous unavailability in at "
+            "least four clinical services, which, because the clinical set "
+            "has exactly four members, means all four. The implementation "
+            "used any() — k = 1 — and the discrepancy propagated into six "
+            "objectives (audit ISSUE-001).\n\n"
+            "An earlier draft of this registry set the primary k to 2 on the "
+            "grounds that k = 1 would saturate and k = 4 would be too rare to "
+            "estimate. The rebuilt discovery bank does not support that "
+            "reasoning and it was withdrawn. Across 12,000 paired discovery "
+            "trials the number of qualifying clinical services is almost "
+            "perfectly bimodal: 4,189 trials had none and 7,269 had all "
+            "four, with only 542 trials — 4.5 per cent — anywhere in "
+            "between. Candidate-level outage probabilities therefore differ "
+            "by roughly three percentage points between k = 1 and k = 4, and "
+            "the interquartile spread across candidates is identical to "
+            "three decimal places, so the choice of k costs nothing in "
+            "estimability and buys nothing in discrimination.\n\n"
+            "Given that, the choice is settled on construct grounds alone, "
+            "and the strictest reading is the least overclaiming one: a "
+            "trial counts as a sustained clinical outage only when the "
+            "whole modeled clinical estate — EHR, laboratory, pharmacy and "
+            "imaging — was each down for more than two hours. Selecting a "
+            "looser k would have meant changing the science to sit closer to "
+            "a defect, with no evidence to justify it.\n\n"
+            "The bimodality is itself a model artifact and is reported as "
+            "one: binary per-step service availability over a shared "
+            "network structure produces all-or-nothing clinical outcomes, "
+            "whereas real incidents show partial and degraded operation. "
+            "This limits what the endpoint can represent regardless of k, "
+            "and is a stronger caveat than the choice of k. Because the "
+            "full ladder is reported everywhere, a reader who prefers a "
+            "different k reads it off the same table."),    ),
     EndpointSpec(
         id="nonrecovery_probability",
         display_name="Non-recovery at horizon",

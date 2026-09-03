@@ -485,3 +485,281 @@ def bootstrap_pareto_stability(raw: pd.DataFrame, cfg: Config,
             "n_bootstrap_samples": n_boot,
         } for name, count in zip(names, counts))
     return pd.DataFrame(rows)
+
+
+# ---------------------------------------------------------------------------
+# Full-space confirmation
+# ---------------------------------------------------------------------------
+# The pre-rebuild holdout evaluated only the 57 discovery-selected finalists
+# and then reported the result as a frontier (audit ISSUE-012). A candidate
+# that looked mediocre in discovery and excellent on fresh scenarios was
+# structurally unable to appear, and in the high-capacity profile "7 of 7
+# non-dominated" was close to arithmetically inevitable with seven points in
+# six dimensions.
+#
+# The measured throughput of the simulator makes the honest version
+# affordable — every resolved candidate, on the same fresh paired scenario
+# bank — so the fix is to compute the true frontier rather than to rename the
+# restricted one. Because the finalists are a subset of the full space, the
+# finalist-only frontier is then a *view* of the same data, and the two can be
+# compared directly instead of being conflated.
+
+#: Distinct master seed for the confirmatory bank. Chosen once and frozen in
+#: the protocol; never reused from discovery.
+CONFIRMATORY_SEED = 4915337
+CONFIRMATORY_ID_OFFSET = 90_000_000
+
+
+def build_confirmatory_specs(
+        cfg: Config, *, trials_per_candidate: int | Mapping[str, int] = 150,
+        master_seed: int = CONFIRMATORY_SEED,
+        id_offset: int = CONFIRMATORY_ID_OFFSET,
+) -> tuple[list[TrialSpec], dict[str, DefensePortfolio]]:
+    """Paired specs covering **every** resolved candidate in every profile.
+
+    Candidates within a profile share one scenario bank, exactly as in
+    discovery, so the common-random-numbers pairing that makes portfolio
+    comparisons meaningful is preserved. Scenario identifiers are offset per
+    profile so no confirmatory scenario collides with a discovery one.
+
+    ``trials_per_candidate`` may be a single count or a per-profile mapping.
+    Per-profile counts exist because the pilot precision analysis found the
+    required scenario count varies by two orders of magnitude across
+    profiles: the high-capacity candidates sit so close together that
+    resolving them needs roughly 800 paired scenarios, while the
+    resource-constrained profile is resolved at around 350. Since pairing is
+    within a profile, nothing requires a common count, and a per-profile
+    allocation buys resolution where it is scarce instead of spending it
+    where it is already ample.
+    """
+    from .optimization import distinct_portfolios_for_profile
+
+    profiles = list(cfg.optimization.profiles)
+    if isinstance(trials_per_candidate, Mapping):
+        missing = set(profiles) - set(trials_per_candidate)
+        if missing:
+            raise ValueError(
+                f"trials_per_candidate is missing profiles: {sorted(missing)}")
+        counts = {name: int(trials_per_candidate[name]) for name in profiles}
+    else:
+        counts = {name: int(trials_per_candidate) for name in profiles}
+    for name, value in counts.items():
+        if value < 1:
+            raise ValueError(f"trials_per_candidate['{name}'] must be >= 1")
+
+    # Scenario identifier blocks must not overlap between profiles even when
+    # the per-profile counts differ, so blocks are laid out cumulatively.
+    block_start: dict[str, int] = {}
+    cursor = id_offset
+    for name in profiles:
+        block_start[name] = cursor
+        cursor += counts[name]
+
+    selected: dict[str, DefensePortfolio] = {}
+    specs: list[TrialSpec] = []
+    trial_id = id_offset
+    entries = cfg.experiment.entry_points
+    for profile in profiles:
+        candidates = distinct_portfolios_for_profile(cfg, profile)
+        if not candidates:
+            raise ValueError(f"no resolved candidates for profile '{profile}'")
+        selected.update({p.name: p for p in candidates})
+        names = [p.name for p in candidates]
+        for replicate in range(counts[profile]):
+            scenario_id = block_start[profile] + replicate
+            entry = entries[replicate % len(entries)]
+            for name in names:
+                specs.append(TrialSpec(
+                    trial_id=trial_id,
+                    experiment="multiobjective_confirmatory",
+                    facility=cfg.optimization.facility,
+                    profile=profile,
+                    portfolio=name,
+                    entry_point=entry,
+                    master_seed=master_seed,
+                    scenario_id=scenario_id,
+                    paired=True,
+                ))
+                trial_id += 1
+    return specs, selected
+
+
+def confirmatory_candidate_counts(cfg: Config) -> dict[str, int]:
+    """Resolved candidate count per profile, for protocol and reporting.
+
+    Candidate counts must be reported at every stage, so this is computed
+    once here and read by the protocol freezer, the runner, and the analysis.
+    """
+    from .optimization import distinct_portfolios_for_profile
+    return {profile: len(distinct_portfolios_for_profile(cfg, profile))
+            for profile in cfg.optimization.profiles}
+
+
+def run_confirmatory_frontier(
+        cfg: Config, output_path: str | Path, *,
+        trials_per_candidate: int | Mapping[str, int] = 150,
+        master_seed: int = CONFIRMATORY_SEED,
+) -> Path:
+    """Run the full-space confirmatory bank and save raw trial rows."""
+    specs, portfolios = build_confirmatory_specs(
+        cfg, trials_per_candidate=trials_per_candidate,
+        master_seed=master_seed)
+    raw = run_specs(cfg, specs, portfolios=portfolios,
+                    desc="multiobjective:confirmatory")
+    path = Path(output_path)
+    ensure_dirs(path.parent)
+    write_csv(raw, path)
+    return path
+
+
+def restricted_frontier_comparison(
+        summary: pd.DataFrame,
+        finalists: Mapping[str, Sequence[str]],
+        objectives: Sequence[str] = OBJECTIVES,
+) -> pd.DataFrame:
+    """Compare the full-space frontier with a finalist-only frontier.
+
+    Both are computed from the *same* confirmatory data, so the difference is
+    attributable entirely to the candidate set. Every row is one candidate,
+    with two dominance flags and the reason they differ:
+
+    ``pareto_full_space``
+        non-dominated among all resolved candidates in the profile.
+    ``pareto_finalist_only``
+        non-dominated among the frozen finalist subset alone.
+    ``finalist_only_artifact``
+        1 when a candidate appears efficient in the restricted view but is
+        dominated in the full space — i.e. an apparent frontier member that
+        exists only because its dominator was never evaluated. This is the
+        quantity the pre-rebuild study could not report.
+    ``dominated_by_non_finalist``
+        for such rows, a candidate outside the finalist set that dominates it.
+    """
+    frames: list[pd.DataFrame] = []
+    for profile, group in summary.groupby("profile", sort=True):
+        frame = group.copy().reset_index(drop=True)
+        matrix = frame[list(objectives)].to_numpy(float)
+        frame["pareto_full_space"] = pareto_mask(matrix).astype(int)
+
+        subset_names = set(finalists.get(profile, ()))
+        in_subset = frame["portfolio"].isin(subset_names).to_numpy()
+        frame["is_frozen_finalist"] = in_subset.astype(int)
+        restricted = np.zeros(len(frame), dtype=int)
+        if in_subset.any():
+            restricted[in_subset] = pareto_mask(matrix[in_subset]).astype(int)
+        frame["pareto_finalist_only"] = restricted
+
+        artifact = (frame["pareto_finalist_only"] == 1) & (
+            frame["pareto_full_space"] == 0)
+        frame["finalist_only_artifact"] = artifact.astype(int)
+
+        dominators: list[str] = []
+        for position in range(len(frame)):
+            if not artifact.iloc[position]:
+                dominators.append("")
+                continue
+            candidate = matrix[position]
+            better = (np.all(matrix <= candidate, axis=1)
+                      & np.any(matrix < candidate, axis=1)
+                      & ~in_subset)
+            found = np.flatnonzero(better)
+            dominators.append(
+                str(frame.loc[found[0], "portfolio"]) if found.size else "")
+        frame["dominated_by_non_finalist"] = dominators
+        frames.append(frame)
+    return (pd.concat(frames, ignore_index=True) if frames
+            else summary.copy())
+
+
+# ---------------------------------------------------------------------------
+# Monte Carlo error
+# ---------------------------------------------------------------------------
+
+def monte_carlo_error(raw: pd.DataFrame, cfg: Config, *,
+                      n_boot: int = 400, seed: int = 20260903
+                      ) -> pd.DataFrame:
+    """Monte Carlo standard error for every stochastic objective.
+
+    An objective reported without its simulation error invites the reader to
+    treat a noisy point estimate as exact, which is how a frontier acquires
+    members it has not earned. Cost and burden are deterministic functions of
+    the portfolio and carry no Monte Carlo error, so they are omitted rather
+    than reported as zero-error quantities alongside the others.
+
+    * Means use the standard error of the mean over the scenario bank.
+    * The two probability endpoints use the binomial standard error.
+    * CVaR90 has no closed form here, so it is bootstrapped over scenarios.
+    """
+    outage_column = sustained_outage_column(
+        cfg.simulation.sustained_outage_min_services)
+    rng = np.random.default_rng(seed)
+    rows: list[dict[str, object]] = []
+    for (profile, portfolio), group in raw.groupby(
+            ["profile", "portfolio"], sort=True):
+        loss = group["weighted_service_hours_lost"].to_numpy(float)
+        n = loss.size
+        outage = group[outage_column].to_numpy(float)
+        recovered = group["recovered_within_horizon"].to_numpy(float)
+
+        draws = rng.integers(0, n, size=(n_boot, n))
+        cvar_draws = np.array([
+            conditional_value_at_risk(loss[draw]) for draw in draws])
+
+        def binomial_se(values: np.ndarray) -> float:
+            p = float(values.mean())
+            return float(np.sqrt(max(p * (1.0 - p), 0.0) / n))
+
+        rows.append({
+            "profile": profile,
+            "portfolio": portfolio,
+            "n_scenarios": int(n),
+            "mean_hours_lost_se": float(loss.std(ddof=1) / np.sqrt(n))
+            if n > 1 else float("nan"),
+            "tail_hours_lost_cvar90_se": float(cvar_draws.std(ddof=1)),
+            "sustained_outage_probability_se": binomial_se(outage),
+            "nonrecovery_probability_se": binomial_se(1.0 - recovered),
+            "monte_carlo_bootstrap_samples": int(n_boot),
+        })
+    return pd.DataFrame(rows)
+
+
+def frontier_resolution_warning(summary: pd.DataFrame,
+                                errors: pd.DataFrame,
+                                objectives: Sequence[str] = OBJECTIVES
+                                ) -> pd.DataFrame:
+    """Flag candidate pairs the scenario bank cannot reliably order.
+
+    Two candidates separated by less than the Monte Carlo error on every
+    objective are not distinguishable by this study, whatever the dominance
+    test says about their point estimates. Reporting the count of such pairs
+    is the honest alternative to presenting a frontier as though every
+    membership decision were exact.
+    """
+    stochastic = [name for name in objectives
+                  if f"{name}_se" in errors.columns]
+    merged = summary.merge(errors, on=["profile", "portfolio"],
+                           suffixes=("", "_err"))
+    rows: list[dict[str, object]] = []
+    for profile, group in merged.groupby("profile", sort=True):
+        values = group[stochastic].to_numpy(float)
+        sigma = group[[f"{name}_se" for name in stochastic]].to_numpy(float)
+        names = group["portfolio"].tolist()
+        indistinguishable = 0
+        total = 0
+        for i in range(len(names)):
+            for j in range(i + 1, len(names)):
+                total += 1
+                gap = np.abs(values[i] - values[j])
+                combined = np.sqrt(sigma[i] ** 2 + sigma[j] ** 2)
+                if np.all(gap <= combined):
+                    indistinguishable += 1
+        rows.append({
+            "profile": profile,
+            "candidate_pairs": total,
+            "indistinguishable_pairs": indistinguishable,
+            "indistinguishable_fraction": (
+                indistinguishable / total if total else 0.0),
+            "criterion": "separated by less than one combined Monte Carlo "
+                         "standard error on every stochastic objective",
+        })
+    return pd.DataFrame(rows)
