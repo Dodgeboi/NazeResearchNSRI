@@ -259,9 +259,9 @@ def test_a_non_finalist_can_dominate_a_finalist():
     dominates it outright.
     """
     summary = _summary([
-        ("kept", 10.0, 10.0),      # frozen finalist
-        ("also_kept", 20.0, 5.0),  # frozen finalist, genuinely efficient
-        ("skipped", 5.0, 5.0),     # not a finalist; dominates "kept"
+        ("kept", 10.0, 10.0),     # frozen finalist
+        ("also_kept", 2.0, 20.0),  # frozen finalist, genuinely efficient
+        ("skipped", 5.0, 5.0),     # not a finalist; dominates "kept" only
     ])
     comparison = restricted_frontier_comparison(
         summary, {"p": ["kept", "also_kept"]})

@@ -2,8 +2,9 @@
 
 Every test here corresponds to a defect the pre-rebuild suite did not detect.
 The 70-test baseline passed both before and after the sustained-outage
-endpoint was changed from k = 1 to k = 2, which is the clearest possible
-demonstration that a green suite was not evidence of semantic correctness
+endpoint was corrected from the implemented k = 1 to the specified k = 4,
+which is the clearest possible demonstration that a green suite alone was
+not evidence of semantic correctness
 (audit ISSUE-020). These tests assert the *manuscript's* definitions, not the
 implementation's behavior, so they fail when the two drift apart.
 """
@@ -162,7 +163,13 @@ def test_thresholded_endpoint_documents_its_rationale():
     """Any arbitrary constant must carry a written justification."""
     spec = endpoint("sustained_outage_probability")
     assert len(spec.threshold_rationale) > 200
-    assert "declared modeling choice" in spec.threshold_rationale
+    # The rationale must show its work: what the choice was, what evidence
+    # bears on it, and — because an earlier draft chose differently — that
+    # the superseded argument was withdrawn rather than quietly replaced.
+    lowered = spec.threshold_rationale.lower()
+    assert "withdrawn" in lowered
+    assert "bimodal" in lowered
+    assert "construct" in lowered
     # It must not claim clinical standing for the threshold.
     assert "catastroph" not in spec.definition.lower()
     assert "not a clinical catastrophe threshold" in (
@@ -276,8 +283,27 @@ def test_manuscript_does_not_use_catastrophe_language_for_the_endpoint():
 def test_manuscript_states_the_primary_k_and_the_ladder():
     tex = (ROOT / "docs" / "manuscript" / "main.tex").read_text(
         encoding="utf-8")
+    generated = (ROOT / "docs" / "manuscript" / "generated_numbers.tex")
     assert "sustained" in tex.lower()
-    # The primary k must be stated as a number, and the ladder must be
-    # reported so a reader can substitute their own k.
-    assert re.search(r"\bk\s*=\s*2\b", tex), (
-        "manuscript must state the primary k explicitly")
+
+    # The primary k must reach the page as a generated macro, never as a
+    # hand-typed digit that could drift from the config. Checking for a
+    # literal "k = 4" would have passed for the wrong reason here: the
+    # manuscript legitimately discusses k = 1, 2 and 4 while narrating the
+    # withdrawn justification.
+    assert re.search(r"k\s*=\s*\\PrimaryK", tex), (
+        "the manuscript must state the primary k via the generated "
+        "\\PrimaryK macro rather than a literal digit")
+
+    if generated.exists():
+        primary = load_config(
+            ROOT / "configs" / "multiobjective_portfolio.yaml"
+        ).simulation.sustained_outage_min_services
+        assert re.search(
+            r"\\newcommand\{\\PrimaryK\}\{" + str(primary) + r"\}",
+            generated.read_text(encoding="utf-8")), (
+            "generated_numbers.tex disagrees with the config about the "
+            "primary k; re-run generate_manuscript_numbers.py")
+
+    # The ladder must be reported so a reader can substitute their own k.
+    assert "every $k$ reported" in tex or "all four values of $k$" in tex
