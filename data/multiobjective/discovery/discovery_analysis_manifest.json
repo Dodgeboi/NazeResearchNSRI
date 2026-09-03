@@ -2,51 +2,17 @@
   "code": {
     "available": true,
     "branch": "rebuild/wp0-wp2",
-    "commit": "771b0a818ed6be81d9c4280ae04dcdd817a0f59f",
+    "commit": "7d88e32efd13b99145d498cc8c14c412471b1848",
     "dirty": true,
     "dirty_paths": [
-      "configs/multiobjective_portfolio.yaml",
-      "configs/public_evidence_validation.yaml",
-      "data/multiobjective/archive_pre_rebuild/",
-      "data/multiobjective/discovery/",
-      "data/multiobjective/holdout_processed/multiobjective_manifest.json",
-      "data/multiobjective/holdout_processed/portfolio_benchmark_comparison.csv",
-      "data/multiobjective/holdout_processed/portfolio_objective_summary.csv",
-      "data/multiobjective/holdout_processed/portfolio_pareto_frontier.csv",
-      "data/multiobjective/holdout_processed/portfolio_pareto_stability.csv",
-      "data/multiobjective/holdout_processed/portfolio_preference_scenarios.csv",
-      "data/multiobjective/processed/multiobjective_holdout_protocol.json",
-      "data/multiobjective/processed/multiobjective_manifest.json",
-      "data/multiobjective/processed/multiobjective_portfolio_best_portfolios.csv",
-      "data/multiobjective/processed/multiobjective_portfolio_cost_sensitivity.csv",
-      "data/multiobjective/processed/multiobjective_portfolio_minimum_budget.csv",
-      "data/multiobjective/processed/multiobjective_portfolio_pareto_frontier.csv",
-      "data/multiobjective/processed/multiobjective_portfolio_portfolio_summary.csv",
-      "data/multiobjective/processed/multiobjective_portfolio_selection_stability.csv",
-      "data/multiobjective/processed/portfolio_benchmark_comparison.csv",
-      "data/multiobjective/processed/portfolio_objective_summary.csv",
-      "data/multiobjective/processed/portfolio_pareto_frontier.csv",
-      "data/multiobjective/processed/portfolio_pareto_stability.csv",
-      "data/multiobjective/processed/portfolio_preference_scenarios.csv",
-      "data/multiobjective/raw/multiobjective_holdout_results.csv -> data/multiobjective/archive_pre_rebuild_raw/multiobjective_holdout_results.csv",
-      "data/multiobjective/raw/multiobjective_portfolio_optimization_manifest.json -> data/multiobjective/archive_pre_rebuild_raw/multiobjective_portfolio_optimization_manifest.json",
-      "data/multiobjective/raw/multiobjective_portfolio_optimization_results.csv -> data/multiobjective/archive_pre_rebuild_raw/multiobjective_portfolio_optimization_results.csv",
-      "onfigs/fine_step_replication.yaml",
-      "scripts/analyze_discovery_precision.py",
-      "scripts/analyze_portfolio_stage.py",
-      "scripts/freeze_confirmatory_protocol.py",
-      "scripts/run_confirmatory_frontier.py",
-      "scripts/run_discovery.py",
-      "src/grrc/endpoints.py",
-      "src/grrc/multiobjective.py",
-      "src/grrc/provenance.py",
-      "study/DEVIATIONS.md",
-      "study/MODEL_SPECIFICATION.md",
-      "tests/test_falsification.py",
-      "tests/test_provenance.py"
+      "ata/multiobjective/discovery/discovery_results.csv",
+      "audit/final_red_team_report.md",
+      "audit/scored_rubric.md",
+      "data/multiobjective/discovery/config_snapshot/",
+      "data/multiobjective/discovery/discovery_run_manifest.json"
     ]
   },
-  "created_at": "2026-09-03T01:48:29+00:00",
+  "created_at": "2026-09-03T05:58:37+00:00",
   "description": "Six-objective analysis of the discovery bank. Cost and burden are normalized scenario points, not dollars or measured staffing burden.",
   "environment": {
     "implementation": "CPython",
@@ -81,7 +47,7 @@
     {
       "bytes": 4735560,
       "path": "data/multiobjective/discovery/discovery_results.csv",
-      "sha256": "dd5e87479f27e2b6f59e5ba236c6142902eebc08271d1baa18b929a2410b8834"
+      "sha256": "c01ec6298db565098c4bd55f02a605593a1fa412e5df6ea7b5fc53c498bc74e5"
     }
   ],
   "outputs": [

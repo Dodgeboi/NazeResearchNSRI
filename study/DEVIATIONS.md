@@ -237,3 +237,24 @@ The pre-rebuild archive under `data/multiobjective/archive_pre_rebuild/` is
 exempt from manifest verification. Those manifests predate this schema and
 are retained only as a record; their README states that no number in them may
 be cited.
+
+### Verification of the discovery re-run (2026-09-03)
+
+Both expectations stated above were checked rather than assumed.
+
+**Frozen finalist labels are identical.** Re-deriving the finalist rule from
+the re-run discovery analysis reproduces the frozen protocol's identities
+exactly: 40 resource-constrained, 16 intermediate-capacity, 3 high-capacity,
+with zero added and zero removed in every profile. The frozen confirmatory
+protocol therefore still describes the study that was run, and is reused
+rather than superseded. Had a single label moved, the protocol would have had
+to be re-frozen under a new name and the confirmatory bank re-run against it.
+
+**The stale artifact is gone.** The deprecated `catastrophic` alias column in
+the re-run raw file now equals `sustained_clinical_outage_k4`, the configured
+primary. Previously it carried the k = 2 value from the superseded config.
+
+**The manifest now verifies**, because the run archived the exact
+configuration bytes it used into `config_snapshot/` and hashes those rather
+than the live files. A later edit to the study config can no longer
+invalidate a completed run's provenance.
