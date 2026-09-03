@@ -110,8 +110,21 @@ def frontier(summary: pd.DataFrame, errors: pd.DataFrame,
             color=INK_MUTED, alpha=0.45, zorder=2, capsize=0)
 
         front = group[efficient].sort_values("implementation_cost_points")
-        ax.plot(front["implementation_cost_points"], front["mean_hours_lost"],
-                color=colour, linewidth=2.0, zorder=3, solid_capstyle="round")
+
+        # Do NOT connect the six-dimensional frontier points in this
+        # two-dimensional projection. A candidate can be non-dominated in six
+        # objectives while sitting well above another in cost and mean loss,
+        # so joining them in cost order draws a zig-zag that implies a
+        # trade-off curve the data do not contain. What can honestly be drawn
+        # is the cost/disruption lower envelope: the best mean loss reachable
+        # at or below each cost. It is a separate, thinner line and is labelled
+        # as such.
+        envelope = group.sort_values("implementation_cost_points")
+        running = np.minimum.accumulate(
+            envelope["mean_hours_lost"].to_numpy(float))
+        ax.step(envelope["implementation_cost_points"], running, where="post",
+                color=colour, linewidth=1.4, alpha=0.55, zorder=2)
+
         ax.errorbar(
             front["implementation_cost_points"], front["mean_hours_lost"],
             yerr=front["mean_hours_lost_se"],
@@ -141,12 +154,14 @@ def frontier(summary: pd.DataFrame, errors: pd.DataFrame,
         Line2D([], [], color=INK_MUTED, marker="o", markersize=4,
                linewidth=0, alpha=0.6, label="Dominated candidate"),
         Line2D([], [], color=SERIES["resource_constrained"], marker="o",
-               markersize=5.5, linewidth=2.0,
-               label="Full-space Pareto frontier"),
+               markersize=5.5, linewidth=0,
+               label="Non-dominated in all six objectives"),
+        Line2D([], [], color=SERIES["resource_constrained"], linewidth=1.4,
+               alpha=0.55, label="Cost / disruption lower envelope"),
         Line2D([], [], color=INK_SECONDARY, linewidth=1.0,
                linestyle=(0, (4, 3)), label="Declared profile budget"),
     ]
-    fig.legend(handles=handles, loc="lower center", ncol=3, frameon=False,
+    fig.legend(handles=handles, loc="lower center", ncol=4, frameon=False,
                fontsize=8.5, bbox_to_anchor=(0.5, -0.10),
                labelcolor=INK_SECONDARY)
     fig.tight_layout()
