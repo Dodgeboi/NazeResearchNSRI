@@ -1,0 +1,89 @@
+{
+  "code": {
+    "available": true,
+    "branch": "rebuild/wp0-wp2",
+    "commit": "ccb0088ee6167404e18d23b8a570cf07be820cdf",
+    "dirty": true,
+    "dirty_paths": [
+      "docs/manuscript/generated_numbers.tex",
+      "scripts/audit_manuscript_claims.py",
+      "scripts/generate_manuscript_numbers.py"
+    ]
+  },
+  "created_at": "2026-09-03T02:00:33+00:00",
+  "description": "LaTeX macros for every number the manuscript quotes, generated from committed result tables so that no result value is hand-typed in the manuscript.",
+  "environment": {
+    "implementation": "CPython",
+    "machine": "x86_64",
+    "packages": {
+      "matplotlib": "3.11.0",
+      "networkx": "3.6.1",
+      "numpy": "2.5.1",
+      "pandas": "3.0.3",
+      "scipy": "1.18.0",
+      "yaml": "6.0.3"
+    },
+    "platform": "Linux-6.18.44-fc-v24-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "inputs": [
+    {
+      "bytes": 2628,
+      "path": "configs/multiobjective_portfolio.yaml",
+      "sha256": "8b4ce785a8163925bab99b8a108d6b13ebee7c3a47cc90648355001d6fdb03d6"
+    },
+    {
+      "bytes": 4735560,
+      "path": "data/multiobjective/discovery/discovery_results.csv",
+      "sha256": "dd5e87479f27e2b6f59e5ba236c6142902eebc08271d1baa18b929a2410b8834"
+    },
+    {
+      "bytes": 1193,
+      "path": "data/multiobjective/discovery/portfolio_benchmark_comparison.csv",
+      "sha256": "947142d9051138ba1d52ef4970830a0b2e6674ab69babb619a7430426e606245"
+    },
+    {
+      "bytes": 478,
+      "path": "data/multiobjective/discovery/portfolio_frontier_resolution.csv",
+      "sha256": "911c78253469ad7db5f2950364f81b4acb0495ed975a2fa4e95c96d5dea8cfc0"
+    },
+    {
+      "bytes": 50477,
+      "path": "data/multiobjective/discovery/portfolio_monte_carlo_error.csv",
+      "sha256": "5a5ba933168232382125030b2fa435fd2b25c8dd785981229142dcc41341269d"
+    },
+    {
+      "bytes": 69323,
+      "path": "data/multiobjective/discovery/portfolio_objective_summary.csv",
+      "sha256": "872001a4dffb0a0f23ff312a8d049923cd890b87a3d68aca961200138326eb9c"
+    },
+    {
+      "bytes": 70140,
+      "path": "data/multiobjective/discovery/portfolio_pareto_frontier.csv",
+      "sha256": "b04af4dbd4e97a728d5964aa1ff3611ff71ef8db3cb702a7618833b46bd62940"
+    },
+    {
+      "bytes": 31362,
+      "path": "data/multiobjective/discovery/portfolio_pareto_stability.csv",
+      "sha256": "fda865bc14e716b0dc2a262d930eb972076a17b5088070893ec532960c2818ca"
+    },
+    {
+      "bytes": 6665,
+      "path": "data/multiobjective/discovery/precision_analysis.json",
+      "sha256": "58a210afa9b6982c1bdd1e6ebbb9d2ac0a24586cfad267c109ea5d16d507a62b"
+    }
+  ],
+  "outputs": [
+    {
+      "bytes": 4299,
+      "path": "docs/manuscript/generated_numbers.tex",
+      "sha256": "36e9a7cd8005096f2e7849774a129a9b1f398cacabc661b5c25603400c2b0e6e"
+    }
+  ],
+  "parameters": {
+    "macros_defined": 74
+  },
+  "protocol": null,
+  "run_id": "manuscript-numbers",
+  "stage": "analysis"
+}
