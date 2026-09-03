@@ -296,7 +296,14 @@ class RansomwareSimulation:
             contained = not bool(np.any(self.comp & ~self.isolated))
             if contained and self.containment_step < 0:
                 self.containment_step = t
-            if contained:
+            # Structural assumption S1: restoration may be gated on complete
+            # containment, or allowed to proceed in parallel with it. The
+            # gated form is the study's primary specification; the ungated
+            # form is the alternative the structural sensitivity analysis
+            # runs. Only isolated nodes are ever restore candidates either
+            # way, so the ungated form still cannot restore a node that is
+            # actively compromised and reachable.
+            if contained or not sim.restore_requires_containment:
                 self._restore(t, backups_available)
 
             self.peak_compromised = max(self.peak_compromised,

@@ -170,6 +170,15 @@ class SimulationSpec:
     # ``load_config`` still accepts the legacy key.
     sustained_outage_service_steps: int = 8
     sustained_outage_min_services: int = DEFAULT_SUSTAINED_OUTAGE_MIN_SERVICES
+    # Structural assumption S1 (study/MODEL_SPECIFICATION.md section 2).
+    # When true, no node begins restoring until every compromised node is
+    # isolated. Real incident response restores in parallel with containment
+    # and prioritises clinical systems, so this couples the response controls
+    # to the recovery endpoint through a modeling choice rather than a
+    # mechanism. It was undocumented before the rebuild (audit ISSUE-007) and
+    # is now switchable so the structural sensitivity analysis can vary it
+    # rather than assert it.
+    restore_requires_containment: bool = True
     early_stop: bool = True
 
     def validate(self) -> None:
