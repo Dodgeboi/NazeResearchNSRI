@@ -19,6 +19,11 @@ jobs:
           pip install -r requirements.txt
           pip install -e .
 
+      # Large raw trial banks are committed gzipped. Manifests hash the
+      # uncompressed bytes, so they must be restored before verification.
+      - name: Unpack compressed raw trial banks
+        run: python scripts/unpack_raw.py
+
       - name: Unit, invariant, and falsification tests
         run: pytest -q
 

@@ -257,13 +257,40 @@ than corrected.}
 \subsection{Structural sensitivity}
 
 Assumption S1 --- that restoration begins only once the estate is contained
---- was varied on the candidates carrying the conclusions above. Of
-\StructuralCandidatesTested{} candidates evaluated under both structures,
-\StructuralPreserved{} keep their frontier membership;
-\StructuralOnlyGated{} are non-dominated only under the primary structure and
-\StructuralOnlyParallel{} only under the alternative. The worst per-profile
-agreement is \StructuralWorstAgreement\%.
+--- was varied on the \StructuralCandidatesTested{} candidates carrying the
+conclusions above. It turns out to matter, in both membership and magnitude,
+and we report it rather than treating S1 as innocuous.
+
+\textbf{Frontier membership.} \StructuralPreserved{} candidates keep their
+membership under both structures; \StructuralOnlyGated{} are non-dominated
+only under the primary structure and \StructuralOnlyParallel{} only under the
+alternative. Per-profile agreement ranges from
+\StructuralWorstAgreement\% to \StructuralBestAgreement\%. Roughly a
+quarter to a third of frontier membership is therefore a property of the
+structural choice rather than of the candidates.
+
+\textbf{Magnitude, and its direction.} Removing the containment gate makes
+outcomes markedly \emph{worse}, not better: resource-constrained mean loss
+across these candidates moves from
+\StructuralResourceConstrainedGatedMeanLoss{} to
+\StructuralResourceConstrainedParallelMeanLoss{} weighted service-hours and
+non-recovery from \StructuralResourceConstrainedGatedNonRecovery\% to
+\StructuralResourceConstrainedParallelNonRecovery\%; the intermediate
+profile moves from \StructuralIntermediateGatedMeanLoss{} to
+\StructuralIntermediateParallelMeanLoss{}. The high-capacity profile is
+unaffected, because it contains the estate almost immediately either way.
+
+The direction is initially counterintuitive and the mechanism is worth
+stating, because it is a genuine property of the model rather than an
+artifact of the switch. A restored node re-enters the network susceptible.
+Restoring while the attack is still propagating therefore returns clean
+assets to an adversary who still has reach, and the incident lengthens. The
+gated structure is not merely a simplifying assumption about scheduling; it
+encodes a substantive claim --- that responders do not restore into an
+uncontained environment --- and the model is materially more optimistic
+because of it.
 
 Structural uncertainty is not expressible as an interval, and this comparison
-is the substitute: the conclusions above are conditional on S1, and the
-magnitude of that conditionality is measured rather than assumed away.
+is the substitute. The conclusions above are conditional on S1, that
+conditionality is large, and it is the only structural assumption in the
+model that has been varied at all. The rest are asserted.

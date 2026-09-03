@@ -205,6 +205,10 @@ def main() -> int:
 
     python = sys.executable
     results: list[Result] = []
+    # Manifests hash uncompressed bytes; restore anything stored gzipped
+    # before anything tries to verify it.
+    results.append(run_command(
+        "unpack compressed raw banks", [python, "scripts/unpack_raw.py"]))
     if not args.skip_tests:
         results.append(run_command("test suite", [python, "-m", "pytest", "-q"]))
         results.append(run_command(

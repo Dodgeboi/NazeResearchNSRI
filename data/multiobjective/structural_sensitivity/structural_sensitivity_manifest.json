@@ -1,0 +1,80 @@
+{
+  "code": {
+    "available": true,
+    "branch": "rebuild/wp0-wp2",
+    "commit": "8069a7ab18a6d50461d276d42288fe912bc14662",
+    "dirty": true,
+    "dirty_paths": [
+      "audit/human_decisions_required.md",
+      "data/multiobjective/structural_sensitivity/"
+    ]
+  },
+  "created_at": "2026-09-03T06:40:39+00:00",
+  "description": "Structural sensitivity for assumption S1: restoration gated on complete containment versus proceeding in parallel with it. Reports whether frontier membership is preserved, not merely whether the numbers move.",
+  "environment": {
+    "implementation": "CPython",
+    "machine": "x86_64",
+    "packages": {
+      "matplotlib": "3.11.0",
+      "networkx": "3.6.1",
+      "numpy": "2.5.1",
+      "pandas": "3.0.3",
+      "scipy": "1.18.0",
+      "yaml": "6.0.3"
+    },
+    "platform": "Linux-6.18.44-fc-v24-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "inputs": [
+    {
+      "bytes": 561,
+      "path": "data/multiobjective/structural_sensitivity/config_snapshot/defense_burdens.yaml",
+      "sha256": "70647c2c1cc3d0a260ff06660c69c31b29fcffd743b16c4db40a18394730515a"
+    },
+    {
+      "bytes": 1057,
+      "path": "data/multiobjective/structural_sensitivity/config_snapshot/defense_costs.yaml",
+      "sha256": "66e66f192c5e44cacd099ef747262639379006084819569353306517cc30e3e5"
+    },
+    {
+      "bytes": 2628,
+      "path": "data/multiobjective/structural_sensitivity/config_snapshot/multiobjective_portfolio.yaml",
+      "sha256": "8b4ce785a8163925bab99b8a108d6b13ebee7c3a47cc90648355001d6fdb03d6"
+    }
+  ],
+  "outputs": [
+    {
+      "bytes": 266,
+      "path": "data/multiobjective/structural_sensitivity/structural_frontier_agreement.csv",
+      "sha256": "03b4a3efb967331c0c89a8b430dfd54025ad9683fcf41b68c05ca859396bbb83"
+    },
+    {
+      "bytes": 4692827,
+      "path": "data/multiobjective/structural_sensitivity/structural_gated_primary.csv",
+      "sha256": "c49666e9f3f7657a62e12000067dd42283beaeb05d2c5572d9158f48c9a53316"
+    },
+    {
+      "bytes": 750,
+      "path": "data/multiobjective/structural_sensitivity/structural_objective_movement.csv",
+      "sha256": "45b95c8e48e20f372ebe14ca30c45c156f17136124efd21d0a22032e51d958c7"
+    },
+    {
+      "bytes": 4821945,
+      "path": "data/multiobjective/structural_sensitivity/structural_parallel_alternative.csv",
+      "sha256": "71f68505fbaf66647b8e7bc723f53d80b491233331a8933123eb0e981dc2545d"
+    }
+  ],
+  "parameters": {
+    "candidates_by_profile": {
+      "high_capacity": 7,
+      "intermediate_capacity": 18,
+      "resource_constrained": 50
+    },
+    "master_seed": 7731409,
+    "total_executions_per_arm": 11250,
+    "trials_per_candidate": 150
+  },
+  "protocol": null,
+  "run_id": "structural-sensitivity-s1",
+  "stage": "validation"
+}

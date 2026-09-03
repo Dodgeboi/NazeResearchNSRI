@@ -32,3 +32,8 @@ venv/
 private/
 sensitive/
 hospital_data/
+
+# Large raw trial banks are committed gzipped instead; scripts/unpack_raw.py
+# restores them. Manifests hash the UNCOMPRESSED bytes, so nothing in the
+# provenance chain is weakened by storing them this way.
+data/multiobjective/confirmatory/multiobjective_confirmatory_results.csv

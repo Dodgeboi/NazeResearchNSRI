@@ -1,0 +1,4 @@
+profile,candidates_tested,non_dominated_gated,non_dominated_parallel,preserved,only_under_gated,only_under_parallel,jaccard_agreement
+high_capacity,7,5,4,4,1,0,0.8
+intermediate_capacity,18,12,12,10,2,2,0.7142857143
+resource_constrained,50,44,33,32,12,1,0.7111111111

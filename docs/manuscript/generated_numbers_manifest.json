@@ -2,22 +2,16 @@
   "code": {
     "available": true,
     "branch": "rebuild/wp0-wp2",
-    "commit": "95cd5ac7ebb15d815e7db964f80930bcf533211c",
+    "commit": "8069a7ab18a6d50461d276d42288fe912bc14662",
     "dirty": true,
     "dirty_paths": [
-      "data/multiobjective/confirmatory/",
-      "docs/manuscript/generated_numbers_manifest.json",
-      "docs/manuscript/section_abstract.tex",
-      "docs/manuscript/section_conclusion.tex",
-      "docs/manuscript/section_discussion.tex",
-      "docs/manuscript/section_discussion_finding.tex",
-      "docs/manuscript/section_results.tex",
+      "audit/human_decisions_required.md",
+      "data/multiobjective/structural_sensitivity/",
       "ocs/manuscript/generated_numbers.tex",
-      "scripts/audit_manuscript_claims.py",
       "scripts/generate_manuscript_numbers.py"
     ]
   },
-  "created_at": "2026-09-03T04:51:19+00:00",
+  "created_at": "2026-09-03T06:41:14+00:00",
   "description": "LaTeX macros for every number the manuscript quotes, generated from committed result tables so that no result value is hand-typed in the manuscript.",
   "environment": {
     "implementation": "CPython",
@@ -82,7 +76,7 @@
     {
       "bytes": 4735560,
       "path": "data/multiobjective/discovery/discovery_results.csv",
-      "sha256": "dd5e87479f27e2b6f59e5ba236c6142902eebc08271d1baa18b929a2410b8834"
+      "sha256": "c01ec6298db565098c4bd55f02a605593a1fa412e5df6ea7b5fc53c498bc74e5"
     },
     {
       "bytes": 1193,
@@ -118,17 +112,27 @@
       "bytes": 6665,
       "path": "data/multiobjective/discovery/precision_analysis.json",
       "sha256": "58a210afa9b6982c1bdd1e6ebbb9d2ac0a24586cfad267c109ea5d16d507a62b"
+    },
+    {
+      "bytes": 266,
+      "path": "data/multiobjective/structural_sensitivity/structural_frontier_agreement.csv",
+      "sha256": "03b4a3efb967331c0c89a8b430dfd54025ad9683fcf41b68c05ca859396bbb83"
+    },
+    {
+      "bytes": 750,
+      "path": "data/multiobjective/structural_sensitivity/structural_objective_movement.csv",
+      "sha256": "45b95c8e48e20f372ebe14ca30c45c156f17136124efd21d0a22032e51d958c7"
     }
   ],
   "outputs": [
     {
-      "bytes": 12128,
+      "bytes": 13111,
       "path": "docs/manuscript/generated_numbers.tex",
-      "sha256": "74b1562273ef6b89beb957048a714944750de4d1c0f4ecd5ef0e195462610566"
+      "sha256": "fc3e7ff9b0fd25432bec248e272a0b488cf6a8e75f351e4696f62fe689f2d4c9"
     }
   ],
   "parameters": {
-    "macros_defined": 215
+    "macros_defined": 233
   },
   "protocol": {
     "frozen_at": "2026-09-03T01:49:25+00:00",

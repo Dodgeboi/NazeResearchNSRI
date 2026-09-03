@@ -343,6 +343,26 @@ def main() -> None:
                        frame["only_under_parallel"].sum())
         macros.percent("StructuralWorstAgreement",
                        frame["jaccard_agreement"].min())
+        macros.percent("StructuralBestAgreement",
+                       frame["jaccard_agreement"].max())
+
+        movement = Path("data/multiobjective/structural_sensitivity/"
+                        "structural_objective_movement.csv")
+        if movement.exists():
+            moved = pd.read_csv(movement).set_index(
+                ["structural_arm", "profile"])
+            for profile, tag in PROFILE_MACRO.items():
+                for arm, label in (("gated_primary", "Gated"),
+                                   ("parallel_alternative", "Parallel")):
+                    key = (arm, profile)
+                    if key not in moved.index:
+                        continue
+                    row = moved.loc[key]
+                    macros.one_dp(f"Structural{tag}{label}MeanLoss",
+                                  row["mean_mean_hours_lost"])
+                    macros.percent(f"Structural{tag}{label}NonRecovery",
+                                   row["mean_nonrecovery_probability"])
+            consumed.append(movement)
         consumed.append(structural)
 
     precision = DISCOVERY / "precision_analysis.json"

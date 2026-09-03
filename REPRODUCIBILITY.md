@@ -29,6 +29,7 @@ the git commit and whether the working tree was dirty.
 Three checks, in order. Each exits non-zero on failure.
 
 ```bash
+python scripts/unpack_raw.py             # restore gzipped raw trial banks
 pytest                                   # 165 tests, 1 expected xfail
 python scripts/verify_sources.py         # archived sources + derived counts
 python -m grrc.cli validate --no-report  # behavioral validation checks
@@ -91,6 +92,11 @@ python scripts/run_discovery.py --trials 3 \
 
 Committed raw and processed outputs mean every reported value can be audited
 without rerunning anything.
+
+The confirmatory bank is 68 MB uncompressed and is committed gzipped at
+4.8 MB. `scripts/unpack_raw.py` restores it, and is idempotent. **Manifests
+hash the uncompressed bytes**, so verification still fails if a single value
+changed; compression is a storage choice, not a weakening of the chain.
 
 ## What makes the freeze checkable
 

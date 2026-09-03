@@ -95,8 +95,10 @@ reliably order — 33% in the high-capacity profile even at 800 paired
 scenarios. Scenario counts are justified by a pilot precision analysis and
 allocated per profile, because the requirement varies by more than a factor
 of four. Bootstrap Pareto stability resamples whole scenarios, preserving
-cross-portfolio correlation. Structural assumption S1 is varied and the
-frontier agreement reported.
+cross-portfolio correlation. Structural assumption S1 is varied, and the
+result earns its place: relaxing it moves 20-29% of frontier membership and
+nearly doubles modeled disruption in the two weaker profiles, which is
+reported rather than buried.
 
 **Withheld (4 points), and this is the largest single gap.** *Parameter*
 uncertainty is not represented at all. The unidentified coefficients — spread

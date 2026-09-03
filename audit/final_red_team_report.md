@@ -200,13 +200,28 @@ Both inflate the modeled value of the corresponding controls.
 parameter-identification section. **Real fix:** exploit-specific
 susceptibility and coverage-dependent authentication effects.
 
-### R6 — Structural assumption S1. **Medium.**
+### R6 — Structural assumption S1, and the assumptions like it. **High.**
 
-Restoration is gated on complete containment, which couples the response
-controls to the recovery objective through a modeling choice.
-**Mitigation:** varied in a structural sensitivity analysis whose frontier
-agreement is reported. This is the only structural assumption that is
-varied; the others are asserted.
+*Raised from Medium after the sensitivity analysis returned.* Relaxing S1
+alone changes frontier membership by 20–29% depending on profile (Jaccard
+agreement 0.71–0.80) and moves resource-constrained mean loss from 155.0 to
+245.6 weighted service-hours, with non-recovery going from 14.4% to 73.5%.
+S1 is not a scheduling convenience; it encodes the substantive claim that
+responders never restore into an uncontained environment, and the model is
+materially more optimistic for it.
+
+The mechanism is worth understanding: a restored node re-enters susceptible,
+so restoring during active propagation hands clean assets back to an
+adversary with reach. That is a real property of the model, not an artifact
+of the switch.
+
+**Why this raises the risk rather than resolving it:** S1 is the *only*
+structural assumption that has been varied. If the one we tested moves the
+answer this much, the untested ones — the transition ordering within a step,
+the service-dependency graph, the criticality-ordered restoration queue, the
+absence of an adaptive adversary — cannot be assumed gentler. The honest
+position is that structural uncertainty in this model is large and mostly
+unmeasured.
 
 ### R7 — High-capacity conclusions rest on differences near the noise floor. **Medium.**
 
