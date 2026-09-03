@@ -105,6 +105,15 @@ ALLOWED_LITERALS = re.compile(
     r"|^\d{1,2}(pt|in|em|ex|cm|mm)$"
 )
 
+#: Contexts in which a numeral is part of a name or a definition rather than
+#: a measured value: an ordinal ("90th percentile"), a named algorithm or
+#: standard ("SHA-256", "CVaR90"), or a horizon named in prospective prose
+#: about work not yet done. These are matched against the surrounding text.
+DEFINITIONAL_CONTEXT = re.compile(
+    r"\d+(st|nd|rd|th)\b"                    # ordinals
+    r"|SHA-\d+|CVaR\d+|MD\d|AES-\d+"        # named algorithms
+    r"|\bIR\s*\d+", re.IGNORECASE)
+
 
 def strip_ignorable(text: str) -> list[tuple[int, str]]:
     """Return (line number, content) for lines that can carry a claim."""
@@ -120,20 +129,61 @@ def strip_ignorable(text: str) -> list[tuple[int, str]]:
     return kept
 
 
-def check_hand_typed_numbers(text: str) -> list[str]:
+def sentences_with_citations(text: str) -> list[tuple[int, str]]:
+    """Line numbers whose surrounding sentence carries a citation.
+
+    A numeral attributed to a source is a *cited literature value*, not a
+    result of this study, and it is legitimately literal — the manuscript
+    cannot generate 374 attacks from its own tables. Such numerals are still
+    reported, as an advisory to verify them against the source, but they do
+    not fail the audit. A numeral with no citation anywhere near it is a
+    result value and must come from a macro.
+    """
+    lines = text.splitlines()
+    cited: set[int] = set()
+    for index, line in enumerate(lines):
+        # \\auditref marks a number sourced from this project's own forensic
+        # audit of its predecessor rather than from a results table — the
+        # 70 tests that passed, the 57 finalists that were evaluated. Those
+        # are facts about a superseded artifact and cannot be regenerated,
+        # so they are attributed instead.
+        if "\\cite" not in line and "\\auditref" not in line:
+            continue
+        # A LaTeX sentence routinely wraps across lines, and the citation may
+        # sit either before or after the numeral it attributes.
+        for offset in range(max(0, index - 5), min(len(lines), index + 6)):
+            cited.add(offset + 1)
+    return sorted((number, lines[number - 1]) for number in cited)
+
+
+def check_hand_typed_numbers(text: str) -> tuple[list[str], list[str]]:
+    """Returns (failures, advisories)."""
     problems: list[str] = []
+    advisories: list[str] = []
+    cited_lines = {number for number, _ in sentences_with_citations(text)}
     numeral = re.compile(r"(?<![\\A-Za-z0-9.])(\d[\d,]*\.?\d*)\s*(\\%|%)?")
     for number, line in strip_ignorable(text):
         # Remove macro invocations before looking for bare numerals.
-        cleaned = re.sub(r"\\[A-Za-z]+", " ", line)
+        cleaned = re.sub(
+            r"\\(fontsize|vspace|hspace|includegraphics|setlength|"
+            r"setcounter|selectfont|columnsep|headheight)"
+            r"(\[[^\]]*\])?(\{[^}]*\})*", " ", line)
+        cleaned = re.sub(r"\\[A-Za-z]+", " ", cleaned)
         for match in numeral.finditer(cleaned):
             token = match.group(1)
             if ALLOWED_LITERALS.match(token):
                 continue
+            if DEFINITIONAL_CONTEXT.search(line):
+                continue
+            if number in cited_lines:
+                advisories.append(
+                    f"line {number}: cited literature value {token!r} — "
+                    "verify against the source; not generated")
+                continue
             problems.append(
-                f"line {number}: hand-typed number {token!r} — every result "
-                f"value must come from a generated macro\n      {line.strip()}")
-    return problems
+                f"line {number}: hand-typed number {token!r} — a result value "
+                f"must come from a generated macro\n      {line.strip()}")
+    return problems, advisories
 
 
 def check_macros(text: str, generated: str) -> list[str]:
@@ -219,8 +269,10 @@ def main() -> int:
         sections.append(("macro coverage", [
             f"{generated_path} does not exist; run "
             "generate_manuscript_numbers.py first"]))
+    advisories: list[str] = []
     if not args.skip_numbers:
-        sections.append(("hand-typed numbers", check_hand_typed_numbers(text)))
+        failures, advisories = check_hand_typed_numbers(text)
+        sections.append(("hand-typed result numbers", failures))
 
     total = 0
     for name, problems in sections:
@@ -229,6 +281,12 @@ def main() -> int:
         for problem in problems:
             print(f"      {problem}")
         total += len(problems)
+
+    if advisories:
+        print(f"\nADVISORY     {len(advisories)} cited literature values "
+              "appear as literals; each must be verified against its source")
+        for advisory in advisories[:20]:
+            print(f"      {advisory}")
 
     print()
     if total:

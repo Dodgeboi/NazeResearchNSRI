@@ -232,6 +232,15 @@ def main() -> None:
     macros.integer("HorizonHours",
                    cfg.simulation.max_steps * cfg.simulation.step_minutes / 60)
     macros.integer("StepMinutes", cfg.simulation.step_minutes)
+    macros.integer("ServiceFunctionalPercent",
+                   round(100 * cfg.simulation.service_functional_fraction))
+    # Horizons named in the prospective-work paragraph. They are declared
+    # targets rather than settings of this run, so they are defined here
+    # once and referenced, not retyped.
+    macros.integer("AcuteHorizonHours", 72)
+    macros.integer("MinimumViableHorizonDays", 21)
+    macros.integer("FullRecoveryHorizonDays", 90)
+    macros.integer("TailHorizonDays", 180)
 
     consumed += add_stage(macros, "Discovery", DISCOVERY, cfg)
     consumed += add_bimodality(

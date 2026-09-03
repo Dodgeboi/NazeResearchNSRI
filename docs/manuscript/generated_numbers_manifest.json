@@ -2,15 +2,19 @@
   "code": {
     "available": true,
     "branch": "rebuild/wp0-wp2",
-    "commit": "ccb0088ee6167404e18d23b8a570cf07be820cdf",
+    "commit": "1099ac7a79b53b0453297d3d280644771a3e2992",
     "dirty": true,
     "dirty_paths": [
-      "docs/manuscript/generated_numbers.tex",
+      "docs/manuscript/main.tex",
+      "docs/manuscript/section_discussion.tex",
+      "ocs/manuscript/generated_numbers.tex",
       "scripts/audit_manuscript_claims.py",
-      "scripts/generate_manuscript_numbers.py"
+      "scripts/generate_manuscript_numbers.py",
+      "scripts/run_full_audit.py",
+      "study/external_validation_benchmarks.json"
     ]
   },
-  "created_at": "2026-09-03T02:00:33+00:00",
+  "created_at": "2026-09-03T03:19:35+00:00",
   "description": "LaTeX macros for every number the manuscript quotes, generated from committed result tables so that no result value is hand-typed in the manuscript.",
   "environment": {
     "implementation": "CPython",
@@ -75,13 +79,13 @@
   ],
   "outputs": [
     {
-      "bytes": 4299,
+      "bytes": 4498,
       "path": "docs/manuscript/generated_numbers.tex",
-      "sha256": "36e9a7cd8005096f2e7849774a129a9b1f398cacabc661b5c25603400c2b0e6e"
+      "sha256": "84b4dcffa3eaaa683dbe9002018162bcec2f4415ab8d1fd4ef4725c4f94b8bd4"
     }
   ],
   "parameters": {
-    "macros_defined": 74
+    "macros_defined": 79
   },
   "protocol": null,
   "run_id": "manuscript-numbers",

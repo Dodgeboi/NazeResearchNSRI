@@ -46,13 +46,26 @@
       "population": "U.S. hospitals with ransomware attacks, Medicare claims based",
       "model_endpoint": "reduction in delivered clinical service capacity during the first 7 days",
       "time_window": "days 0-7",
-      "target": {"lower": 0.17, "upper": 0.24, "units": "proportional decline in hospital volume"},
-      "uncertainty": "range reported across specifications",
+      "target": {
+        "emergency_room_decline": 0.167,
+        "inpatient_admissions_decline": 0.254,
+        "outpatient_visits_decline_range": [
+          0.17,
+          0.25
+        ],
+        "units": "proportional decline in volume during the first week"
+      },
+      "uncertainty": "Point estimates by setting. Figures verified against the authors' working-paper text, which reports ER 16.7%, inpatient 25.4%, and outpatient 17-25%. The rebuild handoff summarised these as a single 17-24% range; the by-setting figures are used instead because they are what the source states. The published AEJ version should be re-checked before submission in case the estimates were revised in review.",
       "direction": "two-sided",
       "discrepancy_measure": "absolute difference between modeled week-1 activity loss and the target interval",
       "used_for": "validation",
       "verdict": "not_scored",
-      "structural_reason": "Construct mismatch, and it is not a close one. The model reports weighted service-hours lost with binary per-step availability; the target is a change in patient volume. A hospital with a degraded but functioning EHR still admits patients, and the model has no representation of degraded operation, downtime procedures, or manual workarounds. Converting service-hours into volume would require exactly the patient-flow layer the model does not have. Reporting a number here would be manufacturing a validation."
+      "structural_reason": "Construct mismatch, and it is not a close one. The model reports weighted service-hours lost with binary per-step availability; the target is a change in patient volume. A hospital with a degraded but functioning EHR still admits patients, and the model has no representation of degraded operation, downtime procedures, or manual workarounds. Converting service-hours into volume would require exactly the patient-flow layer the model does not have. Reporting a number here would be manufacturing a validation.",
+      "citation_verification": {
+        "verified_at": "2026-09-03",
+        "method": "authors' working-paper full text; the journal and PMC pages are behind automated-access challenges",
+        "discrepancy_found": "the handoff's '17-24% in the first week' is narrower than, and not identical to, any single figure in the source"
+      }
     },
     {
       "id": "recovery_trajectory_three_weeks",
@@ -62,14 +75,23 @@
       "population": "U.S. hospitals with ransomware attacks",
       "model_endpoint": "time to return to full modeled clinical availability",
       "time_window": "0-8 weeks",
-      "target": {"approximate_recovery_weeks": 3},
-      "uncertainty": "approximate; described qualitatively in the source",
+      "target": {
+        "approximate_recovery_weeks_range": [
+          2,
+          3
+        ]
+      },
+      "uncertainty": "The source states volume in all hospital settings recovers to pre-attack levels within two to three weeks. The handoff's 'approximately three weeks' is the upper end of that range.",
       "direction": "the modeled recovery time should be of the same order",
       "discrepancy_measure": "recovery-curve distance over the observation window",
       "used_for": "validation",
       "verdict": "fail",
       "observed_model_behaviour": "Technical recovery in the model completes far earlier than the observed three-week trajectory, and the horizon cannot represent the comparison window at all.",
-      "structural_reason": "Same horizon limitation as recovery_duration_bins. This is recorded as a fail rather than not_addressable because the direction of the discrepancy is unambiguous and informative: the model recovers optimistically fast relative to the public record, and any decision read off its recovery objective inherits that optimism."
+      "structural_reason": "Same horizon limitation as recovery_duration_bins. This is recorded as a fail rather than not_addressable because the direction of the discrepancy is unambiguous and informative: the model recovers optimistically fast relative to the public record, and any decision read off its recovery objective inherits that optimism.",
+      "citation_verification": {
+        "verified_at": "2026-09-03",
+        "quote": "Volume in all hospital settings recovers to pre-attack levels within two to three weeks."
+      }
     },
     {
       "id": "california_ed_and_admissions",
@@ -80,7 +102,7 @@
       "model_endpoint": "clinical service availability trajectory by week",
       "time_window": "weeks 1-8",
       "target": {
-        "ed_visits_week_1": -0.0810,
+        "ed_visits_week_1": -0.081,
         "ed_visits_week_2": -0.1621,
         "inpatient_admissions_week_2": -0.1662,
         "return_toward_baseline_by_week": 8
@@ -101,8 +123,10 @@
       "model_endpoint": "regional spillover of demand",
       "time_window": "duration of one attack",
       "target": {
-        "census_before": 218.4, "census_during": 251.4,
-        "waiting_minutes_before": 21, "waiting_minutes_during": 31,
+        "census_before": 218.4,
+        "census_during": 251.4,
+        "waiting_minutes_before": 21,
+        "waiting_minutes_during": 31,
         "admitted_length_of_stay_minutes_before": 614,
         "admitted_length_of_stay_minutes_during": 822,
         "ems_arrival_increase": 0.352
@@ -147,7 +171,10 @@
       "time_window": "0-48+ hours",
       "target": {
         "median_downtime_hours": 5.1,
-        "iqr_hours": [2.5, 8.1],
+        "iqr_hours": [
+          2.5,
+          8.1
+        ],
         "share_recovered_within_six_hours": 0.581,
         "share_exceeding_48_hours": 0.078
       },
@@ -170,7 +197,9 @@
       "population": "self-reported healthcare ransomware victims across 17 countries, organizations of 100-5,000 employees",
       "model_endpoint": "share of trials contained before clinical service loss",
       "time_window": "per incident",
-      "target": {"share_stopped_before_encryption": 0.53},
+      "target": {
+        "share_stopped_before_encryption": 0.53
+      },
       "uncertainty": "vendor survey; self-selected respondents; not a probability sample of U.S. hospitals",
       "direction": "order-of-magnitude consistency only",
       "discrepancy_measure": "absolute difference in the contained-before-disruption share",
@@ -191,7 +220,9 @@
       "model_endpoint": "capacity profile posture definitions",
       "time_window": "2023",
       "target": {
-        "any_mfa": 0.90, "vpn_mfa": 0.84, "email_mfa": 0.88,
+        "any_mfa": 0.9,
+        "vpn_mfa": 0.84,
+        "email_mfa": 0.88,
         "quarterly_vulnerability_scanning": 0.886,
         "documented_remediation_plan": 0.53,
         "any_network_segmentation": 0.883,
