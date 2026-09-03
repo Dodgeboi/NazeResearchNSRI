@@ -25,7 +25,8 @@ from grrc.config import load_config
 from grrc.multiobjective import (confirmatory_candidate_counts,
                                  run_confirmatory_frontier)
 from grrc.provenance import (ProvenanceError, build_manifest,
-                             load_frozen_protocol, write_manifest)
+                             load_frozen_protocol, snapshot_inputs,
+                             write_manifest)
 
 
 def main() -> None:
@@ -91,14 +92,17 @@ def main() -> None:
     raw["protocol_sha256"] = protocol["sha256"]
     raw.to_csv(path, index=False)
 
+    snapshots = snapshot_inputs(
+        [args.config, "configs/defense_costs.yaml",
+         "configs/defense_burdens.yaml", Path(protocol["path"])],
+        path.parent / "config_snapshot")
+
     manifest = build_manifest(
         run_id=f"{protocol['name']}:{protocol['sha256'][:12]}",
         stage="confirmation",
         description="Full-space confirmatory evaluation of every resolved "
                     "candidate portfolio on a fresh paired scenario bank.",
-        inputs=[args.config, "configs/defense_costs.yaml",
-                "configs/defense_burdens.yaml",
-                Path(protocol["path"])],
+        inputs=snapshots,
         outputs=[path],
         parameters={
             "trials_per_candidate": trials,

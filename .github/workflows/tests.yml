@@ -18,7 +18,69 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install -e .
-      - name: Unit and invariant tests
-        run: pytest
+
+      - name: Unit, invariant, and falsification tests
+        run: pytest -q
+
       - name: Behavioral validation
         run: python -m grrc.cli validate --no-report
+
+      # Archived evidence must still be the evidence that was analyzed. This
+      # recomputes every hash and size AND re-derives every count the
+      # registry records, which catches intact bytes under drifted analysis
+      # code.
+      - name: Verify archived sources
+        run: python scripts/verify_sources.py
+
+      # A frozen protocol that no longer matches its own recorded digest is
+      # not a freeze. Loading each committed protocol verifies it.
+      - name: Verify frozen protocols
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from grrc.provenance import load_frozen_protocol
+          protocols = sorted(Path("study/protocols").glob("*.protocol.json"))
+          if not protocols:
+              print("no frozen protocols committed")
+          for path in protocols:
+              name = path.name.removesuffix(".protocol.json")
+              loaded = load_frozen_protocol(name)
+              print(f"ok {name}: sha256 {loaded['sha256'][:12]} "
+                    f"frozen {loaded['frozen_at']}")
+          PY
+
+      # Every manifest must still describe the files on disk. This is the
+      # check that turns "reproducible in principle" into a build failure
+      # when an input has silently changed.
+      - name: Verify run manifests
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from grrc.provenance import ProvenanceError, verify_manifest
+          failures = []
+          for path in sorted(Path("data").rglob("*manifest*.json")):
+              # Source registries are verified by verify_sources.py and do
+              # not use the run-manifest schema.
+              if path.name == "source_manifest.json":
+                  continue
+              # Superseded pre-rebuild artifacts predate this schema and are
+              # retained only as a record. They are not re-verified, and
+              # their README states that no number in them may be cited.
+              if "archive_pre_rebuild" in path.parts:
+                  continue
+              try:
+                  verify_manifest(path)
+              except (ProvenanceError, KeyError, TypeError) as error:
+                  failures.append(f"{path}: {error}")
+              else:
+                  print(f"ok {path}")
+          if failures:
+              raise SystemExit("manifest verification failed:\n  "
+                               + "\n  ".join(failures))
+          PY
+
+      # The manuscript must say what the artifacts show. This fails on
+      # red-line claims, missing disclosures, endpoint definitions that
+      # disagree with the registry, and undefined or orphan macros.
+      - name: Audit manuscript claims
+        run: python scripts/audit_manuscript_claims.py

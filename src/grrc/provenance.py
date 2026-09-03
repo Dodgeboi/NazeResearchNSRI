@@ -167,6 +167,37 @@ def hash_paths(paths: Iterable[str | Path]) -> list[dict[str, Any]]:
     return sorted(entries, key=lambda entry: entry["path"])
 
 
+def snapshot_inputs(paths: Iterable[str | Path], destination: str | Path
+                    ) -> list[Path]:
+    """Copy each input into the run directory and return the copies.
+
+    A manifest that hashes a live config file records a hash that becomes
+    false the moment anyone edits that file for an unrelated reason — even
+    when the run's outputs are provably unaffected. Archiving the exact bytes
+    beside the outputs makes the recorded hash permanently true, and lets a
+    reader diff the snapshot against the current file to see what changed.
+
+    This is the "complete configuration snapshots" requirement, and it exists
+    because the first discovery run in this rebuild tripped exactly that
+    failure: the study config's declared primary k changed after the run, so
+    the manifest correctly refused to verify.
+    """
+    import shutil
+
+    target = Path(destination)
+    target.mkdir(parents=True, exist_ok=True)
+    copies: list[Path] = []
+    for source in paths:
+        source_path = Path(source)
+        if not source_path.exists():
+            raise ProvenanceError(
+                f"cannot snapshot missing input: {relative_to_repo(source_path)}")
+        copy = target / source_path.name
+        shutil.copy2(source_path, copy)
+        copies.append(copy)
+    return copies
+
+
 def build_manifest(
         *,
         run_id: str,

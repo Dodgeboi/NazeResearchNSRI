@@ -182,3 +182,58 @@ are reported as declared assumptions with the defect named:
 - the 72-hour horizon with the current restore rate cannot express the
   weeks-to-months recovery tail in the public record, so non-recovery is an
   artifact of the horizon rather than a recovery estimate (ISSUE-008).
+
+## 2026-09-03 - discovery run manifest failed verification, and why
+
+The manifest verifier refused the first discovery run's manifest:
+
+```
+discovery_run_manifest.json does not describe the files on disk:
+  inputs: configs/multiobjective_portfolio.yaml sha256 8b4ce785a816 !=
+          recorded a5d0e64a659b
+```
+
+This is recorded rather than quietly repaired, because the failure is the
+provenance layer working correctly on its author.
+
+**What happened.** Discovery ran while the study config declared
+`sustained_outage_min_services: 2`. The discovery data then showed the
+clinical-outage outcome to be bimodal, the k = 2 justification was withdrawn,
+and the config was changed to `4`. The manifest had hashed the live config
+file, so it stopped describing reality the moment that file changed.
+
+**What was and was not affected.** The changed key does not enter the
+simulation dynamics at all. `propagation.py` uses it only to select which
+k-of-n indicator is copied into the deprecated `catastrophic` alias column;
+spread, detection, isolation and restoration are untouched, and the raw
+schema emits the indicator at every k independently. So:
+
+- the raw discovery trials are unaffected except for that one alias column,
+  which was computed at k = 2 and is therefore stale;
+- the discovery analysis was re-run under k = 4 and reads the explicit
+  `sustained_clinical_outage_k4` column, never the alias;
+- the frozen confirmatory protocol's finalist labels derive from the k = 4
+  bootstrap inclusion probabilities, so they are correct.
+
+**Resolution.** Two changes, one structural and one specific.
+
+*Structural.* Runs now archive the exact configuration bytes they used into a
+`config_snapshot/` directory beside their outputs, and the manifest hashes
+the archived copies rather than the live files. An archived copy cannot
+drift, and a reader can diff it against the current config to see exactly
+what changed since. This is the "complete configuration snapshots"
+requirement, and it would have prevented this entirely.
+
+*Specific.* Discovery is re-run under the final configuration so that no
+stale artifact remains anywhere in the record. Because the changed key does
+not affect the dynamics, the re-run is expected to reproduce the previous
+trials exactly apart from the alias column, and the frozen finalist labels
+are expected to be identical. Both expectations are checked explicitly rather
+than assumed, and the check is recorded below. Had the labels changed, the
+frozen protocol would have had to be superseded under a new name rather than
+reused.
+
+The pre-rebuild archive under `data/multiobjective/archive_pre_rebuild/` is
+exempt from manifest verification. Those manifests predate this schema and
+are retained only as a record; their README states that no number in them may
+be cited.

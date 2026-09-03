@@ -15,7 +15,8 @@ from pathlib import Path
 from grrc.config import load_config
 from grrc.optimization import build_candidate_specs
 from grrc.experiments import run_specs
-from grrc.provenance import build_manifest, write_manifest
+from grrc.provenance import (build_manifest, snapshot_inputs,
+                             write_manifest)
 from grrc.utilities import ensure_dirs, write_csv
 
 
@@ -37,12 +38,19 @@ def main() -> None:
     out = Path(args.output); ensure_dirs(out.parent)
     write_csv(raw, out)
 
+    # Archive the exact configuration bytes this run used, and hash the
+    # archived copies rather than the live files, so the manifest stays true
+    # when the study config is later edited for an unrelated reason.
+    snapshots = snapshot_inputs(
+        [args.config, "configs/defense_costs.yaml",
+         "configs/defense_burdens.yaml"],
+        out.parent / "config_snapshot")
+
     manifest = build_manifest(
         run_id=f"discovery:seed{cfg.seed}",
         stage="discovery",
         description="Exploratory full-space paired evaluation. Not confirmatory.",
-        inputs=[args.config, "configs/defense_costs.yaml",
-                "configs/defense_burdens.yaml"],
+        inputs=snapshots,
         outputs=[out],
         parameters={
             "master_seed": cfg.seed,
