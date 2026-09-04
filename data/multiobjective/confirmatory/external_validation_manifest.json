@@ -2,13 +2,25 @@
   "code": {
     "available": true,
     "branch": "rebuild/wp0-wp2",
-    "commit": "95cd5ac7ebb15d815e7db964f80930bcf533211c",
+    "commit": "2cc28bce5e0947ed96a66f892c6f09c1239fd193",
     "dirty": true,
     "dirty_paths": [
-      "data/multiobjective/confirmatory/"
+      "ata/multiobjective/confirmatory/confirmation_analysis_manifest.json",
+      "data/multiobjective/confirmatory/config_snapshot/",
+      "data/multiobjective/confirmatory/confirmatory_run_manifest.json",
+      "data/multiobjective/confirmatory/external_validation.json",
+      "data/multiobjective/confirmatory/multiobjective_confirmatory_results.csv",
+      "data/multiobjective/confirmatory/portfolio_benchmark_comparison.csv",
+      "data/multiobjective/confirmatory/portfolio_frontier_resolution.csv",
+      "data/multiobjective/confirmatory/portfolio_full_space_vs_finalist.csv",
+      "data/multiobjective/confirmatory/portfolio_monte_carlo_error.csv",
+      "data/multiobjective/confirmatory/portfolio_objective_summary.csv",
+      "data/multiobjective/confirmatory/portfolio_pareto_frontier.csv",
+      "data/multiobjective/confirmatory/portfolio_pareto_stability.csv",
+      "data/multiobjective/confirmatory/portfolio_preference_scenarios.csv"
     ]
   },
-  "created_at": "2026-09-03T04:43:02+00:00",
+  "created_at": "2026-09-04T04:29:17+00:00",
   "description": "Comparison against the frozen external benchmark registry. Failures are reported, not corrected.",
   "environment": {
     "implementation": "CPython",
@@ -26,14 +38,14 @@
   },
   "inputs": [
     {
-      "bytes": 2628,
+      "bytes": 4667,
       "path": "configs/multiobjective_portfolio.yaml",
-      "sha256": "8b4ce785a8163925bab99b8a108d6b13ebee7c3a47cc90648355001d6fdb03d6"
+      "sha256": "a3dff5682e1e8277cc29d3a5836009deccf87a901d4fa60fdd1ce7c091e41e31"
     },
     {
-      "bytes": 70312592,
+      "bytes": 101343517,
       "path": "data/multiobjective/confirmatory/multiobjective_confirmatory_results.csv",
-      "sha256": "d7d1c1830b6c26079c5ac5326e1f422a8113b657be234c3e41c406b71f93006b"
+      "sha256": "6b558145ae770f744f21a9d4c096c02e7d205f039b101eb98084dda7f2fdce91"
     },
     {
       "bytes": 16159,
@@ -43,9 +55,9 @@
   ],
   "outputs": [
     {
-      "bytes": 9435,
+      "bytes": 9433,
       "path": "data/multiobjective/confirmatory/external_validation.json",
-      "sha256": "004daa44237326237c20fd4aefcf77a3a6a3a2e65d4e9ea23d828934ce452c8d"
+      "sha256": "bfdf84d31fae1da2c2582d3ba1c1187a0a28c69c4502acfb7c29dc9831a7d886"
     }
   ],
   "parameters": {

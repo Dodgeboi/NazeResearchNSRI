@@ -1,0 +1,71 @@
+{
+  "parameters_sampled": 10,
+  "method": "correlation-ratio first-order effect on scenario means; Spearman rank stability between the low and high thirds of each parameter",
+  "dominant_parameter_by_profile_objective": [
+    {
+      "profile": "high_capacity",
+      "objective": "mean_hours_lost",
+      "parameter": "simulation_false_positive_rate",
+      "first_order_effect": 0.5507,
+      "rank_stability": 0.9196
+    },
+    {
+      "profile": "intermediate_capacity",
+      "objective": "mean_hours_lost",
+      "parameter": "simulation_base_spread_rate",
+      "first_order_effect": 0.1707,
+      "rank_stability": 0.9852
+    },
+    {
+      "profile": "intermediate_capacity",
+      "objective": "sustained_outage_probability",
+      "parameter": "simulation_base_spread_rate",
+      "first_order_effect": 0.1466,
+      "rank_stability": 0.9736
+    },
+    {
+      "profile": "high_capacity",
+      "objective": "nonrecovery_probability",
+      "parameter": "simulation_false_positive_rate",
+      "first_order_effect": 0.1179,
+      "rank_stability": null
+    },
+    {
+      "profile": "intermediate_capacity",
+      "objective": "nonrecovery_probability",
+      "parameter": "simulation_false_positive_rate",
+      "first_order_effect": 0.1104,
+      "rank_stability": 0.8581
+    },
+    {
+      "profile": "resource_constrained",
+      "objective": "sustained_outage_probability",
+      "parameter": "simulation_base_spread_rate",
+      "first_order_effect": 0.0937,
+      "rank_stability": 0.9524
+    },
+    {
+      "profile": "resource_constrained",
+      "objective": "nonrecovery_probability",
+      "parameter": "simulation_restore_rate_fraction",
+      "first_order_effect": 0.0809,
+      "rank_stability": 0.8146
+    },
+    {
+      "profile": "resource_constrained",
+      "objective": "mean_hours_lost",
+      "parameter": "simulation_base_spread_rate",
+      "first_order_effect": 0.0647,
+      "rank_stability": 0.9284
+    },
+    {
+      "profile": "high_capacity",
+      "objective": "sustained_outage_probability",
+      "parameter": "simulation_patch_effectiveness",
+      "first_order_effect": 0.0289,
+      "rank_stability": 0.8272
+    }
+  ],
+  "worst_rank_stability": 0.6057,
+  "interpretation": "A large first-order effect with rank stability near 1 means the level of an objective is uncertain while the ordering of portfolios is not, so the decision is robust to that parameter even though the number is not. Low rank stability means the opposite, and is the case that must be reported loudly."
+}

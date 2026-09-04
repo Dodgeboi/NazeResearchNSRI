@@ -1,8 +1,15 @@
 # Scored rubric, with evidence for every awarded point
 
 Scored against the rubric in the rebuild handoff. **The target was 85–90.
-This work scores 81.** The gap is not diffuse; it is one work package that
-was not attempted, and it is named in §Uncertainty and §What would move this.
+After WP3 this work scores 87.** An earlier revision of this file scored the
+same work at 81, before the mechanism repairs and parameter uncertainty; the
+9-point rubric gap it identified was one work package, and this is the score
+after that package was done.
+
+Reaching a rubric band is not the same as being publishable. The rubric
+prices methodological discipline. It does not price the model's central
+limitation — that no internal coefficient is identified by hospital data —
+and it cannot price novelty, journal fit, or reviewer judgement.
 
 Scoring rule applied throughout: a defect that is *disclosed* earns less than
 a defect that is *fixed*, and more than a defect that is hidden. Several
@@ -31,7 +38,7 @@ binding cap of 74.
 
 ## Area scores
 
-### Scientific and semantic correctness — 15 / 20
+### Scientific and semantic correctness — 17 / 20
 
 **Earned.** Definitions, code, configs, outputs and prose agree, and the
 agreement is enforced rather than inspected. The endpoint registry is the
@@ -43,17 +50,27 @@ all 288 portfolios × 3 profiles. Deduplication resolves under the study
 config rather than library defaults, and representatives are named for what
 they run.
 
-**Withheld (5 points).** Three parameters are still used in ways the paper's
-own framework does not sanction: a single patch-effectiveness scalar applied
-to pathways where patching is mechanically irrelevant, a whole-network
-identity multiplier, and an isolated-backup traversal of exactly zero that
-makes protected backups unfalsifiable. These are *disclosed as defects* in
-the manuscript and tracked in the ledger, and one is pinned by a deliberately
-failing test — but disclosure is not repair. The handoff's falsification list
-requires that an isolated backup retain non-network failure modes, and it
-does not.
+**Repaired in WP3.** All three previously misapplied mechanisms now act only
+where they can act. Edges carry a pathway label, so patching removes
+susceptibility on exploit-mediated traversal and not against stolen
+credentials; identity effects are confined to credential-mediated edges with
+explicit coverage; and isolated backups fail through a per-incident isolation
+lapse and a non-network residual mode. The strict `xfail` that pinned the
+backup defect now passes.
 
-### Evidence and parameter identification — 12 / 15
+The backup repair was wrong on the first attempt and the suite caught it: a
+0.02 per-step traversal looked like a small residual and compounds to a 100%
+failure rate over 864 steps. A per-step probability models delay, not rarity.
+That is recorded in `DEVIATIONS.md` rather than silently corrected.
+
+**Withheld (3 points).** The recovery endpoint is still a single 72-hour
+horizon. The model specification requires layered endpoints over 72 hours, 21
+days and 90 days with a 180-day tail, and without them the model cannot
+represent the phenomenon its own evidence base describes — which is why the
+recovery benchmarks fail. Repairing the transition mechanisms did not touch
+this.
+
+### Evidence and parameter identification — 14 / 15
 
 **Earned.** Every reported quantity carries an identification class, declared
 in a machine-readable registry that the analysis, the tables and the claim
@@ -65,10 +82,14 @@ resolves the article's ~160 hospitals, the repository's 149 records and the
 `verify_sources.py` re-derives all of it. Citation verification found and
 recorded a discrepancy in the handoff's own summary of the AEJ estimates.
 
-**Withheld (3 points).** `study/PUBLIC_EVIDENCE_PARAMETER_REGISTER.csv` still
-carries pre-rebuild content and was not regenerated against the new registry.
-The evidence work is complete in `grrc.endpoints` and the source manifest;
-that CSV is now a stale third copy.
+The parameter register was regenerated from the live registry and config: 17
+parameters, each with its identification class, evidence basis, whether it is
+sampled, and how it is treated.
+
+**Withheld (1 point).** The uncertainty ranges are declared by the authors
+without an elicitation protocol. They are honest about being wide where
+evidence is absent, but "we chose a wide range" is a weaker warrant than a
+structured elicitation with calibration questions would be.
 
 ### Study design and validation — 13 / 15
 
@@ -87,7 +108,7 @@ shape. Each carries a written structural reason a reviewer can check, but the
 classification is not independent. And the freeze ordering is verifiable only
 within this repository's history; an external timestamp would close that.
 
-### Uncertainty and robustness — 6 / 10
+### Uncertainty and robustness — 8 / 10
 
 **Earned.** Monte Carlo standard error is reported for every stochastic
 objective, alongside the count of candidate pairs the scenario bank cannot
@@ -100,15 +121,23 @@ result earns its place: relaxing it moves 20-29% of frontier membership and
 nearly doubles modeled disruption in the two weaker profiles, which is
 reported rather than buried.
 
-**Withheld (4 points), and this is the largest single gap.** *Parameter*
-uncertainty is not represented at all. The unidentified coefficients — spread
-rate, patch effectiveness, isolation success, identity multiplier,
-restoration rate — are fixed point values, not the prespecified uncertainty
-ranges the handoff requires and the evidence memorandum recommends. The paper
-labels them as declared assumptions, which is honest, but a declared
-assumption with no distribution over it cannot propagate into the results. No
-global or scenario sensitivity over those parameters was run. Only one
-structural alternative of several was varied.
+**Added in WP3.** Ten unidentified coefficients now carry prespecified
+ranges, drawn once per scenario and shared by every candidate replaying it,
+so parameter uncertainty is a latent dimension of the common-random-numbers
+design rather than something reported beside the results. Every objective is
+marginal over those ranges. Every draw is recorded per row, which makes a
+variance-based global sensitivity free, and it reports rank stability
+alongside variance — the distinction between "the level is uncertain" and
+"the decision is uncertain", which turns out to matter here: sampling ten
+coefficients across wide ranges leaves orderings largely intact (worst
+Spearman 0.61, mostly above 0.9).
+
+**Withheld (2 points).** Only one structural alternative has been varied, and
+that result argues loudly for varying more: relaxing S1 alone moves up to 16
+candidates off the frontier and roughly doubles modeled disruption in two
+profiles, which dwarfs the effect of sampling ten parameters. Structural
+uncertainty is the kind that threatens the conclusions, and it remains almost
+entirely unquantified. The declared ranges are also the authors' own.
 
 ### Multi-objective methodology — 8 / 10
 
@@ -150,12 +179,16 @@ and non-causal effects. The paper reports its own predecessor's defects and
 states which numbers were withdrawn. It also records a justification that was
 drafted and then withdrawn on the data.
 
-**Withheld (1 point).** The manuscript reports that identity controls buy
-nothing detectable while also declaring the identity mechanism misapplied.
-Both statements are made, but a reader could take the first as a finding
-about identity controls rather than about this model's treatment of them. The
-red-team report flags it; the manuscript could be more explicit at the point
-of the claim.
+The manuscript also now reports a correction to its own frozen protocol: the
+protocol's rationale claimed that three high-capacity objectives were
+unresolvable at any scenario count, and the confirmatory data refuted it —
+the zero interquartile ranges were an artifact of a thirty-scenario pilot.
+The protocol was not edited; the correction is stated in the paper and in
+`DEVIATIONS.md`.
+
+**Withheld (1 point).** No human has read the rendered paper end to end, and
+several judgement calls in it — the benchmark classifications above all —
+would benefit from a reader who did not write them.
 
 ### Tests and adversarial audit — 4 / 5
 
@@ -185,49 +218,51 @@ journal's requirements are unchecked.
 
 ---
 
-## Total: 81 / 100
+## Total: 87 / 100
 
 | Area | Score | Max |
 |---|---:|---:|
-| Scientific and semantic correctness | 15 | 20 |
-| Evidence and parameter identification | 12 | 15 |
+| Scientific and semantic correctness | 17 | 20 |
+| Evidence and parameter identification | 14 | 15 |
 | Study design and validation | 13 | 15 |
-| Uncertainty and robustness | 6 | 10 |
+| Uncertainty and robustness | 8 | 10 |
 | Multi-objective methodology | 8 | 10 |
 | Reproducibility and provenance | 10 | 10 |
 | Manuscript argument and restraint | 9 | 10 |
 | Tests and adversarial audit | 4 | 5 |
 | Presentation and journal readiness | 4 | 5 |
-| **Total** | **81** | **100** |
+| **Total** | **87** | **100** |
 
-## What would move this to 85–90
+## What would move this higher
 
-The gap is almost entirely one work package. In order of points recovered per
-unit of effort:
+The remaining 13 points are concentrated, and only two of them are things
+this agent could supply.
 
-1. **Parameter uncertainty (+3 to +4).** Give every unidentified coefficient
-   a prespecified range and propagate it. This is the largest single deficit
-   and needs no new evidence — only the discipline of declaring distributions
-   instead of point values, and the compute to sample them.
-2. **The three misapplied mechanisms (+3 to +4).** Nonzero residual failure
-   for isolated backups; exploit-specific rather than universal patching;
-   coverage-dependent rather than network-wide identity effects. These are
-   bounded code changes with tests already written to catch them.
-3. **Layered recovery endpoints (+1 to +2, and it removes risk R1).** 72 h /
-   21 d / 90 d with a 180-day tail, and an interval-censored recovery-class
-   model. This is the change that would let the model be compared against the
-   recovery evidence at all.
-4. **Regenerate the stale parameter register (+1).** Cheap.
-5. **Independent review (+1).** Not something this agent can supply.
-
-Items 1–3 are WP3 of the handoff, which was not attempted. That is the honest
-summary of the gap: the study's *method* was rebuilt to the target standard;
-its *model* was not.
+1. **Layered recovery endpoints (+2 to +3).** 72 hours, 21 days, 90 days and
+   a 180-day tail, with an interval-censored recovery-class model. This is
+   the single change that would let the model be compared against the
+   recovery evidence at all, and it is what turns two failed external
+   benchmarks into scoreable ones. It is also the largest piece of work.
+2. **Vary more than one structural assumption (+2).** The transition ordering
+   within a step, the service dependency graph, the criticality-ordered
+   restoration queue, the absence of an adaptive adversary. The S1 result
+   makes this the highest-value uncertainty work remaining, because
+   structural uncertainty moved the answer far more than parameter
+   uncertainty did.
+3. **Multi-facility structure, or an explicit narrowing (+1 to +2).**
+   Currently a failed benchmark and an unaddressable one.
+4. **Confirmatory cost-scaling sensitivity (+1).** Two of six objectives rest
+   on an undefended cost table.
+5. **Structured elicitation for the declared ranges (+1).** Requires domain
+   experts.
+6. **Independent review (+1 to +2).** Requires a human who did not write
+   this. It is the only item that no amount of further work by this agent can
+   substitute for.
 
 ## What this score does not mean
 
-It does not mean the paper is 81% likely to be accepted, that the conclusions
-are 81% correct, or that 9 more points would make the model right. It is a
+It does not mean the paper is 87% likely to be accepted, that the conclusions
+are 87% correct, or that 13 more points would make the model right. It is a
 score against a methodological rubric supplied with the rebuild brief. Journal
 fit, novelty, reviewer judgement and editorial decision are outside it, and
 the model's central limitation — that no internal coefficient is identified

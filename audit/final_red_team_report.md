@@ -2,9 +2,12 @@
 
 **Object:** `Dodgeboi/NazeResearchNSRI`, branch `rebuild/wp0-wp2`
 **Baseline audited:** commit `3b734df`
-**Confirmatory protocol:** `multiobjective_confirmatory_v1`, SHA-256
-`fdf6777e4ba6…`, frozen 2026-09-03T01:49:25Z and committed to git **before**
-any confirmatory output existed (commit `463da77`).
+**Confirmatory protocol:** `multiobjective_confirmatory_v2`, SHA-256
+`9cb7e835446a…`, frozen 2026-09-04T01:53:46Z and committed to git **before**
+any v2 output existed. Protocol v1 is superseded rather than edited: the WP3
+mechanism repairs and the addition of parameter uncertainty changed what the
+model is, so v1 no longer describes a study anyone would run. The freezing
+machinery refused to overwrite it.
 **Method:** `python scripts/run_full_audit.py`, plus the manual falsification
 attempts recorded below.
 
@@ -20,7 +23,7 @@ artifacts, and that is what follows.
 
 | Check | Result |
 |---|---|
-| Test suite | 165 passed, 1 expected xfail |
+| Test suite | 179 passed, 0 xfail (the backup defect is repaired, so its pinning xfail became a passing test) |
 | Behavioral validation | 12/12 |
 | Archived sources: hashes, sizes, re-derived counts | pass |
 | Frozen protocols verify against their own digests | pass |
@@ -126,6 +129,48 @@ into "not applicable". Each such verdict carries a written structural reason
 that a reviewer can check, but the reader should read those reasons
 sceptically rather than take the classification on trust.
 
+### "Parameter uncertainty is inside the objectives, not beside them"
+
+**Attempted falsification:** check that two candidates replaying one scenario
+see identical parameters (otherwise pairing is silently broken and every
+portfolio comparison is between different physics); check that draws land in
+their declared ranges; check that a reordered config reproduces the same
+draws; check that the shared config object is not mutated by workers.
+
+**Result: claim holds** (`tests/test_uncertainty.py`, twelve tests). The
+pairing property is the one that matters and it is asserted directly.
+
+**A related defect this surfaced.** Four falsification tests pin a
+coefficient and assert what the mechanism must then do. With sampling
+enabled those pins are silently overridden, and the tests would have been
+asserting properties of a random draw. They now disable sampling explicitly,
+and a new test asserts the override itself so the interaction is pinned
+rather than assumed.
+
+### "The frozen protocol's rationale is correct"
+
+**Result: it was not, and this is the most important finding in this
+revision.**
+
+Protocol v2's `trials_rationale` records that three of four high-capacity
+objectives had an interquartile range of exactly zero across all sixteen
+candidates, and concludes that "no scenario count resolves them at all --
+that is a finding about the profile, not a budget problem."
+
+The confirmatory data refute it. At 400 scenarios those sixteen candidates
+take sixteen distinct values on mean disruption, spanning 13.07 to 15.02
+weighted service-hours. The zero ranges were an artifact of the
+thirty-scenario pilot: at that resolution the achievable outcome values are
+coarse enough that candidates tie exactly, and a correlation-ratio estimator
+asked to size a difference it cannot yet see returns an unattainable
+requirement. **"This quantity cannot be resolved" and "this pilot cannot
+resolve it" are easy to confuse, and we confused them.**
+
+The protocol was not edited. A frozen protocol whose rationale turns out to
+be wrong is corrected in the open, in the manuscript and in
+`DEVIATIONS.md`, or freezing it means nothing. No result changed: 400
+scenarios was the affordable maximum and would have been chosen either way.
+
 ## 3. Attempts to falsify the model itself
 
 Beyond the frozen benchmark registry, `tests/test_falsification.py` runs
@@ -172,15 +217,17 @@ staggered loss. A reader could mistake the *k*-insensitivity for robustness.
 results, the discussion, and the figure caption. **Real fix:** graded service
 capacity. Not attempted here.
 
-### R3 — Isolated backups cannot fail. **High.**
+### R3 — Isolated backups cannot fail. **RESOLVED in WP3.**
 
-`backup_traversal["isolated"] = 0.0` makes protected backups a deterministic
-win in the objective space, and protected backups appear in many frontier
-portfolios. Survey evidence reports attempted backup compromise in the large
-majority of healthcare victims. **Mitigation:** a deliberately failing test
-(`xfail`, strict) keeps the defect visible in every test run, and the
-manuscript names it as a defect rather than defending it. **Real fix:**
-nonzero residual failure with a prespecified range.
+Falsifiability now comes from a per-incident isolation lapse plus a
+non-network residual failure mode, both drawn once per incident and shared
+across candidates in a scenario. Isolated backups fail 8.3% of the time
+against 100% for connected under the aggressive validation config. The
+pinning `xfail` now passes.
+
+*Residual concern:* the lapse and residual rates are declared assumptions
+sampled from declared ranges. Isolation is no longer a guarantee, but how
+often it lapses is still something we chose rather than measured.
 
 ### R4 — Single facility. **High for external validity, low for the internal comparison.**
 
@@ -190,15 +237,15 @@ hospital-linked events. It cannot address regional spillover at all.
 respectively. **Real fix:** multi-facility structure, or an explicit
 narrowing of the paper's scope.
 
-### R5 — Patch effectiveness and identity effects are misapplied scalars. **Medium.**
+### R5 — Patch effectiveness and identity effects are misapplied scalars. **RESOLVED in WP3.**
 
-A single 0.85 multiplier applies to every pathway including
-credential-origin ones where patching is mechanically irrelevant; identity
-compromise multiplies every edge rather than eligible authentication paths.
-Both inflate the modeled value of the corresponding controls.
-**Mitigation:** named as defects in the manuscript's own
-parameter-identification section. **Real fix:** exploit-specific
-susceptibility and coverage-dependent authentication effects.
+Edges carry a pathway label, so patching acts fully only on exploit-mediated
+traversal and identity effects only on credential-mediated traversal, with
+explicit coverage for identity controls. Both effectiveness values are now
+sampled from declared ranges rather than fixed.
+
+*Residual concern:* the pathway taxonomy is itself a modeling choice with
+three categories, and real traversal does not partition that cleanly.
 
 ### R6 — Structural assumption S1, and the assumptions like it. **High.**
 
@@ -215,8 +262,14 @@ so restoring during active propagation hands clean assets back to an
 adversary with reach. That is a real property of the model, not an artifact
 of the switch.
 
-**Why this raises the risk rather than resolving it:** S1 is the *only*
-structural assumption that has been varied. If the one we tested moves the
+**Now the largest quantified threat to the conclusions.** With parameter
+uncertainty in place the comparison is direct: sampling ten coefficients
+across wide declared ranges leaves portfolio orderings largely intact (worst
+Spearman 0.61, mostly above 0.9), while changing one structural assumption
+moves up to 16 candidates off the frontier and roughly doubles modeled
+disruption in two profiles. Structural uncertainty dominates parameter
+uncertainty here by a wide margin, and S1 is the *only* structural
+assumption that has been varied. If the one we tested moves the
 answer this much, the untested ones — the transition ordering within a step,
 the service-dependency graph, the criticality-ordered restoration queue, the
 absence of an adaptive adversary — cannot be assumed gentler. The honest
@@ -258,6 +311,11 @@ mitigation, and it has not happened.
 If we were reviewing this paper adversarially, these are where we would
 start, in order:
 
+0. **The declared uncertainty ranges.** Ten coefficients now carry ranges
+   the authors chose, and every reported objective is marginal over them. A
+   wide range honestly says "we do not know", but it does not make the
+   resulting interval empirical, and a reader could mistake widened
+   objectives for calibrated ones.
 1. **The `not_addressable` classifications.** Seven of nine benchmarks are
    excluded from scoring on structural grounds. Are all seven genuinely
    unanswerable, or are some merely inconvenient? Each carries a written

@@ -1,0 +1,73 @@
+{
+  "code": {
+    "available": true,
+    "branch": "rebuild/wp0-wp2",
+    "commit": "2cc28bce5e0947ed96a66f892c6f09c1239fd193",
+    "dirty": true,
+    "dirty_paths": [
+      "ata/multiobjective/confirmatory/confirmation_analysis_manifest.json",
+      "data/multiobjective/confirmatory/config_snapshot/",
+      "data/multiobjective/confirmatory/confirmatory_run_manifest.json",
+      "data/multiobjective/confirmatory/external_validation.json",
+      "data/multiobjective/confirmatory/external_validation_manifest.json",
+      "data/multiobjective/confirmatory/multiobjective_confirmatory_results.csv",
+      "data/multiobjective/confirmatory/parameter_sensitivity.csv",
+      "data/multiobjective/confirmatory/parameter_sensitivity_summary.json",
+      "data/multiobjective/confirmatory/portfolio_benchmark_comparison.csv",
+      "data/multiobjective/confirmatory/portfolio_frontier_resolution.csv",
+      "data/multiobjective/confirmatory/portfolio_full_space_vs_finalist.csv",
+      "data/multiobjective/confirmatory/portfolio_monte_carlo_error.csv",
+      "data/multiobjective/confirmatory/portfolio_objective_summary.csv",
+      "data/multiobjective/confirmatory/portfolio_pareto_frontier.csv",
+      "data/multiobjective/confirmatory/portfolio_pareto_stability.csv",
+      "data/multiobjective/confirmatory/portfolio_preference_scenarios.csv"
+    ]
+  },
+  "created_at": "2026-09-04T04:29:23+00:00",
+  "description": "Variance-based sensitivity to the unidentified coefficients, decomposed from the confirmatory bank's own recorded parameter draws.",
+  "environment": {
+    "implementation": "CPython",
+    "machine": "x86_64",
+    "packages": {
+      "matplotlib": "3.11.0",
+      "networkx": "3.6.1",
+      "numpy": "2.5.1",
+      "pandas": "3.0.3",
+      "scipy": "1.18.0",
+      "yaml": "6.0.3"
+    },
+    "platform": "Linux-6.18.44-fc-v24-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "inputs": [
+    {
+      "bytes": 4667,
+      "path": "configs/multiobjective_portfolio.yaml",
+      "sha256": "a3dff5682e1e8277cc29d3a5836009deccf87a901d4fa60fdd1ce7c091e41e31"
+    },
+    {
+      "bytes": 101343517,
+      "path": "data/multiobjective/confirmatory/multiobjective_confirmatory_results.csv",
+      "sha256": "6b558145ae770f744f21a9d4c096c02e7d205f039b101eb98084dda7f2fdce91"
+    }
+  ],
+  "outputs": [
+    {
+      "bytes": 10695,
+      "path": "data/multiobjective/confirmatory/parameter_sensitivity.csv",
+      "sha256": "df3c313436fe03f32d130ef5b241db7341966a5ef30627afba1a8676a77686c9"
+    },
+    {
+      "bytes": 2524,
+      "path": "data/multiobjective/confirmatory/parameter_sensitivity_summary.json",
+      "sha256": "056aec96557095d66012a3952ada2ed051f890c5a3633e8c6c15805bf7338f90"
+    }
+  ],
+  "parameters": {
+    "bins": 8,
+    "parameters_sampled": 10
+  },
+  "protocol": null,
+  "run_id": "parameter-sensitivity",
+  "stage": "analysis"
+}

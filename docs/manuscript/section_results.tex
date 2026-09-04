@@ -36,33 +36,31 @@ profile. Restricting attention to the \ConfirmFinalistLabelled{} candidates
 that the frozen discovery rule labels as finalists, and recomputing dominance
 within that subset alone, gives a frontier of \ConfirmFinalistOnlyFrontier{}.
 
-The two views disagree in both directions, and the disagreement is the point
-(Figure~\ref{fig:fullspace}).
+The two views disagree, and how they disagree has changed since the
+model was repaired (Figure~\ref{fig:fullspace}).
 
-\textbf{\ConfirmFinalistOnlyArtifacts{} candidates are efficient only in the
-restricted view.} They appear non-dominated among the finalists and are
-dominated once the full space is present. In each case the dominating
-candidate is instructive rather than exotic. In the high-capacity profile the
-displaced candidate is dominated by the portfolio identical to it except for
-dropping identity controls: within this model, in that environment, identity
-controls cost four points and buy nothing detectable. Two
-intermediate-capacity candidates are displaced by portfolios that retain the
-profile's own periodic backup architecture instead of upgrading it.
+\textbf{No candidate is efficient only in the restricted view.} The
+finalist-only frontier contains \ConfirmFinalistOnlyArtifacts{} candidates
+that the full space dominates. An earlier version of this study, run before
+the mechanism repairs and without parameter uncertainty, found three such
+artifacts; with wider objectives and more scenarios per candidate, that
+particular distortion disappears. We report the zero rather than the earlier
+three, and note that a design cannot know in advance which it will get.
 
 \textbf{\ConfirmNonFinalistsOnFrontier{} non-dominated candidates were never
-labelled as finalists at all.} A design that evaluated only the finalist set
-could not have shown them to a reader under any circumstances, and could not
-have reported that they existed. Of the \ConfirmFinalistLabelled{} labelled
-finalists, \ConfirmFinalistsSurviving{} remain non-dominated over the full
-space and \ConfirmFinalistsDisplaced{} do not.
+labelled as finalists at all.} This is where the restricted design actually
+costs something, and it costs more than before: a study evaluating only the
+finalist set could not have shown those candidates to a reader under any
+circumstances, and could not have reported that they existed. Of the
+\ConfirmFinalistLabelled{} labelled finalists, \ConfirmFinalistsSurviving{}
+remain non-dominated over the full space and \ConfirmFinalistsDisplaced{} do
+not.
 
-We report these magnitudes as modest, because they are. The discovery rule is
-not badly wrong: most of what it selects survives, and most of the frontier
-it would have shown is genuinely efficient. What it cannot do is tell a
-reader which of those two statements is true, because a restricted comparison
-contains no evidence about the candidates it excluded. That is a structural
-property of the design rather than a property of this dataset, and it is why
-the count is worth having at all.
+The asymmetry is the useful part. A restricted comparison rarely promotes a
+candidate that does not deserve it, because the candidates it evaluates were
+selected for being good. What it reliably does is hide the ones it never
+looked at, and no amount of care inside the restricted set can detect that,
+because the evidence needed is exactly the evidence the design discarded.
 
 \begin{figure*}[t]
 \centering
@@ -80,8 +78,8 @@ candidate is present.}
 The three profiles do not merely differ in degree; they pose different kinds
 of decision (Figure~\ref{fig:frontier}).
 
-\textbf{High-capacity: nothing worth buying.} Every one of the
-\ConfirmHighCapacityCandidates{} resolved candidates falls between
+\textbf{High-capacity: very little worth buying.} All
+\ConfirmHighCapacityCandidates{} resolved candidates fall between
 \ConfirmHighCapacityMeanLossMin{} and \ConfirmHighCapacityMeanLossMax{}
 weighted service-hours. The entire purchasable improvement in this profile is
 \ConfirmHighCapacityMaxPurchasableImprovement{} weighted service-hours, and
@@ -89,16 +87,23 @@ the best candidate within the \ConfirmHighCapacityBudget-point budget spends
 \ConfirmHighCapacityBestAffordableCost{} points to reach
 \ConfirmHighCapacityBestAffordableMeanLoss{} hours from a free baseline of
 \ConfirmHighCapacityFreeBaselineMeanLoss{}. Against a Monte Carlo standard
-error of \ConfirmHighCapacityWorstMeanLossStandardError{} hours, that
-improvement sits at the edge of what \ConfirmHighCapacityScenarios{} paired
-scenarios can resolve:
+error of \ConfirmHighCapacityWorstMeanLossStandardError{} hours, and with
 \ConfirmHighCapacityIndistinguishablePairs{} of
 \ConfirmHighCapacityCandidatePairs{} candidate pairs
-(\ConfirmHighCapacityIndistinguishableShare\%) are separated by less than one
-combined standard error on every stochastic objective. The defensible reading
-is that in this modeled environment no purchasable control makes a detectable
-difference to disruption, and the frontier is driven by cost and burden
-alone.
+(\ConfirmHighCapacityIndistinguishableShare\%) separated by less than one
+combined standard error on every stochastic objective, the ordering within
+this profile is weakly determined and should be read that way.
+
+The sensitivity analysis sharpens this into something more interesting than
+"the differences are small". In this profile the parameter that explains most
+of the variance in mean disruption is not the spread rate or patch
+effectiveness but \emph{the false-positive isolation rate}, at
+\SensitivityHighCapacityDominantEffect\% of variance. When defenses are
+strong enough that the attack rarely spreads far, the dominant modeled source
+of lost service-hours is the defense removing healthy systems from service.
+That is a conditional model result and not a claim about real hospitals, but
+it is the kind of trade-off a six-objective frontier exists to surface, and a
+study reporting only mean disruption would have missed it entirely.
 
 \textbf{Intermediate-capacity: the decision that matters.} The free baseline
 loses \ConfirmIntermediateFreeBaselineMeanLoss{} hours and the best candidate
@@ -148,15 +153,12 @@ the three profiles.
 The share of candidate pairs the scenario bank cannot reliably order is
 \ConfirmResourceConstrainedIndistinguishableShare\%,
 \ConfirmIntermediateIndistinguishableShare\%, and
-\ConfirmHighCapacityIndistinguishableShare\%. The per-profile scenario
-allocation was chosen precisely to attack this. At the
-\DiscoveryHighCapacityScenarios{} scenarios used in discovery, every one of
-the \DiscoveryHighCapacityCandidatePairs{} high-capacity pairs was
-indistinguishable; raising that profile alone to
-\ConfirmHighCapacityScenarios{} scenarios reduced it to
-\ConfirmHighCapacityIndistinguishablePairs{}. A uniform allocation would have
-spent scenarios where they were already ample and withheld them where they
-were scarce.
+\ConfirmHighCapacityIndistinguishableShare\%. The high-capacity figure is
+the one to read carefully: at the thirty-scenario pilot resolution that
+profile's candidates were indistinguishable to the point of tying exactly,
+and at \ConfirmHighCapacityScenarios{} scenarios they separate into sixteen
+distinct values while a sixth of pairs still cannot be ordered. Both facts
+are about resolution, not about the profile having no decision in it.
 
 Bootstrap Pareto inclusion is at least \StabilityThreshold{} for
 \ConfirmResourceConstrainedStableAtEighty{},
@@ -254,43 +256,73 @@ than corrected.}
 \label{fig:validation}
 \end{figure}
 
+\subsection{Sensitivity to the unidentified coefficients}
+
+Because every trial records the parameter vector its scenario drew, a
+variance decomposition costs no additional simulation: the confirmatory bank
+is already a Monte Carlo sample over the declared ranges.
+\SampledParameters{} coefficients were sampled.
+
+The results separate two questions that are easy to conflate. In the
+resource-constrained and intermediate profiles the dominant parameter for
+mean disruption is the base spread rate, explaining
+\SensitivityResourceConstrainedDominantEffect\% and
+\SensitivityIntermediateDominantEffect\% of variance respectively; in the
+high-capacity profile it is the false-positive isolation rate, at
+\SensitivityHighCapacityDominantEffect\%.
+
+Those are effects on the \emph{level} of an objective. The effect on the
+\emph{decision} is much smaller. Ranking candidates within the low and high
+thirds of each parameter and comparing the two orderings gives Spearman
+correlations of \SensitivityResourceConstrainedDominantRankStability{},
+\SensitivityIntermediateDominantRankStability{} and
+\SensitivityHighCapacityDominantRankStability{} for those dominant
+parameters, with a worst case of \SensitivityWorstRankStability{} across all
+parameters and objectives.
+
+The reading is therefore specific: within the declared ranges, how much
+disruption a portfolio produces is genuinely uncertain, while which
+portfolios are preferable is largely stable. That is a weaker and more
+defensible claim than either "the results are robust" or "the results are
+uncertain", and it is the claim the analysis supports. It does not extend
+beyond the ranges, which we chose.
+
 \subsection{Structural sensitivity}
 
 Assumption S1 --- that restoration begins only once the estate is contained
 --- was varied on the \StructuralCandidatesTested{} candidates carrying the
-conclusions above. It turns out to matter, in both membership and magnitude,
-and we report it rather than treating S1 as innocuous.
+conclusions above. Structural uncertainty behaves quite differently from
+parameter uncertainty, and the contrast is the point of running both.
 
-\textbf{Frontier membership.} \StructuralPreserved{} candidates keep their
+\textbf{Membership.} \StructuralPreserved{} candidates keep their frontier
 membership under both structures; \StructuralOnlyGated{} are non-dominated
 only under the primary structure and \StructuralOnlyParallel{} only under the
-alternative. Per-profile agreement ranges from
-\StructuralWorstAgreement\% to \StructuralBestAgreement\%. Roughly a
-quarter to a third of frontier membership is therefore a property of the
-structural choice rather than of the candidates.
+alternative. Per-profile agreement runs from \StructuralWorstAgreement\% to
+\StructuralBestAgreement\%.
 
 \textbf{Magnitude, and its direction.} Removing the containment gate makes
-outcomes markedly \emph{worse}, not better: resource-constrained mean loss
-across these candidates moves from
-\StructuralResourceConstrainedGatedMeanLoss{} to
-\StructuralResourceConstrainedParallelMeanLoss{} weighted service-hours and
-non-recovery from \StructuralResourceConstrainedGatedNonRecovery\% to
-\StructuralResourceConstrainedParallelNonRecovery\%; the intermediate
-profile moves from \StructuralIntermediateGatedMeanLoss{} to
-\StructuralIntermediateParallelMeanLoss{}. The high-capacity profile is
-unaffected, because it contains the estate almost immediately either way.
+outcomes markedly \emph{worse}, not better. Intermediate-capacity mean loss
+across these candidates moves from \StructuralIntermediateGatedMeanLoss{} to
+\StructuralIntermediateParallelMeanLoss{} weighted service-hours and
+non-recovery from \StructuralIntermediateGatedNonRecovery\% to
+\StructuralIntermediateParallelNonRecovery\%; the resource-constrained
+profile moves from \StructuralResourceConstrainedGatedMeanLoss{} to
+\StructuralResourceConstrainedParallelMeanLoss{}. The high-capacity profile
+is unaffected, because it contains the estate almost immediately either way.
 
 The direction is initially counterintuitive and the mechanism is worth
 stating, because it is a genuine property of the model rather than an
 artifact of the switch. A restored node re-enters the network susceptible.
 Restoring while the attack is still propagating therefore returns clean
-assets to an adversary who still has reach, and the incident lengthens. The
-gated structure is not merely a simplifying assumption about scheduling; it
-encodes a substantive claim --- that responders do not restore into an
-uncontained environment --- and the model is materially more optimistic
-because of it.
+assets to an adversary who still has reach, and the incident lengthens. S1 is
+not a simplifying assumption about scheduling; it encodes the substantive
+claim that responders do not restore into an uncontained environment, and the
+model is materially more optimistic because of it.
 
-Structural uncertainty is not expressible as an interval, and this comparison
-is the substitute. The conclusions above are conditional on S1, that
-conditionality is large, and it is the only structural assumption in the
-model that has been varied at all. The rest are asserted.
+Set against the previous subsection, the comparison is stark. Sampling ten
+coefficients across wide declared ranges leaves portfolio orderings largely
+intact. Changing one structural assumption moves up to
+\StructuralOnlyGated{} candidates off the frontier and nearly doubles modeled
+disruption in two profiles. Parameter uncertainty is the kind this study can
+quantify; structural uncertainty is the kind that actually threatens its
+conclusions, and only one structural assumption of several has been varied.

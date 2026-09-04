@@ -2,13 +2,23 @@
   "code": {
     "available": true,
     "branch": "rebuild/wp0-wp2",
-    "commit": "95cd5ac7ebb15d815e7db964f80930bcf533211c",
+    "commit": "2cc28bce5e0947ed96a66f892c6f09c1239fd193",
     "dirty": true,
     "dirty_paths": [
-      "data/multiobjective/confirmatory/"
+      "ata/multiobjective/confirmatory/confirmatory_run_manifest.json",
+      "data/multiobjective/confirmatory/config_snapshot/",
+      "data/multiobjective/confirmatory/multiobjective_confirmatory_results.csv",
+      "data/multiobjective/confirmatory/portfolio_benchmark_comparison.csv",
+      "data/multiobjective/confirmatory/portfolio_frontier_resolution.csv",
+      "data/multiobjective/confirmatory/portfolio_full_space_vs_finalist.csv",
+      "data/multiobjective/confirmatory/portfolio_monte_carlo_error.csv",
+      "data/multiobjective/confirmatory/portfolio_objective_summary.csv",
+      "data/multiobjective/confirmatory/portfolio_pareto_frontier.csv",
+      "data/multiobjective/confirmatory/portfolio_pareto_stability.csv",
+      "data/multiobjective/confirmatory/portfolio_preference_scenarios.csv"
     ]
   },
-  "created_at": "2026-09-03T04:42:52+00:00",
+  "created_at": "2026-09-04T04:29:15+00:00",
   "description": "Six-objective analysis of the confirmation bank. Cost and burden are normalized scenario points, not dollars or measured staffing burden.",
   "environment": {
     "implementation": "CPython",
@@ -36,61 +46,61 @@
       "sha256": "66e66f192c5e44cacd099ef747262639379006084819569353306517cc30e3e5"
     },
     {
-      "bytes": 2628,
+      "bytes": 4667,
       "path": "configs/multiobjective_portfolio.yaml",
-      "sha256": "8b4ce785a8163925bab99b8a108d6b13ebee7c3a47cc90648355001d6fdb03d6"
+      "sha256": "a3dff5682e1e8277cc29d3a5836009deccf87a901d4fa60fdd1ce7c091e41e31"
     },
     {
-      "bytes": 70312592,
+      "bytes": 101343517,
       "path": "data/multiobjective/confirmatory/multiobjective_confirmatory_results.csv",
-      "sha256": "d7d1c1830b6c26079c5ac5326e1f422a8113b657be234c3e41c406b71f93006b"
+      "sha256": "6b558145ae770f744f21a9d4c096c02e7d205f039b101eb98084dda7f2fdce91"
     },
     {
-      "bytes": 20951,
-      "path": "study/protocols/multiobjective_confirmatory_v1.protocol.json",
-      "sha256": "ce22775ee8178db5d2420e5d380dde1ed7bfdd908c8bca70fdd0d82d171a2ed2"
+      "bytes": 20143,
+      "path": "study/protocols/multiobjective_confirmatory_v2.protocol.json",
+      "sha256": "5265d84055a438aec01b5fe75fb0ba84a62f28c391cc4384e543578547853006"
     }
   ],
   "outputs": [
     {
-      "bytes": 1223,
+      "bytes": 1177,
       "path": "data/multiobjective/confirmatory/portfolio_benchmark_comparison.csv",
-      "sha256": "3c0e57d6625df2680f5a316bd77fa8dafecb31bb47573cd840516fa79355eaac"
+      "sha256": "24f6c2593c5b24e070c95cfae3d2c9f2b05b46b49b1aec8766925a187a70a391"
     },
     {
-      "bytes": 488,
+      "bytes": 487,
       "path": "data/multiobjective/confirmatory/portfolio_frontier_resolution.csv",
-      "sha256": "0b279a0fd752abb1a9a00787d137a4b05dcb41ec214a7d69f08567dabc7ef16d"
+      "sha256": "047f6eaa7e7269354b84081a9b77cefce56697cf60da9cd71706a3a77f098f72"
     },
     {
-      "bytes": 75411,
+      "bytes": 65223,
       "path": "data/multiobjective/confirmatory/portfolio_full_space_vs_finalist.csv",
-      "sha256": "364bbb4f413046d4c20c144b3d06145bbae230cc790f20959cc6a7d49e1c8d1d"
+      "sha256": "c34c247d1c36ecf69fc06e6d84e691772f9154abd10b4e328469f99602cb4c3a"
     },
     {
-      "bytes": 52630,
+      "bytes": 52354,
       "path": "data/multiobjective/confirmatory/portfolio_monte_carlo_error.csv",
-      "sha256": "48ce1ab131a021e9d31c58b17a317f48c74f78876f55b55578555a9c083c5b41"
+      "sha256": "cba5d937559299ef6bc7c6c156e65c58c8af1f3041e0d3519da004593d34f44e"
     },
     {
-      "bytes": 71539,
+      "bytes": 61516,
       "path": "data/multiobjective/confirmatory/portfolio_objective_summary.csv",
-      "sha256": "6c6a53ad88109a2c2de79d341be9a00538404e7287d99a24c8532c16a042ea46"
+      "sha256": "cf41ebdacf092df8855edfa61893e5dcdacc19f3a76f7fc9166f3bc27b27fdab"
     },
     {
-      "bytes": 72356,
+      "bytes": 62333,
       "path": "data/multiobjective/confirmatory/portfolio_pareto_frontier.csv",
-      "sha256": "3018d4b5fd868439c0eeae4d5e50c7df1635a88409e9eb589a21b2b1a993e0a7"
+      "sha256": "0f1c172d9e59f9e8875668e5824edcde810acfd0d554ca2ed6d6ccf3690c49b1"
     },
     {
-      "bytes": 31736,
+      "bytes": 31695,
       "path": "data/multiobjective/confirmatory/portfolio_pareto_stability.csv",
-      "sha256": "31f293b3c8a77493b0295d236c6f13dbcbcf974be40fe8a2fb2831cbeaffb952"
+      "sha256": "f2cc35e888b85a7287484b75305084bb989b44f460ad94038eef8dbb1f861a17"
     },
     {
-      "bytes": 2677,
+      "bytes": 2633,
       "path": "data/multiobjective/confirmatory/portfolio_preference_scenarios.csv",
-      "sha256": "ae00de8c584f2b2fd12fe62b20bdd8414f9e90ba3bd64efb93e2332f59c61684"
+      "sha256": "a61803d62adebd2a1fdcc358a327522145b26979f684dc78d15b6da06c0fb86b"
     }
   ],
   "parameters": {
@@ -103,34 +113,34 @@
         "resource_constrained": 288
       },
       "finalist_only_artifacts_by_profile": {
-        "high_capacity": 1,
-        "intermediate_capacity": 2,
+        "high_capacity": 0,
+        "intermediate_capacity": 0,
         "resource_constrained": 0
       },
       "finalist_only_frontier_size_by_profile": {
-        "high_capacity": 3,
-        "intermediate_capacity": 13,
-        "resource_constrained": 34
+        "high_capacity": 4,
+        "intermediate_capacity": 17,
+        "resource_constrained": 36
       },
       "non_dominated_by_profile": {
-        "high_capacity": 6,
-        "intermediate_capacity": 16,
-        "resource_constrained": 50
+        "high_capacity": 9,
+        "intermediate_capacity": 22,
+        "resource_constrained": 64
       },
       "scenarios_by_profile": {
-        "high_capacity": 800,
-        "intermediate_capacity": 250,
-        "resource_constrained": 350
+        "high_capacity": 400,
+        "intermediate_capacity": 400,
+        "resource_constrained": 400
       },
-      "total_executions": 137600
+      "total_executions": 160000
     },
     "sustained_outage_primary_k": 4
   },
   "protocol": {
-    "frozen_at": "2026-09-03T01:49:25+00:00",
-    "name": "multiobjective_confirmatory_v1",
-    "path": "study/protocols/multiobjective_confirmatory_v1.protocol.json",
-    "sha256": "fdf6777e4ba6b0886623ed6aecc64e6a808212547be6ee4ec40b4c8fbb66649e"
+    "frozen_at": "2026-09-04T01:53:46+00:00",
+    "name": "multiobjective_confirmatory_v2",
+    "path": "study/protocols/multiobjective_confirmatory_v2.protocol.json",
+    "sha256": "9cb7e835446a127e2be10326d46e3d8059eda29abce1ea4d5238f7bbad8d31ba"
   },
   "run_id": "confirmation-analysis",
   "stage": "analysis"

@@ -2,13 +2,14 @@
   "code": {
     "available": true,
     "branch": "rebuild/wp0-wp2",
-    "commit": "95cd5ac7ebb15d815e7db964f80930bcf533211c",
+    "commit": "2cc28bce5e0947ed96a66f892c6f09c1239fd193",
     "dirty": true,
     "dirty_paths": [
-      "data/multiobjective/confirmatory/"
+      "ata/multiobjective/confirmatory/multiobjective_confirmatory_results.csv",
+      "data/multiobjective/confirmatory/config_snapshot/"
     ]
   },
-  "created_at": "2026-09-03T04:40:29+00:00",
+  "created_at": "2026-09-04T04:28:52+00:00",
   "description": "Full-space confirmatory evaluation of every resolved candidate portfolio on a fresh paired scenario bank.",
   "environment": {
     "implementation": "CPython",
@@ -27,30 +28,30 @@
   "inputs": [
     {
       "bytes": 561,
-      "path": "configs/defense_burdens.yaml",
+      "path": "data/multiobjective/confirmatory/config_snapshot/defense_burdens.yaml",
       "sha256": "70647c2c1cc3d0a260ff06660c69c31b29fcffd743b16c4db40a18394730515a"
     },
     {
       "bytes": 1057,
-      "path": "configs/defense_costs.yaml",
+      "path": "data/multiobjective/confirmatory/config_snapshot/defense_costs.yaml",
       "sha256": "66e66f192c5e44cacd099ef747262639379006084819569353306517cc30e3e5"
     },
     {
-      "bytes": 2628,
-      "path": "configs/multiobjective_portfolio.yaml",
-      "sha256": "8b4ce785a8163925bab99b8a108d6b13ebee7c3a47cc90648355001d6fdb03d6"
+      "bytes": 20143,
+      "path": "data/multiobjective/confirmatory/config_snapshot/multiobjective_confirmatory_v2.protocol.json",
+      "sha256": "5265d84055a438aec01b5fe75fb0ba84a62f28c391cc4384e543578547853006"
     },
     {
-      "bytes": 20951,
-      "path": "study/protocols/multiobjective_confirmatory_v1.protocol.json",
-      "sha256": "ce22775ee8178db5d2420e5d380dde1ed7bfdd908c8bca70fdd0d82d171a2ed2"
+      "bytes": 4667,
+      "path": "data/multiobjective/confirmatory/config_snapshot/multiobjective_portfolio.yaml",
+      "sha256": "a3dff5682e1e8277cc29d3a5836009deccf87a901d4fa60fdd1ce7c091e41e31"
     }
   ],
   "outputs": [
     {
-      "bytes": 70312592,
+      "bytes": 101343517,
       "path": "data/multiobjective/confirmatory/multiobjective_confirmatory_results.csv",
-      "sha256": "d7d1c1830b6c26079c5ac5326e1f422a8113b657be234c3e41c406b71f93006b"
+      "sha256": "6b558145ae770f744f21a9d4c096c02e7d205f039b101eb98084dda7f2fdce91"
     }
   ],
   "parameters": {
@@ -61,19 +62,19 @@
     },
     "master_seed": 4915337,
     "sustained_outage_primary_k": 4,
-    "total_executions": 137600,
+    "total_executions": 160000,
     "trials_per_candidate": {
-      "high_capacity": 800,
-      "intermediate_capacity": 250,
-      "resource_constrained": 350
+      "high_capacity": 400,
+      "intermediate_capacity": 400,
+      "resource_constrained": 400
     }
   },
   "protocol": {
-    "frozen_at": "2026-09-03T01:49:25+00:00",
-    "name": "multiobjective_confirmatory_v1",
-    "path": "study/protocols/multiobjective_confirmatory_v1.protocol.json",
-    "sha256": "fdf6777e4ba6b0886623ed6aecc64e6a808212547be6ee4ec40b4c8fbb66649e"
+    "frozen_at": "2026-09-04T01:53:46+00:00",
+    "name": "multiobjective_confirmatory_v2",
+    "path": "study/protocols/multiobjective_confirmatory_v2.protocol.json",
+    "sha256": "9cb7e835446a127e2be10326d46e3d8059eda29abce1ea4d5238f7bbad8d31ba"
   },
-  "run_id": "multiobjective_confirmatory_v1:fdf6777e4ba6",
+  "run_id": "multiobjective_confirmatory_v2:9cb7e835446a",
   "stage": "confirmation"
 }

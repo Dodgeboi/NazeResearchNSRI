@@ -1,27 +1,29 @@
 # Completion report
 
-**Branch:** `rebuild/wp0-wp2`, 14 commits on top of `3b734df`
-**Scale:** 128 files changed, 80 new, +186,668 / −612 lines
+**Branch:** `rebuild/wp0-wp2`, on top of `3b734df`
 **Nothing pushed.** All work is local to this branch.
 
 ---
 
 ## 1. Bottom line
 
-**Scored 81/100 against the handoff's rubric. The target was 85–90, and this
-does not reach it.** Every score cap is cleared, so 81 is the rubric total
-rather than a capped number; the baseline was capped at 74.
+**Scored 87/100 against the handoff's rubric, inside the 85–90 target band.**
+Every score cap is cleared. The baseline was capped at 74; an intermediate
+revision of this work scored 81 before WP3.
 
-The gap is one work package, not a diffuse shortfall. **WP3 — the
-evidence-constrained model redesign — was not attempted.** The study's
-*method* was rebuilt to the target standard; its *model* was not. Three
-mechanisms are disclosed as defects rather than repaired, and the
-unidentified coefficients are still fixed point values rather than
-prespecified uncertainty ranges.
+**Not submission-ready, and the score does not say otherwise.** Reaching a
+rubric band measures methodological discipline. It does not price the
+model's central limitation — that no internal coefficient is identified by
+hospital data — and it cannot price novelty, journal fit, or reviewer
+judgement. Four blocking human decisions remain open and no human has read
+the rendered paper.
 
-**Not submission-ready.** Eleven decisions in
-`audit/human_decisions_required.md` remain open, four of them blocking, and
-no human has read the rendered paper.
+**What still limits the science, in order:** the recovery endpoint is a
+single 72-hour horizon where the specification requires layered endpoints to
+90 days, which is why two external benchmarks fail; only one structural
+assumption has been varied, and that one moved the answer far more than
+sampling ten parameters did; and the model runs one facility against an
+incident record where a quarter of events span several.
 
 ## 2. What changed
 
@@ -85,22 +87,23 @@ python scripts/unpack_raw.py && python scripts/run_full_audit.py
 
 | Check | Result |
 |---|---|
-| Test suite | 165 passed, 1 expected xfail |
+| Test suite | 179 passed, 0 xfail |
 | Behavioral validation | 12/12 |
 | Archived sources (hashes, sizes, re-derived counts) | pass |
 | Frozen protocols verify | pass |
-| Run manifests describe files on disk | 10 checked, pass |
+| Run manifests describe files on disk | 11 checked, pass |
 | Manuscript claim audit | pass, 5/5 checks |
 | Numbers re-derive from raw trials | pass |
 | External validation reports its failures | pass |
 
-Confirmatory protocol `multiobjective_confirmatory_v1`, SHA-256
-`fdf6777e4ba6…`, frozen 2026-09-03T01:49:25Z, committed in `463da77`
-**before** any confirmatory output existed.
+Confirmatory protocol `multiobjective_confirmatory_v2`, SHA-256
+`9cb7e835446a…`, frozen 2026-09-04T01:53:46Z and committed **before** any v2
+output existed. Protocol v1 is superseded rather than edited, because the
+mechanism repairs changed what the model is.
 
-Banks: discovery 12,000 executions; confirmatory 137,600; structural
-sensitivity 22,500 across two arms. Roughly 3.5 hours of compute on two
-cores.
+Banks: discovery 12,000 executions; confirmatory 160,000; structural
+sensitivity 28,800 across two arms. Roughly six hours of compute on two
+cores across both study versions.
 
 ## 4. Validation
 

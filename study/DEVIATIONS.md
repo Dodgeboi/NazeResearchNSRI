@@ -342,3 +342,31 @@ no longer describes a study anyone would run. The freezing machinery refused
 to overwrite it, which is the machinery working; v2 was frozen under a new
 name and committed before any v2 output existed. Results generated under v1
 are retained and are not reinterpreted under v2.
+
+### Correction: the zero-interquartile-range reading was wrong
+
+The frozen protocol `multiobjective_confirmatory_v2` records, in its
+`trials_rationale`, that three of four high-capacity objectives had an
+interquartile range of exactly zero across all sixteen candidates and that
+"no scenario count resolves them at all -- that is a finding about the
+profile, not a budget problem."
+
+**The confirmatory data refute that reading.** At 400 scenarios the sixteen
+high-capacity candidates take sixteen distinct values on mean disruption,
+spanning 13.07 to 15.02 weighted service-hours, with an interquartile range
+of 0.743. The pilot's zero ranges came from its thirty-scenario resolution:
+at that size the achievable outcome values are coarse enough that most
+candidates tie exactly.
+
+What the precision estimator was actually reporting is that a thirty-scenario
+pilot cannot see the differences it was being asked to size. A correlation-
+ratio requirement computed from a pilot too small to resolve the quantity
+returns an unattainable number, and "this quantity cannot be resolved" and
+"this pilot cannot resolve it" are easy to confuse. We confused them.
+
+**The protocol is not edited.** A frozen protocol whose rationale turns out
+to be wrong is corrected in the open, not amended, or freezing it means
+nothing. The correction is recorded here and stated in the manuscript's
+study-design section. No result changes: the scenario count of 400 was
+chosen as the affordable maximum and would have been the same under the
+correct reading.

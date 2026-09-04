@@ -1,7 +1,7 @@
 structural_arm,profile,mean_mean_hours_lost,mean_tail_hours_lost_cvar90,mean_sustained_outage_probability,mean_nonrecovery_probability,mean_implementation_cost_points,mean_operational_burden_points
-gated_primary,high_capacity,4.111269841,18.19031746,0,0,6,4.857142857
-gated_primary,intermediate_capacity,33.00842284,104.3975656,0.212962963,0.02148148148,6.888888889,6.444444444
-gated_primary,resource_constrained,155.0006378,267.9534444,0.6766666667,0.144,10.28,9.54
-parallel_alternative,high_capacity,4.099436508,18.11198413,0,0,6,4.857142857
-parallel_alternative,intermediate_capacity,72.82343827,195.3578935,0.28,0.2392592593,6.888888889,6.444444444
-parallel_alternative,resource_constrained,245.6139822,346.4061264,0.7402666667,0.7348,10.28,9.54
+gated_primary,high_capacity,15.14646914,40.73882716,0.02,0.07333333333,6.777777778,5.222222222
+gated_primary,intermediate_capacity,46.92654106,127.176715,0.3017391304,0.09188405797,9,8.130434783
+gated_primary,resource_constrained,162.5564297,290.8218837,0.7310416667,0.2001041667,12.34375,10.9375
+parallel_alternative,high_capacity,15.16762346,41.36388889,0.01407407407,0.07481481481,6.777777778,5.222222222
+parallel_alternative,intermediate_capacity,107.4136135,292.2605797,0.3768115942,0.3428985507,9,8.130434783
+parallel_alternative,resource_constrained,269.7895642,364.9763732,0.80375,0.810625,12.34375,10.9375

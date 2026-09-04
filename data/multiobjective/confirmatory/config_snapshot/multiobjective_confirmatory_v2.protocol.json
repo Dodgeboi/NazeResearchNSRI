@@ -1,0 +1,372 @@
+{
+  "body": {
+    "analysis_plan": {
+      "dominance": "no other candidate is no worse on all six objectives and strictly better on at least one",
+      "monte_carlo_error": "reported for every objective as a standard error over the paired scenario bank",
+      "preference_scenarios": "declared weight sets applied after the frontier is built, never before",
+      "reported_candidate_counts": "stated at every stage: enumerated, resolved, evaluated, non-dominated",
+      "stability": "1000 paired scenario bootstraps, resampling whole scenario identifiers so cross-portfolio correlation is preserved",
+      "tie_tolerance": "exact float comparison; objectives are not rounded before dominance is evaluated"
+    },
+    "candidate_space": {
+      "counts_by_profile": {
+        "high_capacity": 16,
+        "intermediate_capacity": 96,
+        "resource_constrained": 288
+      },
+      "note": "This is the whole point of the confirmatory design. The prior study evaluated 57 discovery-selected finalists and reported the result as a frontier; a candidate that was mediocre in discovery could not appear.",
+      "rule": "every behaviorally distinct resolved candidate in each profile, deduplicated under the study config",
+      "total_profile_candidates": 400
+    },
+    "design": {
+      "config_sha256": "a3dff5682e1e8277cc29d3a5836009deccf87a901d4fa60fdd1ce7c091e41e31",
+      "defense_burdens_sha256": "70647c2c1cc3d0a260ff06660c69c31b29fcffd743b16c4db40a18394730515a",
+      "defense_costs_sha256": "66e66f192c5e44cacd099ef747262639379006084819569353306517cc30e3e5",
+      "entry_point_cycle": [
+        "workstation",
+        "internet_facing",
+        "privileged_system",
+        "medical_device",
+        "vendor_connection"
+      ],
+      "master_seed": 4915337,
+      "pairing": "common random numbers; all candidates in a profile replay one scenario bank (topology, entry point, patch draws, and event-level random fields)",
+      "total_executions": 160000,
+      "trials_per_candidate": {
+        "high_capacity": 400,
+        "intermediate_capacity": 400,
+        "resource_constrained": 400
+      },
+      "trials_rationale": "Set from the pilot precision analysis, which after the WP3 repairs and the addition of parameter uncertainty returns a requirement that is either small or unattainable, with nothing in between. Most objectives need 28 to 297 paired scenarios. Two do not, and both are reported as under-resolved rather than presented as established: resource-constrained sustained outage needs about 1,400, and high-capacity mean disruption needs roughly 80,000 because its candidates differ by an interquartile range of 0.066 weighted service-hours. Three of the four high-capacity objectives have an interquartile range of exactly zero across all 16 candidates, so no scenario count resolves them at all -- that is a finding about the profile, not a budget problem. A uniform count is therefore used: per-profile allocation buys nothing when the binding requirements are unattainable rather than merely uneven."
+    },
+    "endpoints": {
+      "horizon_steps": 864,
+      "step_minutes": 5,
+      "sustained_outage_primary_k": 4,
+      "sustained_outage_reported_k_ladder": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "sustained_outage_service_steps": 24
+    },
+    "estimands": [
+      "For each capacity profile, the set of resolved candidate portfolios that are non-dominated on the six declared objectives, evaluated on a fresh paired scenario bank.",
+      "The proportion of discovery-frontier candidates that remain non-dominated when the full resolved space is evaluated.",
+      "The number of candidates that appear non-dominated within the frozen finalist subset but are dominated in the full space."
+    ],
+    "frozen_finalist_labels": {
+      "counts_by_profile": {
+        "high_capacity": 4,
+        "intermediate_capacity": 20,
+        "resource_constrained": 41
+      },
+      "identities": {
+        "high_capacity": [
+          "seg-least_privilege|patch+0|det0|iso0|bak-isolated|idm0",
+          "seg-least_privilege|patch+0|det1|iso0|bak-isolated|idm0",
+          "seg-least_privilege|patch+1|det0|iso0|bak-isolated|idm0",
+          "seg-least_privilege|patch+1|det1|iso1|bak-isolated|idm1"
+        ],
+        "intermediate_capacity": [
+          "seg-basic|patch+0|det0|iso0|bak-isolated|idm0",
+          "seg-basic|patch+0|det0|iso0|bak-periodic|idm0",
+          "seg-basic|patch+0|det1|iso0|bak-isolated|idm0",
+          "seg-basic|patch+0|det1|iso0|bak-periodic|idm0",
+          "seg-basic|patch+0|det1|iso1|bak-isolated|idm0",
+          "seg-least_privilege|patch+0|det0|iso0|bak-periodic|idm0",
+          "seg-least_privilege|patch+0|det1|iso0|bak-isolated|idm0",
+          "seg-least_privilege|patch+0|det1|iso0|bak-isolated|idm1",
+          "seg-least_privilege|patch+0|det1|iso0|bak-periodic|idm0",
+          "seg-least_privilege|patch+0|det1|iso0|bak-periodic|idm1",
+          "seg-least_privilege|patch+0|det1|iso1|bak-isolated|idm1",
+          "seg-least_privilege|patch+0|det1|iso1|bak-periodic|idm1",
+          "seg-least_privilege|patch+1|det0|iso0|bak-periodic|idm0",
+          "seg-least_privilege|patch+1|det1|iso0|bak-periodic|idm0",
+          "seg-least_privilege|patch+1|det1|iso0|bak-periodic|idm1",
+          "seg-least_privilege|patch+1|det1|iso1|bak-periodic|idm1",
+          "seg-least_privilege|patch+2|det1|iso0|bak-isolated|idm1",
+          "seg-least_privilege|patch+2|det1|iso0|bak-periodic|idm1",
+          "seg-least_privilege|patch+2|det1|iso1|bak-isolated|idm1",
+          "seg-least_privilege|patch+2|det1|iso1|bak-periodic|idm1"
+        ],
+        "resource_constrained": [
+          "seg-basic|patch+0|det1|iso0|bak-connected|idm0",
+          "seg-basic|patch+0|det1|iso0|bak-isolated|idm0",
+          "seg-basic|patch+0|det1|iso0|bak-periodic|idm0",
+          "seg-basic|patch+0|det1|iso1|bak-isolated|idm0",
+          "seg-basic|patch+1|det1|iso0|bak-connected|idm0",
+          "seg-basic|patch+1|det1|iso0|bak-isolated|idm0",
+          "seg-basic|patch+1|det1|iso0|bak-isolated|idm1",
+          "seg-basic|patch+1|det1|iso0|bak-periodic|idm0",
+          "seg-flat|patch+0|det0|iso0|bak-connected|idm0",
+          "seg-flat|patch+0|det0|iso0|bak-isolated|idm0",
+          "seg-flat|patch+0|det0|iso0|bak-periodic|idm0",
+          "seg-flat|patch+0|det1|iso0|bak-connected|idm0",
+          "seg-flat|patch+0|det1|iso0|bak-isolated|idm0",
+          "seg-flat|patch+0|det1|iso0|bak-periodic|idm0",
+          "seg-flat|patch+0|det1|iso1|bak-isolated|idm0",
+          "seg-least_privilege|patch+0|det1|iso0|bak-connected|idm0",
+          "seg-least_privilege|patch+0|det1|iso0|bak-connected|idm1",
+          "seg-least_privilege|patch+0|det1|iso0|bak-isolated|idm0",
+          "seg-least_privilege|patch+0|det1|iso0|bak-isolated|idm1",
+          "seg-least_privilege|patch+0|det1|iso0|bak-periodic|idm0",
+          "seg-least_privilege|patch+0|det1|iso0|bak-periodic|idm1",
+          "seg-least_privilege|patch+0|det1|iso1|bak-isolated|idm0",
+          "seg-least_privilege|patch+0|det1|iso1|bak-isolated|idm1",
+          "seg-least_privilege|patch+1|det1|iso0|bak-connected|idm0",
+          "seg-least_privilege|patch+1|det1|iso0|bak-connected|idm1",
+          "seg-least_privilege|patch+1|det1|iso0|bak-isolated|idm0",
+          "seg-least_privilege|patch+1|det1|iso0|bak-isolated|idm1",
+          "seg-least_privilege|patch+1|det1|iso0|bak-periodic|idm0",
+          "seg-least_privilege|patch+1|det1|iso0|bak-periodic|idm1",
+          "seg-least_privilege|patch+1|det1|iso1|bak-isolated|idm1",
+          "seg-least_privilege|patch+2|det1|iso0|bak-connected|idm0",
+          "seg-least_privilege|patch+2|det1|iso0|bak-isolated|idm0",
+          "seg-least_privilege|patch+2|det1|iso0|bak-isolated|idm1",
+          "seg-least_privilege|patch+2|det1|iso0|bak-periodic|idm0",
+          "seg-least_privilege|patch+3|det1|iso0|bak-connected|idm0",
+          "seg-least_privilege|patch+3|det1|iso0|bak-connected|idm1",
+          "seg-least_privilege|patch+3|det1|iso0|bak-isolated|idm0",
+          "seg-least_privilege|patch+3|det1|iso0|bak-isolated|idm1",
+          "seg-least_privilege|patch+3|det1|iso0|bak-periodic|idm0",
+          "seg-least_privilege|patch+3|det1|iso0|bak-periodic|idm1",
+          "seg-least_privilege|patch+3|det1|iso1|bak-isolated|idm1"
+        ]
+      },
+      "purpose": "reporting only; does not restrict what is evaluated",
+      "rule": "discovery bootstrap Pareto inclusion >= threshold, union every declared preference choice and benchmark comparator",
+      "threshold": 0.5
+    },
+    "objectives": {
+      "implementation_cost_points": {
+        "definition": "Sum of declared control cost points for the increment a portfolio adds to its profile's exogenous baseline posture.",
+        "direction": "minimize",
+        "identification": "normalized-scenario-unit"
+      },
+      "mean_hours_lost": {
+        "definition": "Mean weighted service-hours lost across the seven modeled services, where each service is binary at each step and is weighted by its declared service weight.",
+        "direction": "minimize",
+        "identification": "model-internal"
+      },
+      "nonrecovery_probability": {
+        "definition": "Fraction of trials in which weighted clinical service availability had not returned to full at the final simulated step of the declared horizon.",
+        "direction": "minimize",
+        "identification": "model-internal"
+      },
+      "operational_burden_points": {
+        "definition": "Sum of declared workflow and implementation burden points for the increment a portfolio adds to its profile's exogenous baseline posture.",
+        "direction": "minimize",
+        "identification": "normalized-scenario-unit"
+      },
+      "sustained_outage_probability": {
+        "definition": "Fraction of trials in which at least k of the four clinical services (ehr, laboratory, pharmacy, imaging) each experienced a continuous unavailability run of more than two modeled hours, with the primary analysis fixing k = 4 and every results table also reporting k = 1, 2, and 3.",
+        "direction": "minimize",
+        "identification": "declared-assumption"
+      },
+      "tail_hours_lost_cvar90": {
+        "definition": "Conditional mean weighted service-hours lost among trials at or above the empirical 90th percentile of weighted service-hours lost.",
+        "direction": "minimize",
+        "identification": "model-internal"
+      }
+    },
+    "precision_justification": {
+      "binding_requirement": {
+        "interpretation": "The paired figure governs frontier comparisons, which are what the study reports; the unpaired figure governs any standalone mean quoted on its own. Where the chosen scenario count is below a requirement, the affected objective is under-resolved and the manuscript must say so rather than presenting its differences as established.",
+        "paired_max": 81534,
+        "unpaired_max": 3537084
+      },
+      "method": "Pilot precision analysis: justify the confirmatory scenario count.\n\nThe handoff requires that the number of simulations be justified by a\nprecision target rather than by a round number. This script reads the\ndiscovery bank and answers one question per objective: **how many paired\nscenarios per candidate are needed for the Monte Carlo standard error to be\nsmall relative to the spread the frontier has to resolve?**",
+      "profiles": {
+        "high_capacity": {
+          "candidates": 16,
+          "objectives": {
+            "mean_hours_lost": {
+              "achieved_mc_se_at_pilot_n": 2.2795935417673516,
+              "candidate_mean_iqr": 0.06638888899999884,
+              "mean_within_scenario_correlation": 0.988474470452951,
+              "paired_difference_sd": 1.8956732742861349,
+              "per_scenario_sd": 12.485848047690736,
+              "required_scenarios_paired": 81534,
+              "required_scenarios_unpaired": 3537084,
+              "resolution_target": 0.006638888899999884
+            },
+            "nonrecovery_probability": {
+              "achieved_mc_se_at_pilot_n": 0.055708601453115555,
+              "candidate_mean_iqr": 0.0,
+              "mean_within_scenario_correlation": 1.0,
+              "paired_difference_sd": 0.0,
+              "per_scenario_sd": 0.30512857662936466,
+              "required_scenarios_paired": null,
+              "required_scenarios_unpaired": null,
+              "resolution_target": 0.0
+            },
+            "sustained_outage_probability": {
+              "achieved_mc_se_at_pilot_n": 0.016376789481350587,
+              "candidate_mean_iqr": 0.0,
+              "mean_within_scenario_correlation": 1.0,
+              "paired_difference_sd": 0.0,
+              "per_scenario_sd": 0.08969937018449047,
+              "required_scenarios_paired": null,
+              "required_scenarios_unpaired": null,
+              "resolution_target": 0.0
+            },
+            "tail_hours_lost_cvar90": {
+              "achieved_mc_se_at_pilot_n": 2.2795935417673516,
+              "candidate_mean_iqr": 0.0,
+              "mean_within_scenario_correlation": 0.988474470452951,
+              "paired_difference_sd": 1.8956732742861349,
+              "per_scenario_sd": 12.485848047690736,
+              "required_scenarios_paired": null,
+              "required_scenarios_unpaired": null,
+              "resolution_target": 0.0
+            }
+          },
+          "pilot_scenarios": 30
+        },
+        "intermediate_capacity": {
+          "candidates": 96,
+          "objectives": {
+            "mean_hours_lost": {
+              "achieved_mc_se_at_pilot_n": 12.112178953869725,
+              "candidate_mean_iqr": 67.81840277450002,
+              "mean_within_scenario_correlation": 0.4710004835084869,
+              "paired_difference_sd": 68.23788246869974,
+              "per_scenario_sd": 66.34113633573773,
+              "required_scenarios_paired": 102,
+              "required_scenarios_unpaired": 96,
+              "resolution_target": 6.7818402774500015
+            },
+            "nonrecovery_probability": {
+              "achieved_mc_se_at_pilot_n": 0.04815398088258497,
+              "candidate_mean_iqr": 0.0,
+              "mean_within_scenario_correlation": 0.9421316394384154,
+              "paired_difference_sd": 0.08972808738770126,
+              "per_scenario_sd": 0.26375021563064316,
+              "required_scenarios_paired": null,
+              "required_scenarios_unpaired": null,
+              "resolution_target": 0.0
+            },
+            "sustained_outage_probability": {
+              "achieved_mc_se_at_pilot_n": 0.08441349755580613,
+              "candidate_mean_iqr": 0.26666666666666666,
+              "mean_within_scenario_correlation": 0.5069876835765039,
+              "paired_difference_sd": 0.4591096324755418,
+              "per_scenario_sd": 0.4623517676922222,
+              "required_scenarios_paired": 297,
+              "required_scenarios_unpaired": 301,
+              "resolution_target": 0.02666666666666667
+            },
+            "tail_hours_lost_cvar90": {
+              "achieved_mc_se_at_pilot_n": 12.112178953869725,
+              "candidate_mean_iqr": 127.85763889083331,
+              "mean_within_scenario_correlation": 0.4710004835084869,
+              "paired_difference_sd": 68.23788246869974,
+              "per_scenario_sd": 66.34113633573773,
+              "required_scenarios_paired": 29,
+              "required_scenarios_unpaired": 27,
+              "resolution_target": 12.785763889083333
+            }
+          },
+          "pilot_scenarios": 30
+        },
+        "resource_constrained": {
+          "candidates": 288,
+          "objectives": {
+            "mean_hours_lost": {
+              "achieved_mc_se_at_pilot_n": 13.536183906171205,
+              "candidate_mean_iqr": 140.1181944483333,
+              "mean_within_scenario_correlation": 0.5076259780265997,
+              "paired_difference_sd": 73.57316463513538,
+              "per_scenario_sd": 74.14073267948362,
+              "required_scenarios_paired": 28,
+              "required_scenarios_unpaired": 28,
+              "resolution_target": 14.01181944483333
+            },
+            "nonrecovery_probability": {
+              "achieved_mc_se_at_pilot_n": 0.0681312621369561,
+              "candidate_mean_iqr": 0.33333333333333337,
+              "mean_within_scenario_correlation": 0.4805134939635075,
+              "paired_difference_sd": 0.3803725736284366,
+              "per_scenario_sd": 0.37317029143708486,
+              "required_scenarios_paired": 131,
+              "required_scenarios_unpaired": 126,
+              "resolution_target": 0.03333333333333334
+            },
+            "sustained_outage_probability": {
+              "achieved_mc_se_at_pilot_n": 0.05593738517329482,
+              "candidate_mean_iqr": 0.06666666666666665,
+              "mean_within_scenario_correlation": 0.6635561295787032,
+              "paired_difference_sd": 0.25132407716913596,
+              "per_scenario_sd": 0.306381676672686,
+              "required_scenarios_paired": 1422,
+              "required_scenarios_unpaired": 2113,
+              "resolution_target": 0.006666666666666665
+            },
+            "tail_hours_lost_cvar90": {
+              "achieved_mc_se_at_pilot_n": 13.536183906171205,
+              "candidate_mean_iqr": 115.07152781666667,
+              "mean_within_scenario_correlation": 0.5076259780265997,
+              "paired_difference_sd": 73.57316463513538,
+              "per_scenario_sd": 74.14073267948362,
+              "required_scenarios_paired": 41,
+              "required_scenarios_unpaired": 42,
+              "resolution_target": 11.507152781666669
+            }
+          },
+          "pilot_scenarios": 30
+        }
+      },
+      "resolution_fraction_of_iqr": 0.1,
+      "scenarios_per_candidate_in_pilot": 30
+    },
+    "prespecified_sensitivity": [
+      "sustained-outage k over 1..4, reported in every results table",
+      "cost scaling over the declared scale factors",
+      "finalist-only versus full-space frontier comparison"
+    ],
+    "stage": "confirmation",
+    "stopping_rule": "the confirmatory bank is run once, in full. Individual cells are never rerun. If the run fails part way, it is restarted from the beginning under the same seed and the failure is recorded in study/DEVIATIONS.md.",
+    "study": "multi-objective hospital ransomware defense portfolios",
+    "written_before_any_confirmatory_simulation": true
+  },
+  "code": {
+    "available": true,
+    "branch": "rebuild/wp0-wp2",
+    "commit": "f46e8face2330d6cb641fa950f3a7861cf5656cc",
+    "dirty": true,
+    "dirty_paths": [
+      "ata/multiobjective/discovery/config_snapshot/multiobjective_portfolio.yaml",
+      "data/multiobjective/discovery/discovery_analysis_manifest.json",
+      "data/multiobjective/discovery/discovery_results.csv",
+      "data/multiobjective/discovery/discovery_run_manifest.json",
+      "data/multiobjective/discovery/portfolio_benchmark_comparison.csv",
+      "data/multiobjective/discovery/portfolio_frontier_resolution.csv",
+      "data/multiobjective/discovery/portfolio_monte_carlo_error.csv",
+      "data/multiobjective/discovery/portfolio_objective_summary.csv",
+      "data/multiobjective/discovery/portfolio_pareto_frontier.csv",
+      "data/multiobjective/discovery/portfolio_pareto_stability.csv",
+      "data/multiobjective/discovery/portfolio_preference_scenarios.csv",
+      "data/multiobjective/discovery/precision_analysis.json",
+      "scripts/freeze_confirmatory_protocol.py"
+    ]
+  },
+  "environment": {
+    "implementation": "CPython",
+    "machine": "x86_64",
+    "packages": {
+      "matplotlib": "3.11.0",
+      "networkx": "3.6.1",
+      "numpy": "2.5.1",
+      "pandas": "3.0.3",
+      "scipy": "1.18.0",
+      "yaml": "6.0.3"
+    },
+    "platform": "Linux-6.18.44-fc-v24-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "frozen_at": "2026-09-04T01:53:46+00:00",
+  "protocol_name": "multiobjective_confirmatory_v2",
+  "protocol_sha256": "9cb7e835446a127e2be10326d46e3d8059eda29abce1ea4d5238f7bbad8d31ba"
+}

@@ -503,27 +503,39 @@ observed within-scenario correlation to obtain the paired requirement that
 governs a frontier comparison.
 
 Once parameter uncertainty is inside the objectives, that requirement stops
-being a single number and becomes bimodal. Most objectives need between a few
-dozen and a few hundred paired scenarios. Two need counts nobody can buy:
-resource-constrained sustained outage needs
+being a single number. Most objectives needed between a few dozen and a few
+hundred paired scenarios. Two returned counts nobody can buy:
+resource-constrained sustained outage needed
 \PrecisionResourceConstrainedOutageRequired{}, and high-capacity mean
-disruption needs \PrecisionHighCapacityMeanLossRequired{}, because its
-candidates differ by an interquartile range of
-\PrecisionHighCapacityMeanLossIQR{} weighted service-hours.
+disruption needed \PrecisionHighCapacityMeanLossRequired{}. More strikingly,
+\PrecisionHighCapacityDegenerateObjectives{} of the four high-capacity
+objectives had an interquartile range of \emph{exactly zero} across all
+\ConfirmHighCapacityCandidates{} candidates in the pilot.
 
-More decisively, \PrecisionHighCapacityDegenerateObjectives{} of the four
-high-capacity objectives have an interquartile range of \emph{exactly zero}
-across all \ConfirmHighCapacityCandidates{} candidates. No scenario count
-resolves them, because there is nothing to resolve. We report that as a
-finding about the profile rather than as a budget constraint, and it is the
-sharpest single result in this study.
+\textbf{We initially read that as a property of the profile, and the
+confirmatory data refuted it.} At \ConfirmHighCapacityScenarios{} scenarios
+all \ConfirmHighCapacityCandidates{} high-capacity candidates separate on
+mean disruption, taking sixteen distinct values across a range of
+\ConfirmHighCapacityMeanLossMin{} to \ConfirmHighCapacityMeanLossMax{}
+weighted service-hours. The zero interquartile ranges were an artifact of a
+thirty-scenario pilot: at that resolution the achievable outcomes are coarse
+enough that most candidates tie exactly, and a correlation-based precision
+estimator asked to size a difference it cannot yet see returns an
+unattainable requirement.
 
-We therefore use a uniform \ConfirmResourceConstrainedScenarios{} scenarios
-per candidate, giving \ConfirmTotalExecutions{} confirmatory executions.
-Allocating scenarios where they are scarce, as an earlier version of this
-design did, only helps when the binding requirement is attainable somewhere.
-Both under-resolved objectives are recorded as such in the frozen protocol
-and are reported below as under-resolved rather than established.
+The lesson is about the estimator, not the profile, and it generalizes: \emph{a
+precision analysis run on too small a pilot does not report "this quantity
+cannot be resolved", it reports "this pilot cannot resolve it", and the two
+are easy to confuse.} The frozen protocol for this study records the
+stronger reading, because it was frozen before the confirmatory data
+existed. We report the correction here rather than editing the protocol,
+which is the point of freezing one.
+
+We used a uniform \ConfirmResourceConstrainedScenarios{} scenarios per
+candidate, giving \ConfirmTotalExecutions{} confirmatory executions. That is
+above the attainable requirements and far below the two unattainable ones,
+so resource-constrained sustained outage remains under-resolved and is
+reported as such below.
 
 \subsection{Full-space confirmation}
 

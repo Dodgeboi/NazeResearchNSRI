@@ -18,21 +18,25 @@ and \ConfirmHighCapacityCandidates{} across three capacity profiles --- on
 fresh paired scenarios under a content-addressed protocol committed before
 any result existed, for \ConfirmTotalExecutions{} executions. Scenario counts
 were set per profile from a pilot precision analysis rather than declared.
+Ten unidentified coefficients carry prespecified ranges, drawn per scenario
+and shared across candidates, so objectives are marginal over declared
+uncertainty rather than conditional on point estimates.
 \ConfirmFullSpaceFrontier{} candidates are non-dominated on six separately
 reported objectives and none minimizes all six. Because the comparison is
 full-space we also report what a restricted holdout cannot:
-\ConfirmFinalistOnlyArtifacts{} candidates efficient only within the
-discovery-selected subset, and \ConfirmNonFinalistsOnFrontier{} efficient
-candidates that subset would never have shown.
+\ConfirmNonFinalistsOnFrontier{} efficient candidates that a
+discovery-selected subset would never have shown.
 
 The informative results are negative. In the strongest profile the entire
 purchasable improvement is \ConfirmHighCapacityMaxPurchasableImprovement{}
-weighted service-hours and a third of candidate pairs are statistically
-indistinguishable. In the weakest, the declared budget leaves sustained
-clinical-outage probability at
-\ConfirmResourceConstrainedBestAffordableOutage\%. Of \ValidationBenchmarks{}
-frozen external benchmarks only \ValidationScored{} can be scored,
-\ValidationFailed{} fail, and none passes. Every number here is generated
+weighted service-hours, and the parameter explaining most of its variance is
+the model's own false-positive isolation rate rather than anything about the
+attack. In the weakest, the declared budget leaves sustained clinical-outage
+probability at \ConfirmResourceConstrainedBestAffordableOutage\%. Sampling
+ten coefficients across wide ranges leaves portfolio orderings largely
+intact; varying one structural assumption does not. Of
+\ValidationBenchmarks{} frozen external benchmarks only \ValidationScored{}
+can be scored, \ValidationFailed{} fail, and none passes. Every number here is generated
 from a committed results table by script, and a claim audit fails the build
 when prose and artifacts disagree. The framework supports auditable
 trade-off exploration \modelonly; it does not estimate hospital risk or

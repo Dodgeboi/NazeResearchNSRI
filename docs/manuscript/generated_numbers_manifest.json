@@ -2,14 +2,38 @@
   "code": {
     "available": true,
     "branch": "rebuild/wp0-wp2",
-    "commit": "01dc7c3930a77520cda215ba2847eaa4f2ff633f",
+    "commit": "2cc28bce5e0947ed96a66f892c6f09c1239fd193",
     "dirty": true,
     "dirty_paths": [
-      "ocs/manuscript/generated_numbers.tex",
-      "scripts/generate_manuscript_numbers.py"
+      "ata/multiobjective/confirmatory/confirmation_analysis_manifest.json",
+      "data/multiobjective/confirmatory/config_snapshot/",
+      "data/multiobjective/confirmatory/confirmatory_run_manifest.json",
+      "data/multiobjective/confirmatory/external_validation.json",
+      "data/multiobjective/confirmatory/external_validation_manifest.json",
+      "data/multiobjective/confirmatory/multiobjective_confirmatory_results.csv",
+      "data/multiobjective/confirmatory/parameter_sensitivity.csv",
+      "data/multiobjective/confirmatory/parameter_sensitivity_manifest.json",
+      "data/multiobjective/confirmatory/parameter_sensitivity_summary.json",
+      "data/multiobjective/confirmatory/portfolio_benchmark_comparison.csv",
+      "data/multiobjective/confirmatory/portfolio_frontier_resolution.csv",
+      "data/multiobjective/confirmatory/portfolio_full_space_vs_finalist.csv",
+      "data/multiobjective/confirmatory/portfolio_monte_carlo_error.csv",
+      "data/multiobjective/confirmatory/portfolio_objective_summary.csv",
+      "data/multiobjective/confirmatory/portfolio_pareto_frontier.csv",
+      "data/multiobjective/confirmatory/portfolio_pareto_stability.csv",
+      "data/multiobjective/confirmatory/portfolio_preference_scenarios.csv",
+      "data/multiobjective/structural_sensitivity/config_snapshot/multiobjective_portfolio.yaml",
+      "data/multiobjective/structural_sensitivity/structural_frontier_agreement.csv",
+      "data/multiobjective/structural_sensitivity/structural_gated_primary.csv",
+      "data/multiobjective/structural_sensitivity/structural_objective_movement.csv",
+      "data/multiobjective/structural_sensitivity/structural_parallel_alternative.csv",
+      "data/multiobjective/structural_sensitivity/structural_sensitivity_manifest.json",
+      "docs/manuscript/generated_numbers.tex",
+      "docs/manuscript/main.tex",
+      "study/DEVIATIONS.md"
     ]
   },
-  "created_at": "2026-09-04T02:06:17+00:00",
+  "created_at": "2026-09-04T05:05:26+00:00",
   "description": "LaTeX macros for every number the manuscript quotes, generated from committed result tables so that no result value is hand-typed in the manuscript.",
   "environment": {
     "implementation": "CPython",
@@ -32,44 +56,49 @@
       "sha256": "a3dff5682e1e8277cc29d3a5836009deccf87a901d4fa60fdd1ce7c091e41e31"
     },
     {
-      "bytes": 9435,
+      "bytes": 9433,
       "path": "data/multiobjective/confirmatory/external_validation.json",
-      "sha256": "004daa44237326237c20fd4aefcf77a3a6a3a2e65d4e9ea23d828934ce452c8d"
+      "sha256": "bfdf84d31fae1da2c2582d3ba1c1187a0a28c69c4502acfb7c29dc9831a7d886"
     },
     {
-      "bytes": 1223,
+      "bytes": 2524,
+      "path": "data/multiobjective/confirmatory/parameter_sensitivity_summary.json",
+      "sha256": "056aec96557095d66012a3952ada2ed051f890c5a3633e8c6c15805bf7338f90"
+    },
+    {
+      "bytes": 1177,
       "path": "data/multiobjective/confirmatory/portfolio_benchmark_comparison.csv",
-      "sha256": "3c0e57d6625df2680f5a316bd77fa8dafecb31bb47573cd840516fa79355eaac"
+      "sha256": "24f6c2593c5b24e070c95cfae3d2c9f2b05b46b49b1aec8766925a187a70a391"
     },
     {
-      "bytes": 488,
+      "bytes": 487,
       "path": "data/multiobjective/confirmatory/portfolio_frontier_resolution.csv",
-      "sha256": "0b279a0fd752abb1a9a00787d137a4b05dcb41ec214a7d69f08567dabc7ef16d"
+      "sha256": "047f6eaa7e7269354b84081a9b77cefce56697cf60da9cd71706a3a77f098f72"
     },
     {
-      "bytes": 75411,
+      "bytes": 65223,
       "path": "data/multiobjective/confirmatory/portfolio_full_space_vs_finalist.csv",
-      "sha256": "364bbb4f413046d4c20c144b3d06145bbae230cc790f20959cc6a7d49e1c8d1d"
+      "sha256": "c34c247d1c36ecf69fc06e6d84e691772f9154abd10b4e328469f99602cb4c3a"
     },
     {
-      "bytes": 52630,
+      "bytes": 52354,
       "path": "data/multiobjective/confirmatory/portfolio_monte_carlo_error.csv",
-      "sha256": "48ce1ab131a021e9d31c58b17a317f48c74f78876f55b55578555a9c083c5b41"
+      "sha256": "cba5d937559299ef6bc7c6c156e65c58c8af1f3041e0d3519da004593d34f44e"
     },
     {
-      "bytes": 71539,
+      "bytes": 61516,
       "path": "data/multiobjective/confirmatory/portfolio_objective_summary.csv",
-      "sha256": "6c6a53ad88109a2c2de79d341be9a00538404e7287d99a24c8532c16a042ea46"
+      "sha256": "cf41ebdacf092df8855edfa61893e5dcdacc19f3a76f7fc9166f3bc27b27fdab"
     },
     {
-      "bytes": 72356,
+      "bytes": 62333,
       "path": "data/multiobjective/confirmatory/portfolio_pareto_frontier.csv",
-      "sha256": "3018d4b5fd868439c0eeae4d5e50c7df1635a88409e9eb589a21b2b1a993e0a7"
+      "sha256": "0f1c172d9e59f9e8875668e5824edcde810acfd0d554ca2ed6d6ccf3690c49b1"
     },
     {
-      "bytes": 31736,
+      "bytes": 31695,
       "path": "data/multiobjective/confirmatory/portfolio_pareto_stability.csv",
-      "sha256": "31f293b3c8a77493b0295d236c6f13dbcbcf974be40fe8a2fb2831cbeaffb952"
+      "sha256": "f2cc35e888b85a7287484b75305084bb989b44f460ad94038eef8dbb1f861a17"
     },
     {
       "bytes": 6228395,
@@ -112,25 +141,25 @@
       "sha256": "20f346b55f875a8ceac943bf69170a9d24a9a503db78a69d315ffe7429bbf58e"
     },
     {
-      "bytes": 266,
+      "bytes": 264,
       "path": "data/multiobjective/structural_sensitivity/structural_frontier_agreement.csv",
-      "sha256": "03b4a3efb967331c0c89a8b430dfd54025ad9683fcf41b68c05ca859396bbb83"
+      "sha256": "37abc7d87b7415385f47ada739d76d16a5b0bcbf10115de1d3b123c95a4b6fb3"
     },
     {
-      "bytes": 750,
+      "bytes": 813,
       "path": "data/multiobjective/structural_sensitivity/structural_objective_movement.csv",
-      "sha256": "45b95c8e48e20f372ebe14ca30c45c156f17136124efd21d0a22032e51d958c7"
+      "sha256": "b44a02428e3a72c75e306392834b0bb939ac61c93040c00770fc3f479d71235a"
     }
   ],
   "outputs": [
     {
-      "bytes": 13407,
+      "bytes": 14111,
       "path": "docs/manuscript/generated_numbers.tex",
-      "sha256": "69eb5d33388b313cb8a17b933adcf025513fdddb279416d3c5ee7aa61aac2358"
+      "sha256": "b3178f4edba2755376f7f15ddb52c844b51ed485ea43a14a12a3d1e11149eadb"
     }
   ],
   "parameters": {
-    "macros_defined": 238
+    "macros_defined": 249
   },
   "protocol": {
     "frozen_at": "2026-09-03T01:49:25+00:00",

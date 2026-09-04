@@ -78,18 +78,18 @@
       "scoring": {
         "computable": true,
         "computed_verdict": "fail",
-        "model_median_outage_hours": 42.5,
+        "model_median_outage_hours": 40.92,
         "target_median_hours": 5.1,
         "target_iqr_hours": [
           2.5,
           8.1
         ],
         "median_within_target_iqr": false,
-        "model_share_within_six_hours": 0.2533,
+        "model_share_within_six_hours": 0.2319,
         "target_share_within_six_hours": 0.581,
-        "share_absolute_error": 0.3277,
-        "trials_with_any_clinical_outage": 114150,
-        "trials_total": 137600,
+        "share_absolute_error": 0.3491,
+        "trials_with_any_clinical_outage": 149622,
+        "trials_total": 160000,
         "interpretation": "Read alongside recovery_trajectory_three_weeks, this is a two-sided failure and the more informative for it. Against the one directly observed large-scale technical outage the model is far too SLOW: its median clinical outage is several times the observed median and its six-hour recovery share is well below the observed one. Against the ransomware incident record the same restoration engine is far too FAST, finishing within a 72-hour horizon where the public distribution has most of its mass beyond a week. The model's recovery behaviour is therefore anchored to neither reference, and its non-recovery objective should be read as a within-model ordering device rather than a duration estimate."
       },
       "scoring_note": "This is the ONE benchmark the model's horizon can actually address, which is why it is scored numerically. It is a non-malicious update failure, so it validates the short-duration technical-restoration engine and nothing else. It is not a ransomware recovery distribution and must never be presented as one."
@@ -104,17 +104,17 @@
         "computable": true,
         "computed_verdict": "consistent",
         "profile_spread": [
-          0.2115,
-          0.9691
+          0.1268,
+          0.84
         ],
-        "model_share_contained_overall": 0.3642,
+        "model_share_contained_overall": 0.2272,
         "model_share_contained_by_profile": {
-          "high_capacity": 0.9691,
-          "intermediate_capacity": 0.683,
-          "resource_constrained": 0.2115
+          "high_capacity": 0.84,
+          "intermediate_capacity": 0.4261,
+          "resource_constrained": 0.1268
         },
         "target_share": 0.53,
-        "absolute_error": 0.1658,
+        "absolute_error": 0.3028,
         "note": "The model's spread across profiles is far wider than a single survey figure, because the profiles are declared scenarios rather than a sample of hospitals. Only gross inconsistency would be informative here."
       },
       "scoring_note": "Graded below administrative and peer-reviewed evidence, and reported as a loose consistency check rather than a target. A survey of victims across 17 countries and all organization sizes is not a U.S. hospital denominator. The comparison is informative only if the model is wildly outside the range."

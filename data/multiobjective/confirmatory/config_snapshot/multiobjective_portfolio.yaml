@@ -1,0 +1,132 @@
+# Five-minute paired discovery design for multi-objective portfolio analysis.
+# Mechanistic values are stress assumptions, not hospital-sector estimates.
+mode: multiobjective_portfolio
+seed: 5726001
+
+facilities:
+  regional_hospital:
+    min_nodes: 200
+    max_nodes: 300
+
+profiles:
+  resource_constrained:
+    patch_coverage: 0.25
+    detection_delay_steps: 72
+    isolation_success: 0.50
+    legacy_fraction: 0.35
+    base_segmentation: flat
+    backup_strategy: connected
+    budget: 5
+    complexity_factor: 1.0
+  intermediate_capacity:
+    patch_coverage: 0.50
+    detection_delay_steps: 36
+    isolation_success: 0.70
+    legacy_fraction: 0.15
+    base_segmentation: basic
+    backup_strategy: periodic
+    budget: 10
+    complexity_factor: 1.1
+  high_capacity:
+    patch_coverage: 0.75
+    detection_delay_steps: 9
+    isolation_success: 0.90
+    legacy_fraction: 0.05
+    base_segmentation: least_privilege
+    backup_strategy: isolated
+    budget: 15
+    complexity_factor: 1.25
+
+simulation:
+  max_steps: 864
+  step_minutes: 5
+  base_spread_rate: 0.1337609218
+  patch_effectiveness: 0.85
+  detection_model: geometric
+  false_positive_rate: 0.0006671116
+  false_positive_duration: 24
+  rapid_isolation_success: 0.6315968501
+  detection_improvement_factor: 0.5
+  identity_breach_multiplier: 1.5
+  restore_rate_fraction: 0.0066666667
+  restore_rate_min: 0.3333333333
+  restore_duration: 6
+  no_backup_restore_penalty: 0.25
+  service_functional_fraction: 0.60
+  sustained_outage_service_steps: 24
+  # Primary k for the sustained-outage endpoint; the full k = 1..4
+  # ladder is reported alongside it. Frozen in study/MODEL_SPECIFICATION.md.
+  sustained_outage_min_services: 4
+  early_stop: true
+
+experiment:
+  facilities: [regional_hospital]
+  profiles: [resource_constrained, intermediate_capacity, high_capacity]
+  portfolios: [baseline_flat]
+  entry_points: [workstation, internet_facing, privileged_system, medical_device, vendor_connection]
+  trials_per_cell: 1
+  workers: 0
+
+sweep:
+  enabled: false
+  facility: regional_hospital
+  profile: intermediate_capacity
+  patch_levels: [0.25]
+  detection_delays: [36]
+  trials_per_cell: 1
+
+optimization:
+  enabled: true
+  facility: regional_hospital
+  profiles: [resource_constrained, intermediate_capacity, high_capacity]
+  budgets: [5, 10, 15, 20]
+  trials_per_portfolio: 30
+  cost_scale_factors: [0.5, 0.75, 1.0, 1.25, 1.5]
+  catastrophic_target: 0.05
+
+output:
+  raw_dir: data/multiobjective/raw
+  processed_dir: data/multiobjective/processed
+  figures_dir: outputs/multiobjective/figures
+  tables_dir: outputs/multiobjective/tables
+  logs_dir: outputs/multiobjective/logs
+
+# Prespecified uncertainty over the coefficients no public evidence
+# identifies. One vector is drawn per scenario and shared by every candidate
+# in it, so portfolio comparisons stay matched while reported objectives
+# become marginal over these ranges rather than conditional on a point
+# estimate. Every range is a DECLARED ASSUMPTION, not an estimate; see
+# study/MODEL_SPECIFICATION.md for the basis of each.
+parameter_uncertainty:
+  enabled: true
+  simulation:
+    # No public source gives a representative per-edge hospital transmission
+    # rate. The range spans roughly half to one and a half times the
+    # previously fixed point value.
+    base_spread_rate: [0.07, 0.20]
+    # Patch effectiveness on the exploit pathway. Wide on purpose: the
+    # previously fixed 0.85 was on the handoff's red-line list and no cited
+    # source supports any particular value.
+    patch_effectiveness: [0.50, 0.95]
+    # Partial, because the remote side of a vendor path is outside the
+    # estate's control.
+    patch_effectiveness_vendor: [0.05, 0.45]
+    # Acceleration once identity is compromised, on credential pathways only.
+    identity_breach_multiplier: [1.1, 2.5]
+    # Identity controls: what share of eligible authentication is covered,
+    # and how much it reduces compromise there. Coverage is loosely bounded
+    # by reported hospital MFA adoption; effectiveness is not bounded by
+    # anything transferable, so it is wide.
+    identity_control_coverage: [0.60, 0.95]
+    identity_control_effectiveness: [0.40, 0.90]
+    # Per-step success of automated isolation. Unidentified.
+    rapid_isolation_success: [0.40, 0.85]
+    # Node restoration throughput. The single least defensible parameter in
+    # the model, and the range says so.
+    restore_rate_fraction: [0.002, 0.015]
+    # False-positive isolation of healthy assets.
+    false_positive_rate: [0.0002, 0.0020]
+  network:
+    # Per-incident probability that nominally isolated backups had a usable
+    # path after all.
+    backup_isolation_lapse: [0.02, 0.25]

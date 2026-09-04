@@ -11,16 +11,22 @@ comparison ranges over the whole resolved space, so a reader can see what was
 excluded, which is nothing.
 
 Measuring the difference between the two designs is the substantive
-contribution. \ConfirmFinalistOnlyArtifacts{} candidates look efficient
-inside the discovery-selected subset and are dominated once the full space is
-present; \ConfirmNonFinalistsOnFrontier{} genuinely efficient candidates were
-never labelled finalists and so could never have been shown. Those numbers
-are small. Their smallness is itself the finding, and it cuts against the
-obvious reading: a restricted holdout is not a ruinous design, it is a
-design whose error is unmeasurable from inside itself. Evaluating the full
-space costs a few hours of compute and converts an untestable assumption into
-a reported quantity. At this problem size there is no reason to accept the
-assumption instead.
+contribution. \ConfirmNonFinalistsOnFrontier{} genuinely efficient candidates
+were never labelled finalists and so could never have been shown, while
+\ConfirmFinalistOnlyArtifacts{} candidates are efficient only inside the
+restricted subset. The asymmetry is instructive: a restricted comparison
+rarely promotes a candidate that does not deserve it, because it evaluates
+candidates selected for being good. What it reliably does is hide the ones it
+never looked at, and that error is undetectable from inside the design,
+because the evidence needed to detect it is exactly the evidence the design
+discarded. Evaluating the full space costs a few hours of compute and
+converts an untestable assumption into a reported quantity.
+
+A caution against reading that number as stable: an earlier version of this
+study, before the mechanism repairs and without parameter uncertainty, found
+three restricted-view artifacts where this one finds none. The count depends
+on the model and the scenario budget, so it should be measured per study
+rather than cited from one.
 
 \subsection{What the three profiles actually say}
 
@@ -28,17 +34,19 @@ The profiles behave less like a gradient and more like three separate
 questions, and this became visible only once capacity stopped being
 purchasable.
 
-In the high-capacity environment the modeled answer is to buy nothing. The
+In the high-capacity environment there is very little worth buying. The
 entire purchasable improvement is
 \ConfirmHighCapacityMaxPurchasableImprovement{} weighted service-hours across
 a decision space of \ConfirmHighCapacityCandidates{} configurations, and a
-third of candidate pairs cannot be reliably ordered even at
-\ConfirmHighCapacityScenarios{} paired scenarios. A study reporting a
-six-objective frontier here without reporting its Monte Carlo error would be
-presenting noise as structure. It is worth being blunt: the previous version
-reported this profile as having a frontier on which every tested candidate
-was non-dominated, which was arithmetically close to unavoidable given how
-few were tested.
+sixth of candidate pairs cannot be reliably ordered even at
+\ConfirmHighCapacityScenarios{} paired scenarios. What makes this profile
+worth reporting is not the small differences but their source: the parameter
+explaining most of the variance in its mean disruption is the false-positive
+isolation rate, at \SensitivityHighCapacityDominantEffect\%. Once an estate
+is strong enough that attacks rarely spread, the dominant modeled cost is the
+defense removing healthy systems from service. A study reporting a single
+disruption number would not have seen that, and a study reporting six
+objectives without a variance decomposition would have seen it only as noise.
 
 The intermediate profile is the only one where the decision is genuinely
 live. Moving from the profile's own posture to the best affordable portfolio
