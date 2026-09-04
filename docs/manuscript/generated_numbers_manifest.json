@@ -2,38 +2,23 @@
   "code": {
     "available": true,
     "branch": "rebuild/wp0-wp2",
-    "commit": "2cc28bce5e0947ed96a66f892c6f09c1239fd193",
+    "commit": "1e23fd77bc24e916ae7c7950f617d1223271870c",
     "dirty": true,
     "dirty_paths": [
-      "ata/multiobjective/confirmatory/confirmation_analysis_manifest.json",
-      "data/multiobjective/confirmatory/config_snapshot/",
-      "data/multiobjective/confirmatory/confirmatory_run_manifest.json",
-      "data/multiobjective/confirmatory/external_validation.json",
-      "data/multiobjective/confirmatory/external_validation_manifest.json",
-      "data/multiobjective/confirmatory/multiobjective_confirmatory_results.csv",
-      "data/multiobjective/confirmatory/parameter_sensitivity.csv",
-      "data/multiobjective/confirmatory/parameter_sensitivity_manifest.json",
-      "data/multiobjective/confirmatory/parameter_sensitivity_summary.json",
-      "data/multiobjective/confirmatory/portfolio_benchmark_comparison.csv",
-      "data/multiobjective/confirmatory/portfolio_frontier_resolution.csv",
-      "data/multiobjective/confirmatory/portfolio_full_space_vs_finalist.csv",
-      "data/multiobjective/confirmatory/portfolio_monte_carlo_error.csv",
-      "data/multiobjective/confirmatory/portfolio_objective_summary.csv",
-      "data/multiobjective/confirmatory/portfolio_pareto_frontier.csv",
-      "data/multiobjective/confirmatory/portfolio_pareto_stability.csv",
-      "data/multiobjective/confirmatory/portfolio_preference_scenarios.csv",
-      "data/multiobjective/structural_sensitivity/config_snapshot/multiobjective_portfolio.yaml",
-      "data/multiobjective/structural_sensitivity/structural_frontier_agreement.csv",
-      "data/multiobjective/structural_sensitivity/structural_gated_primary.csv",
-      "data/multiobjective/structural_sensitivity/structural_objective_movement.csv",
-      "data/multiobjective/structural_sensitivity/structural_parallel_alternative.csv",
-      "data/multiobjective/structural_sensitivity/structural_sensitivity_manifest.json",
+      "EPRODUCIBILITY.md",
+      "audit/completion_report.md",
+      "audit/issue_ledger.csv",
+      "data/multiobjective/confirmatory/multiobjective_confirmatory_results.csv.gz",
       "docs/manuscript/generated_numbers.tex",
-      "docs/manuscript/main.tex",
-      "study/DEVIATIONS.md"
+      "docs/manuscript/generated_numbers_manifest.json",
+      "scripts/generate_manuscript_numbers.py",
+      "scripts/run_full_audit.py",
+      "scripts/unpack_raw.py",
+      "study/DEVIATIONS.md",
+      "tests/test_provenance.py"
     ]
   },
-  "created_at": "2026-09-04T05:05:26+00:00",
+  "created_at": "2026-09-04T05:17:35+00:00",
   "description": "LaTeX macros for every number the manuscript quotes, generated from committed result tables so that no result value is hand-typed in the manuscript.",
   "environment": {
     "implementation": "CPython",
@@ -155,17 +140,17 @@
     {
       "bytes": 14111,
       "path": "docs/manuscript/generated_numbers.tex",
-      "sha256": "b3178f4edba2755376f7f15ddb52c844b51ed485ea43a14a12a3d1e11149eadb"
+      "sha256": "92c920cc3c50930f38e8dc450cd76395eeb1d004ce7aeb7af71d266997ed9123"
     }
   ],
   "parameters": {
     "macros_defined": 249
   },
   "protocol": {
-    "frozen_at": "2026-09-03T01:49:25+00:00",
-    "name": "multiobjective_confirmatory_v1",
-    "path": "study/protocols/multiobjective_confirmatory_v1.protocol.json",
-    "sha256": "fdf6777e4ba6b0886623ed6aecc64e6a808212547be6ee4ec40b4c8fbb66649e"
+    "frozen_at": "2026-09-04T01:53:46+00:00",
+    "name": "multiobjective_confirmatory_v2",
+    "path": "study/protocols/multiobjective_confirmatory_v2.protocol.json",
+    "sha256": "9cb7e835446a127e2be10326d46e3d8059eda29abce1ea4d5238f7bbad8d31ba"
   },
   "run_id": "manuscript-numbers",
   "stage": "analysis"

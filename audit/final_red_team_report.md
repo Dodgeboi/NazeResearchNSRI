@@ -23,7 +23,7 @@ artifacts, and that is what follows.
 
 | Check | Result |
 |---|---|
-| Test suite | 179 passed, 0 xfail (the backup defect is repaired, so its pinning xfail became a passing test) |
+| Test suite | 184 passed, 0 xfail (the backup defect is repaired, so its pinning xfail became a passing test) |
 | Behavioral validation | 12/12 |
 | Archived sources: hashes, sizes, re-derived counts | pass |
 | Frozen protocols verify against their own digests | pass |
@@ -306,6 +306,25 @@ This report, the issue ledger, the validation registry's
 Independent review by someone who did not write the code is the only
 mitigation, and it has not happened.
 
+**There is now a worked example of what that costs.** After every check in
+this document passed, the committed gzip archive of the confirmatory bank
+turned out to hold the superseded 137,600-execution run while the file beside
+it held the 160,000-execution one that everything was computed from. Nine
+audit checks and a CI pipeline passed while the repository could not
+reproduce itself to a third party, because `unpack_raw.py` judged currency by
+modification time and nothing else in the harness ever opened the archive. It
+was found by reading a passing check and asking what it would fail on — not
+by any automated check, which is the point.
+
+Two things follow for a reviewer. First, treat "the audit passes" as evidence
+about the checks that exist, never about the ones that do not; a check that
+has never failed may be asserting nothing, and this repository has now
+produced that exact situation twice (see also the 70-test baseline that passed
+identically before and after the endpoint definition changed). Second, the
+defect is repaired and pinned by five regression tests, but the search that
+found it was manual, unsystematic, and conducted by the author. Assume more of
+its class survive.
+
 ## 5. Things a reviewer should attack first
 
 If we were reviewing this paper adversarially, these are where we would
@@ -322,6 +341,9 @@ start, in order:
    reason; check them.
 2. **The claim that the frozen protocol is prospective.** Verified within
    this repository's history only.
+2b. **Anything else the harness verifies indirectly.** One committed artifact
+   was never read by any check and was wrong for it. Ask of each check what
+   input it would have to be handed to fail.
 3. **The cost and burden tables.** Two of six objectives rest on numbers
    nobody defended.
 4. **The high-capacity conclusion.** Differences near the noise floor.

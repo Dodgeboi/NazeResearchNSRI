@@ -152,6 +152,18 @@ def check_cross_artifact_consistency() -> Result:
             result.problems.append(
                 f"{prefix}Executions = {claimed:,} but the raw file has "
                 f"{len(raw):,} rows")
+        if prefix == "Confirm":
+            # ConfirmTotalExecutions comes from the frozen protocol, not from
+            # the summary tables, so it can be sourced from a SUPERSEDED
+            # protocol without any other check noticing. It did exactly that
+            # once.
+            protocol_total = as_int("ConfirmTotalExecutions")
+            if protocol_total is not None and protocol_total != len(raw):
+                result.problems.append(
+                    f"ConfirmTotalExecutions = {protocol_total:,} comes from "
+                    f"the frozen protocol but the raw file has {len(raw):,} "
+                    "rows; the manuscript may be quoting a superseded "
+                    "protocol")
         claimed = as_int(f"{prefix}Candidates")
         actual = raw.groupby("profile")["portfolio"].nunique().sum()
         if claimed is not None and claimed != actual:

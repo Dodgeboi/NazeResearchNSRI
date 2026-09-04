@@ -258,7 +258,7 @@ def main() -> None:
     parser.add_argument("--config",
                         default="configs/multiobjective_portfolio.yaml")
     parser.add_argument("--protocol",
-                        default="multiobjective_confirmatory_v1")
+                        default="multiobjective_confirmatory_v2")
     parser.add_argument("--output",
                         default="docs/manuscript/generated_numbers.tex")
     args = parser.parse_args()

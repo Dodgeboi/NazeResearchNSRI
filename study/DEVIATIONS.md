@@ -370,3 +370,40 @@ nothing. The correction is recorded here and stated in the manuscript's
 study-design section. No result changes: the scenario count of 400 was
 chosen as the affordable maximum and would have been the same under the
 correct reading.
+
+### Defect found after WP3: the committed archive was the superseded bank
+
+The confirmatory raw bank is 101 MB and is committed gzipped. For one commit
+the committed archive held the **superseded v1 bank of 137,600 executions**
+while the uncompressed file beside it held the **v2 bank of 160,000**. Every
+check in `scripts/run_full_audit.py` passed regardless, and so did CI.
+
+The reason is worth stating plainly, because it is a general failure mode and
+not a slip. `scripts/unpack_raw.py` decided whether an uncompressed file was
+current by comparing modification times. In the working tree, the CSV had just
+been written by the v2 run, so it was newer than the archive and the script
+correctly did nothing — and no other check in the audit ever opens the
+archive. The entire provenance chain therefore verified against a file that
+the repository could not reproduce. On a fresh clone the sequence would have
+restored the v1 bank over the v2 manifests, and every manifest check would
+have failed for reasons that pointed at the wrong thing.
+
+A hash-based provenance layer that trusts a timestamp anywhere has a hole
+exactly the size of that timestamp.
+
+**Repair.** The archive is regenerated from the current bank
+(SHA-256 `6b558145ae77…`, 5.7 MB). `unpack_raw.py` now decides currency by
+decompressing and comparing SHA-256, and on a disagreement it **exits
+non-zero without writing**, because it cannot tell whether the archive or the
+working copy is the stale one, and guessing wrong in one direction discards
+hours of compute that the repository does not hold. `--restore` forces the
+archive to win when the author knows it should. Five tests in
+`tests/test_provenance.py` pin this, including a case where the stale archive
+sits beside a fresher file with a far newer mtime — the exact configuration
+that went undetected.
+
+**No reported number changes.** The v2 bank was the analyzed data throughout;
+what was wrong was the copy committed for others to check against, which is a
+reproducibility defect rather than a result defect. It is recorded here rather
+than quietly fixed because the audit harness passed while it was true, and
+that is the more useful thing for a reader to know about the harness.

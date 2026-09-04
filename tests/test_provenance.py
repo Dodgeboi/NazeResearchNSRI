@@ -262,3 +262,101 @@ def test_every_committed_protocol_verifies():
         loaded = load_frozen_protocol(name)
         assert loaded["sha256"], name
         assert loaded["body"], name
+
+
+# ---------------------------------------------------------------------------
+# Committed archives
+#
+# The confirmatory bank is committed gzipped and unpacked before verification.
+# For one commit the archive was the superseded 137,600-execution bank while
+# the file beside it was the 160,000-execution one, and every check passed:
+# the unpack step decided currency by mtime, so in the tree where the study had
+# just been re-run it did nothing, and nothing else ever opened the archive.
+# A fresh clone would have unpacked the wrong data.
+#
+# These tests pin the repaired contract: currency is decided by content, and a
+# disagreement is an error rather than a silent overwrite in either direction.
+# ---------------------------------------------------------------------------
+
+import gzip
+import os
+import subprocess
+import sys
+
+from grrc.utilities import REPO_ROOT
+
+
+def _run_unpack(root: Path, *args: str) -> subprocess.CompletedProcess:
+    """Run scripts/unpack_raw.py against an arbitrary directory as its root.
+
+    The script resolves its own repository root at import time, so the only
+    way to exercise it against a fixture tree is to rebind that constant. The
+    substitution keeps the module's real body — the point is to test the
+    shipped logic, not a copy of it that could drift away from it.
+    """
+    script = (REPO_ROOT / "scripts" / "unpack_raw.py").read_text(encoding="utf-8")
+    substituted = script.replace(
+        "from grrc.utilities import REPO_ROOT",
+        f"import pathlib\nREPO_ROOT = pathlib.Path({str(root)!r})")
+    assert substituted != script, "unpack_raw.py no longer imports REPO_ROOT"
+    copy = root / "_unpack_under_test.py"
+    copy.write_text(substituted, encoding="utf-8")
+    return subprocess.run([sys.executable, str(copy), *args],
+                          capture_output=True, text=True, cwd=REPO_ROOT)
+
+
+def _make_bank(root: Path, csv_bytes: bytes, gz_bytes: bytes) -> Path:
+    target = root / "data" / "stage" / "results.csv"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_bytes(csv_bytes)
+    with gzip.open(target.with_suffix(".csv.gz"), "wb") as sink:
+        sink.write(gz_bytes)
+    return target
+
+
+def test_matching_archive_is_left_alone(tmp_path):
+    body = b"profile,value\nhigh,1\n"
+    target = _make_bank(tmp_path, body, body)
+    result = _run_unpack(tmp_path)
+    assert result.returncode == 0, result.stderr
+    assert target.read_bytes() == body
+
+
+def test_missing_file_is_restored_from_the_archive(tmp_path):
+    body = b"profile,value\nhigh,1\n"
+    target = _make_bank(tmp_path, body, body)
+    target.unlink()
+    result = _run_unpack(tmp_path)
+    assert result.returncode == 0, result.stderr
+    assert target.read_bytes() == body
+
+
+def test_a_stale_archive_is_an_error_not_a_silent_overwrite(tmp_path):
+    """The exact defect: archive and file disagree, and neither is trusted."""
+    fresh = b"profile,value\nhigh,160000\n"
+    stale = b"profile,value\nhigh,137600\n"
+    target = _make_bank(tmp_path, fresh, stale)
+    result = _run_unpack(tmp_path)
+    assert result.returncode == 1
+    assert "disagree" in result.stderr
+    # The freshly computed bank must survive: overwriting it on a guess would
+    # discard hours of compute that cannot be recovered from the repository.
+    assert target.read_bytes() == fresh
+
+
+def test_restore_takes_the_archive_when_told_to(tmp_path):
+    fresh = b"profile,value\nhigh,160000\n"
+    stale = b"profile,value\nhigh,137600\n"
+    target = _make_bank(tmp_path, fresh, stale)
+    result = _run_unpack(tmp_path, "--restore")
+    assert result.returncode == 0, result.stderr
+    assert target.read_bytes() == stale
+
+
+def test_a_mtime_touch_does_not_make_a_stale_archive_look_current(tmp_path):
+    """Currency is content, not timestamps. This is what regressed before."""
+    fresh = b"profile,value\nhigh,160000\n"
+    stale = b"profile,value\nhigh,137600\n"
+    target = _make_bank(tmp_path, fresh, stale)
+    os.utime(target, (1 << 31, 1 << 31))  # far newer than the archive
+    assert _run_unpack(tmp_path).returncode == 1

@@ -26,19 +26,28 @@ the git commit and whether the working tree was dirty.
 
 ## Verify before you trust
 
-Three checks, in order. Each exits non-zero on failure.
+One command runs everything below and reports the full set of failures
+rather than stopping at the first:
 
 ```bash
 python scripts/unpack_raw.py             # restore gzipped raw trial banks
-pytest                                   # 165 tests, 1 expected xfail
-python scripts/verify_sources.py         # archived sources + derived counts
-python -m grrc.cli validate --no-report  # behavioral validation checks
+python scripts/run_full_audit.py         # 9 checks; exits non-zero on any failure
 ```
 
-The expected xfail is deliberate: it asserts that an "isolated" backup can
-still fail, which the current model does not allow. The defect is tracked as
-ISSUE-006 and the failing test keeps it visible in every run rather than only
-in a document. If it ever passes unexpectedly, the model changed.
+Or individually:
+
+```bash
+pytest                                   # 184 tests, no expected failures
+python scripts/verify_sources.py         # archived sources + derived counts
+python -m grrc.cli validate --no-report  # behavioral validation checks
+python scripts/audit_manuscript_claims.py
+```
+
+There are no `xfail` tests. An earlier version carried one deliberately — it
+asserted that an "isolated" backup could still fail, which the model of the
+time did not allow, and the failing test kept ISSUE-006 visible in every run
+rather than only in a document. The mechanism was repaired in WP3, so the
+test now passes as an ordinary assertion.
 
 `verify_sources.py` recomputes each archived source's SHA-256 and byte size
 **and** re-derives every count the registry records. That second part catches
@@ -46,8 +55,10 @@ the subtler failure of intact bytes under drifted analysis code.
 
 ## Reproduce the study
 
-Roughly 2.5 hours of the pipeline is simulation; the rest is seconds. Every
-stage writes a manifest hashing its inputs and outputs.
+Roughly four hours of the pipeline is simulation; the rest is seconds. Every
+stage writes a manifest hashing its inputs and outputs, and archives a byte
+copy of every config it consumed, so a later config edit cannot silently
+invalidate a recorded run.
 
 ```bash
 # 1. Discovery — exploratory. 12,000 executions, ~15 min on 2 cores.
@@ -58,16 +69,22 @@ python scripts/analyze_discovery_precision.py
 # 2. Freeze the confirmatory protocol. Commit it BEFORE step 3.
 python scripts/freeze_confirmatory_protocol.py --name my_confirmatory_v1
 
-# 3. Confirmation — 137,600 executions, ~4 h on 2 cores.
+# 3. Confirmation — the full candidate space, not a shortlist.
+#    160,000 executions under the committed protocol, ~3.5 h on 2 cores.
 python scripts/run_confirmatory_frontier.py --protocol my_confirmatory_v1
 python scripts/analyze_portfolio_stage.py --stage confirmation \
     --protocol my_confirmatory_v1
 
-# 4. External validation against the frozen benchmark registry.
+# 4. External validation against the frozen benchmark registry, then
+#    sensitivity to the unidentified coefficients and to assumption S1.
 python scripts/run_external_validation.py
+python scripts/analyze_parameter_sensitivity.py
+python scripts/run_structural_sensitivity.py
 
-# 5. Manuscript numbers, then the claim audit, then the PDF.
-python scripts/generate_manuscript_numbers.py
+# 5. Manuscript numbers, figures, the claim audit, then the PDF.
+python scripts/generate_manuscript_numbers.py \
+    --protocol my_confirmatory_v1
+python scripts/generate_confirmatory_figures.py
 python scripts/audit_manuscript_claims.py
 cd docs/manuscript && latexmk -pdf main.tex
 ```
@@ -93,10 +110,22 @@ python scripts/run_discovery.py --trials 3 \
 Committed raw and processed outputs mean every reported value can be audited
 without rerunning anything.
 
-The confirmatory bank is 68 MB uncompressed and is committed gzipped at
-4.8 MB. `scripts/unpack_raw.py` restores it, and is idempotent. **Manifests
-hash the uncompressed bytes**, so verification still fails if a single value
-changed; compression is a storage choice, not a weakening of the chain.
+The confirmatory bank is 101 MB uncompressed and is committed gzipped at
+5.7 MB. `scripts/unpack_raw.py` restores it. **Manifests hash the
+uncompressed bytes**, so verification still fails if a single value changed;
+compression is a storage choice, not a weakening of the chain.
+
+The script decides whether a restore is needed by decompressing the archive
+and comparing SHA-256, and it **exits non-zero rather than overwriting**
+when the two disagree. An earlier version compared modification times
+instead, which is how the superseded 137,600-execution archive came to be
+committed beside the 160,000-execution bank without a single check
+noticing: in the tree where the study had just been re-run the script did
+nothing, and nothing else in the audit ever opened the archive. On a fresh
+clone it would have restored the wrong data over the right manifest. The
+defect and its repair are recorded in `study/DEVIATIONS.md`, and five tests
+in `tests/test_provenance.py` pin the new behaviour, including the specific
+case of a stale archive beside a fresher file.
 
 ## What makes the freeze checkable
 
