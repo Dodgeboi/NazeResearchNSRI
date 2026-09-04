@@ -12,12 +12,18 @@ the weakest.
 \textbf{Model validity.} The mechanism is an abstract epidemic process on a
 declared graph. It is defensible as a decision-analysis scaffold and it is
 not validated against internal hospital telemetry, because no representative
-public telemetry exists. Structural assumption S1 is varied rather than
-asserted, and the result is a warning about the rest: relaxing that single
-assumption moves roughly a quarter to a third of frontier membership and
-nearly doubles modeled disruption in the two weaker profiles. Every other
-structural choice in this model is asserted and unvaried, and there is no
-reason to assume they are gentler.
+public telemetry exists. Three mechanisms that previously acted where they
+could not act have been repaired, and the coefficients that remain
+unidentified now carry declared ranges that propagate into every result.
+
+What has not been addressed is structure. Assumption S1 is varied rather
+than asserted, and the result is a warning about the rest: relaxing that
+single assumption moves roughly a quarter to a third of frontier membership
+and nearly doubles modeled disruption in the two weaker profiles. Every
+other structural choice — the transition ordering within a step, the service
+dependency graph, the criticality-ordered restoration queue, the absence of
+an adaptive adversary — is asserted and unvaried, and the one assumption we
+did test gives no reason to expect the others are gentler.
 
 \textbf{Data validity.} The archived public sources are hash-verified and
 every count the registry records re-derives from the file. One source is a
@@ -88,7 +94,16 @@ beds.
 
 \emph{Elicited thresholds.} The service-functional fraction, the outage
 duration, and the service count are declared choices without clinical
-validation. Calling any of them a clinical threshold would be false.
+validation. Calling any of them a clinical threshold would be false. Unlike
+the transition coefficients, these are not sampled: a threshold that moves
+between scenarios would change what the endpoint means rather than how
+uncertain it is.
+
+\emph{Declared ranges are not evidence.} Parameter uncertainty makes every
+objective marginal over ranges we chose. A wide range honestly says "we do
+not know"; it does not make the resulting interval an empirical one, and a
+reader should not treat the widened objectives as calibrated because they
+are now wider.
 
 \emph{Cost uncertainty.} Normalized points omit procurement, integration,
 training, maintenance, alert workload, and constraints specific to clinical
@@ -128,10 +143,11 @@ Either way, parameter mappings should be pre-registered before outcome
 comparisons are seen, using the same freezing mechanism this study applies to
 its confirmatory protocol.
 
-Three model changes are prerequisites rather than refinements, and are named
+Two model changes remain prerequisites rather than refinements, and are named
 in the specification: layered recovery endpoints over \AcuteHorizonHours{}
 hours, \MinimumViableHorizonDays{} days and \FullRecoveryHorizonDays{} days
-with a \TailHorizonDays-day tail; nonzero residual failure for isolated
-backups; and
-either multi-facility structure or an explicit narrowing of the paper's scope
-to a single synthetic facility.
+with a \TailHorizonDays-day tail, without which the model cannot be compared
+against the recovery evidence at all; and either multi-facility structure or
+an explicit narrowing of the paper's scope to a single synthetic facility.
+Beyond those, the structural sensitivity result argues for varying more than
+one structural assumption, not merely declaring the rest.

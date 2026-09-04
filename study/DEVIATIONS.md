@@ -258,3 +258,87 @@ primary. Previously it carried the k = 2 value from the superseded config.
 configuration bytes it used into `config_snapshot/` and hashes those rather
 than the live files. A later edit to the study config can no longer
 invalidate a completed run's provenance.
+
+## 2026-09-04 - WP3: mechanism repairs and parameter uncertainty
+
+The scored rubric put 9 of its 19 missing points on three misapplied
+mechanisms and on the absence of parameter uncertainty. This entry records
+that work, including one repair that was wrong on the first attempt.
+
+### Mechanisms
+
+1. **Pathway classification.** Every edge is now labelled by the mechanism
+   that traverses it: exploitation of a vulnerability on the target, use of
+   valid credentials or tokens, or passage through a third-party gateway.
+   Credential takes precedence over vendor, because an attacker holding
+   valid credentials does not need the vulnerability. This is what lets a
+   control act only where it could act.
+
+2. **Patching (ISSUE-009).** A patch now removes susceptibility on the
+   exploit pathway, does essentially nothing on the credential pathway, and
+   acts partly on the vendor pathway. One scalar across every edge was on
+   the handoff's red-line list.
+
+3. **Identity (ISSUE-010).** A compromised identity zone accelerates
+   credential-mediated traversal only. Identity controls carry explicit
+   coverage and effectiveness on the covered fraction; the remainder stands
+   for unenrolled accounts, service accounts, legacy protocols and token
+   theft.
+
+4. **Isolated backups (ISSUE-006), corrected twice.** The first attempt set
+   the per-step traversal into an isolated backup zone to 0.02, reasoning
+   that a small nonzero value made the architecture falsifiable. **That was
+   wrong, and the test suite caught it:** the aggressive validation case
+   went to a 100% backup failure rate, because 0.02 per step compounds to
+   near-certainty across 864 steps. A per-step probability models *delay*,
+   not rarity.
+
+   The traversal is therefore zero again — a correctly isolated backup has
+   no network path — and falsifiability moved to two per-incident
+   mechanisms: an isolation lapse, in which a nominally isolated estate
+   turns out to have a usable path, and a residual failure covering causes
+   the network does not model. Both are drawn once per incident and shared
+   across candidates in a scenario. Under the aggressive config isolated
+   backups now fail 8.3% of the time against 100% for connected. The strict
+   `xfail` that pinned this defect now passes.
+
+### Parameter uncertainty
+
+Ten unidentified coefficients carry prespecified ranges, sampled once per
+scenario and shared by every candidate replaying it. Parameter uncertainty
+is therefore another latent dimension of the common-random-numbers design:
+comparisons stay matched, and objectives become marginal over the ranges
+rather than conditional on a point estimate. Every draw is written into
+every raw row, which makes a variance-based global sensitivity analysis free.
+
+Four falsification tests had to disable sampling, because they pin a
+coefficient and assert what the mechanism must then do; leaving sampling on
+would have had them assert something about a random draw. A new test asserts
+that override directly rather than leaving it implicit in a fixture.
+
+### Consequences for the study design
+
+The precision analysis was re-run and its answer changed shape. Most
+objectives still need 28 to 297 paired scenarios. Two are now unattainable:
+resource-constrained sustained outage needs about 1,400, and high-capacity
+mean disruption needs roughly 80,000 because its 16 candidates differ by an
+interquartile range of 0.066 weighted service-hours.
+
+**Three of the four high-capacity objectives now have an interquartile range
+of exactly zero across all 16 candidates.** No scenario count resolves them,
+because there is nothing to resolve. That is a finding about the profile
+rather than a budget problem, and it is reported as one.
+
+A uniform 400 scenarios per candidate replaces v1's per-profile allocation:
+allocating scenarios where they are scarce only helps when the binding
+requirement is attainable somewhere. Both under-resolved objectives are
+recorded in the frozen protocol as under-resolved.
+
+### Superseded protocol
+
+Confirmatory protocol v1 is superseded rather than edited. The repairs
+changed the mechanisms and parameter uncertainty changed the physics, so v1
+no longer describes a study anyone would run. The freezing machinery refused
+to overwrite it, which is the machinery working; v2 was frozen under a new
+name and committed before any v2 output existed. Results generated under v1
+are retained and are not reinterpreted under v2.

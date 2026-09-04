@@ -258,29 +258,69 @@ token theft, or compromised administrators.
 Guidance documents \citep{cisa2023,nist2026,hhs2026} justify mechanisms and
 scenario structure. They are not cited as estimating any coefficient.
 
-\subsection{Assumptions this model makes that it should not}
+\subsection{What is repaired, and what remains unidentified}
 
-Three parameters are used in ways this framework does not sanction. We report
-them as defects rather than defending them.
+Three parameters were previously used in ways this framework does not
+sanction. They are now repaired, and we describe both the repair and its
+limits rather than presenting the model as corrected and moving on.
 
-\begin{itemize}
-\item \textbf{Patch effectiveness} is a single scalar applied to every
-  patched node against every pathway, including credential-origin and
-  vendor-origin scenarios where patching is mechanically irrelevant. It
-  should be exploit-specific susceptibility removal, or an explicitly broad
-  uncertainty distribution.
-\item \textbf{Identity compromise} multiplies every edge in the network
-  rather than the eligible authentication pathways.
-\item \textbf{Isolated backups} are unreachable by construction: the
-  traversal multiplier into an isolated backup zone is exactly zero, so
-  isolated backups cannot fail by any modeled mechanism. Survey evidence
-  reports attempted backup compromise in the large majority of healthcare
-  victims and success in a substantial minority of attempts
-  \citep{sophos2024}. A hard zero is not a defensible representation of any
-  real architecture, and it makes protected backups a deterministic win in
-  the objective space. A deliberately failing test keeps this visible in
-  every test run so it cannot be forgotten between versions.
-\end{itemize}
+\textbf{Patching acts on the pathway where patching acts.} Every edge is
+classified by the mechanism that traverses it: exploitation of a
+vulnerability on the target, use of valid credentials or tokens, or passage
+through a third-party gateway. A patch removes susceptibility on the first,
+does essentially nothing against the second, and acts only partly on the
+third, because the remote side of a vendor path is not the estate's to
+patch. Previously a single scalar reduced compromise probability on every
+edge, which is on the red-line list and unsupported by any cited source.
+
+\textbf{Identity effects are confined to eligible pathways.} A compromised
+identity zone accelerates credential-mediated traversal only. Previously it
+multiplied every edge in the network, so an identity breach sped up
+exploitation of an unrelated unpatched device. Identity controls now carry
+an explicit coverage and an effectiveness on the covered fraction; the
+uncovered remainder is what unenrolled accounts, service accounts, legacy
+protocols and token theft represent \citep{microsoftmfa2022}.
+
+\textbf{Isolated backups can fail.} The traversal multiplier into an
+isolated backup zone remains zero, because a correctly isolated backup
+genuinely has no network path. Falsifiability lives instead in two
+per-incident mechanisms: an isolation lapse, in which a nominally isolated
+estate turns out to have a usable path after all, and a residual failure
+covering causes the network does not model — no clean recovery point, a
+failed restore, compromise of the backup platform's own identity. Both are
+drawn once per incident and shared across candidates in a scenario. Survey
+evidence reports attempted backup compromise in the large majority of
+healthcare victims and success in a substantial minority of attempts
+\citep{sophos2024}; a mechanism that cannot fail is not a model of any
+architecture.
+
+The shape of that last repair is worth a sentence, because the obvious
+version is wrong. Encoding rarity as a small per-step traversal does not
+model a rare event: even a two-percent per-step probability compounds to
+near-certainty across an \HorizonHours-hour horizon, which models delay
+rather than rarity. Isolation either holds for an incident or it does not.
+
+\subsection{Uncertainty over what remains unidentified}
+
+Repairing a mechanism does not identify its coefficients. No public source
+gives a per-edge transmission rate, a patch effectiveness, an isolation
+success probability, or a restoration throughput, and labelling these as
+declared assumptions while computing results at a single point value tells a
+reader the number is uncertain and then shows them an answer that pretends
+otherwise.
+
+Each such coefficient therefore carries a \textbf{prespecified range}, and
+one parameter vector is drawn per scenario and shared by every candidate
+replaying it — exactly as the topology and the entry point are. Parameter
+uncertainty becomes another latent dimension of the common-random-numbers
+design: portfolio comparisons stay matched, and every reported objective is
+marginal over the declared ranges rather than conditional on a point
+estimate. The ranges are wide where evidence is absent, and that width is
+the honest width.
+
+Every draw is recorded in every raw row, which makes a variance-based global
+sensitivity analysis cost no additional simulation: the confirmatory bank is
+already a Monte Carlo sample over the ranges.
 
 \section{Model specification}
 
@@ -516,8 +556,10 @@ Controls may delete or modify paths but cannot receive more favorable latent
 randomness. This is a common-random-numbers design \citep{buffalo2026}.
 
 We distinguish aleatory event variation, parameter uncertainty, structural
-uncertainty, evidence uncertainty, and Monte Carlo error, and report the last
-explicitly. Every stochastic objective carries a standard error, and we
+uncertainty, evidence uncertainty, and Monte Carlo error. Parameter
+uncertainty enters through the per-scenario draws described above and is
+therefore inside every reported objective rather than beside it; Monte Carlo
+error is reported explicitly. Every stochastic objective carries a standard error, and we
 report the number of candidate pairs separated by less than one combined
 standard error on every stochastic objective --- pairs the scenario bank
 cannot reliably order, whatever the dominance test says about their point
