@@ -7,6 +7,8 @@ row — so any single row of the raw CSV can be re-simulated exactly.
 
 from __future__ import annotations
 
+import dataclasses
+
 import numpy as np
 
 from .config import Config
@@ -15,7 +17,8 @@ from .enums import BackupStrategy, EntryPoint, SegmentationLevel, Zone
 from .models import HospitalNetwork, TrialSpec
 from .network_generator import apply_controls_to_base, generate_network
 from .propagation import RansomwareSimulation
-from .utilities import trial_rng
+from .uncertainty import apply_parameters, sample_parameters
+from .utilities import event_uniform, trial_rng
 
 
 def choose_entry(net: HospitalNetwork, entry_point: str,
@@ -44,6 +47,17 @@ def run_trial(cfg: Config, spec: TrialSpec,
     """
     if portfolio is None:
         portfolio = get_portfolio(spec.portfolio)
+
+    # Parameter uncertainty is a latent dimension of the scenario, drawn once
+    # per scenario and shared by every candidate replaying it, exactly like
+    # the topology and the entry point. Portfolio comparisons therefore stay
+    # matched while reported objectives become marginal over the declared
+    # ranges rather than conditional on a point estimate.
+    drawn_parameters = sample_parameters(
+        cfg, spec.master_seed,
+        spec.scenario_id if spec.scenario_id is not None else spec.trial_id)
+    cfg = apply_parameters(cfg, drawn_parameters)
+
     profile = cfg.profiles[spec.profile]
     eff = effective_settings(
         profile, portfolio,
@@ -52,6 +66,19 @@ def run_trial(cfg: Config, spec: TrialSpec,
         rapid_isolation_success=cfg.simulation.rapid_isolation_success,
         detection_improvement_factor=
             cfg.simulation.detection_improvement_factor)
+
+    # Isolation lapse: drawn once per incident and shared by every candidate
+    # in the scenario, so the paired comparison stays matched. A candidate
+    # that bought isolated backups experiences this estate's lapse; one that
+    # did not is unaffected, because it never had isolation to lose.
+    lapse_scenario = (spec.scenario_id if spec.scenario_id is not None
+                      else spec.trial_id)
+    lapse_draw = float(event_uniform(
+        spec.master_seed, lapse_scenario, 15, 0, 1)[0])
+    isolation_lapsed = lapse_draw < cfg.network.backup_isolation_lapse
+    if eff.backup_strategy == BackupStrategy.ISOLATED.value and isolation_lapsed:
+        eff = dataclasses.replace(
+            eff, backup_strategy=BackupStrategy.PERIODIC.value)
 
     if spec.paired:
         scenario_id = (spec.scenario_id if spec.scenario_id is not None
@@ -115,5 +142,15 @@ def run_trial(cfg: Config, spec: TrialSpec,
         "backup_strategy": eff.backup_strategy,
         "identity_controls": int(eff.identity_controls),
         "rapid_isolation": int(eff.isolate_same_step),
+        # Whether this incident's nominally isolated backups had a usable
+        # path after all. Recorded so the mechanism is auditable rather than
+        # hidden inside a compromise flag.
+        "backup_isolation_lapsed": int(isolation_lapsed),
+        # The parameter vector this scenario drew. Written into every row so
+        # an analyst can recompute results conditional on any coefficient,
+        # or regress outcomes on the draws for a variance-based sensitivity,
+        # without rerunning a single trial.
+        **{f"param_{key.replace('.', '_')}": round(value, 8)
+           for key, value in drawn_parameters.items()},
         **metrics,
     }

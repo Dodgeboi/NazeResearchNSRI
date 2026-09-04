@@ -70,6 +70,19 @@ def test_least_privilege_lowers_traversal_modifiers(cfg):
 
 
 def test_isolated_backup_has_no_inbound_cross_zone_edges(cfg):
+    """When isolation holds, it holds at the topology level.
+
+    Falsifiability of "isolated backups" does not live here, and it should
+    not: a correctly isolated backup genuinely has no network path. It lives
+    one level up, in two per-incident mechanisms — an isolation lapse that
+    makes the estate behave as `periodic` for that incident, and a
+    non-network residual failure — both exercised in
+    ``tests/test_falsification.py``.
+
+    Encoding rarity as a small per-step traversal instead would be wrong:
+    even 0.02 per step compounds to near-certainty over an 864-step horizon,
+    which models delay rather than rarity (audit ISSUE-006).
+    """
     net = _gen(cfg, backup="isolated", seed=9)
     backup_nodes = set(net.nodes_in_zone(Zone.BACKUP).tolist())
     inbound = [e for e in range(net.n_edges)

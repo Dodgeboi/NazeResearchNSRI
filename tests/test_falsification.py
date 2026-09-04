@@ -36,9 +36,37 @@ FLAT = "seg-flat|patch+0|det0|iso0|bak-connected|idm0"
 
 @pytest.fixture(scope="module")
 def base_cfg():
+    """Config for limiting-case tests, with parameter sampling OFF.
+
+    These tests pin a coefficient and assert what the mechanism must then do
+    — zero transmission means no spread, complete patching means no
+    propagation. Parameter uncertainty draws those same coefficients per
+    scenario, so leaving it on would overwrite the pin and the test would be
+    asserting something about a random draw. Sampling is exercised on its
+    own in ``tests/test_uncertainty.py`` and in
+    ``test_parameter_sampling_overrides_a_pinned_value`` below.
+    """
     cfg = load_config(CONFIG)
     cfg.simulation.max_steps = 120  # 10 modeled hours; keeps the suite fast
+    cfg.parameter_uncertainty.enabled = False
     return cfg
+
+
+def test_parameter_sampling_overrides_a_pinned_value():
+    """The interaction the fixture above exists to avoid, asserted directly.
+
+    A caller who pins a coefficient while sampling is enabled does NOT get
+    the pinned value. That is intended — the sampled vector is the scenario's
+    physics — but it is exactly the kind of silent override that produces a
+    test asserting nothing, so it is pinned here.
+    """
+    cfg = load_config(CONFIG)
+    cfg.simulation.max_steps = 60
+    cfg.simulation.base_spread_rate = 0.0
+    assert cfg.parameter_uncertainty.enabled
+    row = run(cfg, make_spec(scenario=4321))
+    assert row["param_simulation_base_spread_rate"] > 0.0, (
+        "sampling must replace the pinned value, not defer to it")
 
 
 def make_spec(trial_id: int = 1, portfolio: str = FLAT,
@@ -108,26 +136,41 @@ def test_extreme_parameters_produce_interpretable_limits(base_cfg):
 # Backup architecture
 # ---------------------------------------------------------------------------
 
-def test_isolated_backup_cannot_be_reached_through_the_network(base_cfg):
-    """Traversal into an isolated backup zone is zero by construction."""
+def test_isolated_backup_is_much_harder_to_reach_than_a_connected_one(base_cfg):
+    """Isolation is a large reduction in reachability, not immunity."""
     cfg = copy.deepcopy(base_cfg)
     cfg.simulation.base_spread_rate = 1.0
-    spec = make_spec(portfolio="seg-flat|patch+0|det0|iso0|bak-isolated|idm0")
-    row = run(cfg, spec)
-    assert row["backup_compromised"] == 0
+    # Remove the non-network failure mode so this isolates traversal alone.
+    cfg.network.backup_residual_failure = {
+        key: 0.0 for key in cfg.network.backup_residual_failure}
+
+    def failure_rate(portfolio: str) -> float:
+        hits = 0
+        for trial in range(40):
+            spec = make_spec(trial_id=trial, portfolio=portfolio,
+                             scenario=9000 + trial)
+            hits += run(cfg, spec)["backup_compromised"]
+        return hits / 40
+
+    isolated = failure_rate(
+        "seg-flat|patch+0|det0|iso0|bak-isolated|idm0")
+    connected = failure_rate(
+        "seg-flat|patch+0|det0|iso0|bak-connected|idm0")
+    assert isolated < connected, (
+        f"isolation must reduce backup compromise: isolated={isolated:.0%}, "
+        f"connected={connected:.0%}")
 
 
-@pytest.mark.xfail(
-    reason="audit ISSUE-006: backup_traversal['isolated'] is exactly 0.0, so "
-           "isolated backups cannot fail by ANY modeled mechanism. The "
-           "handoff's red-line list forbids 'backup isolation eliminates "
-           "compromise', and Sophos 2024 reports backup compromise attempted "
-           "in 95% of healthcare victims and succeeding in 66% of attempts. "
-           "Scheduled for WP3: nonzero residual failure with a prespecified "
-           "uncertainty range.",
-    strict=True)
 def test_isolated_backup_retains_a_residual_failure_mode(base_cfg):
-    """An 'isolated' backup must still be able to fail sometimes."""
+    """An "isolated" backup must still be able to fail.
+
+    This was a strict xfail before the WP3 repair, pinning audit ISSUE-006:
+    the traversal multiplier into an isolated backup zone was exactly zero,
+    so isolated backups could not fail by ANY modeled mechanism. The handoff
+    forbids "backup isolation eliminates compromise", and Sophos 2024
+    reports backup compromise attempted in 95% of healthcare victims and
+    succeeding in 66% of attempts. It now passes.
+    """
     cfg = copy.deepcopy(base_cfg)
     cfg.simulation.base_spread_rate = 1.0
     failures = 0
@@ -139,6 +182,20 @@ def test_isolated_backup_retains_a_residual_failure_mode(base_cfg):
         failures += run(cfg, spec)["backup_compromised"]
     assert failures > 0, (
         "isolated backups survived every one of 40 saturated-spread trials")
+
+
+def test_residual_backup_failure_is_independent_of_the_network(base_cfg):
+    """The non-network failure mode fires even with no propagation at all."""
+    cfg = copy.deepcopy(base_cfg)
+    cfg.simulation.base_spread_rate = 0.0
+    cfg.network.backup_residual_failure = {
+        key: 1.0 for key in cfg.network.backup_residual_failure}
+    row = run(cfg, make_spec(
+        portfolio="seg-flat|patch+0|det0|iso0|bak-isolated|idm0"))
+    assert row["backup_residual_failed"] == 1
+    assert row["backup_compromised"] == 1
+    assert row["lateral_movements"] == 0, (
+        "the residual mode must not depend on any traversal happening")
 
 
 # ---------------------------------------------------------------------------

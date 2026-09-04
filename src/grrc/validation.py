@@ -121,6 +121,7 @@ def _drop_edges(net: HospitalNetwork, keep: np.ndarray) -> HospitalNetwork:
         edge_strength=net.edge_strength[keep],
         edge_cross_boundary=net.edge_cross_boundary[keep],
         edge_traversal_mod=net.edge_traversal_mod[keep],
+        edge_pathway=net.edge_pathway[keep],
         out_edges=[],  # forces adjacency rebuild in __post_init__
     )
 
@@ -201,17 +202,40 @@ def check_disconnected_zone() -> ValidationResult:
 
 
 def check_isolated_backup() -> ValidationResult:
-    """4. Fully isolated backups cannot be compromised via propagation."""
+    """4. Isolated backups fail far less often than connected ones — but
+    they do fail.
+
+    This check used to assert that an isolated backup could never be
+    compromised. That was the defect, not the property: it made protected
+    backups a deterministic win in the objective space, it is on the
+    handoff's red-line list ("backup isolation eliminates compromise"), and
+    no real architecture justifies it (audit ISSUE-006). Survey evidence
+    reports attempted backup compromise in the large majority of healthcare
+    victims and success in a substantial minority of attempts.
+
+    The property worth checking is comparative and directional: isolation
+    should reduce the failure rate substantially without driving it to zero.
+    """
     cfg = _aggressive_config()
-    spec = TrialSpec(4, "validate", "small_clinic", "resource_constrained",
-                     "isolated_backups", "workstation", master_seed=cfg.seed)
-    row = run_trial(cfg, spec)
-    ok = (row["backup_compromised"] == 0
-          and row["total_compromised"] > 1)
+    rates: dict[str, float] = {}
+    for strategy, portfolio in (("connected", "baseline_flat"),
+                                ("isolated", "isolated_backups")):
+        failures = 0
+        trials = 60
+        for i in range(trials):
+            spec = TrialSpec(400 + i, "validate", "small_clinic",
+                             "resource_constrained", portfolio, "workstation",
+                             master_seed=cfg.seed + i)
+            failures += int(run_trial(cfg, spec)["backup_compromised"])
+        rates[strategy] = failures / trials
+
+    isolated, connected = rates["isolated"], rates["connected"]
+    ok = (0.0 < isolated < connected)
     return ValidationResult(
         "isolated_backup", ok,
-        f"backup_compromised={row['backup_compromised']} (expected 0) "
-        f"with {row['total_compromised']} nodes compromised elsewhere")
+        f"backup failure rate: isolated={isolated:.1%}, "
+        f"connected={connected:.1%}; isolation must reduce the rate "
+        f"substantially but not to zero")
 
 
 def check_patch_immunity() -> ValidationResult:

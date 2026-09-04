@@ -59,6 +59,12 @@ class HospitalNetwork:
     edge_strength: np.ndarray
     edge_cross_boundary: np.ndarray
     edge_traversal_mod: np.ndarray
+    #: Mechanism by which each edge is traversed (grrc.enums.Pathway).
+    #: Decides which controls can act on it: patching acts on EXPLOIT edges,
+    #: identity controls on CREDENTIAL edges, and neither fully on VENDOR.
+    #: Optional so hand-built validation graphs keep working; a missing
+    #: array is filled with EXPLOIT in __post_init__.
+    edge_pathway: np.ndarray | None = None
 
     # Paired-experiment bookkeeping. ``patch_draw`` is the common uniform
     # variate used to assign patch status under every portfolio, making
@@ -78,6 +84,17 @@ class HospitalNetwork:
         default_factory=dict)
 
     def __post_init__(self) -> None:
+        if self.edge_pathway is None:
+            from .enums import Pathway
+            self.edge_pathway = np.full(
+                len(self.edge_src), int(Pathway.EXPLOIT), dtype=np.int8)
+        elif len(self.edge_pathway) != len(self.edge_src):
+            # A per-edge array that has drifted out of step with the edge
+            # list is a construction bug, and silently broadcasting it would
+            # apply the wrong control to the wrong edge.
+            raise ValueError(
+                f"edge_pathway has {len(self.edge_pathway)} entries but "
+                f"there are {len(self.edge_src)} edges")
         if self.patch_draw is None:
             # Backward-compatible fallback for hand-built validation graphs.
             self.patch_draw = np.where(self.patched, 0.0, 1.0)

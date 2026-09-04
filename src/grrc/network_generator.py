@@ -19,7 +19,7 @@ from __future__ import annotations
 import numpy as np
 
 from .config import Config, NetworkSpec
-from .enums import (EntryPoint, Privilege, SegmentationLevel, Service,
+from .enums import (Pathway,EntryPoint, Privilege, SegmentationLevel, Service,
                     SERVICE_ZONE, Zone)
 from .models import HospitalNetwork
 
@@ -278,6 +278,9 @@ def generate_network(
         edge_strength=np.asarray(strength_l),
         edge_cross_boundary=np.asarray(cross_l, dtype=bool),
         edge_traversal_mod=np.asarray(trav_l),
+        edge_pathway=_classify_pathways(
+            np.asarray(src_l, dtype=np.int64),
+            np.asarray(dst_l, dtype=np.int64), zone),
         patch_draw=patch_draw,
         edge_base_id=np.arange(len(src_l), dtype=np.int64),
         base_edge_count=len(src_l),
@@ -300,6 +303,32 @@ def generate_network(
             vendor_nodes if vendor_nodes.size else inet,
     }
     return net
+
+
+def _classify_pathways(edge_src: np.ndarray, edge_dst: np.ndarray,
+                       zone: np.ndarray) -> np.ndarray:
+    """Label each edge by the mechanism that traverses it.
+
+    An edge touching the identity zone is credential-mediated; one touching
+    an internet-facing or vendor gateway is vendor-mediated; everything else
+    is exploit-mediated. Credential takes precedence over vendor, because an
+    attacker holding valid credentials does not need the vulnerability.
+
+    This exists so a control can act only where it could act. Before the
+    rebuild a single patch scalar reduced compromise probability on every
+    edge, and a compromised identity zone multiplied every edge in the
+    network (audit ISSUE-009, ISSUE-010).
+    """
+    src_zone = zone[edge_src]
+    dst_zone = zone[edge_dst]
+    pathway = np.full(len(edge_src), int(Pathway.EXPLOIT), dtype=np.int8)
+    gateway = ((src_zone == int(Zone.INTERNET_FACING))
+               | (dst_zone == int(Zone.INTERNET_FACING)))
+    pathway[gateway] = int(Pathway.VENDOR)
+    identity = ((src_zone == int(Zone.IDENTITY))
+                | (dst_zone == int(Zone.IDENTITY)))
+    pathway[identity] = int(Pathway.CREDENTIAL)
+    return pathway
 
 
 def apply_controls_to_base(
@@ -346,9 +375,24 @@ def apply_controls_to_base(
         traversal[sensitive] *= spec.sensitive_zone_modifier
     into_backup = cross & (dst_zone == int(Zone.BACKUP))
     traversal[into_backup] *= spec.backup_traversal[backup_strategy]
+
+    # Classify every edge by the mechanism that traverses it, so a control
+    # can act only where it could act. An edge touching the identity zone is
+    # credential-mediated; one touching an internet-facing or vendor gateway
+    # is vendor-mediated; everything else is exploit-mediated. Credential
+    # takes precedence, because an attacker holding valid credentials does
+    # not need the vulnerability.
+    pathway = _classify_pathways(base.edge_src, base.edge_dst, base.zone)
+
     if identity_controls:
-        into_identity = cross & (dst_zone == int(Zone.IDENTITY))
-        traversal[into_identity] *= 0.5
+        # Identity controls act on the credential-mediated pathway only, and
+        # only over the fraction of it they cover. The uncovered remainder
+        # stands for unenrolled accounts, service accounts, legacy protocols
+        # and token or session theft, none of which an MFA rollout reaches.
+        covered = (cfg.simulation.identity_control_coverage
+                   * cfg.simulation.identity_control_effectiveness)
+        eligible = pathway == int(Pathway.CREDENTIAL)
+        traversal[eligible] *= (1.0 - covered)
     keep &= traversal > 0.0
     edge_ids = np.flatnonzero(keep)
 
@@ -374,6 +418,7 @@ def apply_controls_to_base(
         edge_strength=base.edge_strength[edge_ids].copy(),
         edge_cross_boundary=base.edge_cross_boundary[edge_ids].copy(),
         edge_traversal_mod=traversal[edge_ids],
+        edge_pathway=pathway[edge_ids],
         patch_draw=np.asarray(base.patch_draw).copy(),
         edge_base_id=np.asarray(base.edge_base_id)[edge_ids].copy(),
         base_edge_count=int(base.base_edge_count or base.n_edges),

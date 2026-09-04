@@ -90,3 +90,43 @@ output:
   figures_dir: outputs/multiobjective/figures
   tables_dir: outputs/multiobjective/tables
   logs_dir: outputs/multiobjective/logs
+
+# Prespecified uncertainty over the coefficients no public evidence
+# identifies. One vector is drawn per scenario and shared by every candidate
+# in it, so portfolio comparisons stay matched while reported objectives
+# become marginal over these ranges rather than conditional on a point
+# estimate. Every range is a DECLARED ASSUMPTION, not an estimate; see
+# study/MODEL_SPECIFICATION.md for the basis of each.
+parameter_uncertainty:
+  enabled: true
+  simulation:
+    # No public source gives a representative per-edge hospital transmission
+    # rate. The range spans roughly half to one and a half times the
+    # previously fixed point value.
+    base_spread_rate: [0.07, 0.20]
+    # Patch effectiveness on the exploit pathway. Wide on purpose: the
+    # previously fixed 0.85 was on the handoff's red-line list and no cited
+    # source supports any particular value.
+    patch_effectiveness: [0.50, 0.95]
+    # Partial, because the remote side of a vendor path is outside the
+    # estate's control.
+    patch_effectiveness_vendor: [0.05, 0.45]
+    # Acceleration once identity is compromised, on credential pathways only.
+    identity_breach_multiplier: [1.1, 2.5]
+    # Identity controls: what share of eligible authentication is covered,
+    # and how much it reduces compromise there. Coverage is loosely bounded
+    # by reported hospital MFA adoption; effectiveness is not bounded by
+    # anything transferable, so it is wide.
+    identity_control_coverage: [0.60, 0.95]
+    identity_control_effectiveness: [0.40, 0.90]
+    # Per-step success of automated isolation. Unidentified.
+    rapid_isolation_success: [0.40, 0.85]
+    # Node restoration throughput. The single least defensible parameter in
+    # the model, and the range says so.
+    restore_rate_fraction: [0.002, 0.015]
+    # False-positive isolation of healthy assets.
+    false_positive_rate: [0.0002, 0.0020]
+  network:
+    # Per-incident probability that nominally isolated backups had a usable
+    # path after all.
+    backup_isolation_lapse: [0.02, 0.25]

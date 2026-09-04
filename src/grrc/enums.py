@@ -25,6 +25,28 @@ class Zone(IntEnum):
     INTERNET_FACING = 9   # patient portal, remote access, vendor gateways
 
 
+class Pathway(IntEnum):
+    """How an edge is traversed, which decides which controls can touch it.
+
+    The pre-rebuild model had no such distinction: a single patch scalar
+    reduced compromise probability on every edge, including ones where
+    patching is mechanically irrelevant, and a compromised identity zone
+    multiplied every edge in the network (audit ISSUE-009, ISSUE-010).
+    Classifying edges by mechanism is what lets a control act only where it
+    could act.
+    """
+
+    #: Traversal that exploits a software vulnerability on the target.
+    #: Patching removes susceptibility here.
+    EXPLOIT = 0
+    #: Traversal that uses valid credentials, tokens or sessions. Patching
+    #: the target does essentially nothing; identity controls act here.
+    CREDENTIAL = 1
+    #: Traversal through a third-party or internet-facing gateway. Partly
+    #: patchable, but the remote side is outside the estate's control.
+    VENDOR = 2
+
+
 class NodeState(IntEnum):
     """Abstract per-node compromise lifecycle.
 

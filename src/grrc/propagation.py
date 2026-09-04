@@ -32,7 +32,8 @@ from .config import Config
 from .defenses import EffectiveSettings
 from .endpoints import (max_streak_column, sustained_outage_column,
                         sustained_outage_ladder)
-from .enums import (CLINICAL_SERVICES, NodeState, Privilege, Service, Zone)
+from .enums import (CLINICAL_SERVICES, NodeState, Pathway, Privilege,
+                    Service, Zone)
 from .models import HospitalNetwork
 from .service_dependencies import service_availability
 from .utilities import event_uniform
@@ -76,14 +77,30 @@ class RansomwareSimulation:
             int(Privilege.ADMIN): cfg.network.privilege_modifiers["ADMIN"],
         }
         priv_mod = np.array([priv_map[int(p)] for p in net.privilege])
-        patch_factor = np.where(net.patched,
-                                1.0 - sim.patch_effectiveness, 1.0)
-        target_factor = net.vulnerability * patch_factor
+        # Patching acts on the pathway where patching acts, and only there.
+        # A correctly applied patch removes a vulnerability; it does nothing
+        # against valid stolen credentials and only partly against a
+        # compromised third party whose remote side the estate does not run.
+        # The pre-rebuild model applied one scalar to every edge, which was
+        # on the handoff's red-line list (audit ISSUE-009).
+        pathway = np.asarray(net.edge_pathway)
+        effectiveness = np.select(
+            [pathway == int(Pathway.EXPLOIT),
+             pathway == int(Pathway.CREDENTIAL),
+             pathway == int(Pathway.VENDOR)],
+            [sim.patch_effectiveness,
+             sim.patch_effectiveness_credential,
+             sim.patch_effectiveness_vendor],
+            default=sim.patch_effectiveness)
+        # Only a patched target can benefit, and only on that edge's pathway.
+        edge_patch_factor = np.where(
+            net.patched[net.edge_dst], 1.0 - effectiveness, 1.0)
+        self.edge_pathway = pathway
         self.edge_p = np.clip(
             sim.base_spread_rate
             * priv_mod[net.edge_src]
             * net.edge_access * net.edge_strength * net.edge_traversal_mod
-            * target_factor[net.edge_dst],
+            * net.vulnerability[net.edge_dst] * edge_patch_factor,
             0.0, 1.0)
 
         # --- mutable node state -------------------------------------------
@@ -145,11 +162,19 @@ class RansomwareSimulation:
         candidates = np.flatnonzero(active_src & susceptible)
         if candidates.size == 0:
             return
-        mult = 1.0
+        # A compromised identity zone accelerates traversal on the pathways
+        # that use credentials, not on every edge in the estate. Applying it
+        # network-wide was audit ISSUE-010: it let an identity breach speed
+        # up exploitation of an unrelated unpatched device.
+        p = self.edge_p[candidates]
         if self.identity_nodes.size and bool(
                 np.any(self.comp[self.identity_nodes])):
-            mult = self.cfg.simulation.identity_breach_multiplier
-        p = np.minimum(1.0, self.edge_p[candidates] * mult)
+            eligible = (self.edge_pathway[candidates]
+                        == int(Pathway.CREDENTIAL))
+            boost = np.where(
+                eligible, self.cfg.simulation.identity_breach_multiplier, 1.0)
+            p = p * boost
+        p = np.minimum(1.0, p)
         if self.random_field_key is None:
             draws = rng.random(candidates.size)
         else:
@@ -269,6 +294,25 @@ class RansomwareSimulation:
         weights = cfg.service_weights.as_dict()
         clinical_w = sum(weights[s.value] for s in CLINICAL_SERVICES)
 
+        # Residual backup failure: backups can be unusable for reasons this
+        # network does not model at all — no clean recovery point, a failed
+        # restore, or compromise of the backup platform's own identity. It is
+        # drawn once per trial, independently of network traversal, and it is
+        # what keeps an "isolated" architecture from meaning "guaranteed"
+        # (audit ISSUE-006). The rate is a declared assumption, sampled from
+        # a range under parameter uncertainty, not an estimate.
+        residual_rate = cfg.network.backup_residual_failure.get(
+            self.eff.backup_strategy, 0.0)
+        if self.random_field_key is None:
+            residual_draw = float(rng.random())
+        else:
+            master_seed, scenario_id = self.random_field_key
+            # Event stream 14, step 0: shared across candidates in a scenario
+            # so the paired comparison stays matched.
+            residual_draw = float(event_uniform(
+                master_seed, scenario_id, 14, 0, 1)[0])
+        backup_residual_failed = residual_draw < residual_rate
+
         self.compromise(np.asarray([entry_node]), 0)
         rec = StepRecord(
             downtime={s: 0 for s in Service},
@@ -278,7 +322,7 @@ class RansomwareSimulation:
         weighted_clinical_lost_sum = 0.0
         last_clinical_unavail = -1  # step of most recent clinical outage
         clinical_avail_at_end = True
-        backup_compromised = False
+        backup_compromised = backup_residual_failed
         steps_simulated = 0
 
         for t in range(1, sim.max_steps + 1):
@@ -396,6 +440,7 @@ class RansomwareSimulation:
             "lateral_movements": self.lateral_movements,
             "containment_step": self.containment_step,
             "backup_compromised": int(backup_compromised),
+            "backup_residual_failed": int(backup_residual_failed),
             "identity_compromised": int(bool(
                 np.any(self.ever_comp[self.identity_nodes]))),
             # --- healthcare-service metrics ---

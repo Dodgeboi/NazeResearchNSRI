@@ -110,8 +110,31 @@ class NetworkSpec:
     # under least-privilege segmentation.
     sensitive_zone_modifier: float = 0.60
     # Traversal multiplier for edges into the backup zone by strategy.
+    # Traversal multiplier for edges into the backup zone by strategy.
+    # "isolated" is zero *by design*: a correctly isolated backup has no
+    # network path. What makes it falsifiable is not a small per-step
+    # probability but the two per-incident mechanisms below.
+    #
+    # A per-step multiplier is the wrong shape for "rare misconfiguration":
+    # even 0.02 per step compounds to near-certainty over an 864-step
+    # horizon, which is not rarity, it is delay. Isolation either holds for
+    # an incident or it does not, so it is drawn once per incident.
     backup_traversal: dict[str, float] = field(default_factory=lambda: {
         "connected": 1.0, "periodic": 0.30, "isolated": 0.0,
+    })
+    # Per-incident probability that a nominally isolated architecture has a
+    # usable inbound path after all — a forgotten connection, a management
+    # interface, a mount left in place. When it fires, the estate behaves as
+    # `periodic` for that incident. This is what keeps "isolated" from
+    # meaning "unfalsifiable" (audit ISSUE-006).
+    backup_isolation_lapse: float = 0.10
+    # Per-incident probability that backups are unusable for reasons the
+    # network does not model at all: no clean recovery point, a failed
+    # restore, or compromise of the backup platform's own identity. Declared
+    # assumptions, sampled from ranges under parameter uncertainty. They are
+    # what keep "isolated" from meaning "guaranteed".
+    backup_residual_failure: dict[str, float] = field(default_factory=lambda: {
+        "connected": 0.08, "periodic": 0.05, "isolated": 0.03,
     })
     # Per-step detection-probability multiplier for hard-to-monitor nodes.
     device_detect_capability: float = 0.5
@@ -131,6 +154,16 @@ class NetworkSpec:
         for key, v in self.backup_traversal.items():
             _check(0.0 <= v <= 1.0,
                    f"backup traversal {key} must be in [0,1]")
+        _check(0.0 <= self.backup_isolation_lapse <= 1.0,
+               "backup_isolation_lapse must be in [0,1]")
+        _check(self.backup_isolation_lapse > 0.0
+               or self.backup_residual_failure.get("isolated", 0.0) > 0.0,
+               "an isolated backup must be able to fail by SOME mechanism: "
+               "set backup_isolation_lapse or backup_residual_failure "
+               "['isolated'] above zero (audit ISSUE-006)")
+        for key, v in self.backup_residual_failure.items():
+            _check(0.0 <= v <= 1.0,
+                   f"backup residual failure {key} must be in [0,1]")
         lo, hi = self.vuln_range
         _check(0.0 <= lo <= hi <= 1.0, "vuln_range must be within [0,1]")
         lo, hi = self.legacy_vuln_range
@@ -144,7 +177,21 @@ class SimulationSpec:
     max_steps: int = 192            # horizon; 192 x 15 min = 48 modeled hours
     step_minutes: int = 15          # interpretation of one step (assumption)
     base_spread_rate: float = 0.35  # per-edge, per-step baseline
-    patch_effectiveness: float = 0.85  # patched target multiplier = 1 - this
+    # Patch effectiveness, applied ONLY on the pathway where patching acts.
+    # A single scalar across every pathway was on the handoff's red-line list
+    # and is unsupported by any cited source (audit ISSUE-009): a correctly
+    # applied patch can remove one vulnerability, and does nothing against
+    # stolen credentials, tokens, or a compromised third party.
+    patch_effectiveness: float = 0.85          # exploit-mediated edges
+    patch_effectiveness_credential: float = 0.05   # essentially none
+    patch_effectiveness_vendor: float = 0.25       # partial; remote side is
+                                                   # outside the estate
+    # Identity controls act only on authentication-eligible pathways, and
+    # only over the fraction of them they actually cover. Unenrolled
+    # accounts, service accounts, legacy protocols and token theft are what
+    # the uncovered remainder represents (audit ISSUE-010).
+    identity_control_coverage: float = 0.85
+    identity_control_effectiveness: float = 0.70
     detection_model: str = "geometric"  # 'geometric' | 'fixed'
     false_positive_rate: float = 0.002  # per healthy node per step
     false_positive_duration: int = 8    # steps an FP isolation lasts
@@ -185,8 +232,12 @@ class SimulationSpec:
         _check(self.max_steps >= 1, "max_steps must be >= 1")
         _check(0.0 <= self.base_spread_rate <= 1.0,
                "base_spread_rate must be in [0,1]")
-        _check(0.0 <= self.patch_effectiveness <= 1.0,
-               "patch_effectiveness must be in [0,1]")
+        for name in ("patch_effectiveness", "patch_effectiveness_credential",
+                     "patch_effectiveness_vendor",
+                     "identity_control_coverage",
+                     "identity_control_effectiveness"):
+            _check(0.0 <= getattr(self, name) <= 1.0,
+                   f"{name} must be in [0,1]")
         _check(self.detection_model in ("geometric", "fixed"),
                "detection_model must be 'geometric' or 'fixed'")
         _check(0.0 <= self.false_positive_rate <= 1.0,
@@ -206,6 +257,55 @@ class SimulationSpec:
                <= len(CLINICAL_SERVICES),
                "sustained_outage_min_services must be in "
                f"1..{len(CLINICAL_SERVICES)}")
+
+
+@dataclass
+class ParameterUncertaintySpec:
+    """Prespecified ranges for coefficients no public evidence identifies.
+
+    Each entry is ``[low, high]`` and is sampled uniformly, once per
+    scenario, shared across every candidate in that scenario. See
+    ``grrc.uncertainty`` for why this exists and what it changes.
+
+    These ranges are **declared assumptions**, not estimates. Where public
+    evidence bounds a quantity loosely, the range reflects that looseness;
+    where it does not bound it at all, the range is deliberately wide.
+    """
+
+    enabled: bool = False
+    #: field name -> [low, high], applied to cfg.simulation
+    simulation: dict[str, list[float]] = field(default_factory=dict)
+    #: field name -> [low, high], applied to cfg.network
+    network: dict[str, list[float]] = field(default_factory=dict)
+
+    def ordered_names(self) -> list[tuple[str, str, tuple[float, float]]]:
+        """Deterministic (section, field, range) order for sampling.
+
+        Sorted, so the mapping from uniform variate to parameter does not
+        depend on YAML key order and a reordered config reproduces the same
+        draws.
+        """
+        out: list[tuple[str, str, tuple[float, float]]] = []
+        for section in ("simulation", "network"):
+            for name in sorted(getattr(self, section)):
+                low, high = getattr(self, section)[name]
+                out.append((section, name, (float(low), float(high))))
+        return out
+
+    def validate(self) -> None:
+        for section in ("simulation", "network"):
+            target = SimulationSpec() if section == "simulation" else NetworkSpec()
+            for name, bounds in getattr(self, section).items():
+                _check(hasattr(target, name),
+                       f"parameter_uncertainty.{section}.{name} is not a "
+                       f"{section} field")
+                _check(len(bounds) == 2,
+                       f"parameter_uncertainty.{section}.{name} must be "
+                       "[low, high]")
+                low, high = float(bounds[0]), float(bounds[1])
+                _check(low <= high,
+                       f"parameter_uncertainty.{section}.{name} has "
+                       f"low {low} > high {high}")
 
 
 @dataclass
@@ -360,6 +460,8 @@ class Config:
     optimization: OptimizationSpec = field(default_factory=OptimizationSpec)
     output: OutputSpec = field(default_factory=OutputSpec)
     service_weights: ServiceWeights = field(default_factory=ServiceWeights)
+    parameter_uncertainty: ParameterUncertaintySpec = field(
+        default_factory=ParameterUncertaintySpec)
 
     def validate(self) -> None:
         for name, fac in self.facilities.items():
@@ -368,6 +470,7 @@ class Config:
             prof.validate(name)
         self.network.validate()
         self.simulation.validate()
+        self.parameter_uncertainty.validate()
         self.experiment.validate()
         self.sweep.validate()
         self.optimization.validate()
@@ -446,6 +549,7 @@ def load_config(path: str | Path) -> Config:
         ("experiment", cfg.experiment), ("sweep", cfg.sweep),
         ("optimization", cfg.optimization), ("output", cfg.output),
         ("service_weights", cfg.service_weights),
+        ("parameter_uncertainty", cfg.parameter_uncertainty),
     ):
         if section in raw:
             _update_dataclass(attr, raw[section], section)
