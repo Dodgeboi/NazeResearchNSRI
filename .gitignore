@@ -37,3 +37,16 @@ hospital_data/
 # restores them. Manifests hash the UNCOMPRESSED bytes, so nothing in the
 # provenance chain is weakened by storing them this way.
 data/multiobjective/confirmatory/multiobjective_confirmatory_results.csv
+
+# Raw trial banks that are committed gzipped instead.
+#
+# The confirmatory bank is 97 MB uncompressed and 5.5 MB gzipped. For one
+# commit BOTH were tracked, which made `unpack_raw.py` decorative rather than
+# load-bearing: the uncompressed file arrived with the clone, so the restore
+# path was never exercised by anyone, and the stale-archive defect recorded in
+# study/DEVIATIONS.md could sit in the repository undetected. The archive is
+# the committed artifact; the uncompressed file is derived from it.
+#
+# Earlier history still contains the uncompressed blobs. History is not
+# rewritten here, so this saves space going forward only.
+data/multiobjective/confirmatory/multiobjective_confirmatory_results.csv

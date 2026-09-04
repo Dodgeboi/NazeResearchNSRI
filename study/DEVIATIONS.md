@@ -407,3 +407,13 @@ what was wrong was the copy committed for others to check against, which is a
 reproducibility defect rather than a result defect. It is recorded here rather
 than quietly fixed because the audit harness passed while it was true, and
 that is the more useful thing for a reader to know about the harness.
+
+**Follow-on: the archive was redundant.** The uncompressed 97 MB bank was
+*also* tracked. Committing both made `unpack_raw.py` decorative — the
+uncompressed file arrived with every clone, so the restore path was dead code
+that no reader ever executed, and the stale archive could therefore sit in
+the repository indefinitely without anyone touching it. The uncompressed file
+is now git-ignored and the archive is the committed artifact, which makes the
+restore path load-bearing and exercised by every reproduction. Earlier
+history retains the uncompressed blobs; it is preserved rather than
+rewritten, so the saving is prospective.

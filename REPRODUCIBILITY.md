@@ -110,10 +110,19 @@ python scripts/run_discovery.py --trials 3 \
 Committed raw and processed outputs mean every reported value can be audited
 without rerunning anything.
 
-The confirmatory bank is 101 MB uncompressed and is committed gzipped at
-5.7 MB. `scripts/unpack_raw.py` restores it. **Manifests hash the
-uncompressed bytes**, so verification still fails if a single value changed;
-compression is a storage choice, not a weakening of the chain.
+The confirmatory bank is 97 MB uncompressed and is committed **only**
+gzipped, at 5.5 MB. `scripts/unpack_raw.py` is therefore load-bearing: the
+uncompressed file does not arrive with the clone, and nothing verifies until
+it has been restored. For one commit both copies were tracked, which made
+the restore path dead code that no reader ever ran — and that is precisely
+why the stale archive below went unnoticed.
+
+**Manifests hash the uncompressed bytes**, so verification still fails if a
+single value changed; compression is a storage choice, not a weakening of
+the chain.
+
+Earlier commits do contain the uncompressed blobs. History is preserved
+rather than rewritten, so this is a saving going forward only.
 
 The script decides whether a restore is needed by decompressing the archive
 and comparing SHA-256, and it **exits non-zero rather than overwriting**
