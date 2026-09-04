@@ -2,16 +2,14 @@
   "code": {
     "available": true,
     "branch": "rebuild/wp0-wp2",
-    "commit": "8069a7ab18a6d50461d276d42288fe912bc14662",
+    "commit": "01dc7c3930a77520cda215ba2847eaa4f2ff633f",
     "dirty": true,
     "dirty_paths": [
-      "audit/human_decisions_required.md",
-      "data/multiobjective/structural_sensitivity/",
       "ocs/manuscript/generated_numbers.tex",
       "scripts/generate_manuscript_numbers.py"
     ]
   },
-  "created_at": "2026-09-03T06:41:14+00:00",
+  "created_at": "2026-09-04T02:06:17+00:00",
   "description": "LaTeX macros for every number the manuscript quotes, generated from committed result tables so that no result value is hand-typed in the manuscript.",
   "environment": {
     "implementation": "CPython",
@@ -29,9 +27,9 @@
   },
   "inputs": [
     {
-      "bytes": 2628,
+      "bytes": 4667,
       "path": "configs/multiobjective_portfolio.yaml",
-      "sha256": "8b4ce785a8163925bab99b8a108d6b13ebee7c3a47cc90648355001d6fdb03d6"
+      "sha256": "a3dff5682e1e8277cc29d3a5836009deccf87a901d4fa60fdd1ce7c091e41e31"
     },
     {
       "bytes": 9435,
@@ -74,44 +72,44 @@
       "sha256": "31f293b3c8a77493b0295d236c6f13dbcbcf974be40fe8a2fb2831cbeaffb952"
     },
     {
-      "bytes": 4735560,
+      "bytes": 6228395,
       "path": "data/multiobjective/discovery/discovery_results.csv",
-      "sha256": "c01ec6298db565098c4bd55f02a605593a1fa412e5df6ea7b5fc53c498bc74e5"
+      "sha256": "40718c3e0bb54c127be99c28379bbd6e06677d5654d883b54cb54fda008fcc54"
     },
     {
-      "bytes": 1193,
+      "bytes": 1248,
       "path": "data/multiobjective/discovery/portfolio_benchmark_comparison.csv",
-      "sha256": "947142d9051138ba1d52ef4970830a0b2e6674ab69babb619a7430426e606245"
+      "sha256": "fce8856b394dcd5969e4b7486422018846fb3ec0b35a009df2b2c0db520a625d"
     },
     {
-      "bytes": 478,
+      "bytes": 488,
       "path": "data/multiobjective/discovery/portfolio_frontier_resolution.csv",
-      "sha256": "911c78253469ad7db5f2950364f81b4acb0495ed975a2fa4e95c96d5dea8cfc0"
+      "sha256": "3616b6748ef802aaebae7692aebb10639d4c6d98045fd1edb59b631d9c34d71c"
     },
     {
-      "bytes": 50477,
+      "bytes": 51633,
       "path": "data/multiobjective/discovery/portfolio_monte_carlo_error.csv",
-      "sha256": "5a5ba933168232382125030b2fa435fd2b25c8dd785981229142dcc41341269d"
+      "sha256": "e5c46e10b0d6fd6ea8c073c384ed92df84e6643e205ef41ae50ade3b016a2ab5"
     },
     {
-      "bytes": 69323,
+      "bytes": 72803,
       "path": "data/multiobjective/discovery/portfolio_objective_summary.csv",
-      "sha256": "872001a4dffb0a0f23ff312a8d049923cd890b87a3d68aca961200138326eb9c"
+      "sha256": "ac555a58d53a377a4d2eec8959774b782546e561475be104e55ae1a50bc2e580"
     },
     {
-      "bytes": 70140,
+      "bytes": 73620,
       "path": "data/multiobjective/discovery/portfolio_pareto_frontier.csv",
-      "sha256": "b04af4dbd4e97a728d5964aa1ff3611ff71ef8db3cb702a7618833b46bd62940"
+      "sha256": "e797824b683f5ac21367e0b5b0ff1d82bde47da09405f032d0fec9cd8239c366"
     },
     {
-      "bytes": 31362,
+      "bytes": 31338,
       "path": "data/multiobjective/discovery/portfolio_pareto_stability.csv",
-      "sha256": "fda865bc14e716b0dc2a262d930eb972076a17b5088070893ec532960c2818ca"
+      "sha256": "abd217100fad67bdb3a5d51a5cfa737b94fa4a791b8bc5fbddbd6cd4bbc32711"
     },
     {
-      "bytes": 6665,
+      "bytes": 6775,
       "path": "data/multiobjective/discovery/precision_analysis.json",
-      "sha256": "58a210afa9b6982c1bdd1e6ebbb9d2ac0a24586cfad267c109ea5d16d507a62b"
+      "sha256": "20f346b55f875a8ceac943bf69170a9d24a9a503db78a69d315ffe7429bbf58e"
     },
     {
       "bytes": 266,
@@ -126,13 +124,13 @@
   ],
   "outputs": [
     {
-      "bytes": 13111,
+      "bytes": 13407,
       "path": "docs/manuscript/generated_numbers.tex",
-      "sha256": "fc3e7ff9b0fd25432bec248e272a0b488cf6a8e75f351e4696f62fe689f2d4c9"
+      "sha256": "69eb5d33388b313cb8a17b933adcf025513fdddb279416d3c5ee7aa61aac2358"
     }
   ],
   "parameters": {
-    "macros_defined": 233
+    "macros_defined": 238
   },
   "protocol": {
     "frozen_at": "2026-09-03T01:49:25+00:00",

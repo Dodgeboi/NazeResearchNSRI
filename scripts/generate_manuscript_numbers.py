@@ -365,11 +365,61 @@ def main() -> None:
             consumed.append(movement)
         consumed.append(structural)
 
+    sensitivity = CONFIRM / "parameter_sensitivity_summary.json"
+    if sensitivity.exists():
+        report = json.loads(sensitivity.read_text(encoding="utf-8"))
+        macros.integer("SampledParameters", report["parameters_sampled"])
+        worst = report.get("worst_rank_stability")
+        if worst is not None:
+            macros.add("SensitivityWorstRankStability", f"{worst:.2f}")
+        dominant = report.get("dominant_parameter_by_profile_objective", [])
+        for entry in dominant:
+            if entry["profile"] not in PROFILE_MACRO:
+                continue
+            tag = PROFILE_MACRO[entry["profile"]]
+            if entry["objective"] != "mean_hours_lost":
+                continue
+            name = "".join(part.capitalize()
+                           for part in entry["parameter"].split("_")
+                           if part not in ("simulation", "network"))
+            macros.add(f"Sensitivity{tag}DominantParameter", name)
+            macros.percent(f"Sensitivity{tag}DominantEffect",
+                           entry["first_order_effect"])
+            if entry.get("rank_stability") is not None:
+                macros.add(f"Sensitivity{tag}DominantRankStability",
+                           f"{entry['rank_stability']:.2f}")
+        consumed.append(sensitivity)
+
     precision = DISCOVERY / "precision_analysis.json"
     if precision.exists():
         report = json.loads(precision.read_text(encoding="utf-8"))
-        macros.integer("PrecisionBindingPaired",
-                       report["binding_requirement"]["paired_max"])
+        binding = report["binding_requirement"]["paired_max"]
+        if binding is not None:
+            macros.integer("PrecisionBindingPaired", binding)
+        # The two objectives the study cannot resolve, and the profile whose
+        # candidates are literally identical on three of four objectives.
+        degenerate = 0
+        for profile, entry in report["profiles"].items():
+            for stats in entry["objectives"].values():
+                if stats["candidate_mean_iqr"] == 0.0:
+                    degenerate += 1
+            if profile == "high_capacity":
+                macros.integer(
+                    "PrecisionHighCapacityDegenerateObjectives",
+                    sum(1 for stats in entry["objectives"].values()
+                        if stats["candidate_mean_iqr"] == 0.0))
+                mean = entry["objectives"]["mean_hours_lost"]
+                macros.add("PrecisionHighCapacityMeanLossIQR",
+                           f"{mean['candidate_mean_iqr']:.3f}")
+                if mean["required_scenarios_paired"]:
+                    macros.integer("PrecisionHighCapacityMeanLossRequired",
+                                   mean["required_scenarios_paired"])
+            if profile == "resource_constrained":
+                outage = entry["objectives"]["sustained_outage_probability"]
+                if outage["required_scenarios_paired"]:
+                    macros.integer("PrecisionResourceConstrainedOutageRequired",
+                                   outage["required_scenarios_paired"])
+        macros.integer("PrecisionDegenerateObjectives", degenerate)
         consumed.append(precision)
 
     out = Path(args.output)

@@ -502,13 +502,28 @@ actually distinguish --- and solve for the required scenario count, using the
 observed within-scenario correlation to obtain the paired requirement that
 governs a frontier comparison.
 
-The requirement varies by more than a factor of four across profiles. Since
-pairing is within a profile, nothing requires a common count, so scenarios
-are allocated per profile: \ConfirmResourceConstrainedScenarios{},
-\ConfirmIntermediateScenarios{}, and \ConfirmHighCapacityScenarios{}
-scenarios per candidate, giving \ConfirmTotalExecutions{} confirmatory
-executions. Where a count still falls below a requirement we say so and treat
-the affected objective as under-resolved rather than established.
+Once parameter uncertainty is inside the objectives, that requirement stops
+being a single number and becomes bimodal. Most objectives need between a few
+dozen and a few hundred paired scenarios. Two need counts nobody can buy:
+resource-constrained sustained outage needs
+\PrecisionResourceConstrainedOutageRequired{}, and high-capacity mean
+disruption needs \PrecisionHighCapacityMeanLossRequired{}, because its
+candidates differ by an interquartile range of
+\PrecisionHighCapacityMeanLossIQR{} weighted service-hours.
+
+More decisively, \PrecisionHighCapacityDegenerateObjectives{} of the four
+high-capacity objectives have an interquartile range of \emph{exactly zero}
+across all \ConfirmHighCapacityCandidates{} candidates. No scenario count
+resolves them, because there is nothing to resolve. We report that as a
+finding about the profile rather than as a budget constraint, and it is the
+sharpest single result in this study.
+
+We therefore use a uniform \ConfirmResourceConstrainedScenarios{} scenarios
+per candidate, giving \ConfirmTotalExecutions{} confirmatory executions.
+Allocating scenarios where they are scarce, as an earlier version of this
+design did, only helps when the binding requirement is attainable somewhere.
+Both under-resolved objectives are recorded as such in the frozen protocol
+and are reported below as under-resolved rather than established.
 
 \subsection{Full-space confirmation}
 
