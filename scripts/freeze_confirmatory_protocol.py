@@ -128,14 +128,22 @@ def main() -> None:
             "trials_per_candidate": trials,
             "total_executions": total_executions,
             "trials_rationale": (
-                "Per-profile scenario counts, each set above the paired "
-                "requirement the pilot precision analysis computed for that "
-                "profile's most demanding objective. Pairing is within a "
-                "profile, so nothing requires a common count, and the "
-                "required count varies by more than a factor of two across "
-                "profiles. Where a count still falls below a requirement, "
-                "the affected objective is reported as under-resolved rather "
-                "than presented as established."),
+                "Set from the pilot precision analysis, which after the WP3 "
+                "repairs and the addition of parameter uncertainty returns a "
+                "requirement that is either small or unattainable, with "
+                "nothing in between. Most objectives need 28 to 297 paired "
+                "scenarios. Two do not, and both are reported as "
+                "under-resolved rather than presented as established: "
+                "resource-constrained sustained outage needs about 1,400, "
+                "and high-capacity mean disruption needs roughly 80,000 "
+                "because its candidates differ by an interquartile range of "
+                "0.066 weighted service-hours. Three of the four "
+                "high-capacity objectives have an interquartile range of "
+                "exactly zero across all 16 candidates, so no scenario count "
+                "resolves them at all -- that is a finding about the "
+                "profile, not a budget problem. A uniform count is therefore "
+                "used: per-profile allocation buys nothing when the binding "
+                "requirements are unattainable rather than merely uneven."),
             "pairing": "common random numbers; all candidates in a profile "
                        "replay one scenario bank (topology, entry point, "
                        "patch draws, and event-level random fields)",

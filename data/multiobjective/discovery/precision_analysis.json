@@ -8,44 +8,44 @@
       "pilot_scenarios": 30,
       "objectives": {
         "mean_hours_lost": {
-          "per_scenario_sd": 5.601982065924067,
-          "candidate_mean_iqr": 0.1933333333333329,
-          "resolution_target": 0.019333333333333293,
-          "mean_within_scenario_correlation": 0.9952596571358168,
-          "paired_difference_sd": 0.545458343726987,
-          "required_scenarios_unpaired": 83960,
-          "required_scenarios_paired": 796,
-          "achieved_mc_se_at_pilot_n": 1.0227773147486678
+          "per_scenario_sd": 12.485848047690736,
+          "candidate_mean_iqr": 0.06638888899999884,
+          "resolution_target": 0.006638888899999884,
+          "mean_within_scenario_correlation": 0.988474470452951,
+          "paired_difference_sd": 1.8956732742861349,
+          "required_scenarios_unpaired": 3537084,
+          "required_scenarios_paired": 81534,
+          "achieved_mc_se_at_pilot_n": 2.2795935417673516
         },
         "tail_hours_lost_cvar90": {
-          "per_scenario_sd": 5.601982065924067,
+          "per_scenario_sd": 12.485848047690736,
           "candidate_mean_iqr": 0.0,
           "resolution_target": 0.0,
-          "mean_within_scenario_correlation": 0.9952596571358168,
-          "paired_difference_sd": 0.545458343726987,
+          "mean_within_scenario_correlation": 0.988474470452951,
+          "paired_difference_sd": 1.8956732742861349,
           "required_scenarios_unpaired": null,
           "required_scenarios_paired": null,
-          "achieved_mc_se_at_pilot_n": 1.0227773147486678
+          "achieved_mc_se_at_pilot_n": 2.2795935417673516
         },
         "sustained_outage_probability": {
-          "per_scenario_sd": 0.0,
+          "per_scenario_sd": 0.08969937018449047,
           "candidate_mean_iqr": 0.0,
           "resolution_target": 0.0,
-          "mean_within_scenario_correlation": 0.0,
+          "mean_within_scenario_correlation": 1.0,
           "paired_difference_sd": 0.0,
           "required_scenarios_unpaired": null,
           "required_scenarios_paired": null,
-          "achieved_mc_se_at_pilot_n": 0.0
+          "achieved_mc_se_at_pilot_n": 0.016376789481350587
         },
         "nonrecovery_probability": {
-          "per_scenario_sd": 0.0,
+          "per_scenario_sd": 0.30512857662936466,
           "candidate_mean_iqr": 0.0,
           "resolution_target": 0.0,
-          "mean_within_scenario_correlation": 0.0,
+          "mean_within_scenario_correlation": 1.0,
           "paired_difference_sd": 0.0,
           "required_scenarios_unpaired": null,
           "required_scenarios_paired": null,
-          "achieved_mc_se_at_pilot_n": 0.0
+          "achieved_mc_se_at_pilot_n": 0.055708601453115555
         }
       }
     },
@@ -54,44 +54,44 @@
       "pilot_scenarios": 30,
       "objectives": {
         "mean_hours_lost": {
-          "per_scenario_sd": 55.22342084301174,
-          "candidate_mean_iqr": 51.978750002516676,
-          "resolution_target": 5.197875000251668,
-          "mean_within_scenario_correlation": 0.39235486645715656,
-          "paired_difference_sd": 60.8784120257881,
-          "required_scenarios_unpaired": 113,
-          "required_scenarios_paired": 138,
-          "achieved_mc_se_at_pilot_n": 10.082371099439495
+          "per_scenario_sd": 66.34113633573773,
+          "candidate_mean_iqr": 67.81840277450002,
+          "resolution_target": 6.7818402774500015,
+          "mean_within_scenario_correlation": 0.4710004835084869,
+          "paired_difference_sd": 68.23788246869974,
+          "required_scenarios_unpaired": 96,
+          "required_scenarios_paired": 102,
+          "achieved_mc_se_at_pilot_n": 12.112178953869725
         },
         "tail_hours_lost_cvar90": {
-          "per_scenario_sd": 55.22342084301174,
-          "candidate_mean_iqr": 175.47152777999997,
-          "resolution_target": 17.547152777999997,
-          "mean_within_scenario_correlation": 0.39235486645715656,
-          "paired_difference_sd": 60.8784120257881,
-          "required_scenarios_unpaired": 10,
-          "required_scenarios_paired": 13,
-          "achieved_mc_se_at_pilot_n": 10.082371099439495
+          "per_scenario_sd": 66.34113633573773,
+          "candidate_mean_iqr": 127.85763889083331,
+          "resolution_target": 12.785763889083333,
+          "mean_within_scenario_correlation": 0.4710004835084869,
+          "paired_difference_sd": 68.23788246869974,
+          "required_scenarios_unpaired": 27,
+          "required_scenarios_paired": 29,
+          "achieved_mc_se_at_pilot_n": 12.112178953869725
         },
         "sustained_outage_probability": {
-          "per_scenario_sd": 0.3643934234447823,
-          "candidate_mean_iqr": 0.30833333333333335,
-          "resolution_target": 0.030833333333333338,
-          "mean_within_scenario_correlation": 0.40158971636009666,
-          "paired_difference_sd": 0.398643835047553,
-          "required_scenarios_unpaired": 140,
-          "required_scenarios_paired": 168,
-          "achieved_mc_se_at_pilot_n": 0.06652883260907971
+          "per_scenario_sd": 0.4623517676922222,
+          "candidate_mean_iqr": 0.26666666666666666,
+          "resolution_target": 0.02666666666666667,
+          "mean_within_scenario_correlation": 0.5069876835765039,
+          "paired_difference_sd": 0.4591096324755418,
+          "required_scenarios_unpaired": 301,
+          "required_scenarios_paired": 297,
+          "achieved_mc_se_at_pilot_n": 0.08441349755580613
         },
         "nonrecovery_probability": {
-          "per_scenario_sd": 0.1949739642703482,
+          "per_scenario_sd": 0.26375021563064316,
           "candidate_mean_iqr": 0.0,
           "resolution_target": 0.0,
-          "mean_within_scenario_correlation": 0.9295177666971731,
-          "paired_difference_sd": 0.07320343294043152,
+          "mean_within_scenario_correlation": 0.9421316394384154,
+          "paired_difference_sd": 0.08972808738770126,
           "required_scenarios_unpaired": null,
           "required_scenarios_paired": null,
-          "achieved_mc_se_at_pilot_n": 0.035597212785691994
+          "achieved_mc_se_at_pilot_n": 0.04815398088258497
         }
       }
     },
@@ -100,51 +100,51 @@
       "pilot_scenarios": 30,
       "objectives": {
         "mean_hours_lost": {
-          "per_scenario_sd": 94.4538431558827,
-          "candidate_mean_iqr": 117.40291667083332,
-          "resolution_target": 11.740291667083333,
-          "mean_within_scenario_correlation": 0.48456467304814843,
-          "paired_difference_sd": 95.90068771978491,
-          "required_scenarios_unpaired": 65,
-          "required_scenarios_paired": 67,
-          "achieved_mc_se_at_pilot_n": 17.2448335131773
+          "per_scenario_sd": 74.14073267948362,
+          "candidate_mean_iqr": 140.1181944483333,
+          "resolution_target": 14.01181944483333,
+          "mean_within_scenario_correlation": 0.5076259780265997,
+          "paired_difference_sd": 73.57316463513538,
+          "required_scenarios_unpaired": 28,
+          "required_scenarios_paired": 28,
+          "achieved_mc_se_at_pilot_n": 13.536183906171205
         },
         "tail_hours_lost_cvar90": {
-          "per_scenario_sd": 94.4538431558827,
-          "candidate_mean_iqr": 111.97222220833339,
-          "resolution_target": 11.19722222083334,
-          "mean_within_scenario_correlation": 0.48456467304814843,
-          "paired_difference_sd": 95.90068771978491,
-          "required_scenarios_unpaired": 72,
-          "required_scenarios_paired": 74,
-          "achieved_mc_se_at_pilot_n": 17.2448335131773
+          "per_scenario_sd": 74.14073267948362,
+          "candidate_mean_iqr": 115.07152781666667,
+          "resolution_target": 11.507152781666669,
+          "mean_within_scenario_correlation": 0.5076259780265997,
+          "paired_difference_sd": 73.57316463513538,
+          "required_scenarios_unpaired": 42,
+          "required_scenarios_paired": 41,
+          "achieved_mc_se_at_pilot_n": 13.536183906171205
         },
         "sustained_outage_probability": {
-          "per_scenario_sd": 0.38570294586910703,
-          "candidate_mean_iqr": 0.20000000000000007,
-          "resolution_target": 0.020000000000000007,
-          "mean_within_scenario_correlation": 0.5328833874766168,
-          "paired_difference_sd": 0.3728040400336327,
-          "required_scenarios_unpaired": 372,
-          "required_scenarios_paired": 348,
-          "achieved_mc_se_at_pilot_n": 0.07041940131623464
+          "per_scenario_sd": 0.306381676672686,
+          "candidate_mean_iqr": 0.06666666666666665,
+          "resolution_target": 0.006666666666666665,
+          "mean_within_scenario_correlation": 0.6635561295787032,
+          "paired_difference_sd": 0.25132407716913596,
+          "required_scenarios_unpaired": 2113,
+          "required_scenarios_paired": 1422,
+          "achieved_mc_se_at_pilot_n": 0.05593738517329482
         },
         "nonrecovery_probability": {
-          "per_scenario_sd": 0.3523377954385653,
-          "candidate_mean_iqr": 0.5,
-          "resolution_target": 0.05,
-          "mean_within_scenario_correlation": 0.25806557299841665,
-          "paired_difference_sd": 0.42919731088641316,
-          "required_scenarios_unpaired": 50,
-          "required_scenarios_paired": 74,
-          "achieved_mc_se_at_pilot_n": 0.06432778614111434
+          "per_scenario_sd": 0.37317029143708486,
+          "candidate_mean_iqr": 0.33333333333333337,
+          "resolution_target": 0.03333333333333334,
+          "mean_within_scenario_correlation": 0.4805134939635075,
+          "paired_difference_sd": 0.3803725736284366,
+          "required_scenarios_unpaired": 126,
+          "required_scenarios_paired": 131,
+          "achieved_mc_se_at_pilot_n": 0.0681312621369561
         }
       }
     }
   },
   "binding_requirement": {
-    "paired_max": 796,
-    "unpaired_max": 83960,
+    "paired_max": 81534,
+    "unpaired_max": 3537084,
     "interpretation": "The paired figure governs frontier comparisons, which are what the study reports; the unpaired figure governs any standalone mean quoted on its own. Where the chosen scenario count is below a requirement, the affected objective is under-resolved and the manuscript must say so rather than presenting its differences as established."
   }
 }

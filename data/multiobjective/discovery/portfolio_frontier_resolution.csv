@@ -1,4 +1,4 @@
 profile,candidate_pairs,indistinguishable_pairs,indistinguishable_fraction,criterion
-high_capacity,120,120,1,separated by less than one combined Monte Carlo standard error on every stochastic objective
-intermediate_capacity,4560,465,0.1019736842,separated by less than one combined Monte Carlo standard error on every stochastic objective
-resource_constrained,41328,2732,0.06610530391,separated by less than one combined Monte Carlo standard error on every stochastic objective
+high_capacity,120,92,0.7666666667,separated by less than one combined Monte Carlo standard error on every stochastic objective
+intermediate_capacity,4560,381,0.08355263158,separated by less than one combined Monte Carlo standard error on every stochastic objective
+resource_constrained,41328,4502,0.1089334108,separated by less than one combined Monte Carlo standard error on every stochastic objective

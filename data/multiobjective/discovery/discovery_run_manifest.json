@@ -2,16 +2,14 @@
   "code": {
     "available": true,
     "branch": "rebuild/wp0-wp2",
-    "commit": "7d88e32efd13b99145d498cc8c14c412471b1848",
+    "commit": "f46e8face2330d6cb641fa950f3a7861cf5656cc",
     "dirty": true,
     "dirty_paths": [
-      "ata/multiobjective/discovery/discovery_results.csv",
-      "audit/final_red_team_report.md",
-      "audit/scored_rubric.md",
-      "data/multiobjective/discovery/config_snapshot/"
+      "ata/multiobjective/discovery/config_snapshot/multiobjective_portfolio.yaml",
+      "data/multiobjective/discovery/discovery_results.csv"
     ]
   },
-  "created_at": "2026-09-03T05:58:15+00:00",
+  "created_at": "2026-09-04T01:49:33+00:00",
   "description": "Exploratory full-space paired evaluation. Not confirmatory.",
   "environment": {
     "implementation": "CPython",
@@ -39,16 +37,16 @@
       "sha256": "66e66f192c5e44cacd099ef747262639379006084819569353306517cc30e3e5"
     },
     {
-      "bytes": 2628,
+      "bytes": 4667,
       "path": "data/multiobjective/discovery/config_snapshot/multiobjective_portfolio.yaml",
-      "sha256": "8b4ce785a8163925bab99b8a108d6b13ebee7c3a47cc90648355001d6fdb03d6"
+      "sha256": "a3dff5682e1e8277cc29d3a5836009deccf87a901d4fa60fdd1ce7c091e41e31"
     }
   ],
   "outputs": [
     {
-      "bytes": 4735560,
+      "bytes": 6228395,
       "path": "data/multiobjective/discovery/discovery_results.csv",
-      "sha256": "c01ec6298db565098c4bd55f02a605593a1fa412e5df6ea7b5fc53c498bc74e5"
+      "sha256": "40718c3e0bb54c127be99c28379bbd6e06677d5654d883b54cb54fda008fcc54"
     }
   ],
   "parameters": {

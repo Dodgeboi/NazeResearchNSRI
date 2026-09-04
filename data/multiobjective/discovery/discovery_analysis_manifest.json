@@ -2,17 +2,22 @@
   "code": {
     "available": true,
     "branch": "rebuild/wp0-wp2",
-    "commit": "7d88e32efd13b99145d498cc8c14c412471b1848",
+    "commit": "f46e8face2330d6cb641fa950f3a7861cf5656cc",
     "dirty": true,
     "dirty_paths": [
-      "ata/multiobjective/discovery/discovery_results.csv",
-      "audit/final_red_team_report.md",
-      "audit/scored_rubric.md",
-      "data/multiobjective/discovery/config_snapshot/",
-      "data/multiobjective/discovery/discovery_run_manifest.json"
+      "ata/multiobjective/discovery/config_snapshot/multiobjective_portfolio.yaml",
+      "data/multiobjective/discovery/discovery_results.csv",
+      "data/multiobjective/discovery/discovery_run_manifest.json",
+      "data/multiobjective/discovery/portfolio_benchmark_comparison.csv",
+      "data/multiobjective/discovery/portfolio_frontier_resolution.csv",
+      "data/multiobjective/discovery/portfolio_monte_carlo_error.csv",
+      "data/multiobjective/discovery/portfolio_objective_summary.csv",
+      "data/multiobjective/discovery/portfolio_pareto_frontier.csv",
+      "data/multiobjective/discovery/portfolio_pareto_stability.csv",
+      "data/multiobjective/discovery/portfolio_preference_scenarios.csv"
     ]
   },
-  "created_at": "2026-09-03T05:58:37+00:00",
+  "created_at": "2026-09-04T01:49:45+00:00",
   "description": "Six-objective analysis of the discovery bank. Cost and burden are normalized scenario points, not dollars or measured staffing burden.",
   "environment": {
     "implementation": "CPython",
@@ -40,51 +45,51 @@
       "sha256": "66e66f192c5e44cacd099ef747262639379006084819569353306517cc30e3e5"
     },
     {
-      "bytes": 2628,
+      "bytes": 4667,
       "path": "configs/multiobjective_portfolio.yaml",
-      "sha256": "8b4ce785a8163925bab99b8a108d6b13ebee7c3a47cc90648355001d6fdb03d6"
+      "sha256": "a3dff5682e1e8277cc29d3a5836009deccf87a901d4fa60fdd1ce7c091e41e31"
     },
     {
-      "bytes": 4735560,
+      "bytes": 6228395,
       "path": "data/multiobjective/discovery/discovery_results.csv",
-      "sha256": "c01ec6298db565098c4bd55f02a605593a1fa412e5df6ea7b5fc53c498bc74e5"
+      "sha256": "40718c3e0bb54c127be99c28379bbd6e06677d5654d883b54cb54fda008fcc54"
     }
   ],
   "outputs": [
     {
-      "bytes": 1193,
+      "bytes": 1248,
       "path": "data/multiobjective/discovery/portfolio_benchmark_comparison.csv",
-      "sha256": "947142d9051138ba1d52ef4970830a0b2e6674ab69babb619a7430426e606245"
+      "sha256": "fce8856b394dcd5969e4b7486422018846fb3ec0b35a009df2b2c0db520a625d"
     },
     {
-      "bytes": 478,
+      "bytes": 488,
       "path": "data/multiobjective/discovery/portfolio_frontier_resolution.csv",
-      "sha256": "911c78253469ad7db5f2950364f81b4acb0495ed975a2fa4e95c96d5dea8cfc0"
+      "sha256": "3616b6748ef802aaebae7692aebb10639d4c6d98045fd1edb59b631d9c34d71c"
     },
     {
-      "bytes": 50477,
+      "bytes": 51633,
       "path": "data/multiobjective/discovery/portfolio_monte_carlo_error.csv",
-      "sha256": "5a5ba933168232382125030b2fa435fd2b25c8dd785981229142dcc41341269d"
+      "sha256": "e5c46e10b0d6fd6ea8c073c384ed92df84e6643e205ef41ae50ade3b016a2ab5"
     },
     {
-      "bytes": 69323,
+      "bytes": 72803,
       "path": "data/multiobjective/discovery/portfolio_objective_summary.csv",
-      "sha256": "872001a4dffb0a0f23ff312a8d049923cd890b87a3d68aca961200138326eb9c"
+      "sha256": "ac555a58d53a377a4d2eec8959774b782546e561475be104e55ae1a50bc2e580"
     },
     {
-      "bytes": 70140,
+      "bytes": 73620,
       "path": "data/multiobjective/discovery/portfolio_pareto_frontier.csv",
-      "sha256": "b04af4dbd4e97a728d5964aa1ff3611ff71ef8db3cb702a7618833b46bd62940"
+      "sha256": "e797824b683f5ac21367e0b5b0ff1d82bde47da09405f032d0fec9cd8239c366"
     },
     {
-      "bytes": 31362,
+      "bytes": 31338,
       "path": "data/multiobjective/discovery/portfolio_pareto_stability.csv",
-      "sha256": "fda865bc14e716b0dc2a262d930eb972076a17b5088070893ec532960c2818ca"
+      "sha256": "abd217100fad67bdb3a5d51a5cfa737b94fa4a791b8bc5fbddbd6cd4bbc32711"
     },
     {
-      "bytes": 2620,
+      "bytes": 2691,
       "path": "data/multiobjective/discovery/portfolio_preference_scenarios.csv",
-      "sha256": "ff5b87c30a36432ac4dc2b87b8ec00664d1ae21b3e2d489eb394fce52b6288ee"
+      "sha256": "01563f596eb05d82dd3dbf853e22e3e2e4d165082a57935827bdffa0836d87ab"
     }
   ],
   "parameters": {
@@ -97,9 +102,9 @@
         "resource_constrained": 288
       },
       "non_dominated_by_profile": {
-        "high_capacity": 2,
-        "intermediate_capacity": 14,
-        "resource_constrained": 42
+        "high_capacity": 3,
+        "intermediate_capacity": 19,
+        "resource_constrained": 49
       },
       "scenarios_by_profile": {
         "high_capacity": 30,
