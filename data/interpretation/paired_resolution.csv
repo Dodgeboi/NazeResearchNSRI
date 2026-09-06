@@ -1,4 +1,4 @@
 profile,candidate_pairs,paired_one_se_near_pairs,independent_one_se_near_pairs,classification_changed_pairs,interpretation
-resource_constrained,41328,98,806,708,"one-SE diagnostic, not a hypothesis/equivalence test"
-intermediate_capacity,4560,10,83,73,"one-SE diagnostic, not a hypothesis/equivalence test"
-high_capacity,120,2,28,26,"one-SE diagnostic, not a hypothesis/equivalence test"
+resource_constrained,41328,88,770,682,"one-SE diagnostic, not a hypothesis/equivalence test"
+intermediate_capacity,4560,10,84,74,"one-SE diagnostic, not a hypothesis/equivalence test"
+high_capacity,120,2,32,30,"one-SE diagnostic, not a hypothesis/equivalence test"

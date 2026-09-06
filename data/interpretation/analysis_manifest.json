@@ -2,11 +2,11 @@
   "code": {
     "available": true,
     "branch": "research/methods-revision",
-    "commit": "1782954c8b886772b51c56eca8b3758fac0f1d22",
+    "commit": "50d721617449dfb82768aa98a91892c62984edac",
     "dirty": false,
     "dirty_paths": []
   },
-  "created_at": "2026-09-06T04:25:10+00:00",
+  "created_at": "2026-09-06T04:40:07+00:00",
   "description": "Paired retrospective interpretation diagnostics; unchanged simulator and original raw banks.",
   "environment": {
     "implementation": "CPython",
@@ -59,9 +59,9 @@
       "sha256": "ac555a58d53a377a4d2eec8959774b782546e561475be104e55ae1a50bc2e580"
     },
     {
-      "bytes": 11650,
+      "bytes": 11774,
       "path": "scripts/analyze_interpretation.py",
-      "sha256": "dcabfaab6fb430a76bffb5ff7381abf439834ec46f4c6a56864728529be178ec"
+      "sha256": "c29d868c7bca290e0b8d7d99ca01887ff23839099d1aa0e221cdbb65417f7afe"
     },
     {
       "bytes": 27089,
@@ -79,9 +79,9 @@
       "sha256": "fca0fe015fe2df9919ae807aa7ea571047e6756fbe38609b132a8b70ed396a07"
     },
     {
-      "bytes": 10416,
+      "bytes": 12438,
       "path": "src/grrc/interpretation.py",
-      "sha256": "67e9aa3dfb98fd68c688de74d5bdc624f15512d2d5d89b0c31bddef547852d05"
+      "sha256": "cc8f74338f875054efabc64bbb8dc15f7a1bcafca0822e2b580f8cbcabb0de7b"
     },
     {
       "bytes": 34928,
@@ -99,9 +99,9 @@
       "sha256": "3ee09640a09c3868b530c7937133334acf2897939c2349e6a7dd1bc1fc531afa"
     },
     {
-      "bytes": 5585,
+      "bytes": 6457,
       "path": "study/INTERPRETATION_ANALYSIS_PLAN.md",
-      "sha256": "6d95fa163e2f824aa31ca9fb5575c2db0f33d5268e0e18ce81204895554297b7"
+      "sha256": "e9106f4665f941154704ba59234e8ba254aa7cc5666476f81d39684f55fe7214"
     },
     {
       "bytes": 20143,
@@ -111,9 +111,9 @@
   ],
   "outputs": [
     {
-      "bytes": 97262,
+      "bytes": 108775,
       "path": "data/interpretation/baseline_contrasts.csv",
-      "sha256": "9b7200c8977c36bd48a1cfefd5230cd4b9b12c22722559ae9e28ef4662fff95d"
+      "sha256": "158d56d43fe24790cbbf531fd5cefd4c3281261a6b758df244f35920640709ee"
     },
     {
       "bytes": 98440,
@@ -136,19 +136,19 @@
       "sha256": "a46841b3a9341e1841f52c22d3c81adb9441d1dd8170deee541f588796b24229"
     },
     {
-      "bytes": 220,
+      "bytes": 217,
       "path": "data/interpretation/endpoint_gap_bootstrap.csv",
-      "sha256": "befc02ef6c0ec7129b44e416bcd562d37971fdfe7428f5c81a2f54ee3003cb72"
+      "sha256": "aacaceb9aa3447a704e2c3f806c76654dc89cffd83b0b3bd078be88c3ed5edbf"
     },
     {
-      "bytes": 101053,
+      "bytes": 101034,
       "path": "data/interpretation/frontier_bootstrap_draws.csv",
-      "sha256": "dd99435ad6614acbfd1dc4bfd45159ab04ef7c3234bac37f97d97b9099bfeadc"
+      "sha256": "dd24f6035df7b6df16f3519aa9c27578c7f6b8ac3422a91aead5a696eb1687e8"
     },
     {
-      "bytes": 1095,
+      "bytes": 1105,
       "path": "data/interpretation/frontier_bootstrap_summary.csv",
-      "sha256": "f357a558d503922645009315038d022b8a68d0c035c75e86057fd82f4a2291f2"
+      "sha256": "fbeb0aec2de916c04834cac609bbcc77d994dbff5b44b53bf6de7ab50b0ea200"
     },
     {
       "bytes": 171,
@@ -163,7 +163,7 @@
     {
       "bytes": 392,
       "path": "data/interpretation/paired_resolution.csv",
-      "sha256": "0d8676a72f2e493773a564ebf8b6f194d99a2c6b622bd3f6eb33781fc8f20cc1"
+      "sha256": "8584e33f97f0c9ba5a26f8f1d76a653998cd528dce86b1dc6ac6b7ac17653e21"
     },
     {
       "bytes": 177,
@@ -197,6 +197,7 @@
     },
     "rejected_nonmonotone_tariffs": 186,
     "retrospective": true,
+    "sampling_design": "fixed entry-category allocation; resample scenarios within each of five strata",
     "seed": 2026090601,
     "source_state_captured": "before any analysis outputs were written",
     "weight_draws": 500,
