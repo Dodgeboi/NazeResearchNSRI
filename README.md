@@ -10,7 +10,7 @@ non-recovery, normalized cost, and normalized operational burden, when every
 resolved candidate is evaluated on a fresh paired scenario bank under a
 protocol frozen beforehand?**
 
-It is not an estimate of any hospital's ransomware risk, and it is not
+This project is not meant to be an estimate of any hospital's ransomware risk, and it is not
 evidence that any control achieves any effect in a real hospital. No internal
 transition coefficient in this model is identified by hospital data, and the
 repository says so at each parameter rather than once in a limitations
