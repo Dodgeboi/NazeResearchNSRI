@@ -2,11 +2,11 @@
   "code": {
     "available": true,
     "branch": "research/methods-revision",
-    "commit": "50d721617449dfb82768aa98a91892c62984edac",
+    "commit": "f9251c7d2653584faac1158b575aeb86d5214d88",
     "dirty": false,
     "dirty_paths": []
   },
-  "created_at": "2026-09-06T04:40:07+00:00",
+  "created_at": "2026-09-06T04:54:49+00:00",
   "description": "Paired retrospective interpretation diagnostics; unchanged simulator and original raw banks.",
   "environment": {
     "implementation": "CPython",
@@ -74,9 +74,9 @@
       "sha256": "b9fe7bb6f892ce00c8772907120c9d5314efc54e111059fc0bb0a55a1b6132b9"
     },
     {
-      "bytes": 17531,
+      "bytes": 17038,
       "path": "src/grrc/endpoints.py",
-      "sha256": "fca0fe015fe2df9919ae807aa7ea571047e6756fbe38609b132a8b70ed396a07"
+      "sha256": "d0e158673846ed9f505a67ad43b6fbe7d5ea9f112453f22ba5be87968995125c"
     },
     {
       "bytes": 12438,
