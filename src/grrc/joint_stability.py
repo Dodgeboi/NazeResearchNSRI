@@ -42,12 +42,15 @@ def portfolio_features(portfolio, profile) -> np.ndarray:
     return a
 
 
-def ordered_rectangle_vertices(lower, upper) -> np.ndarray:
-    """Vertices of a two-dimensional box intersected with x <= y."""
+def ordered_rectangle_vertices(lower, upper, minimum_gap=0) -> np.ndarray:
+    """Vertices of a two-dimensional box intersected with x + gap <= y."""
     lower, upper = np.asarray(lower, float), np.asarray(upper, float)
     if (lower.shape != (2,) or upper.shape != (2,)
-            or not np.isfinite([lower, upper]).all() or (lower > upper).any()):
+            or not np.isfinite([lower, upper]).all() or (lower > upper).any()
+            or not np.isfinite(minimum_gap) or minimum_gap < 0):
         raise ValueError("finite ordered two-dimensional bounds required")
+    lower = lower - [0, minimum_gap]
+    upper = upper - [0, minimum_gap]
     vertices = [(x, y) for x in (lower[0], upper[0])
                 for y in (lower[1], upper[1]) if x <= y]
     left, right = max(lower), min(upper)
@@ -55,10 +58,10 @@ def ordered_rectangle_vertices(lower, upper) -> np.ndarray:
         vertices.extend([(left, left), (right, right)])
     if not vertices:
         raise ValueError("empty ordered rectangle")
-    return np.unique(vertices, axis=0)
+    return np.unique(vertices, axis=0) + [0, minimum_gap]
 
 
-def minimum_tariff_difference(coefficients, nominal, radius) -> np.ndarray:
+def minimum_tariff_difference(coefficients, nominal, radius, preserve_gaps=False) -> np.ndarray:
     """Exact linear minimum over a box with two monotone price ladders."""
     a, t = np.asarray(coefficients, float), np.asarray(nominal, float)
     if (a.shape[-1:] != (8,) or t.shape != (8,)
@@ -70,21 +73,23 @@ def minimum_tariff_difference(coefficients, nominal, radius) -> np.ndarray:
     lower, upper = t * (1 - radius), t * (1 + radius)
     result = np.zeros(a.shape[:-1])
     for i, j in ORDERED_PAIRS:
-        vertices = ordered_rectangle_vertices(lower[[i, j]], upper[[i, j]])
+        gap = (1-radius) * (t[j]-t[i]) if preserve_gaps else 0
+        vertices = ordered_rectangle_vertices(lower[[i, j]], upper[[i, j]], gap)
         result += np.min(a[..., [i, j]] @ vertices.T, axis=-1)
     for j in (2, 3, 4, 7):
         result += a[..., j] * np.where(a[..., j] >= 0, lower[j], upper[j])
     return result
 
 
-def tariff_pair_minima(features, costs, burdens, radius) -> np.ndarray:
+def tariff_pair_minima(features, costs, burdens, radius, preserve_gaps=False) -> np.ndarray:
     """Two independent price families, each shared across all candidates."""
     features = np.asarray(features, float)
     difference = features[:, None, :] - features[None, :, :]
     # Integer features and declared decimal radii make these decimal quantities.
     # Round only the price calculation to remove floating cancellation at ties.
     return np.round(np.stack([
-        minimum_tariff_difference(difference, [t[k] for k in TARIFF_KEYS], radius)
+        minimum_tariff_difference(difference, [t[k] for k in TARIFF_KEYS], radius,
+                                 preserve_gaps)
         for t in (costs, burdens)], axis=-1), 12)
 
 

@@ -19,16 +19,19 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 @pytest.mark.parametrize("radius", [0, .1, .25, .5, .75])
-def test_support_matches_independent_linear_program(radius):
+@pytest.mark.parametrize("preserve_gaps", [False, True])
+def test_support_matches_independent_linear_program(radius, preserve_gaps):
     t = np.array([3, 5, 2, 3, 5, 1, 2, 4.])
     rng = np.random.default_rng(61)
     coefficients = rng.integers(-4, 5, (50, 8))
-    observed = minimum_tariff_difference(coefficients, t, radius)
+    observed = minimum_tariff_difference(coefficients, t, radius, preserve_gaps)
     constraint = np.zeros((2, 8))
     for row, (i, j) in enumerate(ORDERED_PAIRS):
         constraint[row, i], constraint[row, j] = 1, -1
     for a, value in zip(coefficients, observed):
-        answer = linprog(a, A_ub=constraint, b_ub=[0, 0],
+        bound = [-(1-radius)*(t[j]-t[i]) if preserve_gaps else 0
+                 for i, j in ORDERED_PAIRS]
+        answer = linprog(a, A_ub=constraint, b_ub=bound,
             bounds=list(zip(t * (1-radius), t * (1+radius))), method="highs")
         assert answer.success
         assert value == pytest.approx(answer.fun, abs=1e-10)
