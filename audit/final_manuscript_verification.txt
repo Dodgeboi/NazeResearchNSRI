@@ -1,14 +1,18 @@
-Final release 3.2.0 verification
-237 tests collected and passed.
-All 14 named and anonymous PDF pages visually inspected.
-19 citations resolve; no em dashes or unresolved references in either PDF.
-Standard TeX fontconfig discovery warning; embedded fonts and rendered output verified.
+Final release 3.3.0 verification
+253 tests collected and passed; all 9 audit categories passed.
+All 24 named and anonymous PDF pages visually inspected.
+22 citations resolve; no em dashes or unresolved references in either PDF.
+All text and figure fonts embedded; no overfull TeX boxes.
+Both PDFs have 12 US-letter pages, including references and appendices.
+Five joint-analysis CSVs reproduce release 3.2.0 byte for byte after the decimal fix.
+Original simulation configurations and raw banks remain unchanged.
+Standard TeX fontconfig discovery warning; rendered output verified.
 
 
 PASS         unpack compressed raw banks
              ok       data\multiobjective\confirmatory\multiobjective_confirmatory_results.csv (matches archive, sha256 6b558145ae77)
 PASS         test suite
-             .....................                                                    [100%]
+             .....................................                                    [100%]
 PASS         behavioral validation
              12/12 validation checks passed
 PASS         archived sources
@@ -17,9 +21,9 @@ PASS         frozen protocols verify
              multiobjective_confirmatory_v1: fdf6777e4ba6 frozen 2026-09-03T01:49:25+00:00
              multiobjective_confirmatory_v2: 9cb7e835446a frozen 2026-09-04T01:53:46+00:00
 PASS         run manifests describe the files on disk
-             15 manifests checked
+             16 manifests checked
 PASS         manuscript claim audit
-             current manuscript checks passed; 19 citations resolve; baseline audit pass reproduced
+             current manuscript checks passed; 22 citations resolve; baseline audit pass reproduced
 PASS         historical numeric macros re-derive from preserved trials
              Discovery: 12,000 rows, 400 profile-candidates
              Confirm: 160,000 rows, 400 profile-candidates
