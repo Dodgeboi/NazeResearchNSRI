@@ -20,6 +20,7 @@ import yaml
 from grrc.provenance import build_manifest, git_state, write_manifest, verify_manifest
 from audit_interpretation_claims import audit
 from generate_joint_paper import content as joint_content, figures as joint_figures
+from generate_comparison_paper import content as comparison_content, figures as comparison_figures
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data/interpretation"
@@ -150,6 +151,9 @@ def content():
     joint_generated, joint_tables = joint_content()
     generated.update(joint_generated)
     tables.update(joint_tables)
+    comparison_generated, comparison_tables = comparison_content()
+    generated.update(comparison_generated)
+    tables.update(comparison_tables)
     return generated, tables
 
 
@@ -189,6 +193,7 @@ def figures(tables):
         ax.legend(fontsize=7)
     save(fig,'conditional_frontier')
     paths += joint_figures(tables, folder)
+    paths += comparison_figures(tables, folder)
     return paths
 
 
@@ -226,6 +231,8 @@ def main():
         ROOT/'data/joint_stability/joint_manifest.json',
         ROOT/'data/cipher/processed/coverage_manifest.json',
         ROOT/'scripts/generate_joint_paper.py'] + list((ROOT/'data/cipher/processed').glob('*.csv'))
+    inputs += list((ROOT/'data/final_comparison').glob('*.csv')) + [
+        ROOT/'data/final_comparison/comparison_manifest.json', ROOT/'scripts/generate_comparison_paper.py']
     manifest = build_manifest(run_id='interpretation-paper',stage='analysis',
         description='Generated values, certificate and transfer tables, and figures for the final research manuscript.',
         inputs=inputs,outputs=outputs,parameters={'scope':'registered values and assertions, not all prose'},source_state=state)

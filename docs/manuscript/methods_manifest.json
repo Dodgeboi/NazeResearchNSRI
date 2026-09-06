@@ -2,11 +2,22 @@
   "code": {
     "available": true,
     "branch": "research/methods-revision",
-    "commit": "3ac458d1ea1baf514517fd2362e18b812694d467",
-    "dirty": false,
-    "dirty_paths": []
+    "commit": "a1d704347cdd1b4121989708c4633f571608d456",
+    "dirty": true,
+    "dirty_paths": [
+      "docs/manuscript/main.tex",
+      "docs/manuscript/references.bib",
+      "docs/manuscript/section_abstract.tex",
+      "docs/manuscript/section_appendix.tex",
+      "docs/manuscript/section_conclusion.tex",
+      "docs/manuscript/section_discussion.tex",
+      "docs/manuscript/section_discussion_finding.tex",
+      "docs/manuscript/section_results.tex",
+      "scripts/generate_comparison_paper.py",
+      "scripts/generate_interpretation_paper.py"
+    ]
   },
-  "created_at": "2026-09-06T07:13:28+00:00",
+  "created_at": "2026-09-06T17:09:12+00:00",
   "description": "Generated values, certificate and transfer tables, and figures for the final research manuscript.",
   "environment": {
     "implementation": "CPython",
@@ -62,6 +73,51 @@
       "bytes": 2531,
       "path": "data/cipher/processed/reference_counts.csv",
       "sha256": "cbdfb0fee5e2a75bf390378982602cdb5ec44731075304fc16d92cf5ec4281bc"
+    },
+    {
+      "bytes": 216324,
+      "path": "data/final_comparison/baseline_comparisons.csv",
+      "sha256": "8a28c76b9286c4e88e2d766f7c0ffe257024e1f2295bc5a44dc4947393ebe03b"
+    },
+    {
+      "bytes": 245511,
+      "path": "data/final_comparison/bound_candidates.csv",
+      "sha256": "01da94d5f8214a49e4e8bb8f56eba6d9dd24a3af539e3517df87915c995bf72b"
+    },
+    {
+      "bytes": 2757,
+      "path": "data/final_comparison/bound_margins.csv",
+      "sha256": "953ed97490c627a67b0ba18d94fb96c4aa22cecc3153ae4a3283b2c35d520262"
+    },
+    {
+      "bytes": 1302,
+      "path": "data/final_comparison/bound_retention.csv",
+      "sha256": "2a85f94ee1716a8b16d6bed992829ace48c7332d2fcbffe5deea63958293e87b"
+    },
+    {
+      "bytes": 8051,
+      "path": "data/final_comparison/coefficient_regimes.csv",
+      "sha256": "7e077b69997e73f47c08bcc134236e5727af7982c9fd41ea9bd83315242bb6c5"
+    },
+    {
+      "bytes": 5898,
+      "path": "data/final_comparison/comparison_manifest.json",
+      "sha256": "9fa3b2defc31ebe77352d4b3ab26698fcffea2128d2df11157b98ec76d94f86f"
+    },
+    {
+      "bytes": 175191,
+      "path": "data/final_comparison/matched_subsets.csv",
+      "sha256": "a60bd50e5d855b8f11d7bffaf2b7fd5bf57047f213c6078350b9cdd8b6142138"
+    },
+    {
+      "bytes": 1456086,
+      "path": "data/final_comparison/regime_candidates.csv",
+      "sha256": "6103bd29d6322883640e42937da180592b49dfb25bf5ab7908776fa4c326f400"
+    },
+    {
+      "bytes": 737841,
+      "path": "data/final_comparison/regime_membership.csv",
+      "sha256": "4828f2ad15c3b25c1fd8eb40e81935a75028b7a0dc91fc1899c13d1f61dba9c0"
     },
     {
       "bytes": 4470,
@@ -186,7 +242,7 @@
     {
       "bytes": 4955,
       "path": "data/joint_stability/joint_manifest.json",
-      "sha256": "ef37249a80ad1056342df049ba080e142b2a64e060e2acd713952ca6acfb7deb"
+      "sha256": "b0a39a40305da70b7a9ce838aa5e09314366d6272973127d6accc02472edd233"
     },
     {
       "bytes": 1384,
@@ -234,9 +290,14 @@
       "sha256": "0f8833152e0b36878e10eb2a60af9532b1381a3cdd9e74df55b0aa896442dc3c"
     },
     {
-      "bytes": 15505,
+      "bytes": 9342,
+      "path": "scripts/generate_comparison_paper.py",
+      "sha256": "149e8c9edcb5a1a0b5b9220d839088a161c65c2518b4130159b721203b7a65f4"
+    },
+    {
+      "bytes": 15976,
       "path": "scripts/generate_interpretation_paper.py",
-      "sha256": "17fd48d39b5e31c92cc9a4bc7887a0a489501739d310997584183a213d4843a9"
+      "sha256": "fd41d7a5468d337228c9a666932268276d2dcf6197820a56b6bb44b73eb8386c"
     },
     {
       "bytes": 6183,
@@ -261,14 +322,29 @@
       "sha256": "bc6197244de8fa87359b81a1da60284c1ce35af78d985ec95c1682de2a623f8a"
     },
     {
+      "bytes": 833,
+      "path": "docs/manuscript/comparison_numbers.tex",
+      "sha256": "5e4ce45ac19593baee16f6e5d50c5e43bc627999aab45ebb846a7e19d268aff7"
+    },
+    {
       "bytes": 682,
       "path": "docs/manuscript/joint_numbers.tex",
       "sha256": "16cb7bbe17a85cef8dd74feb4691780b20fd80b34f698773f2f5214990a15963"
     },
     {
+      "bytes": 43383,
+      "path": "docs/manuscript/methods_figures/coefficient_frontiers.pdf",
+      "sha256": "14cf92969387763f6c531052739741df96936be80dcda077c3e1f16a21c7b5a3"
+    },
+    {
+      "bytes": 81967,
+      "path": "docs/manuscript/methods_figures/coefficient_frontiers.png",
+      "sha256": "d0a07c94a8f642d4398bfbcb5b7727b792ff37ec415a9008ced6748c4dfaa102"
+    },
+    {
       "bytes": 62531,
       "path": "docs/manuscript/methods_figures/conditional_frontier.pdf",
-      "sha256": "607c04f4b179da06f5f44b18ad8411e4357a2e85681d3d0be57e3d6f6bd1d97c"
+      "sha256": "16ed38f661ed4e685e85be504b893a640324d489b35cb95ace88623ddc4caa7a"
     },
     {
       "bytes": 40522,
@@ -278,7 +354,7 @@
     {
       "bytes": 65201,
       "path": "docs/manuscript/methods_figures/endpoint_ladder.pdf",
-      "sha256": "95264a995bcf9e0e52eda663ba30abd79cfd1c8b3e70e61fe62de49d7aec4e57"
+      "sha256": "964c50a990bebf10d3c2f70ecf6ca11f56eb62053cb625289b68a81143fcca36"
     },
     {
       "bytes": 55642,
@@ -288,12 +364,22 @@
     {
       "bytes": 68429,
       "path": "docs/manuscript/methods_figures/joint_stability.pdf",
-      "sha256": "6232b80988c31aa354dbb79e65cfe0ff7a3fa5bae2289778bb0f74b137c244df"
+      "sha256": "ec99a599bf9b0127e9cf8198940fdcd5fa698ed977462c0a819c7c908d4c9d70"
     },
     {
       "bytes": 116166,
       "path": "docs/manuscript/methods_figures/joint_stability.png",
       "sha256": "92d2691edd850732091c8c7ea4dda97f112d42e58ed8941bffe570581f1f81f4"
+    },
+    {
+      "bytes": 97543,
+      "path": "docs/manuscript/methods_figures/model_pathways.pdf",
+      "sha256": "4dce1e5f71be1a28bee93983390757b1746d98af6ec39afd6f794cc1b14798dc"
+    },
+    {
+      "bytes": 161970,
+      "path": "docs/manuscript/methods_figures/model_pathways.png",
+      "sha256": "81f88c1d8ae68b36a5487f4653dc8e978fff91c653fdbf84e71a1e95febc64b3"
     },
     {
       "bytes": 1869,
@@ -304,6 +390,16 @@
       "bytes": 285,
       "path": "docs/manuscript/table_ablation_rows.tex",
       "sha256": "7b18690c4bd56c40d16a2bc230de25b92c2517b3ad8d70acd47fe536acd3310e"
+    },
+    {
+      "bytes": 886,
+      "path": "docs/manuscript/table_all_coefficients_rows.tex",
+      "sha256": "ee34947a4c96ebf2c05c222b7a60761d3bac81289fb43a47a590e1135c8daecd"
+    },
+    {
+      "bytes": 582,
+      "path": "docs/manuscript/table_bound_comparison_rows.tex",
+      "sha256": "55ddd8105f768ac021b5f915c6cb7b8529c3e9a3537eba90bee8dcf969717aa4"
     },
     {
       "bytes": 218,
@@ -319,6 +415,11 @@
       "bytes": 190,
       "path": "docs/manuscript/table_cipher_rows.tex",
       "sha256": "29a31dd68d883d5367fac851329b529f0eeef0ceedec8fa0681b923ad97b8e42"
+    },
+    {
+      "bytes": 207,
+      "path": "docs/manuscript/table_coefficient_summary_rows.tex",
+      "sha256": "7dd30b37a9efe6d17e0e3889efc7077c724ed0216713a01df8393ee90198888f"
     },
     {
       "bytes": 232,

@@ -7,7 +7,7 @@
 \usepackage[hidelinks]{hyperref}
 \newif\ifanonymous
 \ifdefined\AnonymousVersion\anonymoustrue\else\anonymousfalse\fi
-\hypersetup{pdftitle={Defense Portfolio Stability Under Shared Costs and Sampling Uncertainty}}
+\hypersetup{pdftitle={Stable Frontiers, Uncertain Decisions in a Synthetic Hospital Ransomware Model}}
 \ifanonymous
 \hypersetup{pdfauthor={}}
 \else
@@ -16,13 +16,19 @@
 \graphicspath{{methods_figures/}}
 \input{methods_numbers}
 \input{joint_numbers}
+\input{comparison_numbers}
 \makeatletter\let\tableinput\@@input\makeatother
+\makeatletter
+\setlength{\@dblfptop}{0pt}
+\setlength{\@dblfpsep}{18pt}
+\setlength{\@dblfpbot}{0pt plus 1fil}
+\makeatother
 \newcommand{\modelonly}{within the synthetic model}
 \newcommand{\artifactpath}[1]{\texttt{\detokenize{#1}}}
 \renewenvironment{abstract}{\par\noindent\small\bfseries Abstract: }{\par\normalfont\normalsize}
 \renewenvironment{IEEEkeywords}{\par\noindent\small\bfseries\textit{Index Terms: }}{\par\normalfont\normalsize}
 \begin{document}
-\title{Defense Portfolio Stability Under Shared Costs and Sampling Uncertainty}
+\title{Stable Frontiers, Uncertain Decisions in a Synthetic Hospital Ransomware Model}
 \ifanonymous
 \author{Anonymous authors}
 \else
@@ -53,8 +59,8 @@ loss, outage frequency, non-recovery, cost, and burden. An initial check
 appears reassuring: changing the outage definition leaves two profiles'
 frontiers unchanged. Yet this check holds both prices and other estimated
 objectives fixed. Our research question is therefore: \emph{how much of
-that apparent stability survives when these uncertainties are considered
-together?}
+that apparent stability survives changes in endpoint definitions, shared
+prices, scenario samples, and the assumed effectiveness of controls?}
 
 The answer changes the interpretation of the experiment. The
 \CertGuaranteedTotal{} portfolios retained under endpoint uncertainty fall to
@@ -68,13 +74,26 @@ Security portfolio simulation-optimization, interval efficiency, and
 bootstrap selection are established methods
 \cite{kiesling2016,hladik2017,currie2021}. We combine them in a finite
 paired experiment, exploit the model's shared component-price structure,
-and compare the conclusions supported by three kinds of uncertainty
-analysis. The hospital reanalysis is retrospective. Its plans record which
+and compare the conclusions supported by deterministic, resampling, and
+population analyses. A further comparison measures how much finite-sample
+bounds lose relative to approximate paired inference. Coefficient-conditioned
+frontiers expose changes that separate objective rankings can miss.
+The hospital reanalysis is retrospective. Its plans record which
 results were already known and when the positive-upgrade-price extension
 was added.
 
 \section{Model and Experimental Design}
 \subsection{Mechanisms and evidence}
+\begin{figure*}[t]
+\centering\includegraphics[width=\textwidth]{model_pathways.pdf}
+\caption{Model structure and control pathways. Panel A groups the network
+inputs, not a measured hospital topology. Panel B is a conceptual lifecycle:
+healthy and vulnerable are distinct reporting categories, giving seven
+categories in total. The engine uses separate compromise, isolation, and
+restoration flags. False-positive isolation expires; restoration does not
+confer immunity. Panel C links digital availability to the six objectives.}
+\label{fig:model}
+\end{figure*}
 The model represents one facility as a network of 200--300 digital assets.
 Incidents enter through a workstation, internet-facing asset, privileged
 system, medical device, or vendor connection. Compromise, detection,
@@ -92,6 +111,23 @@ isolation lapse or residual recovery failure. Restoration either waits for
 containment or proceeds in parallel in a separate structural experiment.
 Restored nodes become susceptible again, allowing reinfection.
 
+Figure~\ref{fig:model} separates three levels of the experiment. Network
+pathways determine which assets can be reached. Detection and response
+determine how long compromised assets remain active or unavailable. Service
+aggregation converts asset availability into the quantities used for portfolio
+selection. A defense can affect these levels differently: isolation can slow
+spread while also removing an otherwise functioning asset from service.
+The model therefore evaluates the combined consequences of a portfolio.
+
+Restoration illustrates why mechanism choices matter. Isolated compromised
+nodes enter a queue ordered by criticality. A throughput allowance determines
+how many restorations begin, and each takes a fixed number of steps to finish.
+Unavailable backups reduce that allowance. The primary model gates restoration
+on containment; the structural alternative starts recovery while active
+compromise remains elsewhere. Neither rule represents a measured hospital
+recovery schedule. They are competing mechanisms whose consequences can be
+compared in a paired experiment.
+
 An evidence register distinguishes observed quantities, contextual evidence,
 technical assumptions, and normalized decision units. Hospital incident
 studies establish that disruption occurs \cite{neprash2022}; authentication
@@ -101,6 +137,7 @@ effect sizes remain non-identifiable from the available public sources.
 We sample \SampledCoefficients{} coefficients over declared ranges once per
 scenario and share the vector across candidate replays. These ranges express
 assumptions to examine, not estimates of hospital-sector effectiveness.
+Appendix D lists every range alongside its frontier sensitivity.
 
 \subsection{Objectives and paired scenarios}
 A service is available when at least 60\% of its supporting nodes are
@@ -129,6 +166,36 @@ categories, defining an equally weighted scenario mixture. The independent
 units are scenarios; candidate executions are paired observations.
 % claim: independent_units
 % claim: confirmation_size
+
+\subsection{What a portfolio comparison means}
+Let $A_{si}$ be the fraction of available nodes supporting service $s$ in
+time step $i$, $w_s$ its declared weight, and $\Delta t$ the step length in
+hours. The recorded loss is
+\begin{equation}
+ L=\Delta t\sum_i\sum_s w_s\mathbf{1}\{A_{si}<0.60\}.
+ \label{eq:loss}
+\end{equation}
+Thus one weighted service-hour can arise from several patterns of service
+loss. It is not one patient-hour, one hour of complete hospital closure, or
+a monetary loss. The 72-hour endpoint also censors longer disruption.
+These definitions make the arithmetic reproducible while leaving the
+clinical interpretation dependent on evidence outside the simulator.
+
+The six-objective frontier answers a restricted question: which enumerated
+portfolios have no observed competitor that is at least as good on every
+objective and better on one? It does not select one preferred portfolio.
+Cost and burden remain separate because inexpensive controls can consume
+staff effort, while a low-burden choice can require greater expenditure.
+Turning these tradeoffs into a selection would require an explicit budget,
+burden limit, or preference rule. The budget example in Appendix B illustrates
+one such rule without treating it as a universal recommendation.
+
+The full candidate space is small enough to enumerate. This avoids conflating
+failure to find a candidate with evidence that it is inefficient. It also lets
+us compare the frozen discovery shortlist with the full confirmation frontier
+on the same scenario bank. The three capacity profiles define separate
+feasible sets and baselines; a resource-constrained candidate is never removed
+because a candidate from another profile dominates it.
 
 \section{Stability Analysis}
 \subsection{Endpoint definitions and interval efficiency}
@@ -187,8 +254,9 @@ objectives. A rival can dominate under some admissible realization exactly
 when all six minima are nonpositive and at least one is negative. A candidate
 is guaranteed efficient when no rival satisfies that condition.
 
-This calculation preserves shared prices and costs $O(n^2m)$ for fixed
-price dimension. For each rival, its outcome, cost, and burden minima can
+This calculation preserves shared prices and takes $O(n^2m)$ arithmetic
+operations for $n$ candidates, $m$ objectives, and fixed price dimension.
+For each rival, its outcome, cost, and burden minima can
 be attained together because those three uncertainty blocks are independent.
 That suffices for guaranteed retention. It does not produce an exact
 possibly efficient set under coupled prices: avoiding each rival at a
@@ -227,9 +295,68 @@ room for dominance on the omitted tail objective. This is a sufficient,
 potentially conservative population-efficiency screen for the declared
 scenario generator.
 
+\subsection{Variance-sensitive comparison}
+The range-only margin in Eq.~\ref{eq:hoeffding} cannot exploit a small
+variance of paired differences. We compare it with the empirical Bernstein
+bound of Maurer and Pontil \cite{maurer2009}. Their Theorem 11 allows
+independent observations with different distributions, matching the fixed
+entry allocation here. With pooled sample variance $s^2_D$, its margin is
+\begin{equation}
+ b_{\rm EB}=\sqrt{\frac{2s_D^2\log(2K/\alpha)}{n}}
+       +\frac{7R\log(2K/\alpha)}{3(n-1)}.
+ \label{eq:bernstein}
+\end{equation}
+The lower bound is $\overline D-b_{\rm EB}$. Pairing enters through
+$s_D^2$, including the covariance between candidates. The second term remains
+even when the observed differences are constant. The pooled variance may also
+include differences between entry-category means; the theorem permits this
+conservatism without treating the allocation as an i.i.d. mixture sample.
+
+For an approximate comparison, we use the within-entry paired variance in
+Eq.~\ref{eq:pairing}, Welch--Satterthwaite degrees of freedom $\nu$, and
+margin $t_{\nu,1-\alpha/K}\widehat{\rm SE}(\overline D)$. An estimated
+variance of zero triggers the Hoeffding margin, avoiding an unsupported
+zero-width interval. This is a numerical safeguard, not a finite-sample
+coverage theorem for the approximate method.
+
+All three methods use the same $K=\JointMeanFamily{}$ family at
+$\alpha=0.05$, the same paired observations, and the same sufficient
+population screen. We report nominal prices and the positive-gap region at
+$\rho=0.50$. We also count positive lower bounds on mean-loss improvement
+against the free baseline. These answer different questions: a positive
+mean-loss difference need not establish six-objective efficiency. Each
+method receives its own error allocation. Selecting the smallest realized
+margin across methods would require an additional multiplicity argument.
+
+\subsection{Coefficient-conditioned frontier analysis}
+The original coefficient analysis compares separate objective rankings across
+low and high parameter thirds. We extend that question to the complete
+decision set. For each of the ten recorded coefficients, profile, and entry
+category, we select the lowest and highest 26 of its 80 scenario draws.
+Each regime contains 130 paired scenarios with equal entry-category weights.
+Stable scenario order resolves ties. Every candidate is evaluated through
+its recorded outcomes on that same subset; no simulator coefficient is changed.
+
+For each of the resulting \CoefficientRegimes{} regimes, we recompute the
+six objectives, including the empirical tail with its original ties convention.
+We measure frontier Jaccard similarity to the full-bank frontier, additions,
+removals, and endpoint and shared-price certificates. Jaccard is the size of
+the intersection divided by the size of the union. A low value identifies a
+different decision set, even if individual objective rankings remain correlated.
+
+Reducing a bank from 400 to 130 scenarios can itself change its frontier.
+We therefore generate 1,000 matched-size random subsets per profile, drawing
+26 scenarios without replacement within each entry category. Their Jaccard
+quantiles provide a descriptive reference for the coefficient regimes.
+The reference uses the same bank, candidate space, and objective estimators.
+It is not a null distribution for a significance test, and its central range
+is not a confidence interval. Coefficients other than the selected one, and
+the realized incident trajectories, can differ between regimes. This analysis
+measures conditional sensitivity within the recorded design, not the causal
+effect of setting a coefficient or a guarantee over their joint range.
+
 \subsection{Structural and external checks}
-The preserved parameter analysis compares rankings between the low and
-high thirds of each sampled coefficient. A distinct paired structural bank
+A distinct paired structural bank
 of \StructuralTrials{} scenarios per profile compares containment-gated
 and parallel restoration for \StructuralCandidates{} selected candidates.
 These alternatives examine mechanisms that resampling a fixed bank cannot

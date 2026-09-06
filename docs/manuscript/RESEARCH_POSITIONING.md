@@ -17,10 +17,19 @@ The novelty is the specific joint study, dependency-aware implementation,
 and documented scientific finding. This is not a claim to a new general
 optimization or statistical theory.
 
+The final comparison adds complete frontiers conditioned on all ten
+unidentified coefficients, with matched-size reference subsets. It also
+quantifies the difference between range-only bounds, empirical Bernstein,
+and approximate paired inference. These are new analyses of the existing
+bank, not an independently developed hospital experiment.
+
 Additional primary sources reviewed for this revision:
 
 | Primary source | Relevance and boundary |
 | --- | --- |
+| [Maurer and Pontil, 2009, official COLT paper](https://www.cs.mcgill.ca/~colt2009/papers/012.pdf) | Theorem 11 explicitly permits independent, nonidentically distributed observations; pooled paired variance plus the finite-sample range penalty supports the comparison |
+| [Ide and Schobel, 2016, publisher](https://link.springer.com/article/10.1007/s00291-015-0418-7) | Survey distinguishing robustness concepts in uncertain multi-objective optimization; prevents presenting a finite specialization as a new general concept |
+| [Bitran, 1980, publisher](https://pubsonline.informs.org/doi/abs/10.1287/mnsc.26.7.694) | Earlier interval-coefficient multiple-objective optimization; part of the mathematical lineage |
 | [Currie and Monks, 2021](https://doi.org/10.1145/3462187); [accepted manuscript](https://eprints.soton.ac.uk/447867/) | BootComp is a direct predecessor for bootstrap subset selection with common random numbers and includes a hospital ward application |
 | [Andradóttir and Lee, 2021](https://doi.org/10.1016/j.ejor.2020.10.021) | Pareto-set estimation with correct-selection guarantees; our fixed-bank diagnostic is not a replacement sequential selection procedure |
 | [Hoeffding, 1963](https://doi.org/10.1080/01621459.1963.10500830) | Independent bounded-observation inequality used with a union bound; no new concentration result is claimed |
@@ -32,7 +41,7 @@ For presentation, the accepted BootComp paper and the
 the progression from problem formulation through methods to numerical
 findings. Their wording, institutional identities, and publication marks
 were not copied. The manuscript uses the existing IEEEtran layout with
-shorter result headings, a central comparison figure, and technical appendices.
+shorter result headings, a model diagram, comparison figures, and technical appendices.
 
 | Primary work | Established contribution | Relation to this project |
 |---|---|---|

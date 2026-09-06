@@ -1,37 +1,42 @@
 # Final revision record
 
-Version 3.2.0, September 6, 2026.
+Version 3.3.0, September 6, 2026.
 
 | Review concern | Completed revision |
 | --- | --- |
-| Endpoint-only certificates held five estimated objectives fixed | Recomputed all stochastic objectives in 1,000 paired stratified resamples per profile and combined them with endpoint intervals and shared-price uncertainty |
-| Arbitrary cost and burden assumptions received too little attention | Implemented exact pairwise price minima over two shared coefficient regions, five radii each; checked support functions against independent linear programming |
-| A reassuring deterministic result could be read as statistical confidence | Added a separate simultaneous Hoeffding screen over 276,048 ordered mean contrasts, with all three planned alpha levels and its conservative negative finding |
-| A wide price box might make upgrades free | Recorded and ran a positive-gap extension after the first results; all original-region values reproduce exactly; positive-price retention still falls from 72 to 27 |
-| External evidence was too remote from clinical constructs | Archived and analyzed the licensed CIPHER v1.0.1 dataset with a mapping recorded before aggregation, complete category counts, and source influence ranges |
-| Related work omitted direct simulation-selection precedents | Added BootComp and guaranteed Pareto-set selection; positioned the contribution as a joint study and implementation, not a new interval or concentration theorem |
-| Too many competing result sections and repeated caveats | Reorganized into four result sections with one central figure; moved proofs and secondary diagnostics into appendices; shortened headings and prose |
-| Typography and draft language undermined presentation | Removed em dashes, including automatic template punctuation; fixed a stranded table; retained final-product status |
-| The assistance statement excluded earlier code and audit work | Used one sentence covering literature review, code development and revision, verification, and manuscript preparation |
-| Historical blocking checklist appeared current | Added an archival notice and a current release-status record without deleting the original audit |
-| The CrowdStrike reference had incorrect authors | Corrected all authors, volume, issue, article number, and DOI against the publisher and PubMed |
+| Decimal prices could make a feasible zero-radius region appear empty | Construct vertices in original coordinates with scale-aware boundary tolerance; regression tests cover decimal singleton regions, true infeasibility, and three scales |
+| Hoeffding's range-only margin obscured paired precision | Compare empirical Bernstein and approximate stratified paired t using the same observations, endpoints, family size, and price regions |
+| Coefficient sensitivity reported rankings instead of the complete frontier | Recompute every objective and frontier in all 60 low/high coefficient regimes; release membership, objectives, and certificates |
+| Smaller conditional subsets could manufacture apparent instability | Compare with 3,000 matched-size random subsets, preserving entry weights and candidate pairing; label the reference as descriptive |
+| The strongest outcome-versus-decision finding was buried | Lead the abstract and discussion with the mismatch between frequency changes and frontier changes |
+| Model mechanics and mathematical scope were difficult to follow | Add an original model diagram, loss equation, worked interpretation table, all coefficient ranges, and an evidence-scope table |
+| The literature lineage was too narrow | Add Bitran, Ide and Schobel, and Maurer-Pontil; retain direct simulation-selection precedents and identify recent preprints explicitly |
+| The paper felt compressed | Expand to a full methods treatment with results, figures, and technical appendices; retain accurate research dates and retrospective labels |
 
-## What the added research establishes
+## Results of the added analyses
 
-At ±50% shared prices, the original 72 endpoint certificates become 21 under
-monotone prices or 27 when upgrades retain at least half their nominal
-incremental price. With resampling, 8 or 12 original certificates meet a
-95% retention-frequency criterion. The family-wise population screen
-certifies only free baselines, so it does not turn these resampling results
-into a population-efficiency guarantee for purchased controls.
+The high-capacity best-versus-baseline margin is 106.32 hours under Hoeffding,
+74.31 under empirical Bernstein, and 1.74 under approximate paired t. The
+observed benefit is 1.95 hours. Empirical Bernstein does not eliminate its
+finite-sample range penalty. At nominal prices, approximate inference supports
+12 purchased portfolios in the sufficient population screen; only one remains
+under positive-gap 50% price stress. The two finite-sample methods retain
+only free baselines in these settings. Approximate findings are labeled and
+are not converted into exact guarantees.
 
-CIPHER contributes independent source material, not an independently run
-defense experiment. Of 316 coded records, 85 concern absent explicit
-services and 97 carry annotations beyond the 72-hour horizon. Time labels
-are not outage durations. Removing one reference at a time makes the
-beyond-horizon share range from 17.4% to 31.7%, showing source concentration.
+Coefficient-regime Jaccards range from 0.535 to 0.815, 0.708 to 1.000, and
+0.429 to 1.000 across the resource-constrained, intermediate, and high-capacity
+profiles. Six of 60 regimes fall below their matched-size reference's 2.5th
+percentile. This is a descriptive comparison across overlapping conditional
+subsets, not a multiplicity-adjusted significance test or causal estimate.
+Every coefficient, including weak findings, is reported.
 
-The original simulation, trial banks, protocols, benchmark functions,
-failed comparisons, and historical corrections remain preserved. No
-hospital effectiveness data, author attestations, endorsements, or
-acceptance claims were invented. Earlier revision details remain in Git history.
+## Preservation and status
+
+All five existing joint-analysis CSVs reproduce release 3.2.0 byte for byte
+after the decimal fix. The original raw simulation banks, configuration,
+frozen protocols, engineering definitions, failed external comparisons, and
+historical audit remain preserved. The assistance disclosure remains one
+sentence. The final research artifact does not assert a five-month history,
+independent clinical validation, author sign-offs, or venue acceptance.
+Earlier revision details remain in Git history.

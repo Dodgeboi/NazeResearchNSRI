@@ -1,20 +1,22 @@
-An unchanged Pareto frontier can make a simulation look more robust than it
-is. We examine this problem in a single synthetic hospital model with
-pathway-specific defenses, six objectives, and \RevisionExecutions{} paired
-confirmation executions across 400 profile-candidates. Changing the clinical
-outage definition moves high-capacity event frequency by \HighGap{}
-percentage points without changing its observed frontier. An interval
-calculation retains \CertGuaranteedTotal{} of \CertObservedTotal{} efficient
-portfolios when only that endpoint varies. We then let shared component
-prices vary and recompute the stochastic objectives through paired,
-entry-stratified resampling. At $\pm50\%$ prices, even requiring every
-upgrade to retain half its nominal incremental price reduces guaranteed
-retention to \JointRetainedFloored{}. Only \JointFrequentFloored{} of the
-original certificates persist in at least 95\% of resamples. A conservative
-simultaneous bound on population means supports only the free baselines.
-An external construct audit of \CipherRecords{} public clinical-harm records
-also identifies services and time periods outside the model. The contribution
-is a reproducible joint stability study with an exact shared-price retention
-calculation and explicit separation of deterministic guarantees, resampling
-frequencies, and statistical confidence. The results identify which assumptions
-deserve scrutiny before using the simulated tradeoffs to inform a decision.
+The largest change in a simulated outcome need not produce the largest change
+in a decision. We examine this distinction in a synthetic hospital ransomware
+model with six objectives and shared scenarios across defense portfolios.
+Changing the outage threshold moves high-capacity event frequency by
+\HighGap{} percentage points without changing its frontier; a smaller
+frequency change alters the resource-constrained frontier. We then examine
+the assumptions that this endpoint comparison holds fixed. An interval
+calculation retains \CertGuaranteedTotal{} observed efficient portfolios
+under endpoint uncertainty, falling to \JointRetainedFloored{} when shared
+component prices vary while upgrades remain strictly costly. Paired resampling
+and coefficient-conditioned regimes reveal further changes in membership.
+A comparison of Hoeffding, empirical Bernstein, and approximate paired t
+bounds shows how the inferential method changes the conclusions supported
+by the same data. Empirical Bernstein improves the margins but still
+certifies only free baselines; the approximate method supports additional
+portfolios under nominal prices. Public clinical-harm records independently
+expose gaps in modeled services and time coverage. The contribution is an
+auditable comparison of these sources of decision instability, with a
+shared-price retention calculation and explicit distinctions between
+deterministic guarantees, conditional sensitivity, and statistical inference.
+The findings direct validation toward assumptions that can change the choice,
+while keeping the limits of the synthetic evidence visible.

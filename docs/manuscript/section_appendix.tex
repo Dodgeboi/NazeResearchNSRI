@@ -16,6 +16,12 @@ rival. The existence of any such rival disproves universal retention;
 its absence proves retention. Price calculations use integer upgrade
 coefficients and round cancellation residues to 12 decimal places.
 Independent linear-programming checks agree to $10^{-10}$.
+The decimal-price implementation constructs intersections in the original
+coordinates and admits boundary roundoff within eight machine epsilons at
+the input scale. This fixes feasible singleton regions such as adjacent
+prices 0.1 and 0.4. Regression cases cover small and large scales and reject
+gaps that are truly infeasible. The regenerated integer-tariff analysis
+reproduces every published joint-analysis CSV byte for byte.
 
 The population screen follows from Hoeffding's inequality for independent
 bounded observations, including nonidentically distributed observations in
@@ -115,3 +121,64 @@ file hashes recorded in manifests. The reproduction guide documents
 commands and historical provenance, including an earlier dirty source
 state. Automated checks cover specified relationships; an unregistered
 interpretation can still escape them.
+
+\section{Coefficient Ranges and Evidence Scope}
+\begin{table*}[t]
+\centering\small
+\caption{All coefficient regimes. Ranges are original declared assumptions.
+Each profile entry gives low-third / high-third frontier Jaccard relative
+to its full confirmation frontier. The regimes use equal entry weights and
+the same 130 scenarios across every candidate in that profile.}
+\label{tab:all-coefficients}
+\begin{tabular}{@{}llrrr@{}}\toprule
+Coefficient & Declared range & Resource-constrained & Intermediate & High-capacity\\\midrule
+\tableinput table_all_coefficients_rows.tex
+\bottomrule\end{tabular}
+\end{table*}
+The ranges in Table~\ref{tab:all-coefficients} enter the original generator
+as independent uniform coefficient draws per scenario. The conditional
+analysis selects empirical thirds within each entry category. Their realized
+cutoffs need not coincide with one-third and two-thirds of the declared range.
+Released membership tables identify every scenario, its entry category, and
+its selected coefficient value, allowing the subsets to be reconstructed.
+
+The analysis applies the same sequence to every coefficient: construct paired
+subsets; recompute the objective matrix; enumerate the frontier; and compare
+membership with the full bank. It also recomputes endpoint guarantees and
+shared-price guarantees at $\rho=0.50$. Per-candidate objectives and all
+matched-subset counts are released. This records gains as well as losses
+and prevents a low Jaccard from being mistaken for a uniform degradation
+in all portfolio outcomes.
+
+The price proof does not extend to these coefficients. Prices enter the
+objective table linearly through known upgrade features. Propagation,
+detection, isolation, service thresholds, and restoration interact through
+nonlinear trajectories. A coefficient interval is therefore not an objective
+interval unless valid trajectory bounds are supplied. Conditional subsets
+provide empirical sensitivity evidence, but neither their extrema nor their
+intersection of frontiers certifies the continuous coefficient box.
+
+\begin{table*}[t]
+\centering\small
+\caption{What each evidence layer establishes. The layers address different
+questions; success in one cannot substitute for evidence in another.}
+\label{tab:evidence-scope}
+\begin{tabularx}{\textwidth}{@{}lXX@{}}\toprule
+Evidence layer & Question answered & Boundary of the conclusion\\\midrule
+Finite objective boxes & Can any allowed objective realization remove a candidate? & Exact for the declared Cartesian box and finite candidate set.\\
+Shared prices & Can a common admissible tariff schedule enable a dominator? & Preserves common component prices; analyst-chosen ranges.\\
+Paired bootstrap & How often do original certificates recur after resampling? & Conditional frequencies; no claimed frontier-confidence coverage.\\
+Mean bounds & Can every rival be excluded using screened population coordinates? & Sufficient screen; finite-sample or approximate coverage as labeled.\\
+Coefficient regimes & Does the complete frontier change across observed input regimes? & Conditional subsets; no fixed-coefficient intervention or joint-box guarantee.\\
+Restoration alternative & Does a different recovery mechanism change outcomes and membership? & Paired structural comparison within a selected candidate bank.\\
+CIPHER coverage & Which reported services and time periods are missing? & Public coded harms with repeated sources; no control-effect calibration.\\
+Engineering benchmarks & Do finite-box calculations work on independently defined functions? & Implementation checks; no hospital validation.\\
+Interpretation assertions & Do specified statements follow from registered data and scope? & Known-case regression checks; no general prose-verification claim.\\\bottomrule
+\end{tabularx}
+\end{table*}
+Table~\ref{tab:evidence-scope} also suggests a practical sequence for reuse.
+First establish the decision set and preserve pairing in the objective table.
+Then separate uncertainty that changes outcome definitions, valuation, sampling,
+and mechanisms. Finally, match any substantive recommendation to evidence
+about the modeled setting. The software can expose a gap in that chain;
+it cannot supply missing operational measurements.

@@ -1,30 +1,46 @@
-Kiesling et al.\ combine security-control models, multi-objective
-simulation-optimization, and portfolio selection \cite{kiesling2016}.
-Hlad\'ik studies efficiency under interval uncertainty \cite{hladik2017}.
-Our finite-box formulas are direct specializations of that established
-idea. Their role is to make a limited stability claim explicit and
-computable; the shared-price calculation preserves the dependency
-structure of the portfolio cost model.
+Security portfolio simulation-optimization already combines control models,
+multiple objectives, and resource constraints. Kiesling et al.\ provide a
+direct precedent \cite{kiesling2016}. Our contribution concerns the stability
+of the conclusions drawn from one enumerated, paired experiment. It is not
+the introduction of simulation-based security portfolio selection.
 
-Simulation ranking and selection also has a substantial literature.
-Currie and Monks's BootComp uses bootstrap comparisons, permits common
-random numbers, and includes a hospital ward application \cite{currie2021}.
-Andrad\'ottir and Lee develop Pareto-set selection procedures with guaranteed
+Efficiency under uncertain coefficients also has a long history. Bitran
+studies linear multiple-objective problems with interval coefficients
+\cite{bitran1980}; Ide and Sch\"obel review the distinct notions of robustness
+used in uncertain multi-objective optimization \cite{ide2016}. Hlad\'ik
+examines possible efficiency and interval robust counterparts
+\cite{hladik2017}. Our finite-box formulas specialize this lineage to a
+recorded objective table. The shared-price calculation retains the dependence
+created by a common tariff schedule. Its exactness concerns the stated
+finite table and uncertainty region, not a new general robustness concept.
+The price region is a box with ordering and gap constraints; it does not
+impose a budget on the number of components that can depart from nominal.
+
+Simulation ranking and selection provides a second comparison. Currie and
+Monks's BootComp uses bootstrap comparisons, permits common random numbers,
+and includes a hospital ward application \cite{currie2021}. Andrad\'ottir
+and Lee develop Pareto-set selection procedures with guaranteed
 correct-selection probabilities under independent or correlated sampling
-\cite{andradottir2021}. Our fixed-bank study does not propose a replacement
-selection algorithm. It compares deterministic retention, conditional
-resampling frequency, and a conservative simultaneous mean screen on
-the same candidate set.
+\cite{andradottir2021}. Our fixed-bank analysis does not replace those
+selection procedures. It asks how endpoint and shared-price uncertainty
+interact with uncertainty in already collected simulation outputs.
+The Hoeffding and empirical Bernstein screens apply established inequalities
+\cite{hoeffding1963,maurer2009}; the paired t comparison exposes the practical
+cost of demanding a finite-sample guarantee in this experiment.
 
-The design follows the transparency goals of STRESS reporting
-\cite{monks2019}, common-random-number practice \cite{buffalo2026},
-and explicit separation of prior plans from retrospective analysis
-\cite{nosek2018}. Multiverse and specification-curve studies motivate
-examining analytical choices \cite{steegen2016,simonsohn2020};
-our study does not implement their joint inference procedures.
-Statistical consistency checks \cite{nuijten2016}, metamorphic simulation
-tests \cite{raunak2021}, and the ABE-Ralph experimental-fidelity preprint
-\cite{yu2026} provide context for the interpretation assertions.
-The scientific addition is the documented change in conclusions when
-several assumptions are examined together, supported by an auditable
-implementation and public construct evidence.
+The reporting follows STRESS guidance \cite{monks2019} and separates
+recorded plans from retrospective extensions \cite{nosek2018}.
+Multiverse and specification-curve studies motivate examining analytical
+choices \cite{steegen2016,simonsohn2020}, though we do not implement their
+joint inference procedures. Statistical consistency checks \cite{nuijten2016}
+and metamorphic simulation tests \cite{raunak2021} motivate explicit
+verification of relationships among results. Recent preprints on common
+random numbers \cite{buffalo2026} and experimental fidelity \cite{yu2026}
+provide additional context. The paired design and interpretation checks do
+not depend on either preprint's priority or empirical claims.
+
+The transferable result is an analysis pattern: distinguish changes in
+outcome levels from changes in the choice set; preserve shared inputs when
+varying prices and scenarios; and report what each uncertainty procedure
+actually resolves. Applying that pattern to this model turns an apparently
+stable endpoint comparison into a more demanding test of portfolio stability.

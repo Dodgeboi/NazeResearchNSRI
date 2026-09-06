@@ -85,6 +85,33 @@ This generator includes the joint-stability and CIPHER tables and central
 figure, alongside earlier supplementary graphics. No script silently
 stages or commits its outputs.
 
+## Final bound and coefficient comparison
+
+From clean committed source, after restoring the unchanged confirmation bank:
+
+    python scripts/analyze_final_comparison.py
+
+The recorded plan is study/FINAL_COMPARISON_PLAN.md. The calculation compares
+Hoeffding, Maurer-Pontil Theorem 11 empirical Bernstein, and approximate
+stratified paired t margins at alpha 0.05 for the same 276,048 ordered
+mean contrasts. The t method substitutes a Hoeffding margin when estimated
+variance is zero and is still labeled approximate. All candidate retention
+and baseline comparison rows are released.
+
+For each coefficient and entry stratum, low and high regimes select 26 of
+80 scenarios. The 60 regimes retain candidate pairing and equal entry weights.
+The 1,000 matched random subsets per profile use seeds 2026090700 through
+2026090702, sampling without replacement. These are finite-bank reference
+distributions, not confidence intervals or tests. Released membership tables
+record actual regime cutoffs through every selected parameter value.
+
+Commit regenerated comparison tables before the final paper generator. It
+verifies comparison_manifest.json and generates all additional numeric macros,
+tables, coefficient plots, and the explanatory model diagram. The earlier
+joint analysis was regenerated after the decimal-price fix and all its CSVs
+match release 3.2.0 byte for byte. Original simulation inputs, trial banks,
+and frozen protocols remain unchanged.
+
 ## Build the PDFs
 
 The paper uses IEEEtran 1.8b with `[conference,compsoc]`, US letter. With Tectonic 0.17.0, from the repository root:

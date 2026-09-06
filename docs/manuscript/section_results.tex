@@ -89,6 +89,87 @@ membership in every profile.
 The new calculation answers the stronger universal question over the
 specified price region rather than relying on sampled price draws.
 
+\subsection{What variance-sensitive bounds resolve}
+\begin{table*}[t]
+\centering\small
+\caption{Same-family statistical comparison at $\alpha=0.05$ and
+$K=\JointMeanFamily{}$. The margin is for the largest observed mean-loss
+benefit against the free baseline, in weighted hours. Positive comparisons
+count purchased candidates whose mean-loss lower benefit is positive.
+The final columns count purchased candidates retained by the sufficient
+population screen at nominal prices and at positive-gap $\rho=0.50$ prices.
+The paired t row is approximate; the other rows have finite-sample coverage.}
+\label{tab:bounds}
+\begin{tabular}{@{}llrrrr@{}}\toprule
+Profile & Method & Margin & Positive comparisons & Retained, $\rho=0$ & Retained, $\rho=.5$\\\midrule
+\tableinput table_bound_comparison_rows.tex
+\bottomrule\end{tabular}
+\end{table*}
+Empirical Bernstein narrows the high-capacity best-versus-baseline margin
+from \ComparisonHoeffdingHighMargin{} to \ComparisonBernsteinHighMargin{}
+weighted hours. The remaining margin is still much larger than the
+\HighSaving{}-hour observed benefit. Its finite-sample range term prevents
+the small paired variance from producing a narrow interval. Both finite-sample
+methods certify only the free baselines under the tested price regions.
+
+The approximate paired t margin for that same contrast and comparison family
+is \ComparisonTHighMargin{} hours, giving a positive lower benefit of
+\ComparisonTHighLower{} hours. Across the profiles, its population screen
+retains \ComparisonTPurchasedNominal{} purchased candidates at nominal
+prices, falling to \ComparisonTPurchasedHalf{} under positive-gap price
+stress (Table~\ref{tab:bounds}). This comparison separates two issues that
+the original range-only bound could not: the conservatism of the inferential
+procedure and the sensitivity of relative costs. The additional retentions
+depend on approximate inference and are not promoted to exact certificates.
+
+\subsection{Control assumptions and the complete frontier}
+\begin{figure*}[t]
+\centering\includegraphics[width=\textwidth]{coefficient_frontiers.pdf}
+\caption{Frontier similarity in coefficient-conditioned regimes. Each point
+uses 130 paired scenarios, selected within entry categories. The shaded band
+is the central 95\% of Jaccards from matched-size random subsets of the same
+bank; the dotted line is their median. These bands describe finite-bank
+variability, not confidence intervals. The two points per row are low and
+high empirical thirds.}
+\label{fig:coefficients}
+\end{figure*}
+The coefficient-conditioned frontiers vary substantially
+(Figure~\ref{fig:coefficients}). Their Jaccard similarities range from
+\CoefficientResourceMin{} to \CoefficientResourceMax{} in the
+resource-constrained profile, \CoefficientIntermediateMin{} to
+\CoefficientIntermediateMax{} in the intermediate profile, and
+\CoefficientHighMin{} to \CoefficientHighMax{} in the high-capacity profile.
+The high-capacity range is wide even though its common-threshold frontier
+was unchanged. Threshold agreement alone therefore misses sensitivity
+visible elsewhere in the same scenario design.
+
+\begin{table}[t]
+\centering\small
+\caption{Coefficient-regime Jaccard ranges and matched-size reference ranges.
+The last column counts regimes below the reference's 2.5th percentile. It
+is descriptive and has no multiple-testing interpretation.}
+\label{tab:coefficients}
+\begin{tabular}{@{}lrrr@{}}\toprule
+Profile & Regimes & Reference & Below\\\midrule
+\tableinput table_coefficient_summary_rows.tex
+\bottomrule\end{tabular}
+\end{table}
+In the resource-constrained high patch-effect regime,
+\CoefficientPatchRemoved{} of \CoefficientPatchReference{} original
+frontier members disappear. High traversal rates also give a Jaccard below
+every matched-size random draw in that profile. Across all profiles,
+\CoefficientBelowReference{} of \CoefficientRegimes{} regimes fall below
+their reference's 2.5th percentile. We report the complete set in Appendix D,
+including regimes well inside the reference range.
+
+These comparisons strengthen the sensitivity analysis without identifying
+any hospital coefficient. In particular, a high-capacity regime's small
+frontier can change markedly after only a few membership changes, and random
+subsets also give a broad similarity range. Conditional selection reduces
+sample size and changes the realized mix of other inputs. The matched-size
+reference helps expose that limitation; it does not remove it or turn the
+observed associations into control-effect estimates.
+
 \subsection{Structural and clinical gaps}
 The structural experiment finds \StructuralOnlyGated{} candidates efficient
 only with containment-gated restoration and \StructuralOnlyParallel{} only

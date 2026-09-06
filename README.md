@@ -1,15 +1,16 @@
-# Defense Portfolio Stability Under Shared Costs and Sampling Uncertainty
+# Stable Frontiers, Uncertain Decisions in a Synthetic Hospital Ransomware Model
 
-**Final research manuscript, version 3.2.0.**
+**Final research manuscript, version 3.3.0.**
 
 This student research project asks which simulated defense decisions remain
 efficient when outcome definitions, shared component prices, and scenario
-samples change together. The application is one synthetic hospital network
+samples and assumed control effects change. The application is one synthetic hospital network
 with pathway-specific controls and six decision objectives.
 
 ## Paper and results
 
 - [Final paper](docs/manuscript/main.pdf), [editable source](docs/manuscript/main.tex), and [anonymous copy](docs/manuscript/anonymous.pdf)
+- [Bound comparison and coefficient frontiers](data/final_comparison), [recorded analysis plan](study/FINAL_COMPARISON_PLAN.md)
 - [Joint stability results](data/joint_stability), [analysis plan](study/JOINT_STABILITY_PLAN.md), and [recorded price-region extension](study/JOINT_STABILITY_EXTENSION.md)
 - [Public CIPHER construct audit](docs/evidence/CIPHER_COVERAGE.md), [licensed raw dataset](data/cipher/raw), and [processed counts](data/cipher/processed)
 - [Original endpoint certificates and witnesses](data/frontier_certificates), [paired interpretation analysis](data/interpretation), and [executable assertions](study/interpretation_contracts.json)
@@ -38,6 +39,21 @@ five entry categories.
    without an explicit modeled service and 97 have Week 2 or First Month
    annotations. These records identify construct gaps, not recovery durations
    or independent incident rates.
+
+The final comparison adds three inferential methods with the same 276,048
+contrast family. Empirical Bernstein narrows the high-capacity best-versus-baseline
+margin from 106.32 to 74.31 weighted hours; the approximate paired t margin is
+1.74 hours. The approximate population screen retains 12 purchased portfolios
+at nominal prices and one under positive-gap 50% price stress. The two
+finite-sample methods retain only free baselines in these settings.
+
+All 60 coefficient-conditioned regimes and 3,000 matched-size random subsets
+are reported. In the resource-constrained high patch-effect regime, 26 of
+64 original frontier members disappear. These are conditional analyses of
+the original bank, not fixed-coefficient interventions or new hospital data.
+The decimal-price boundary defect is fixed; every earlier joint-analysis
+CSV reproduces byte for byte. The paper includes the model diagram, full
+coefficient table, proofs, and an evidence-scope table.
 
 The original structural experiment, 6,000 engineering perturbations, 512
 exact corner checks, and historical interpretation corrections remain
