@@ -1,0 +1,136 @@
+{
+  "code": {
+    "available": true,
+    "branch": "research/methods-revision",
+    "commit": "8e9a46d608aef0ca9e2bbcc0052f760d80279a00",
+    "dirty": false,
+    "dirty_paths": []
+  },
+  "created_at": "2026-09-06T05:22:55+00:00",
+  "description": "Finite interval efficiency certificates and published engineering benchmark transfer checks.",
+  "environment": {
+    "implementation": "CPython",
+    "machine": "AMD64",
+    "packages": {
+      "matplotlib": "3.11.0",
+      "networkx": "3.6.1",
+      "numpy": "2.3.5",
+      "pandas": "3.0.1",
+      "scipy": "1.18.0",
+      "yaml": "6.0.3"
+    },
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.14"
+  },
+  "inputs": [
+    {
+      "bytes": 101343517,
+      "path": "data/multiobjective/confirmatory/multiobjective_confirmatory_results.csv",
+      "sha256": "6b558145ae770f744f21a9d4c096c02e7d205f039b101eb98084dda7f2fdce91"
+    },
+    {
+      "bytes": 61516,
+      "path": "data/multiobjective/confirmatory/portfolio_objective_summary.csv",
+      "sha256": "cf41ebdacf092df8855edfa61893e5dcdacc19f3a76f7fc9166f3bc27b27fdab"
+    },
+    {
+      "bytes": 7989,
+      "path": "scripts/analyze_frontier_certificates.py",
+      "sha256": "64130534ebc61756fe7d1145b0838df2b2720e1cdf50291ba6ecb52786169cae"
+    },
+    {
+      "bytes": 3065,
+      "path": "src/grrc/frontier_certificates.py",
+      "sha256": "e807fdc415fd3cbe1d6c99b937a125ab9584166777a8fc5eee0b3f0762fc4324"
+    },
+    {
+      "bytes": 12438,
+      "path": "src/grrc/interpretation.py",
+      "sha256": "cc8f74338f875054efabc64bbb8dc15f7a1bcafca0822e2b580f8cbcabb0de7b"
+    },
+    {
+      "bytes": 34928,
+      "path": "src/grrc/multiobjective.py",
+      "sha256": "22053598e5453d63819b35d282482626d848ecd5880c490ab9b7e8b6c9050468"
+    },
+    {
+      "bytes": 14389,
+      "path": "src/grrc/provenance.py",
+      "sha256": "bc68c43d8d9367b0e6ce70dcfb4eb4d5a82e0c59e9a4676cae73ad9aeb664f02"
+    },
+    {
+      "bytes": 3518,
+      "path": "src/grrc/utilities.py",
+      "sha256": "3ee09640a09c3868b530c7937133334acf2897939c2349e6a7dd1bc1fc531afa"
+    },
+    {
+      "bytes": 3816,
+      "path": "study/FRONTIER_CERTIFICATE_PLAN.md",
+      "sha256": "6be25710eeab3d4ea7d4484458443bcdda039edfa2892e47ef76a46fe959cdd0"
+    },
+    {
+      "bytes": 1069,
+      "path": "vendor/reproblems/LICENSE.txt",
+      "sha256": "b6bcfcbf05e958b0ceab88cf07e29b1ed2fbee441fce7ca32136f23d2a212d60"
+    },
+    {
+      "bytes": 1035,
+      "path": "vendor/reproblems/PROVENANCE.md",
+      "sha256": "a5db6d57d0e315cae5420c5bf35e75f381a2444d8dcfd722c76b21d8eb649017"
+    },
+    {
+      "bytes": 45489,
+      "path": "vendor/reproblems/reproblem.py",
+      "sha256": "d55bf2007fd210de01793b655514d9d533f6c4fbc1b3bea5d993e5b18979ed12"
+    }
+  ],
+  "outputs": [
+    {
+      "bytes": 20921,
+      "path": "data/frontier_certificates/external_candidates.csv",
+      "sha256": "eae629643c34731def7286ad72f5ff3f87d064817ac7b20fba18da4e1ce3bb0a"
+    },
+    {
+      "bytes": 127,
+      "path": "data/frontier_certificates/external_corner_checks.csv",
+      "sha256": "bb60a364cdd3494571dbfa42b1598eb74e84b463badf3e0e24253efcd5405649"
+    },
+    {
+      "bytes": 138839,
+      "path": "data/frontier_certificates/external_perturbations.csv",
+      "sha256": "6c48fb6acf219f4fd0c58e9f32a05614a04410812c0359413f8501ae31ec2ff8"
+    },
+    {
+      "bytes": 318,
+      "path": "data/frontier_certificates/external_summary.csv",
+      "sha256": "25c5692207186e45c9a18687f97b745936ce5617d37a7a50984d58aa220b91b4"
+    },
+    {
+      "bytes": 70260,
+      "path": "data/frontier_certificates/hospital_candidates.csv",
+      "sha256": "5987a60227a1a02db6e5e3d607190ba5815f1bbe556e973c5cb68a0a398efe76"
+    },
+    {
+      "bytes": 217,
+      "path": "data/frontier_certificates/hospital_summary.csv",
+      "sha256": "ad7c89ae594234c4efc51f9514f120253c77dfaadec9c4ed605feb1850ecd8ef"
+    }
+  ],
+  "parameters": {
+    "candidate_seed": 2026090603,
+    "candidates_per_problem": 128,
+    "draws_per_setting": 1000,
+    "external_source_commit": "7876b4e465eac381a256e461d1310b8bb2b92846",
+    "hospital_scope": "five objectives fixed; k4-to-k1 candidate-specific outage intervals",
+    "limits": "independently defined benchmark problems; same evaluation workflow; no hospital validation or NLP accuracy claim",
+    "perturbation_seed": 2026090604,
+    "radii": [
+      0.01,
+      0.05,
+      0.1
+    ]
+  },
+  "protocol": null,
+  "run_id": "frontier-certificates",
+  "stage": "analysis"
+}
