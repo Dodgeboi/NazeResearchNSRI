@@ -1,0 +1,165 @@
+{
+  "code": {
+    "available": true,
+    "branch": "research/methods-revision",
+    "commit": "1ddd2615a20b89a5f05d20c5ef3b7905a9db76fc",
+    "dirty": false,
+    "dirty_paths": []
+  },
+  "created_at": "2026-09-06T06:50:28+00:00",
+  "description": "External dataset construct coverage; coded records are not independent incidents.",
+  "environment": {
+    "implementation": "CPython",
+    "machine": "AMD64",
+    "packages": {
+      "matplotlib": "3.11.0",
+      "networkx": "3.6.1",
+      "numpy": "2.3.5",
+      "pandas": "3.0.1",
+      "scipy": "1.18.0",
+      "yaml": "6.0.3"
+    },
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.14"
+  },
+  "inputs": [
+    {
+      "bytes": 28292,
+      "path": "data/cipher/raw/LICENSE.txt",
+      "sha256": "b4e79382e6b4caa952fb293cf09b905f992c85b8eb7f0b805ea228b2f989940a"
+    },
+    {
+      "bytes": 303958,
+      "path": "data/cipher/raw/cipher-v1.0.1.csv",
+      "sha256": "3ee4a39ba8e2b058832d6eadf014f569baad43851d1cba25043b7a8b85b38204"
+    },
+    {
+      "bytes": 1047,
+      "path": "data/cipher/raw/source_manifest.json",
+      "sha256": "7fdf5df49ad97bba06c38301b32f84fd98939c8acb40b430f1d5972d999874af"
+    },
+    {
+      "bytes": 1266,
+      "path": "data/cipher/raw/upstream_CITATION.cff",
+      "sha256": "4381a91fc0b82ad0cdb8573c0870b55f58248d141cef4f8a3f583651106cae32"
+    },
+    {
+      "bytes": 2665,
+      "path": "data/cipher/raw/upstream_README.md",
+      "sha256": "b714b1f43a66a72b474dac296a02d44d817b99402000aac8f30a9c134a9d41de"
+    },
+    {
+      "bytes": 5897,
+      "path": "scripts/analyze_cipher_coverage.py",
+      "sha256": "436a4744e5ece29055934ecca82202111a17c2a9e9538faa22a03136240acca0"
+    },
+    {
+      "bytes": 14389,
+      "path": "src/grrc/provenance.py",
+      "sha256": "bc68c43d8d9367b0e6ce70dcfb4eb4d5a82e0c59e9a4676cae73ad9aeb664f02"
+    },
+    {
+      "bytes": 3518,
+      "path": "src/grrc/utilities.py",
+      "sha256": "3ee09640a09c3868b530c7937133334acf2897939c2349e6a7dd1bc1fc531afa"
+    },
+    {
+      "bytes": 3223,
+      "path": "study/CIPHER_COVERAGE_PLAN.md",
+      "sha256": "8e1750b5f3b4c442130aac01298d79fd66aeb60cda9f8d50b652e25ec19af2a3"
+    }
+  ],
+  "outputs": [
+    {
+      "bytes": 2590,
+      "path": "data/cipher/processed/category_counts.csv",
+      "sha256": "2df1e2f289dfa1c2cb476791f39c8b6d7e6dc0b0d065aa78d927db45c63efb9a"
+    },
+    {
+      "bytes": 431,
+      "path": "data/cipher/processed/coverage_summary.csv",
+      "sha256": "3f871c5aa4746e6158e4932a5493ec90c26ef2d5bb9b243f9ac4f3ed69b9c932"
+    },
+    {
+      "bytes": 554,
+      "path": "data/cipher/processed/domain_mapping.csv",
+      "sha256": "96fa7d81959738e0761fe9efdfc146a05c440421fe522db374e4c3fbbf36396b"
+    },
+    {
+      "bytes": 8016,
+      "path": "data/cipher/processed/leave_one_reference_out.csv",
+      "sha256": "73a83b6bd2e68b40b36f87f3b3e1bb23a3bedbc8cad703316920e1da31a0b10c"
+    },
+    {
+      "bytes": 188,
+      "path": "data/cipher/processed/missingness.csv",
+      "sha256": "014493c80d7e84844264ab04f47a07e60934afd57bc46657a6df97f0f1c9cc27"
+    },
+    {
+      "bytes": 2531,
+      "path": "data/cipher/processed/reference_counts.csv",
+      "sha256": "cbdfb0fee5e2a75bf390378982602cdb5ec44731075304fc16d92cf5ec4281bc"
+    }
+  ],
+  "parameters": {
+    "doi": "10.5281/zenodo.17344644",
+    "inference": "descriptive only; no clinical outcome, incidence, duration or control-effect estimate",
+    "mapping": {
+      "Admin and Billing": [
+        "none",
+        "absent explicit service"
+      ],
+      "All": [
+        "unspecified",
+        "unspecified"
+      ],
+      "Booking Systems": [
+        "scheduling",
+        "represented digital service"
+      ],
+      "Communications": [
+        "none",
+        "absent explicit service"
+      ],
+      "Health Records": [
+        "EHR",
+        "represented digital service"
+      ],
+      "Hospital Infrastructure": [
+        "none",
+        "absent explicit service"
+      ],
+      "Imaging": [
+        "imaging",
+        "represented digital service"
+      ],
+      "Laboratory Systems": [
+        "laboratory",
+        "represented digital service"
+      ],
+      "Operating Rooms": [
+        "none",
+        "absent explicit service"
+      ],
+      "Telemetry": [
+        "none",
+        "absent explicit service"
+      ],
+      "ePrescribing": [
+        "pharmacy",
+        "represented digital service"
+      ]
+    },
+    "release": "v1.0.1",
+    "time_labels": [
+      "First Hour",
+      "First Day",
+      "First Week",
+      "Week 2",
+      "First Month"
+    ]
+  },
+  "protocol": null,
+  "run_id": "cipher-coverage",
+  "stage": "analysis"
+}

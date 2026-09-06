@@ -1,0 +1,39 @@
+subset,category,label,records,reference_links,record_share
+all_records,Technical Domain,Admin and Billing,15,1,0.04746835443
+all_records,Technical Domain,All,2,1,0.006329113924
+all_records,Technical Domain,Booking Systems,17,8,0.05379746835
+all_records,Technical Domain,Communications,14,5,0.04430379747
+all_records,Technical Domain,Health Records,60,12,0.1898734177
+all_records,Technical Domain,Hospital Infrastructure,39,17,0.1234177215
+all_records,Technical Domain,Imaging,26,11,0.08227848101
+all_records,Technical Domain,Laboratory Systems,33,12,0.1044303797
+all_records,Technical Domain,Operating Rooms,13,7,0.04113924051
+all_records,Technical Domain,Telemetry,4,2,0.01265822785
+all_records,Technical Domain,ePrescribing,93,13,0.2943037975
+all_records,coverage,absent explicit service,85,19,0.2689873418
+all_records,coverage,represented digital service,229,32,0.7246835443
+all_records,coverage,unspecified,2,1,0.006329113924
+all_records,Time Point,First Day,59,25,0.1867088608
+all_records,Time Point,First Hour,12,7,0.03797468354
+all_records,Time Point,First Month,41,7,0.1297468354
+all_records,Time Point,First Week,148,28,0.4683544304
+all_records,Time Point,Week 2,56,10,0.1772151899
+exact_rows_deduplicated,Technical Domain,Admin and Billing,15,1,0.04746835443
+exact_rows_deduplicated,Technical Domain,All,2,1,0.006329113924
+exact_rows_deduplicated,Technical Domain,Booking Systems,17,8,0.05379746835
+exact_rows_deduplicated,Technical Domain,Communications,14,5,0.04430379747
+exact_rows_deduplicated,Technical Domain,Health Records,60,12,0.1898734177
+exact_rows_deduplicated,Technical Domain,Hospital Infrastructure,39,17,0.1234177215
+exact_rows_deduplicated,Technical Domain,Imaging,26,11,0.08227848101
+exact_rows_deduplicated,Technical Domain,Laboratory Systems,33,12,0.1044303797
+exact_rows_deduplicated,Technical Domain,Operating Rooms,13,7,0.04113924051
+exact_rows_deduplicated,Technical Domain,Telemetry,4,2,0.01265822785
+exact_rows_deduplicated,Technical Domain,ePrescribing,93,13,0.2943037975
+exact_rows_deduplicated,coverage,absent explicit service,85,19,0.2689873418
+exact_rows_deduplicated,coverage,represented digital service,229,32,0.7246835443
+exact_rows_deduplicated,coverage,unspecified,2,1,0.006329113924
+exact_rows_deduplicated,Time Point,First Day,59,25,0.1867088608
+exact_rows_deduplicated,Time Point,First Hour,12,7,0.03797468354
+exact_rows_deduplicated,Time Point,First Month,41,7,0.1297468354
+exact_rows_deduplicated,Time Point,First Week,148,28,0.4683544304
+exact_rows_deduplicated,Time Point,Week 2,56,10,0.1772151899

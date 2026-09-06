@@ -1,0 +1,12 @@
+domain,model_construct,coverage
+Health Records,EHR,represented digital service
+Laboratory Systems,laboratory,represented digital service
+ePrescribing,pharmacy,represented digital service
+Imaging,imaging,represented digital service
+Booking Systems,scheduling,represented digital service
+Admin and Billing,none,absent explicit service
+Communications,none,absent explicit service
+Hospital Infrastructure,none,absent explicit service
+Operating Rooms,none,absent explicit service
+Telemetry,none,absent explicit service
+All,unspecified,unspecified
