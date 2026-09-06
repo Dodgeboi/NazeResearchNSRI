@@ -1,0 +1,17 @@
+profile,metric,n_boot,mean,median,p025,p975,minimum,maximum,positive_share
+all_profiles,full_frontier,1000,95.257,95,83,107,76,114,1
+all_profiles,restricted_frontier,1000,56.548,57,52,60,49,62,1
+all_profiles,omitted_efficient,1000,39.246,39,29,49,21,57,1
+all_profiles,restricted_artifacts,1000,0.537,0,0,2,0,4,0.445
+high_capacity,full_frontier,1000,8.884,9,6,13,5,15,1
+high_capacity,restricted_frontier,1000,4,4,4,4,4,4,1
+high_capacity,omitted_efficient,1000,5.011,5,3,9,2,11,1
+high_capacity,restricted_artifacts,1000,0.127,0,0,1,0,1,0.127
+intermediate_capacity,full_frontier,1000,22.2,22,20,25,18,26,1
+intermediate_capacity,restricted_frontier,1000,17.712,18,16,19,15,19,1
+intermediate_capacity,omitted_efficient,1000,4.691,5,3,7,2,8,1
+intermediate_capacity,restricted_artifacts,1000,0.203,0,0,1,0,2,0.199
+resource_constrained,full_frontier,1000,64.173,64,52,75,45,83,1
+resource_constrained,restricted_frontier,1000,34.836,35,31,37,28,39,1
+resource_constrained,omitted_efficient,1000,29.544,30,20,39,12,47,1
+resource_constrained,restricted_artifacts,1000,0.207,0,0,1,0,2,0.193

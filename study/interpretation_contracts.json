@@ -1,0 +1,369 @@
+{
+  "version": 1,
+  "limits": "Retrospective, explicitly encoded claims. Does not parse unrestricted prose; source schemas and translations still require human review.",
+  "sources": {
+    "endpoints": {
+      "path": "data/interpretation/endpoint_by_stage_profile.csv",
+      "units": {
+        "k1_minus_k4_pp": "percentage_points",
+        "trials": "executions",
+        "scenarios": "scenarios"
+      }
+    },
+    "frontiers": {
+      "path": "data/interpretation/endpoint_frontier_sensitivity.csv",
+      "units": {
+        "jaccard_vs_k4": "fraction"
+      }
+    },
+    "points": {
+      "path": "data/interpretation/frontier_point_counts.csv",
+      "units": {
+        "full_frontier": "candidates",
+        "omitted_efficient": "candidates"
+      }
+    },
+    "contrasts": {
+      "path": "data/interpretation/baseline_contrasts.csv",
+      "units": {
+        "mean_hours_saved": "weighted_service_hours",
+        "simultaneous_lower": "weighted_service_hours"
+      }
+    }
+  },
+  "current": [
+    {
+      "id": "gap_bounded",
+      "source": "endpoints",
+      "scope": {
+        "stage": "confirmation"
+      },
+      "group": "profile",
+      "groups": [
+        "resource_constrained",
+        "intermediate_capacity",
+        "high_capacity"
+      ],
+      "rows": 3,
+      "column": "k1_minus_k4_pp",
+      "unit": "percentage_points",
+      "reduce": "each",
+      "relation": "lt",
+      "target": 15,
+      "quantifier": "all"
+    },
+    {
+      "id": "confirmation_size",
+      "source": "endpoints",
+      "scope": {
+        "stage": "confirmation"
+      },
+      "group": "profile",
+      "groups": [
+        "resource_constrained",
+        "intermediate_capacity",
+        "high_capacity"
+      ],
+      "rows": 3,
+      "column": "trials",
+      "unit": "executions",
+      "reduce": "sum",
+      "relation": "eq",
+      "target": 160000,
+      "quantifier": "all"
+    },
+    {
+      "id": "independent_units",
+      "source": "endpoints",
+      "scope": {
+        "stage": "confirmation"
+      },
+      "group": "profile",
+      "groups": [
+        "resource_constrained",
+        "intermediate_capacity",
+        "high_capacity"
+      ],
+      "rows": 3,
+      "column": "scenarios",
+      "unit": "scenarios",
+      "reduce": "each",
+      "relation": "eq",
+      "target": 400,
+      "quantifier": "all"
+    },
+    {
+      "id": "high_frontier_stable",
+      "source": "frontiers",
+      "scope": {
+        "profile": "high_capacity"
+      },
+      "group": "k",
+      "groups": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "rows": 4,
+      "column": "jaccard_vs_k4",
+      "unit": "fraction",
+      "reduce": "each",
+      "relation": "eq",
+      "target": 1,
+      "quantifier": "all"
+    },
+    {
+      "id": "full_frontier_size",
+      "source": "points",
+      "scope": {},
+      "group": "profile",
+      "groups": [
+        "resource_constrained",
+        "intermediate_capacity",
+        "high_capacity"
+      ],
+      "rows": 3,
+      "column": "full_frontier",
+      "unit": "candidates",
+      "reduce": "sum",
+      "relation": "eq",
+      "target": 95,
+      "quantifier": "all"
+    },
+    {
+      "id": "omitted_size",
+      "source": "points",
+      "scope": {},
+      "group": "profile",
+      "groups": [
+        "resource_constrained",
+        "intermediate_capacity",
+        "high_capacity"
+      ],
+      "rows": 3,
+      "column": "omitted_efficient",
+      "unit": "candidates",
+      "reduce": "sum",
+      "relation": "eq",
+      "target": 38,
+      "quantifier": "all"
+    },
+    {
+      "id": "high_improvement",
+      "source": "contrasts",
+      "scope": {
+        "profile": "high_capacity"
+      },
+      "group": "portfolio",
+      "groups": [
+        "seg-least_privilege|patch+0|det0|iso0|bak-isolated|idm1",
+        "seg-least_privilege|patch+0|det0|iso1|bak-isolated|idm0",
+        "seg-least_privilege|patch+0|det0|iso1|bak-isolated|idm1",
+        "seg-least_privilege|patch+0|det1|iso0|bak-isolated|idm0",
+        "seg-least_privilege|patch+0|det1|iso0|bak-isolated|idm1",
+        "seg-least_privilege|patch+0|det1|iso1|bak-isolated|idm0",
+        "seg-least_privilege|patch+0|det1|iso1|bak-isolated|idm1",
+        "seg-least_privilege|patch+1|det0|iso0|bak-isolated|idm0",
+        "seg-least_privilege|patch+1|det0|iso0|bak-isolated|idm1",
+        "seg-least_privilege|patch+1|det0|iso1|bak-isolated|idm0",
+        "seg-least_privilege|patch+1|det0|iso1|bak-isolated|idm1",
+        "seg-least_privilege|patch+1|det1|iso0|bak-isolated|idm0",
+        "seg-least_privilege|patch+1|det1|iso0|bak-isolated|idm1",
+        "seg-least_privilege|patch+1|det1|iso1|bak-isolated|idm0",
+        "seg-least_privilege|patch+1|det1|iso1|bak-isolated|idm1"
+      ],
+      "rows": 15,
+      "column": "mean_hours_saved",
+      "unit": "weighted_service_hours",
+      "reduce": "max",
+      "relation": "gt",
+      "target": 1,
+      "quantifier": "all"
+    },
+    {
+      "id": "high_positive_bound",
+      "source": "contrasts",
+      "scope": {
+        "profile": "high_capacity"
+      },
+      "group": "portfolio",
+      "groups": [
+        "seg-least_privilege|patch+0|det0|iso0|bak-isolated|idm1",
+        "seg-least_privilege|patch+0|det0|iso1|bak-isolated|idm0",
+        "seg-least_privilege|patch+0|det0|iso1|bak-isolated|idm1",
+        "seg-least_privilege|patch+0|det1|iso0|bak-isolated|idm0",
+        "seg-least_privilege|patch+0|det1|iso0|bak-isolated|idm1",
+        "seg-least_privilege|patch+0|det1|iso1|bak-isolated|idm0",
+        "seg-least_privilege|patch+0|det1|iso1|bak-isolated|idm1",
+        "seg-least_privilege|patch+1|det0|iso0|bak-isolated|idm0",
+        "seg-least_privilege|patch+1|det0|iso0|bak-isolated|idm1",
+        "seg-least_privilege|patch+1|det0|iso1|bak-isolated|idm0",
+        "seg-least_privilege|patch+1|det0|iso1|bak-isolated|idm1",
+        "seg-least_privilege|patch+1|det1|iso0|bak-isolated|idm0",
+        "seg-least_privilege|patch+1|det1|iso0|bak-isolated|idm1",
+        "seg-least_privilege|patch+1|det1|iso1|bak-isolated|idm0",
+        "seg-least_privilege|patch+1|det1|iso1|bak-isolated|idm1"
+      ],
+      "rows": 15,
+      "column": "simultaneous_lower",
+      "unit": "weighted_service_hours",
+      "reduce": "max",
+      "relation": "gt",
+      "target": 0,
+      "quantifier": "all"
+    }
+  ],
+  "historical": [
+    {
+      "id": "historical_universal_small_gap",
+      "source": "endpoints",
+      "scope": {
+        "stage": "confirmation"
+      },
+      "group": "profile",
+      "groups": [
+        "resource_constrained",
+        "intermediate_capacity",
+        "high_capacity"
+      ],
+      "rows": 3,
+      "column": "k1_minus_k4_pp",
+      "unit": "percentage_points",
+      "reduce": "each",
+      "relation": "le",
+      "target": 4,
+      "quantifier": "all",
+      "location": "audit/baseline_manuscript/section_results.tex:171",
+      "operationalization": "Operationalize roughly three percentage points generously as no more than four in every profile; two profiles violate this tolerance."
+    },
+    {
+      "id": "historical_discovery_caption",
+      "source": "endpoints",
+      "scope": {
+        "stage": "confirmation"
+      },
+      "group": "profile",
+      "groups": [
+        "resource_constrained",
+        "intermediate_capacity",
+        "high_capacity"
+      ],
+      "rows": 3,
+      "column": "trials",
+      "unit": "executions",
+      "reduce": "sum",
+      "relation": "eq",
+      "target": 12000,
+      "quantifier": "all",
+      "location": "audit/baseline_manuscript/section_results.tex:198",
+      "operationalization": "Caption labels a confirmation-bank plot as discovery; generation source is generate_confirmatory_figures.py."
+    },
+    {
+      "id": "historical_under_one_hour",
+      "source": "contrasts",
+      "scope": {
+        "profile": "high_capacity"
+      },
+      "group": "portfolio",
+      "groups": [
+        "seg-least_privilege|patch+0|det0|iso0|bak-isolated|idm1",
+        "seg-least_privilege|patch+0|det0|iso1|bak-isolated|idm0",
+        "seg-least_privilege|patch+0|det0|iso1|bak-isolated|idm1",
+        "seg-least_privilege|patch+0|det1|iso0|bak-isolated|idm0",
+        "seg-least_privilege|patch+0|det1|iso0|bak-isolated|idm1",
+        "seg-least_privilege|patch+0|det1|iso1|bak-isolated|idm0",
+        "seg-least_privilege|patch+0|det1|iso1|bak-isolated|idm1",
+        "seg-least_privilege|patch+1|det0|iso0|bak-isolated|idm0",
+        "seg-least_privilege|patch+1|det0|iso0|bak-isolated|idm1",
+        "seg-least_privilege|patch+1|det0|iso1|bak-isolated|idm0",
+        "seg-least_privilege|patch+1|det0|iso1|bak-isolated|idm1",
+        "seg-least_privilege|patch+1|det1|iso0|bak-isolated|idm0",
+        "seg-least_privilege|patch+1|det1|iso0|bak-isolated|idm1",
+        "seg-least_privilege|patch+1|det1|iso1|bak-isolated|idm0",
+        "seg-least_privilege|patch+1|det1|iso1|bak-isolated|idm1"
+      ],
+      "rows": 15,
+      "column": "mean_hours_saved",
+      "unit": "weighted_service_hours",
+      "reduce": "max",
+      "relation": "lt",
+      "target": 1,
+      "quantifier": "all",
+      "location": "audit/baseline_manuscript/section_results.tex:143",
+      "operationalization": "A plotted range cannot be less than the baseline-to-best mean difference; this lower bound already exceeds one hour."
+    }
+  ],
+  "mutations": [
+    {
+      "id": "wrong_stage",
+      "base": "confirmation_size",
+      "replace": {
+        "scope": {
+          "stage": "discovery"
+        }
+      },
+      "expected": "fail"
+    },
+    {
+      "id": "wrong_unit",
+      "base": "gap_bounded",
+      "replace": {
+        "unit": "probability"
+      },
+      "expected": "invalid"
+    },
+    {
+      "id": "subset_as_full",
+      "base": "omitted_size",
+      "replace": {
+        "scope": {
+          "profile": "high_capacity"
+        }
+      },
+      "expected": "invalid"
+    },
+    {
+      "id": "wrong_reducer",
+      "base": "confirmation_size",
+      "replace": {
+        "reduce": "mean"
+      },
+      "expected": "fail"
+    },
+    {
+      "id": "wrong_bound",
+      "base": "gap_bounded",
+      "replace": {
+        "target": 4
+      },
+      "expected": "fail"
+    },
+    {
+      "id": "strict_boundary",
+      "base": "high_frontier_stable",
+      "replace": {
+        "relation": "lt"
+      },
+      "expected": "fail"
+    },
+    {
+      "id": "missing_population",
+      "base": "confirmation_size",
+      "replace": {
+        "scope": {
+          "stage": "absent"
+        }
+      },
+      "expected": "invalid"
+    },
+    {
+      "id": "unsupported_operation",
+      "base": "gap_bounded",
+      "replace": {
+        "reduce": "causal_effect"
+      },
+      "expected": "invalid"
+    }
+  ]
+}

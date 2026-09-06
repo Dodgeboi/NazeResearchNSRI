@@ -1,0 +1,4 @@
+profile,full_frontier,restricted_frontier,omitted_efficient,restricted_artifacts
+resource_constrained,64,36,28,0
+intermediate_capacity,22,17,5,0
+high_capacity,9,4,5,0

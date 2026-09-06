@@ -1,0 +1,277 @@
+{
+  "scope": "finite retrospective cases from one project; no unseen-paper accuracy estimate",
+  "all_expected_outcomes": true,
+  "current": [
+    {
+      "id": "gap_bounded",
+      "status": "pass",
+      "witnesses": [
+        {
+          "group": "resource_constrained",
+          "value": 3.868055556,
+          "satisfies": true
+        },
+        {
+          "group": "intermediate_capacity",
+          "value": 12.59895833,
+          "satisfies": true
+        },
+        {
+          "group": "high_capacity",
+          "value": 14.34375,
+          "satisfies": true
+        }
+      ]
+    },
+    {
+      "id": "confirmation_size",
+      "status": "pass",
+      "witnesses": [
+        {
+          "group": "sum",
+          "value": 160000.0,
+          "satisfies": true
+        }
+      ]
+    },
+    {
+      "id": "independent_units",
+      "status": "pass",
+      "witnesses": [
+        {
+          "group": "resource_constrained",
+          "value": 400.0,
+          "satisfies": true
+        },
+        {
+          "group": "intermediate_capacity",
+          "value": 400.0,
+          "satisfies": true
+        },
+        {
+          "group": "high_capacity",
+          "value": 400.0,
+          "satisfies": true
+        }
+      ]
+    },
+    {
+      "id": "high_frontier_stable",
+      "status": "pass",
+      "witnesses": [
+        {
+          "group": "1",
+          "value": 1.0,
+          "satisfies": true
+        },
+        {
+          "group": "2",
+          "value": 1.0,
+          "satisfies": true
+        },
+        {
+          "group": "3",
+          "value": 1.0,
+          "satisfies": true
+        },
+        {
+          "group": "4",
+          "value": 1.0,
+          "satisfies": true
+        }
+      ]
+    },
+    {
+      "id": "full_frontier_size",
+      "status": "pass",
+      "witnesses": [
+        {
+          "group": "sum",
+          "value": 95.0,
+          "satisfies": true
+        }
+      ]
+    },
+    {
+      "id": "omitted_size",
+      "status": "pass",
+      "witnesses": [
+        {
+          "group": "sum",
+          "value": 38.0,
+          "satisfies": true
+        }
+      ]
+    },
+    {
+      "id": "high_improvement",
+      "status": "pass",
+      "witnesses": [
+        {
+          "group": "max",
+          "value": 1.952583333,
+          "satisfies": true
+        }
+      ]
+    },
+    {
+      "id": "high_positive_bound",
+      "status": "pass",
+      "witnesses": [
+        {
+          "group": "max",
+          "value": 0.6429845569,
+          "satisfies": true
+        }
+      ]
+    }
+  ],
+  "historical": [
+    {
+      "id": "historical_universal_small_gap",
+      "status": "fail",
+      "witnesses": [
+        {
+          "group": "resource_constrained",
+          "value": 3.868055556,
+          "satisfies": true
+        },
+        {
+          "group": "intermediate_capacity",
+          "value": 12.59895833,
+          "satisfies": false
+        },
+        {
+          "group": "high_capacity",
+          "value": 14.34375,
+          "satisfies": false
+        }
+      ]
+    },
+    {
+      "id": "historical_discovery_caption",
+      "status": "fail",
+      "witnesses": [
+        {
+          "group": "sum",
+          "value": 160000.0,
+          "satisfies": false
+        }
+      ]
+    },
+    {
+      "id": "historical_under_one_hour",
+      "status": "fail",
+      "witnesses": [
+        {
+          "group": "max",
+          "value": 1.952583333,
+          "satisfies": false
+        }
+      ]
+    }
+  ],
+  "mutations": [
+    {
+      "id": "wrong_stage",
+      "status": "fail",
+      "witnesses": [
+        {
+          "group": "sum",
+          "value": 12000.0,
+          "satisfies": false
+        }
+      ],
+      "expected": "fail"
+    },
+    {
+      "id": "wrong_unit",
+      "status": "invalid",
+      "witnesses": [],
+      "reason": "unit differs from source schema",
+      "expected": "invalid"
+    },
+    {
+      "id": "subset_as_full",
+      "status": "invalid",
+      "witnesses": [],
+      "reason": "population empty or row count differs",
+      "expected": "invalid"
+    },
+    {
+      "id": "wrong_reducer",
+      "status": "fail",
+      "witnesses": [
+        {
+          "group": "mean",
+          "value": 53333.333333333336,
+          "satisfies": false
+        }
+      ],
+      "expected": "fail"
+    },
+    {
+      "id": "wrong_bound",
+      "status": "fail",
+      "witnesses": [
+        {
+          "group": "resource_constrained",
+          "value": 3.868055556,
+          "satisfies": true
+        },
+        {
+          "group": "intermediate_capacity",
+          "value": 12.59895833,
+          "satisfies": false
+        },
+        {
+          "group": "high_capacity",
+          "value": 14.34375,
+          "satisfies": false
+        }
+      ],
+      "expected": "fail"
+    },
+    {
+      "id": "strict_boundary",
+      "status": "fail",
+      "witnesses": [
+        {
+          "group": "1",
+          "value": 1.0,
+          "satisfies": false
+        },
+        {
+          "group": "2",
+          "value": 1.0,
+          "satisfies": false
+        },
+        {
+          "group": "3",
+          "value": 1.0,
+          "satisfies": false
+        },
+        {
+          "group": "4",
+          "value": 1.0,
+          "satisfies": false
+        }
+      ],
+      "expected": "fail"
+    },
+    {
+      "id": "missing_population",
+      "status": "invalid",
+      "witnesses": [],
+      "reason": "population empty or row count differs",
+      "expected": "invalid"
+    },
+    {
+      "id": "unsupported_operation",
+      "status": "invalid",
+      "witnesses": [],
+      "reason": "unsupported reducer",
+      "expected": "invalid"
+    }
+  ]
+}
