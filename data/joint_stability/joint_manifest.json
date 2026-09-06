@@ -1,0 +1,153 @@
+{
+  "code": {
+    "available": true,
+    "branch": "research/methods-revision",
+    "commit": "cf2327d384d2acde3a6d3c4782f2acd2b6707784",
+    "dirty": false,
+    "dirty_paths": []
+  },
+  "created_at": "2026-09-06T06:47:23+00:00",
+  "description": "Shared tariffs, paired outcome resampling, and simultaneous bounded-mean screen.",
+  "environment": {
+    "implementation": "CPython",
+    "machine": "AMD64",
+    "packages": {
+      "matplotlib": "3.11.0",
+      "networkx": "3.6.1",
+      "numpy": "2.3.5",
+      "pandas": "3.0.1",
+      "scipy": "1.18.0",
+      "yaml": "6.0.3"
+    },
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.14"
+  },
+  "inputs": [
+    {
+      "bytes": 561,
+      "path": "configs/defense_burdens.yaml",
+      "sha256": "70647c2c1cc3d0a260ff06660c69c31b29fcffd743b16c4db40a18394730515a"
+    },
+    {
+      "bytes": 1057,
+      "path": "configs/defense_costs.yaml",
+      "sha256": "66e66f192c5e44cacd099ef747262639379006084819569353306517cc30e3e5"
+    },
+    {
+      "bytes": 4667,
+      "path": "configs/multiobjective_portfolio.yaml",
+      "sha256": "a3dff5682e1e8277cc29d3a5836009deccf87a901d4fa60fdd1ce7c091e41e31"
+    },
+    {
+      "bytes": 70260,
+      "path": "data/frontier_certificates/hospital_candidates.csv",
+      "sha256": "5987a60227a1a02db6e5e3d607190ba5815f1bbe556e973c5cb68a0a398efe76"
+    },
+    {
+      "bytes": 101343517,
+      "path": "data/multiobjective/confirmatory/multiobjective_confirmatory_results.csv",
+      "sha256": "6b558145ae770f744f21a9d4c096c02e7d205f039b101eb98084dda7f2fdce91"
+    },
+    {
+      "bytes": 61516,
+      "path": "data/multiobjective/confirmatory/portfolio_objective_summary.csv",
+      "sha256": "cf41ebdacf092df8855edfa61893e5dcdacc19f3a76f7fc9166f3bc27b27fdab"
+    },
+    {
+      "bytes": 8981,
+      "path": "scripts/analyze_joint_stability.py",
+      "sha256": "1dbabb1b8e7eb23447b53d1884f4645c290c585b914c14a37822709bbd37489e"
+    },
+    {
+      "bytes": 27089,
+      "path": "src/grrc/config.py",
+      "sha256": "b27a182157159c824e2ff9f6be72adf6e078634cb4654d3c4fdd175c9983e2c9"
+    },
+    {
+      "bytes": 17759,
+      "path": "src/grrc/defenses.py",
+      "sha256": "b9fe7bb6f892ce00c8772907120c9d5314efc54e111059fc0bb0a55a1b6132b9"
+    },
+    {
+      "bytes": 12438,
+      "path": "src/grrc/interpretation.py",
+      "sha256": "cc8f74338f875054efabc64bbb8dc15f7a1bcafca0822e2b580f8cbcabb0de7b"
+    },
+    {
+      "bytes": 7651,
+      "path": "src/grrc/joint_stability.py",
+      "sha256": "59b584140dfbafd503f1e7176017efb377d81c2452c5148eba1f6ad92b005fec"
+    },
+    {
+      "bytes": 34928,
+      "path": "src/grrc/multiobjective.py",
+      "sha256": "22053598e5453d63819b35d282482626d848ecd5880c490ab9b7e8b6c9050468"
+    },
+    {
+      "bytes": 14389,
+      "path": "src/grrc/provenance.py",
+      "sha256": "bc68c43d8d9367b0e6ce70dcfb4eb4d5a82e0c59e9a4676cae73ad9aeb664f02"
+    },
+    {
+      "bytes": 3518,
+      "path": "src/grrc/utilities.py",
+      "sha256": "3ee09640a09c3868b530c7937133334acf2897939c2349e6a7dd1bc1fc531afa"
+    },
+    {
+      "bytes": 4442,
+      "path": "study/JOINT_STABILITY_PLAN.md",
+      "sha256": "c00d25b422b1f7e3a7f3e9e88c04e0bfcece8234887cb0083c54a331a24d0d7c"
+    }
+  ],
+  "outputs": [
+    {
+      "bytes": 494769,
+      "path": "data/joint_stability/bootstrap_draws.csv",
+      "sha256": "91f9c1b20f4b7b7f9ce36f2c32b186ffaf2b10cc6bba32f55f4df7d01d7422aa"
+    },
+    {
+      "bytes": 946,
+      "path": "data/joint_stability/bootstrap_summary.csv",
+      "sha256": "361d58db23647bb78b83f75d9e1dd8fce5573ff33643d49548ab320c032218c1"
+    },
+    {
+      "bytes": 185962,
+      "path": "data/joint_stability/candidate_retention.csv",
+      "sha256": "01dbd0e66a3ed4bd5238a7504506d536c8c6e4520ee367c80c1d7cfdd8c8a24b"
+    },
+    {
+      "bytes": 550,
+      "path": "data/joint_stability/point_retention.csv",
+      "sha256": "6e764acb3031761b805f761b7feb55df1dae5f59826bf1e2f99daf8d7a08e389"
+    },
+    {
+      "bytes": 5269,
+      "path": "data/joint_stability/population_retention.csv",
+      "sha256": "f0b01de112207ea3bd769e90f9c04949147e80c73b4fbea4ec12d5a76d90eff4"
+    }
+  ],
+  "parameters": {
+    "alphas": [
+      0.1,
+      0.05,
+      0.01
+    ],
+    "bootstrap_scope": "conditional resampling frequencies, not confidence guarantees",
+    "draws": 1000,
+    "loss_bound": 381.59999999999997,
+    "ordered_mean_family_size": 276048,
+    "population_scope": "sufficient retention in the declared scenario population; arbitrary tail coordinate",
+    "price_rounding_decimal_places": 12,
+    "radii": [
+      0,
+      0.1,
+      0.25,
+      0.5,
+      0.75
+    ],
+    "seed": 2026090610
+  },
+  "protocol": null,
+  "run_id": "joint-stability",
+  "stage": "analysis"
+}

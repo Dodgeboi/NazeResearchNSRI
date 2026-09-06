@@ -1,0 +1,19 @@
+{
+  "dataset": "CIPHER Dataset v1: Patient Harms During Hospital Cyberattacks",
+  "authors": [
+    "Isabel Straw",
+    "Jeffrey Tully",
+    "Christian Dameff"
+  ],
+  "doi": "10.5281/zenodo.17344644",
+  "release": "v1.0.1",
+  "retrieved": "2026-09-06",
+  "archive_url": "https://zenodo.org/api/records/17344644/files/cipherproject/cipherproject.github.io-v1.0.1.zip/content",
+  "archive_md5": "dd8c21831164565baec999df0e9a56a6",
+  "archive_sha256": "9b058774353e6bf20ddc6c7fbf1686ab8ca42b751f9297df2c1b0cc8b416c2c1",
+  "csv_sha256": "3ee4a39ba8e2b058832d6eadf014f569baad43851d1cba25043b7a8b85b38204",
+  "csv_bytes": 303958,
+  "license": "CC-BY-4.0, copyright 2025 Isabel Straw",
+  "changes": "Raw CSV unchanged. Analysis strips text whitespace, normalizes source trailing slash, and corrects Firsy Day to First Day.",
+  "upstream_metadata_note": "Archive is tagged v1.0.1; its citation file internally says v1.0.0 and has a Tulley spelling and older repository URL. We use the archived release DOI and README author spelling."
+}

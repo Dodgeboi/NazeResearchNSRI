@@ -1,0 +1,16 @@
+profile,radius,guaranteed,original_endpoint_guaranteed,original_retained
+resource_constrained,0,42,42,42
+resource_constrained,0.1,41,42,41
+resource_constrained,0.25,32,42,32
+resource_constrained,0.5,15,42,15
+resource_constrained,0.75,12,42,12
+intermediate_capacity,0,21,21,21
+intermediate_capacity,0.1,19,21,19
+intermediate_capacity,0.25,16,21,16
+intermediate_capacity,0.5,1,21,1
+intermediate_capacity,0.75,1,21,1
+high_capacity,0,9,9,9
+high_capacity,0.1,9,9,9
+high_capacity,0.25,7,9,7
+high_capacity,0.5,5,9,5
+high_capacity,0.75,5,9,5
