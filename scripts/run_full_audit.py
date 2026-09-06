@@ -121,7 +121,7 @@ def check_manifests() -> Result:
 
 def check_cross_artifact_consistency() -> Result:
     """Re-derive the headline counts from raw trials, trusting nothing."""
-    result = Result("manuscript numbers re-derive from raw trials")
+    result = Result("historical numeric macros re-derive from preserved trials")
     generated = REPO_ROOT / "docs" / "manuscript" / "generated_numbers.tex"
     if not generated.exists():
         result.problems.append("generated_numbers.tex is missing")

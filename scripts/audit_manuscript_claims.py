@@ -295,6 +295,10 @@ def main() -> int:
                         help="skip the hand-typed-number check")
     args = parser.parse_args()
 
+    if Path(args.manuscript) == MANUSCRIPT and "methods_numbers" in MANUSCRIPT.read_text(encoding="utf-8"):
+        from audit_methods_manuscript import main as audit_methods
+        return audit_methods()
+
     text = expand_inputs(Path(args.manuscript))
     generated_path = Path(args.generated)
     generated = (generated_path.read_text(encoding="utf-8")

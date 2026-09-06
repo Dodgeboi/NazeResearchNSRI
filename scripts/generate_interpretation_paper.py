@@ -15,6 +15,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import yaml
 
 from grrc.provenance import build_manifest, git_state, write_manifest, verify_manifest
 from audit_interpretation_claims import audit
@@ -27,6 +28,7 @@ LABELS = ["Resource-constrained", "Intermediate", "High-capacity"]
 
 
 def content():
+    verify_manifest(DATA / "analysis_manifest.json")
     tables = {p.stem: pd.read_csv(p) for p in DATA.glob("*.csv")}
     ep = tables["endpoint_by_stage_profile"]
     con = ep[ep.stage == "confirmation"].set_index("profile").loc[PROFILES]
@@ -38,7 +40,9 @@ def content():
     best = tables["baseline_contrasts"].query("profile == 'high_capacity'").sort_values("mean_hours_saved").iloc[-1]
     bs = tables["frontier_bootstrap_summary"].query("profile == 'all_profiles'").set_index("metric")
     parameters = json.loads((DATA / "analysis_manifest.json").read_text())["parameters"]
-    macros = {"RevisionExecutions": f"{int(con.trials.sum()):,}", "RevisionScenarios": str(int(con.scenarios.iloc[0])),
+    config = yaml.safe_load((ROOT/'configs/multiobjective_portfolio.yaml').read_text())
+    macros = {"PrimaryK": str(config['simulation']['sustained_outage_min_services']),
+              "RevisionExecutions": f"{int(con.trials.sum()):,}", "RevisionScenarios": str(int(con.scenarios.iloc[0])),
               "BootstrapDraws": str(parameters["bootstrap"]), "WeightDraws": str(parameters["weight_draws"]),
               "WeightRejected": str(parameters["rejected_nonmonotone_tariffs"]),
               "ContrastFamily": str(parameters["contrast_family_size"]),
@@ -54,6 +58,13 @@ def content():
               "OmittedCandidates": str(int(tables['frontier_point_counts'].omitted_efficient.sum())),
               "CorrectContracts": str(len(report['current'])), "HistoricalContracts": str(len(report['historical'])),
               "MutationContracts": str(len(report['mutations']))}
+    pool = tables['pooling_comparison'].set_index('stage')
+    for stage,prefix in [('discovery','Discovery'),('confirmation','Confirmation')]:
+        for col,suffix in [('pooled_between_share','Pooled'),('equal_profile_between_share','Equal')]:
+            macros[prefix+suffix] = f"{100*pool.loc[stage,col]:.2f}"
+    for profile,prefix in zip(PROFILES,['Resource','Intermediate','High']):
+        macros[prefix+'Weight'] = f"{100*con.loc[profile,'stage_weight']:.0f}"
+        macros[prefix+'DiscoveryGap'] = f"{ep.loc[(ep.stage=='discovery')&(ep.profile==profile),'k1_minus_k4_pp'].iloc[0]:.2f}"
     generated = {"methods_numbers.tex": "% Generated; do not edit. Values are within-model, retrospective.\n" +
                  "\n".join("\\newcommand{\\" + k + "}{" + v + "}" for k,v in macros.items()) + "\n"}
     def table(name, heading, rows):
@@ -145,9 +156,9 @@ def main():
         outputs.append(path)
     outputs += figures(tables)
     inputs = list(DATA.glob('*.csv')) + [DATA/'analysis_manifest.json',
-        ROOT/'study/interpretation_contracts.json', ROOT/'src/grrc/claim_contracts.py',
+        ROOT/'study/interpretation_contracts.json', ROOT/'src/grrc/claim_contracts.py', ROOT/'configs/multiobjective_portfolio.yaml',
         Path(__file__), ROOT/'scripts/audit_interpretation_claims.py']
-    manifest = build_manifest(run_id='interpretation-paper',stage='reporting',
+    manifest = build_manifest(run_id='interpretation-paper',stage='analysis',
         description='Generated numeric TeX and vector figures for retrospective methods paper.',
         inputs=inputs,outputs=outputs,parameters={'scope':'registered values and assertions, not all prose'},source_state=state)
     write_manifest(manifest,PAPER/'methods_manifest.json')

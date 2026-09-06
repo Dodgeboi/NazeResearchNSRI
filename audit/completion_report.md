@@ -1,3 +1,5 @@
+> Historical assessment, superseded by the retrospective interpretation revision. See `docs/manuscript/REVISION_REVIEW.md`; old scores and narrative conclusions are not current readiness judgments.
+
 # Completion report
 
 **Branch:** `rebuild/wp0-wp2`, on top of `3b734df`

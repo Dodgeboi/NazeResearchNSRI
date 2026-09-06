@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If this software or dataset supports your work, please cite the repository and manuscript."
-title: "Layered Controls and Service Disruption in a Synthetic Hospital Network"
+title: "Reproducible Values, Unstable Conclusions: An Interpretation Audit of Security Simulation"
 type: software
 authors:
   - family-names: Agrawal
@@ -9,8 +9,7 @@ authors:
     given-names: Mukil
   - family-names: Upadhyay
     given-names: Naman
-version: 3.0.0
-date-released: 2026-08-05
+version: 3.1.0-dev
 repository-code: "https://github.com/Dodgeboi/NazeResearchNSRI"
 license: MIT
 keywords:

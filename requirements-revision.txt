@@ -1,0 +1,9 @@
+# Actual environment used for retrospective analysis; Python 3.12.
+numpy==2.3.5
+pandas==3.0.1
+networkx==3.6.1
+scipy==1.18.0
+matplotlib==3.11.0
+pyyaml==6.0.3
+tqdm==4.68.4
+pytest==9.1.1

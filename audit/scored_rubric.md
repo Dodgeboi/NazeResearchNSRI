@@ -1,3 +1,5 @@
+> Historical assessment, superseded by the retrospective interpretation revision. See `docs/manuscript/REVISION_REVIEW.md`; old scores and narrative conclusions are not current readiness judgments.
+
 # Scored rubric, with evidence for every awarded point
 
 Scored against the rubric in the rebuild handoff. **The target was 85–90.

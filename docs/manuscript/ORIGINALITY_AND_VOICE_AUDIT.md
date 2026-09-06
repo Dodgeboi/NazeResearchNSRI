@@ -1,3 +1,5 @@
+> Historical assessment, superseded by the retrospective interpretation revision. See `docs/manuscript/REVISION_REVIEW.md`; old scores and narrative conclusions are not current readiness judgments.
+
 # Originality and author-voice audit
 
 **Manuscript audited:** *Layered Controls and Service Disruption in a Synthetic Hospital Network: A Paired Monte Carlo Analysis*

@@ -274,38 +274,21 @@ specification set the primary k to 2, arguing that k = 1 would saturate near
 0.95 and k = 4 would be too rare to estimate. **The rebuilt discovery bank
 does not support that reasoning, and it is withdrawn.**
 
-The number of qualifying clinical services is almost perfectly bimodal.
-Across 12,000 paired discovery trials:
+The subsequent claim that k has uniformly small effects is also withdrawn.
+The candidate-average confirmation frequency changes from k=1 to k=4 by
+3.87, 12.60 and 14.34 percentage points in the resource-constrained,
+intermediate and high-capacity profiles. Their frontier membership responds
+differently: both stronger profiles retain the same estimated frontier.
 
-| Qualifying clinical services | Trials | Share |
-|---:|---:|---:|
-| 0 | 4,189 | 34.9% |
-| 1 | 382 | 3.2% |
-| 2 | 83 | 0.7% |
-| 3 | 77 | 0.6% |
-| 4 | 7,269 | 60.6% |
+For identical observations and weights, the k=1 minus k=4 frequency equals
+the fraction with one to three qualifying services. Pooled discovery values
+cannot establish profile-specific confirmation behavior. See
+`data/interpretation/endpoint_by_stage_profile.csv`,
+`data/interpretation/pooling_comparison.csv` and the revised manuscript.
 
-Only 4.5% of trials land anywhere between "nothing qualifies" and
-"everything qualifies". Consequently candidate-level outage probabilities
-differ by roughly three percentage points between k = 1 and k = 4, and the
-interquartile spread across candidates is identical to three decimal places.
-**The choice of k costs nothing in estimability and buys nothing in
-discrimination.**
-
-Given that, the choice is settled on construct grounds alone, and the
-strictest reading is the least overclaiming one: a trial counts as a
-sustained clinical outage only when the whole modeled clinical estate was
-each down for more than two hours. Choosing a looser k would have meant
-moving the science closer to where the defect happened to sit, with no
-evidence to justify it.
-
-**The bimodality is itself a model artifact and is reported as one.** Binary
-per-step service availability over a shared network structure produces
-all-or-nothing clinical outcomes, whereas real incidents show partial,
-degraded, and staggered service loss. This limits what the endpoint can
-represent *regardless of k*, and it is a stronger caveat than the choice of k
-ever was. It is one more consequence of the binary-availability limitation in
-Section 1.3, and it must appear in the manuscript's limitations.
+Primary k=4 remains a declared construct choice, not a clinically validated
+threshold. Binary service availability and shared dependencies limit what
+the endpoint can represent, separately from its sensitivity to k.
 
 **Where the endpoint has no discriminating power.** In the high-capacity
 profile the endpoint is identically zero at every k ≥ 2 across all 16

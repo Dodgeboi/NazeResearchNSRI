@@ -1,3 +1,13 @@
+# Retrospective interpretation correction
+
+The historical log below is preserved. Its statements that k changes
+probabilities by about three percentage points and is not consequential are
+superseded. The revised profile/stage analysis rejects that inference and
+corrects stale intermediate-bank counts in the active model specification
+and endpoint rationale. Primary k=4 and all simulator behavior remain unchanged.
+The new plan and fixed-entry-allocation amendment are in
+`study/INTERPRETATION_ANALYSIS_PLAN.md`. New findings are retrospective.
+
 # Validation deviations and corrections
 
 ## 2026-08-03 - diagnostic scenario pairing and time conversion
