@@ -2,11 +2,11 @@
   "code": {
     "available": true,
     "branch": "research/methods-revision",
-    "commit": "cf2327d384d2acde3a6d3c4782f2acd2b6707784",
+    "commit": "aa90c780a3ffd95998c0ad11db163b7c62eab540",
     "dirty": false,
     "dirty_paths": []
   },
-  "created_at": "2026-09-06T06:47:23+00:00",
+  "created_at": "2026-09-06T06:54:00+00:00",
   "description": "Shared tariffs, paired outcome resampling, and simultaneous bounded-mean screen.",
   "environment": {
     "implementation": "CPython",
@@ -54,9 +54,9 @@
       "sha256": "cf41ebdacf092df8855edfa61893e5dcdacc19f3a76f7fc9166f3bc27b27fdab"
     },
     {
-      "bytes": 8981,
+      "bytes": 10006,
       "path": "scripts/analyze_joint_stability.py",
-      "sha256": "1dbabb1b8e7eb23447b53d1884f4645c290c585b914c14a37822709bbd37489e"
+      "sha256": "bd89a33f7ea08bc66323a932bbf5604b90972486a496087122c2b73d0bcdbb02"
     },
     {
       "bytes": 27089,
@@ -74,9 +74,9 @@
       "sha256": "cc8f74338f875054efabc64bbb8dc15f7a1bcafca0822e2b580f8cbcabb0de7b"
     },
     {
-      "bytes": 7651,
+      "bytes": 7986,
       "path": "src/grrc/joint_stability.py",
-      "sha256": "59b584140dfbafd503f1e7176017efb377d81c2452c5148eba1f6ad92b005fec"
+      "sha256": "ab664fe99f66c4ce81c5ff64b37f91873bbaae6ff37b44b80dbb68b9f12503ea"
     },
     {
       "bytes": 34928,
@@ -94,6 +94,11 @@
       "sha256": "3ee09640a09c3868b530c7937133334acf2897939c2349e6a7dd1bc1fc531afa"
     },
     {
+      "bytes": 1552,
+      "path": "study/JOINT_STABILITY_EXTENSION.md",
+      "sha256": "fa124bd760c27e752259467771d377a13d79a4e24511707dc23fadf213d52f6e"
+    },
+    {
       "bytes": 4442,
       "path": "study/JOINT_STABILITY_PLAN.md",
       "sha256": "c00d25b422b1f7e3a7f3e9e88c04e0bfcece8234887cb0083c54a331a24d0d7c"
@@ -101,29 +106,29 @@
   ],
   "outputs": [
     {
-      "bytes": 494769,
+      "bytes": 1334520,
       "path": "data/joint_stability/bootstrap_draws.csv",
-      "sha256": "91f9c1b20f4b7b7f9ce36f2c32b186ffaf2b10cc6bba32f55f4df7d01d7422aa"
+      "sha256": "f22065833c87f014e054ce3808c48086e3ebef241bc41064ae4b45f23e1ec204"
     },
     {
-      "bytes": 946,
+      "bytes": 2047,
       "path": "data/joint_stability/bootstrap_summary.csv",
-      "sha256": "361d58db23647bb78b83f75d9e1dd8fce5573ff33643d49548ab320c032218c1"
+      "sha256": "76d4c36e77ccfe937f49b0d743eb4d50078b2cabd50bfb460039f9202b10a1c8"
     },
     {
-      "bytes": 185962,
+      "bytes": 418021,
       "path": "data/joint_stability/candidate_retention.csv",
-      "sha256": "01dbd0e66a3ed4bd5238a7504506d536c8c6e4520ee367c80c1d7cfdd8c8a24b"
+      "sha256": "cb7327dd2b558a6285d6a93c8aa219f9364ac2a8afd56c8b19bddfdbde543190"
     },
     {
-      "bytes": 550,
+      "bytes": 1384,
       "path": "data/joint_stability/point_retention.csv",
-      "sha256": "6e764acb3031761b805f761b7feb55df1dae5f59826bf1e2f99daf8d7a08e389"
+      "sha256": "a5eba42db26612ce26eb4a133831d7fb6c39c1140efb3dd996622b888549db7d"
     },
     {
-      "bytes": 5269,
+      "bytes": 11717,
       "path": "data/joint_stability/population_retention.csv",
-      "sha256": "f0b01de112207ea3bd769e90f9c04949147e80c73b4fbea4ec12d5a76d90eff4"
+      "sha256": "3e71e33a9b1c3d14507b1e7aa5daa7de11e6e99bdb8e3926104e49f31146267b"
     }
   ],
   "parameters": {
@@ -137,6 +142,10 @@
     "loss_bound": 381.59999999999997,
     "ordered_mean_family_size": 276048,
     "population_scope": "sufficient retention in the declared scenario population; arbitrary tail coordinate",
+    "price_regions": [
+      "monotone",
+      "positive_gaps"
+    ],
     "price_rounding_decimal_places": 12,
     "radii": [
       0,
