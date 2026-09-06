@@ -43,22 +43,34 @@ def portfolio_features(portfolio, profile) -> np.ndarray:
 
 
 def ordered_rectangle_vertices(lower, upper, minimum_gap=0) -> np.ndarray:
-    """Vertices of a two-dimensional box intersected with x + gap <= y."""
+    """Vertices of a box intersected with x + gap <= y, to float precision.
+
+    Work in the original coordinates so a rounded gap does not turn a
+    singleton decimal-price box into an empty region. Boundary calculations
+    allow eight machine epsilons at the input scale, never an absolute floor.
+    """
     lower, upper = np.asarray(lower, float), np.asarray(upper, float)
     if (lower.shape != (2,) or upper.shape != (2,)
             or not np.isfinite([lower, upper]).all() or (lower > upper).any()
             or not np.isfinite(minimum_gap) or minimum_gap < 0):
         raise ValueError("finite ordered two-dimensional bounds required")
-    lower = lower - [0, minimum_gap]
-    upper = upper - [0, minimum_gap]
-    vertices = [(x, y) for x in (lower[0], upper[0])
-                for y in (lower[1], upper[1]) if x <= y]
-    left, right = max(lower), min(upper)
-    if left <= right:
-        vertices.extend([(left, left), (right, right)])
+    tolerance = 8 * np.finfo(float).eps * max(
+        np.abs(lower).max(), np.abs(upper).max(), minimum_gap)
+    candidates = [(x, y) for x in (lower[0], upper[0])
+                  for y in (lower[1], upper[1])]
+    candidates += [(x, x + minimum_gap) for x in (lower[0], upper[0])]
+    candidates += [(y - minimum_gap, y) for y in (lower[1], upper[1])]
+    vertices = []
+    for candidate in candidates:
+        point = np.asarray(candidate)
+        if ((point >= lower - tolerance).all()
+                and (point <= upper + tolerance).all()):
+            point = np.clip(point, lower, upper)
+            if point[1] - point[0] >= minimum_gap - tolerance:
+                vertices.append(point)
     if not vertices:
         raise ValueError("empty ordered rectangle")
-    return np.unique(vertices, axis=0) + [0, minimum_gap]
+    return np.unique(vertices, axis=0)
 
 
 def minimum_tariff_difference(coefficients, nominal, radius, preserve_gaps=False) -> np.ndarray:

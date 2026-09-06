@@ -18,6 +18,22 @@ from grrc.multiobjective import (load_operational_burdens,
 ROOT = Path(__file__).resolve().parents[1]
 
 
+@pytest.mark.parametrize("scale", [1e-12, 1, 1e12])
+def test_decimal_singleton_gap_and_infeasibility(scale):
+    point = np.array([.1, .4]) * scale
+    vertices = ordered_rectangle_vertices(point, point, point[1] - point[0])
+    np.testing.assert_array_equal(vertices, point[None, :])
+    with pytest.raises(ValueError, match="empty"):
+        ordered_rectangle_vertices(point, point, .30001 * scale)
+
+
+def test_decimal_zero_radius_support_is_nominal_dot_product():
+    t = np.array([.1, .4, .2, .3, .5, .1, .4, .3])
+    a = np.random.default_rng(728).integers(-4, 5, (30, 8))
+    np.testing.assert_allclose(minimum_tariff_difference(a, t, 0, True), a @ t,
+                               rtol=1e-14, atol=1e-15)
+
+
 @pytest.mark.parametrize("radius", [0, .1, .25, .5, .75])
 @pytest.mark.parametrize("preserve_gaps", [False, True])
 def test_support_matches_independent_linear_program(radius, preserve_gaps):
