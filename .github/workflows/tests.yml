@@ -16,8 +16,8 @@ jobs:
       - name: Install
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install -e .
+          pip install -r requirements-revision.txt
+          pip install -e . --no-deps
 
       # One harness runs every check below and reports the full set of
       # failures rather than stopping at the first. It lives in the repository

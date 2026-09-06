@@ -2,9 +2,9 @@
 
 ## Manuscript
 
-`manuscript/main.pdf` is the current pre-external-validation paper. Its editable source is `main.tex`, references are in `references.bib`, and the two included figures are generated from the fresh five-minute results.
+`manuscript/main.pdf` is the current retrospective methods-paper draft. Its editable source is `main.tex`; references are in `references.bib`. The new tables and figures are generated from paired, stratified reanalysis of the preserved trial banks. `manuscript/anonymous.pdf` is a manuscript-only anonymous review draft.
 
-The originality audit records the closest identified studies and explains why the manuscript avoids a priority claim.
+`manuscript/RESEARCH_POSITIONING.md` records the primary literature and the limited novelty claim. `manuscript/REVISION_REVIEW.md` records changes and pending human review. Older originality assessments are preserved as superseded documents.
 
 ## Evidence review
 

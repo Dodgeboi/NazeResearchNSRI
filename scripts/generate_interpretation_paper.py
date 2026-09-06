@@ -118,7 +118,7 @@ def figures(tables):
         ax.set(xticks=range(1,5),ylim=(0,100),xlabel='Required qualifying clinical services, k',
                ylabel='Candidate-average event frequency (%)', title=stage.capitalize())
         ax.grid(axis='y',alpha=.2)
-    axes[1].legend(fontsize=7,loc='center right')
+    axes[1].legend(fontsize=7,loc='upper right',bbox_to_anchor=(1,.78),frameon=False)
     save(fig,'endpoint_ladder')
     draws = tables['frontier_bootstrap_draws'].groupby('draw').sum(numeric_only=True)
     fig, axes = plt.subplots(1, 2, figsize=(7.05,2.25))

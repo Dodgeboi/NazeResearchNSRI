@@ -168,7 +168,8 @@ def test_thresholded_endpoint_documents_its_rationale():
     # the superseded argument was withdrawn rather than quietly replaced.
     lowered = spec.threshold_rationale.lower()
     assert "withdrawn" in lowered
-    assert "bimodal" in lowered
+    assert "profile" in lowered
+    assert "pooled" in lowered
     assert "construct" in lowered
     # It must not claim clinical standing for the threshold.
     assert "catastroph" not in spec.definition.lower()

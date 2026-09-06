@@ -1,4 +1,5 @@
 \documentclass[conference,compsoc]{IEEEtran}
+\usepackage[T1]{fontenc}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx,booktabs,tabularx}
 \usepackage{microtype}
@@ -14,6 +15,7 @@
 \fi
 \graphicspath{{methods_figures/}}
 \input{methods_numbers}
+\makeatletter\let\tableinput\@@input\makeatother
 \newcommand{\modelonly}{within the synthetic model}
 \newcommand{\artifactpath}[1]{\texttt{\detokenize{#1}}}
 \begin{document}
@@ -266,16 +268,14 @@ retroactively prove that the historical code was committed before execution.
 A commit-attribution map resolves historical source identifiers after the
 repository's metadata-only attribution correction.
 
-For the final retrospective analysis, Python 3.12 and the exact package
-versions are recorded in the manifest and the revision environment file.
-First restore the raw bank with \artifactpath{scripts/unpack_raw.py}; then run
-\artifactpath{scripts/run_full_audit.py}. From a clean checkout,
-\artifactpath{scripts/analyze_interpretation.py} regenerates the tables.
-After reviewing and committing those outputs,
-\artifactpath{scripts/generate_interpretation_paper.py} generates the numeric
-TeX and vector figures. Its \artifactpath{--check} option recomputes the TeX
-and verifies its manifest without overwriting files. These checks certify
-specified artifact relations, not the correctness of every sentence.
+For the final retrospective analysis, Python 3.12 and exact package versions
+are recorded in the manifest and revision environment file. The reproduction
+guide gives commands to restore the compressed bank, run the verification
+harness, regenerate analysis tables from a clean checkout, and generate
+numeric TeX and vector figures after committing those tables. The paper
+generator's check mode recomputes the TeX and verifies its manifest without
+overwriting files. These checks certify specified artifact relations, not
+the correctness of every sentence.
 
 The retrospective plan records an amendment: early diagnostic output treated
 entry categories as randomly mixed, but source inspection established a
@@ -283,17 +283,18 @@ fixed allocation. Final results preserve that allocation. Initial outputs
 are retained in Git history rather than relabeled as the final design.
 For Eq.~\ref{eq:pairing}, set $v_h=w_h^2s^2_{D,h}/n_h$ and use approximate
 degrees of freedom $(\sum_hv_h)^2/\sum_h[v_h^2/(n_h-1)]$. The interval is
-$\widehat\Delta\pm t_{1-.05/(2\cdot397),\nu}\sqrt{\sum_hv_h}$.
+$\widehat\Delta\pm t_{1-.05/(2\cdot\ContrastFamily),\nu}\sqrt{\sum_hv_h}$.
 
+\newpage
 \section{Objective-Subset Enumeration}
-\begin{table}[h]
+\begin{table}[!ht]
 \centering\small
 \caption{Frontier size over all objective subsets of each dimension.
 Entries are minimum/median/maximum, including tied optima. R, I, and H
 denote resource-constrained, intermediate, and high-capacity profiles.}
 \begin{tabular}{@{}crrr@{}}\toprule
 Dimensions & R & I & H\\\midrule
-\input{table_ablation_rows}
+\tableinput table_ablation_rows.tex
 \bottomrule\end{tabular}
 \end{table}
 The single-objective intermediate maximum is caused by tied optima.

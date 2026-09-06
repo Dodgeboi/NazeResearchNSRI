@@ -1,0 +1,180 @@
+{
+  "code": {
+    "available": true,
+    "branch": "research/methods-revision",
+    "commit": "cc8e932587c1e0209ba71fbad7ee6b262a745cc4",
+    "dirty": false,
+    "dirty_paths": []
+  },
+  "created_at": "2026-09-06T04:55:52+00:00",
+  "description": "Generated numeric TeX and vector figures for retrospective methods paper.",
+  "environment": {
+    "implementation": "CPython",
+    "machine": "AMD64",
+    "packages": {
+      "matplotlib": "3.11.0",
+      "networkx": "3.6.1",
+      "numpy": "2.3.5",
+      "pandas": "3.0.1",
+      "scipy": "1.18.0",
+      "yaml": "6.0.3"
+    },
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.14"
+  },
+  "inputs": [
+    {
+      "bytes": 4667,
+      "path": "configs/multiobjective_portfolio.yaml",
+      "sha256": "a3dff5682e1e8277cc29d3a5836009deccf87a901d4fa60fdd1ce7c091e41e31"
+    },
+    {
+      "bytes": 7007,
+      "path": "data/interpretation/analysis_manifest.json",
+      "sha256": "f1a1fd04c722cc51647c1cf00b1d3ede6e0d2b0b5fb03b5793aee3bba9209f5e"
+    },
+    {
+      "bytes": 108775,
+      "path": "data/interpretation/baseline_contrasts.csv",
+      "sha256": "158d56d43fe24790cbbf531fd5cefd4c3281261a6b758df244f35920640709ee"
+    },
+    {
+      "bytes": 98440,
+      "path": "data/interpretation/component_weight_draws.csv",
+      "sha256": "52c54f7bab3c2735ba60a27a7de62812e9b86b24ee1a8766d1484b21a6a51bca"
+    },
+    {
+      "bytes": 84020,
+      "path": "data/interpretation/component_weight_sensitivity.csv",
+      "sha256": "128b011c529bf9015422301bc64fe989441636e36bd1105e0938fcac81d18de3"
+    },
+    {
+      "bytes": 874,
+      "path": "data/interpretation/endpoint_by_stage_profile.csv",
+      "sha256": "915b1cef7f9c881f0f128b3d838a152d951c76e302c3d88509f6cfe25f4d6568"
+    },
+    {
+      "bytes": 630,
+      "path": "data/interpretation/endpoint_frontier_sensitivity.csv",
+      "sha256": "a46841b3a9341e1841f52c22d3c81adb9441d1dd8170deee541f588796b24229"
+    },
+    {
+      "bytes": 217,
+      "path": "data/interpretation/endpoint_gap_bootstrap.csv",
+      "sha256": "aacaceb9aa3447a704e2c3f806c76654dc89cffd83b0b3bd078be88c3ed5edbf"
+    },
+    {
+      "bytes": 101034,
+      "path": "data/interpretation/frontier_bootstrap_draws.csv",
+      "sha256": "dd24f6035df7b6df16f3519aa9c27578c7f6b8ac3422a91aead5a696eb1687e8"
+    },
+    {
+      "bytes": 1105,
+      "path": "data/interpretation/frontier_bootstrap_summary.csv",
+      "sha256": "fbeb0aec2de916c04834cac609bbcc77d994dbff5b44b53bf6de7ab50b0ea200"
+    },
+    {
+      "bytes": 171,
+      "path": "data/interpretation/frontier_point_counts.csv",
+      "sha256": "592e4bd4ec9efa1015d762d371699b9fae81927a3d4dde5d6b996944223c9225"
+    },
+    {
+      "bytes": 19454,
+      "path": "data/interpretation/objective_ablation.csv",
+      "sha256": "f722753935035b2c70f801e60f1dd175751a0eeffec88af72106b7409dea0b66"
+    },
+    {
+      "bytes": 392,
+      "path": "data/interpretation/paired_resolution.csv",
+      "sha256": "8584e33f97f0c9ba5a26f8f1d76a653998cd528dce86b1dc6ac6b7ac17653e21"
+    },
+    {
+      "bytes": 177,
+      "path": "data/interpretation/pooling_comparison.csv",
+      "sha256": "1feeef17caab4492185677b9920aba7516f4f1f8490a429c82b9ac67e2348010"
+    },
+    {
+      "bytes": 1515,
+      "path": "data/interpretation/qualifying_service_distribution.csv",
+      "sha256": "987d5c5db161eeb6f5b2e2a84f6d905aa1f04d5c58e9e8a04f0e234d2fc04df0"
+    },
+    {
+      "bytes": 2429,
+      "path": "scripts/audit_interpretation_claims.py",
+      "sha256": "0f8833152e0b36878e10eb2a60af9532b1381a3cdd9e74df55b0aa896442dc3c"
+    },
+    {
+      "bytes": 10111,
+      "path": "scripts/generate_interpretation_paper.py",
+      "sha256": "6049506ebf2f301619892416a904095b761262ddca21d936a26268b5406e7997"
+    },
+    {
+      "bytes": 3135,
+      "path": "src/grrc/claim_contracts.py",
+      "sha256": "b66238f94ac38c76fe81608ec6a47bfec004fe231be44d7ba25b68002937d23c"
+    },
+    {
+      "bytes": 11060,
+      "path": "study/interpretation_contracts.json",
+      "sha256": "9e06e5cdb78abf7e3df7cc6a707588418c9eda0d4a395ffd6edbe34637eb1479"
+    }
+  ],
+  "outputs": [
+    {
+      "bytes": 62531,
+      "path": "docs/manuscript/methods_figures/conditional_frontier.pdf",
+      "sha256": "a7b1fa46ff661d8da97c62eb7346bdc6c1c671528355c5f182b4898e701aa094"
+    },
+    {
+      "bytes": 40522,
+      "path": "docs/manuscript/methods_figures/conditional_frontier.png",
+      "sha256": "6ab60334e11b15d2c527f13eee535ffc48240b4dabe44c24f83cc112cd396777"
+    },
+    {
+      "bytes": 65367,
+      "path": "docs/manuscript/methods_figures/endpoint_ladder.pdf",
+      "sha256": "f57ae449b47c3f6dbcd0f44c30d9f81eef45ee413026e8d6405dccc6443b09a2"
+    },
+    {
+      "bytes": 55834,
+      "path": "docs/manuscript/methods_figures/endpoint_ladder.png",
+      "sha256": "e7691c612c32e2f83783476ddd223b009a0187a9a836ed8481baaca17aa52384"
+    },
+    {
+      "bytes": 1236,
+      "path": "docs/manuscript/methods_numbers.tex",
+      "sha256": "9446a57553d1e4c351308b1ee92fdc01a0d1b684d32b16dc37b209c12b196d7e"
+    },
+    {
+      "bytes": 285,
+      "path": "docs/manuscript/table_ablation_rows.tex",
+      "sha256": "7b18690c4bd56c40d16a2bc230de25b92c2517b3ad8d70acd47fe536acd3310e"
+    },
+    {
+      "bytes": 232,
+      "path": "docs/manuscript/table_endpoint_rows.tex",
+      "sha256": "127ed5ca759c2210c2b858daee0767f14478ea64f7a936867c242e268de5c68e"
+    },
+    {
+      "bytes": 154,
+      "path": "docs/manuscript/table_frontier_rows.tex",
+      "sha256": "31c1d70119f6184285388b4fe4dcd0beb569be92006c813aa56ab1a4f49a118f"
+    },
+    {
+      "bytes": 169,
+      "path": "docs/manuscript/table_pairing_rows.tex",
+      "sha256": "1a5284de5e2cb46544f90ffb0cd6916a2ee02e85cb30d4d5334ecc2c09b7246e"
+    },
+    {
+      "bytes": 205,
+      "path": "docs/manuscript/table_weight_rows.tex",
+      "sha256": "4fd6cc5381f29b77461ebc4fcf647a4a5b6cce93c6a5f97790ffd0680d6fdf61"
+    }
+  ],
+  "parameters": {
+    "scope": "registered values and assertions, not all prose"
+  },
+  "protocol": null,
+  "run_id": "interpretation-paper",
+  "stage": "analysis"
+}
