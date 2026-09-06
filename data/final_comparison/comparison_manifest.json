@@ -1,0 +1,183 @@
+{
+  "code": {
+    "available": true,
+    "branch": "research/methods-revision",
+    "commit": "2bb8c6be1433caa36ea1dfdf7be9476a2217834c",
+    "dirty": false,
+    "dirty_paths": []
+  },
+  "created_at": "2026-09-06T16:59:49+00:00",
+  "description": "Same-family bound comparison and coefficient-conditioned frontier retention with matched-size references.",
+  "environment": {
+    "implementation": "CPython",
+    "machine": "AMD64",
+    "packages": {
+      "matplotlib": "3.11.0",
+      "networkx": "3.6.1",
+      "numpy": "2.3.5",
+      "pandas": "3.0.1",
+      "scipy": "1.18.0",
+      "yaml": "6.0.3"
+    },
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.14"
+  },
+  "inputs": [
+    {
+      "bytes": 561,
+      "path": "configs/defense_burdens.yaml",
+      "sha256": "70647c2c1cc3d0a260ff06660c69c31b29fcffd743b16c4db40a18394730515a"
+    },
+    {
+      "bytes": 1057,
+      "path": "configs/defense_costs.yaml",
+      "sha256": "66e66f192c5e44cacd099ef747262639379006084819569353306517cc30e3e5"
+    },
+    {
+      "bytes": 4667,
+      "path": "configs/multiobjective_portfolio.yaml",
+      "sha256": "a3dff5682e1e8277cc29d3a5836009deccf87a901d4fa60fdd1ce7c091e41e31"
+    },
+    {
+      "bytes": 101343517,
+      "path": "data/multiobjective/confirmatory/multiobjective_confirmatory_results.csv",
+      "sha256": "6b558145ae770f744f21a9d4c096c02e7d205f039b101eb98084dda7f2fdce91"
+    },
+    {
+      "bytes": 61516,
+      "path": "data/multiobjective/confirmatory/portfolio_objective_summary.csv",
+      "sha256": "cf41ebdacf092df8855edfa61893e5dcdacc19f3a76f7fc9166f3bc27b27fdab"
+    },
+    {
+      "bytes": 10982,
+      "path": "scripts/analyze_final_comparison.py",
+      "sha256": "9e45a81253355428c44b121543af5bd1e16ac9c395bd4c7b051c3bf97a4724fe"
+    },
+    {
+      "bytes": 3895,
+      "path": "src/grrc/comparison.py",
+      "sha256": "5cbd8513518af68e8dedcf6ca0eceb156cd9ce845f105f8b587bd9a8aac9fb8a"
+    },
+    {
+      "bytes": 27089,
+      "path": "src/grrc/config.py",
+      "sha256": "b27a182157159c824e2ff9f6be72adf6e078634cb4654d3c4fdd175c9983e2c9"
+    },
+    {
+      "bytes": 17759,
+      "path": "src/grrc/defenses.py",
+      "sha256": "b9fe7bb6f892ce00c8772907120c9d5314efc54e111059fc0bb0a55a1b6132b9"
+    },
+    {
+      "bytes": 3065,
+      "path": "src/grrc/frontier_certificates.py",
+      "sha256": "e807fdc415fd3cbe1d6c99b937a125ab9584166777a8fc5eee0b3f0762fc4324"
+    },
+    {
+      "bytes": 12438,
+      "path": "src/grrc/interpretation.py",
+      "sha256": "cc8f74338f875054efabc64bbb8dc15f7a1bcafca0822e2b580f8cbcabb0de7b"
+    },
+    {
+      "bytes": 8598,
+      "path": "src/grrc/joint_stability.py",
+      "sha256": "d93666a7f738b633b1e8a9074c6d478958508b5f613c4c9cfce618eada578368"
+    },
+    {
+      "bytes": 34928,
+      "path": "src/grrc/multiobjective.py",
+      "sha256": "22053598e5453d63819b35d282482626d848ecd5880c490ab9b7e8b6c9050468"
+    },
+    {
+      "bytes": 14389,
+      "path": "src/grrc/provenance.py",
+      "sha256": "bc68c43d8d9367b0e6ce70dcfb4eb4d5a82e0c59e9a4676cae73ad9aeb664f02"
+    },
+    {
+      "bytes": 3518,
+      "path": "src/grrc/utilities.py",
+      "sha256": "3ee09640a09c3868b530c7937133334acf2897939c2349e6a7dd1bc1fc531afa"
+    },
+    {
+      "bytes": 3663,
+      "path": "study/FINAL_COMPARISON_PLAN.md",
+      "sha256": "7681857bca29d50b8c90869f099ed876b05beaf05da947e752175f5ef5c6635d"
+    }
+  ],
+  "outputs": [
+    {
+      "bytes": 216324,
+      "path": "data/final_comparison/baseline_comparisons.csv",
+      "sha256": "8a28c76b9286c4e88e2d766f7c0ffe257024e1f2295bc5a44dc4947393ebe03b"
+    },
+    {
+      "bytes": 245511,
+      "path": "data/final_comparison/bound_candidates.csv",
+      "sha256": "01da94d5f8214a49e4e8bb8f56eba6d9dd24a3af539e3517df87915c995bf72b"
+    },
+    {
+      "bytes": 2757,
+      "path": "data/final_comparison/bound_margins.csv",
+      "sha256": "953ed97490c627a67b0ba18d94fb96c4aa22cecc3153ae4a3283b2c35d520262"
+    },
+    {
+      "bytes": 1302,
+      "path": "data/final_comparison/bound_retention.csv",
+      "sha256": "2a85f94ee1716a8b16d6bed992829ace48c7332d2fcbffe5deea63958293e87b"
+    },
+    {
+      "bytes": 8051,
+      "path": "data/final_comparison/coefficient_regimes.csv",
+      "sha256": "7e077b69997e73f47c08bcc134236e5727af7982c9fd41ea9bd83315242bb6c5"
+    },
+    {
+      "bytes": 175191,
+      "path": "data/final_comparison/matched_subsets.csv",
+      "sha256": "a60bd50e5d855b8f11d7bffaf2b7fd5bf57047f213c6078350b9cdd8b6142138"
+    },
+    {
+      "bytes": 1456086,
+      "path": "data/final_comparison/regime_candidates.csv",
+      "sha256": "6103bd29d6322883640e42937da180592b49dfb25bf5ab7908776fa4c326f400"
+    },
+    {
+      "bytes": 737841,
+      "path": "data/final_comparison/regime_membership.csv",
+      "sha256": "4828f2ad15c3b25c1fd8eb40e81935a75028b7a0dc91fc1899c13d1f61dba9c0"
+    }
+  ],
+  "parameters": {
+    "alpha": 0.05,
+    "coefficients": [
+      "param_network_backup_isolation_lapse",
+      "param_simulation_base_spread_rate",
+      "param_simulation_false_positive_rate",
+      "param_simulation_identity_breach_multiplier",
+      "param_simulation_identity_control_coverage",
+      "param_simulation_identity_control_effectiveness",
+      "param_simulation_patch_effectiveness",
+      "param_simulation_patch_effectiveness_vendor",
+      "param_simulation_rapid_isolation_success",
+      "param_simulation_restore_rate_fraction"
+    ],
+    "family_size": 276048,
+    "loss_bound": 381.59999999999997,
+    "matched_subsets": 1000,
+    "methods": [
+      "hoeffding",
+      "empirical_bernstein",
+      "paired_t_approx"
+    ],
+    "per_stratum_selection": 26,
+    "price_radii": [
+      0,
+      0.5
+    ],
+    "price_region": "positive_gaps",
+    "scope": "retrospective; conditional regimes are not interventions; paired t is approximate",
+    "seed": 2026090700
+  },
+  "protocol": null,
+  "run_id": "final-comparison",
+  "stage": "analysis"
+}
