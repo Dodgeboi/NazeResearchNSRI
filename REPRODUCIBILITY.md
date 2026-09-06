@@ -1,4 +1,4 @@
-# Reproducing the interpretation audit
+# Reproducing the final research project
 
 ## Environment and scope
 
@@ -34,7 +34,15 @@ python scripts/analyze_interpretation.py
 
 The default uses 1,000 stratified bootstrap draws, seed 2026090601 with successive profile offsets, and 500 heterogeneous weight draws with seed 2026090602. Entry categories are fixed strata (80 scenarios in each of five categories per confirmation profile). Resampling retains all candidate and endpoint pairings. The finite candidate shortlist remains fixed. Initial unstratified diagnostics are preserved in commit 543c5e1 and explicitly superseded by the design correction; the amendment is not disguised as preregistration.
 
-Review and commit regenerated analysis outputs, then generate reporting artifacts:
+The interval-certificate evaluation has its own committed plan and source manifest. After committing any regenerated interpretation results, run it from a clean checkout:
+
+```bash
+python scripts/analyze_frontier_certificates.py
+```
+
+This uses the unchanged RE21/RE22 Python functions archived from upstream commit 7876b4e465eac381a256e461d1310b8bb2b92846. Candidate sampling uses seed 2026090603 plus problem offsets; perturbations use seed 2026090604 plus successive setting offsets. Every planned radius, including inconclusive settings, is reported. It uses no live download. The independent sorting oracle and exact corner checks test the certificate; they do not validate hospital mechanisms. The retained MIT license and source hashes are in [vendor/reproblems](vendor/reproblems).
+
+Review and commit all regenerated result tables, then generate reporting artifacts:
 
 ```bash
 python scripts/generate_interpretation_paper.py
@@ -55,7 +63,7 @@ tectonic --untrusted docs/manuscript/anonymous.tex
 
 Tectonic fetches its TeX bundle on the initial build. No shell escape is required. A standard LaTeX installation with IEEEtran, BibTeX, and the listed packages is an alternative. Inspect the rendered pages as well as the build log; successful TeX compilation alone does not establish readable layout or correct claims.
 
-The anonymous PDF hides author names, affiliation and the identified artifact URL. It is a review draft: an anonymous artifact link/package and author-verified LLM statement remain to be completed before double-blind submission.
+The anonymous PDF omits author names, affiliation, and the identified artifact URL. It contains the same final research content and concise assistance statement. The public repository and its history remain identified; the PDF alone is an anonymous manuscript copy.
 
 ## Original simulation pipeline
 

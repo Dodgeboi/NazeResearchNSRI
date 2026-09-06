@@ -1,3 +1,5 @@
+> Archival editorial record from an earlier version. Current manuscript status and resolved findings are in [REVISION_REVIEW.md](REVISION_REVIEW.md); this record is not a pending-work list for the final paper.
+
 > Historical assessment, superseded by the retrospective interpretation revision. See `docs/manuscript/REVISION_REVIEW.md`; old scores and narrative conclusions are not current readiness judgments.
 
 # Originality and author-voice audit

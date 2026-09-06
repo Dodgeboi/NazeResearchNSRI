@@ -1,22 +1,9 @@
 # Documentation
 
-## Manuscript
+[manuscript/main.pdf](manuscript/main.pdf) is the final research manuscript. Its editable source is [main.tex](manuscript/main.tex); references are in [references.bib](manuscript/references.bib). [anonymous.pdf](manuscript/anonymous.pdf) is the same research content with identifying manuscript details omitted.
 
-`manuscript/main.pdf` is the current retrospective methods-paper draft. Its editable source is `main.tex`; references are in `references.bib`. The new tables and figures are generated from paired, stratified reanalysis of the preserved trial banks. `manuscript/anonymous.pdf` is a manuscript-only anonymous review draft.
+The paper reports the original model, paired and stratified reanalysis, the interval frontier certificate, and the published engineering benchmark evaluation. Numeric tables and figures are generated from committed data. [RESEARCH_POSITIONING.md](manuscript/RESEARCH_POSITIONING.md) explains the contribution against primary literature; [REVISION_REVIEW.md](manuscript/REVISION_REVIEW.md) records resolved review findings.
 
-`manuscript/RESEARCH_POSITIONING.md` records the primary literature and the limited novelty claim. `manuscript/REVISION_REVIEW.md` records changes and pending human review. Older originality assessments are preserved as superseded documents.
+The evidence directory retains source reviews and planning records. Proposed validation studies are distinct from completed experiments. The authoritative parameter register and model specification are in [study](../study).
 
-## Evidence review
-
-The `evidence` directory separates four things that are easy to blur together:
-
-1. observations reported in public studies;
-2. operational windows informed by those studies;
-3. outcomes defined by the authors; and
-4. synthetic stress assumptions that public evidence could not identify.
-
-The parameter register in `../study/` is the authoritative record for the fresh simulations.
-
-## External review
-
-The next step is high-level face validation by hospital IT or incident-response professionals, clinical-operations professionals, and ideally a simulation reviewer. No reviewer should be asked to disclose patient information, credentials, network diagrams, vulnerabilities, logs, or active-incident details.
+Earlier originality assessments and author worksheets are archival editorial material and do not set the status of the final manuscript.

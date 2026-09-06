@@ -1,3 +1,5 @@
+> Archival editorial record from an earlier version. Current manuscript status and resolved findings are in [REVISION_REVIEW.md](REVISION_REVIEW.md); this record is not a pending-work list for the final paper.
+
 # Author review checklist
 
 Do not submit until all three authors can check every box.

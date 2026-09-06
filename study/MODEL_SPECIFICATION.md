@@ -290,11 +290,15 @@ Primary k=4 remains a declared construct choice, not a clinically validated
 threshold. Binary service availability and shared dependencies limit what
 the endpoint can represent, separately from its sensitivity to k.
 
-**Where the endpoint has no discriminating power.** In the high-capacity
-profile the endpoint is identically zero at every k ≥ 2 across all 16
-resolved candidates, and 0.067 for every candidate at k = 1. It contributes
-nothing to dominance in that profile, and the manuscript must say so rather
-than presenting six live objectives everywhere.
+**Discrimination depends on the bank and endpoint.** The earlier claim in
+this paragraph that every high-capacity candidate had zero events at k >= 2
+described superseded results and does not describe the current confirmation
+bank. Current stage/profile frequencies and frontier membership are reported
+in `data/interpretation/endpoint_by_stage_profile.csv` and
+`data/interpretation/endpoint_frontier_sensitivity.csv`. The confirmation
+high-capacity frontier is unchanged across the four k values even though
+candidate-average frequency changes from 16.00% to 1.66%. This documentation
+correction does not change the endpoint, frozen protocols, or simulator.
 
 **Recomputability requirement.** Per-service longest outage runs are
 persisted in raw output (`<service>_max_outage_streak_steps`), together with
@@ -303,7 +307,7 @@ any duration threshold without rerunning a single simulation. The pre-rebuild
 schema discarded the streak entirely, so the endpoint could not be checked at
 all (audit ISSUE-002).
 
-### 4.2 Recovery — known inadequacy, scheduled for WP3
+### 4.2 Recovery — model scope
 
 `nonrecovery_probability` is right-censored technical recovery at 72 hours.
 It is **not** organizational recovery and **not** return to normal clinical

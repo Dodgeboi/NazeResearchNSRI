@@ -1,0 +1,4 @@
+profile,budget_points,selected_portfolio,free_mean_hours_lost,selected_mean_hours_lost,selected_cost_points,selected_burden_points,selected_k4_frequency
+resource_constrained,5,seg-flat|patch+0|det1|iso0|bak-isolated|idm0,322.1340417,156.9935625,5,4,0.945
+intermediate_capacity,10,seg-least_privilege|patch+2|det1|iso0|bak-isolated|idm0,179.3419375,24.33625,10,11,0.215
+high_capacity,15,seg-least_privilege|patch+1|det1|iso1|bak-isolated|idm1,15.01979167,13.06720833,14,11,0.0

@@ -1,48 +1,31 @@
-Simulation reporting guidelines, especially STRESS, already call for
-transparent model descriptions, experimental design, and implementation
-details \cite{monks2019}. Preregistration distinguishes prior commitments
-from outcome-informed analysis \cite{nosek2018}. Our retrospective plan and
-amendment use that distinction explicitly; recording them does not transform
-an audit informed by observed defects into a confirmatory experiment.
+Kiesling et al.\ already combine security-control models, simulation,
+multi-objective optimization, and portfolio selection \cite{kiesling2016}.
+Our hospital-specific contribution is the explicit evidence-to-mechanism
+framework, clinical-service dependency outcomes, exhaustive paired finite
+comparison, and separation of endpoint retention from other uncertainties.
+Hospital process simulation with local observations and expert input
+\cite{willing2025} addresses a different validation level; our synthetic
+network does not inherit that empirical grounding.
 
-Common random numbers are an established variance-reduction strategy.
-Event-keyed random inputs can preserve meaningful coupling when alternative
-policies change execution order \cite{buffalo2026}. This study does not
-introduce that technique. Its additional observation is that a paired
-simulator can still be followed by an uncertainty calculation that discards
-the resulting covariance. The analysis must also retain fixed design strata;
-correct pairing alone is insufficient.
+Necessary and possible efficiency under interval uncertainty are established
+optimization concepts \cite{hladik2017}. Equations~\ref{eq:guaranteed}--\ref{eq:possible}
+give a direct finite-box specialization, proof, and witness-producing
+implementation. The added evidence is its endpoint application and
+transparent evaluation on the published RE suite \cite{tanabe2020}.
+The benchmark perturbations assess this implementation, not the continuous
+engineering problems' global Pareto fronts.
 
-Multiverse and specification-curve approaches expose variation across
-defensible analytical choices \cite{steegen2016, simonsohn2020}. Our endpoint,
-objective-subset, and tariff exercises are narrower descriptive diagnostics.
-We do not implement the joint inference of a full specification-curve
-analysis or claim that every enumerated specification has equal substantive
-merit. Their purpose is to separate endpoint-frequency sensitivity from
-decision-set sensitivity within one finite experiment.
+STRESS reporting guidance \cite{monks2019}, common random numbers
+\cite{buffalo2026}, and the distinction between prior plans and retrospective
+analysis \cite{nosek2018} inform the experimental design. Multiverse and
+specification-curve work \cite{steegen2016,simonsohn2020} motivate examining
+analytical choices; our enumeration is descriptive and does not implement
+specification-curve joint inference.
 
-Automated statistical consistency checks such as statcheck address whether
-reported test statistics and p-values agree \cite{nuijten2016}. Metamorphic
-testing examines expected relations when direct simulation oracles are
-unavailable \cite{raunak2021}. Our endpoint identity and unit-scaling check
-are examples of this broader relational-testing tradition. The small claim
-registry adds explicit population, units, and quantifiers for selected
-interpretations; it does not replace either numerical or model validation.
-
-A recent preprint, ABE-Ralph, represents experimental claims and protocols
-as structured constraints and checks fidelity in LLM-driven scientific
-workflows \cite{yu2026}. It is directly relevant prior work, so a broad claim
-to be the first executable scientific-claim auditor would be unwarranted.
-Our narrower focus is retrospective statistical interpretation of a security
-simulation, including paired covariance, fixed entry allocation, and
-conditional Pareto-set diagnostics. Unlike a general claim-extraction
-system, our evaluator only handles explicitly authored assertions. The
-assertions are useful because their assumptions and failure witnesses are
-small enough to inspect, not because they automate scientific judgment.
-
-Finally, healthcare cyber-disruption models can address process overload
-using observations and expert assessment \cite{willing2025}. Our case lacks
-independent clinical validation and cannot compete on predictive realism.
-Its research value lies in exposing errors that could also occur in a more
-realistic model: a valid computation can still be summarized with the wrong
-population or strength of conclusion.
+Statistical consistency checks \cite{nuijten2016}, metamorphic simulation
+tests \cite{raunak2021}, and the recent ABE-Ralph experimental-fidelity
+preprint \cite{yu2026} already address relations beyond successful execution.
+Our small deterministic registry contributes case-specific scope, unit,
+and quantifier checks. Its role is to make interpretations reviewable beside
+the model and decision diagnostics, rather than to claim general automated
+scientific judgment.

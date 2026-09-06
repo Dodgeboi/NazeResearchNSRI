@@ -7,7 +7,7 @@
 \usepackage[hidelinks]{hyperref}
 \newif\ifanonymous
 \ifdefined\AnonymousVersion\anonymoustrue\else\anonymousfalse\fi
-\hypersetup{pdftitle={Reproducible Values, Unstable Conclusions: An Interpretation Audit of Security Simulation}}
+\hypersetup{pdftitle={Interpretable Defense Portfolios for Synthetic Hospital Ransomware: Separating Outcome Sensitivity from Decision Stability}}
 \ifanonymous
 \hypersetup{pdfauthor={}}
 \else
@@ -19,7 +19,7 @@
 \newcommand{\modelonly}{within the synthetic model}
 \newcommand{\artifactpath}[1]{\texttt{\detokenize{#1}}}
 \begin{document}
-\title{Reproducible Values, Unstable Conclusions:\\An Interpretation Audit of Security Simulation}
+\title{Interpretable Defense Portfolios for Synthetic Hospital Ransomware:\\Separating Outcome Sensitivity from Decision Stability}
 \ifanonymous
 \author{Anonymous authors}
 \else
@@ -31,96 +31,118 @@
 \input{section_abstract}
 \end{abstract}
 \begin{IEEEkeywords}
-security experimentation; simulation; interpretation audit; paired analysis;
-Pareto frontier; reproducibility
+healthcare cybersecurity; simulation; parameter identification;
+Pareto efficiency; interval uncertainty; reproducibility
 \end{IEEEkeywords}
 
+
 \section{Introduction}
-Security simulations support comparisons that are difficult to observe in
-operational environments: what would the same attack have done under a
-different defense? Their usefulness depends on more than executing code or
-reproducing a table. A sentence can copy a correct value while changing its
-population, uncertainty interpretation, or decision meaning. These errors
-can survive both software tests and automated manuscript checks.
+Hospital ransomware defense involves competing goals: reducing disruption
+and extreme losses while controlling implementation cost and operational
+burden. Incident studies document disruption \cite{neprash2022}, but those
+observations do not identify what a particular hospital would gain from a
+particular combination of controls. Simulation makes such counterfactuals
+inspectable, provided its assumptions and decision implications are explicit.
 
-We investigate this gap through a retrospective audit of one open synthetic
-hospital ransomware study. The preceding version already included paired
-scenarios, frozen protocols, generated numeric macros, archived evidence,
-mechanism tests, and explicit limitations. Its manuscript nevertheless
-described large profile-specific changes as uniformly small, mislabeled a
-figure's experimental stage, and interpreted a heuristic separation rule as
-an inability to detect differences. Reproducing these contradictions is more
-informative than treating successful execution as the end of verification.
+We develop a synthetic hospital network model with pathway-specific defenses,
+clinical-service dependencies, and paired scenario comparisons. Its evidence
+framework distinguishes observed incident quantities, evidence-informed
+context, declared technical assumptions, and normalized decision units.
+This distinction prevents an adoption survey or a guidance document from
+being treated as an estimate of control effectiveness. The finite experiment
+enumerates 400 profile-candidates and compares six objectives without
+collapsing them into a single preferred policy.
 
-The setting matters because plausible simulation conclusions can be mistaken
-for healthcare guidance. Empirical incident research documents disruption,
-but does not identify the counterfactual effect of each proposed control
-\cite{neprash2022}. Process-level hospital simulation can incorporate local
-workflow observations and expert input \cite{willing2025}; the model studied
-here does not have that level of validation. We use it as an inspectable
-security-experimentation case, not as a validated procurement instrument.
+The central question is: \emph{when modeled outcomes change, which portfolio
+decisions can still be defended?} Changing the service-outage definition can
+substantially change event frequency while preserving the estimated efficient
+set. Conversely, changing a restoration mechanism can alter that set even
+when parameter-based ranking checks appear reassuring. These are different
+forms of sensitivity, requiring different evidence.
 
-Our question is: \emph{which conclusions change when interpretation is checked
-at the same level of specificity as the computation?} We contribute three
-case-specific results. First, a substantial change in an outcome frequency
-can coexist with an unchanged estimated Pareto frontier. Second, retaining
-scenario pairing and the fixed entry-category design changes uncertainty
-diagnostics; stable rankings and lack of evidence for a difference are
-separate claims. Third, the observed completeness of a discovery shortlist
-depends on conditional resampling and on declared objective weights. A small
-executable assertion registry makes selected scope, unit, aggregation, and
-bound claims inspectable alongside these results.
+We make three contributions. First, we provide an inspectable defense-portfolio
+experiment that links evidence classification to mechanisms, matched scenarios,
+and separate parameter and structural sensitivity analyses. Second, we derive
+and implement a finite interval certificate that bounds every admissible
+frontier between guaranteed and possible efficient sets, with competing
+portfolios as failure witnesses. Applied to the endpoint interval, it certifies
+retention of \CertGuaranteedTotal{} of the \CertObservedTotal{} observed
+efficient portfolios. Third, we evaluate the certificate on two independently
+defined engineering benchmarks and connect selected manuscript interpretations
+to executable assertions and worked corrections.
 
-We do not claim to introduce preregistration, common random numbers,
-metamorphic testing, or structured claim auditing. The contribution is a
-documented failure-and-repair case with quantitative interpretation
-diagnostics. The new analysis is retrospective and informed by prior reviews;
-it is not a new preregistered confirmation or an independent replication.
+Security portfolio simulation-optimization and necessary/possible efficiency
+are established ideas \cite{kiesling2016,hladik2017}. Our contribution is their
+concrete use to distinguish outcome sensitivity, frontier retention, and
+remaining decision uncertainty in an evidence-constrained hospital experiment.
+The added hospital analyses are retrospective. The benchmark evaluation plan
+was committed before generating its candidate outcomes; the evaluations share
+our research workflow and do not constitute independent clinical validation.
 
-\section{Study and Audit Design}
-\subsection{The preserved simulation experiment}
-The simulator represents one synthetic facility as a network of digital
-assets with clinical-service dependencies. An incident enters through one of
-five declared categories: workstation, internet-facing asset, privileged
-system, medical device, or vendor connection. Spread, detection, defensive
-isolation, and restoration evolve in five-minute steps over a 72-hour horizon.
-Clinical service availability is binary at each step, using a declared
-60\% supporting-node threshold. This is a digital-service construct, not a
-measurement of patients treated, clinical harm, or full organizational recovery.
+\section{Model and Evidence Design}
+\subsection{Evidence constrains mechanisms, not every coefficient}
+The parameter and endpoint registries separate evidence-constrained
+quantities, external comparison targets, declared assumptions, model-internal
+quantities, and normalized scenario units. A source must match both the
+quantity and the population to identify a coefficient. Incident-level recovery
+durations, for example, do not identify per-node restoration throughput.
+Sector adoption figures can inform a scenario's context without estimating
+the effectiveness of a deployed control.
 
-Three capacity profiles are fixed environments. Controls can change
+This rule changes model structure. Patching mainly reduces exploit-mediated
+traversal, has little effect on credential-mediated traversal, and has partial
+effect on vendor pathways. Identity protection has explicit coverage and
+effectiveness on eligible authentication pathways. Evidence about commercial
+account authentication \cite{meyer2023} is not applied as a reduction in
+whole-network ransomware probability. Isolated backups have no normal
+traversal path, but can suffer a per-incident isolation lapse or residual
+recovery failure. A small repeated traversal probability would instead model
+a delay: over $T$ independent opportunities, a per-step probability $q$
+produces cumulative probability $1-(1-q)^T$.
+
+Technical effect sizes remain non-identifiable from the available public
+sources. We sample \SampledCoefficients{} coefficients over declared ranges
+once per scenario and share that vector across candidate replays. The
+objectives therefore average over those ranges as well as event randomness.
+Guidance motivates mechanisms; it does not supply invented numerical
+effectiveness estimates. The complete register and mechanism specification
+are included in the artifact.
+
+\subsection{Network, objectives, and paired experiment}
+One synthetic facility is a network of digital assets with four clinical-service
+dependencies. Incidents enter through five categories: workstation,
+internet-facing asset, privileged system, medical device, or vendor connection.
+Spread, detection, defensive isolation, and restoration evolve in five-minute
+steps over 72 hours. Each service is available when its declared 60\%
+supporting-node threshold is met. This binary digital-service construct does
+not measure patients treated or clinical harm. Weighted service-hours lost
+sum unavailable time over seven services: EHR, laboratory, pharmacy, imaging,
+scheduling, identity, and backup/recovery, with declared weights
+$(1.0,0.8,0.9,0.7,0.4,0.9,0.6)$. Only the first four enter the clinical-outage
+endpoint; supporting-service losses still contribute to total weighted loss.
+
+The resource-constrained, intermediate, and high-capacity profiles are fixed
+environments with 288, 96, and 16 distinct resolved candidates. Controls vary
 segmentation, patching, detection, isolation, backups, and identity protection;
-they cannot purchase a change of profile. Patch protection is mechanism
-specific, identity protection applies to covered authentication pathways,
-and isolated backups can still suffer a per-incident isolation lapse. The
-revision preserves these mechanisms, all original raw trials, and the
-historical protocols. Full model details and earlier sensitivity experiments
-remain in the archived manuscript and repository.
+they cannot purchase a different profile. Each candidate has six minimized
+objectives: mean weighted service-hours lost, empirical upper-tail mean loss,
+sustained-outage frequency, non-recovery by 72 hours, implementation cost,
+and operational burden. The tail statistic averages losses at or above the
+empirical 90th percentile, including ties. Cost and burden are normalized
+scenario points, not monetary or staffing estimates.
 
-There are 288, 96, and 16 distinct resolved candidates in the
-resource-constrained, intermediate, and high-capacity profiles. Discovery
-contains 30 scenarios per profile and 12,000 candidate executions.
+Discovery contains 30 scenarios per profile and 12,000 candidate executions.
 Confirmation contains \RevisionScenarios{} fresh scenarios per profile and
-\RevisionExecutions{} candidate executions. Scenario IDs occupy disjoint
-blocks across profiles and stages. Within a profile, each scenario is shared
-across all candidates using event-keyed random inputs. The confirmation design
-cycles through the five entry categories, giving 80 scenarios per category.
-Thus 160,000 executions do not constitute 160,000 independent experimental
-units. The estimand averages equally across the five designed categories,
-not across an empirically estimated hospital-incident population.
+\RevisionExecutions{} executions. Disjoint scenario-ID blocks separate
+profiles and stages; within a profile, all candidates share event-keyed
+random inputs. Confirmation cycles through five entry categories, giving
+80 scenarios per category. The estimand weights those categories equally.
+The independent units are the scenarios, not the individual candidate
+executions, and the designed mixture is not hospital incident prevalence.
 % claim: independent_units
 % claim: confirmation_size
 
-Each candidate has six objectives, all minimized: mean weighted service-hours
-lost, empirical upper-tail mean loss, sustained-outage frequency, non-recovery
-by 72 hours, implementation cost, and operational burden. The historical
-tail statistic is the mean at or above the empirical 90th percentile,
-including all ties; we retain that convention rather than silently replacing
-it with a different expected-shortfall estimator. Cost and burden are
-normalized scenario points, not dollars or measured staff effort. Technical
-control effects remain non-identifiable from the available public sources;
-the model is only partially calibrated in its context and incident constraints.
-
+\section{Decision Stability and Verification}
 \subsection{Outcome definitions and population alignment}
 Let $N_{pci}$ be the number of clinical services with an individual continuous
 outage longer than two hours in profile $p$, candidate $c$, scenario $i$.
@@ -196,6 +218,72 @@ uniform scaling of cost and burden is checked separately: it preserves
 Pareto dominance algebraically, although keeping a numeric budget fixed can
 change affordability.
 
+
+\subsection{An interval certificate for frontier retention}
+Let $f_c\in\mathbb{R}^m$ be candidate $c$'s minimized objective vector, with
+componentwise bounds $L_c\leq f_c\leq U_c$. Write $a\prec b$ when $a$ is no
+worse in every coordinate and strictly better in at least one. The finite
+Cartesian box $\mathcal{B}$ permits independent choices across candidates
+and objectives. Define
+\begin{align}
+ G &= \{c:\nexists d\ne c,\ L_d\prec U_c\}, \label{eq:guaranteed}\\
+ P &= \{c:\nexists d\ne c,\ U_d\prec L_c\}. \label{eq:possible}
+\end{align}
+\textbf{Proposition.} $G=\bigcap_{f\in\mathcal B}F(f)$ and
+$P=\bigcup_{f\in\mathcal B}F(f)$. Consequently,
+$G\subseteq F(f)\subseteq P$ for every admissible matrix.
+
+\emph{Proof.} If $L_d\prec U_c$, choosing $d$ at its lower bound and $c$
+at its upper bound makes $c$ dominated. Conversely, any realized dominator
+implies $L_d\prec U_c$, so its absence guarantees efficiency. If
+$U_d\prec L_c$, $d$ dominates $c$ in every realization. If no such $d$
+exists, put $c$ at $L_c$ and every competitor at its upper bound:
+none dominates $c$, proving possible efficiency. Independence permits these
+simultaneous corner assignments. Strictness retains exact ties. $\square$
+
+The algorithm requires $O(n^2m)$ comparisons and returns a competing
+candidate for each failed guarantee or excluded possibility. These are
+finite-box instances of established necessary/possible efficiency concepts
+\cite{hladik2017}. We use them as an interpretable diagnostic, without a
+probabilistic coverage claim. If the true specification set is a correlated
+subset of $\mathcal B$, $G$ remains sufficient for retention and $P$ remains
+an outer bound; they need not be exact for that smaller set.
+
+For the hospital application, five objectives remain fixed at their observed
+confirmation estimates. The outage coordinate of each candidate ranges
+independently from its $k=4$ frequency to its $k=1$ frequency. This contains
+all four common-$k$ specifications and additional combinations that a common
+threshold cannot produce. Certifying a candidate across this entire box
+is stronger than observing it at four thresholds. An uncertified candidate
+need not actually change membership under those four thresholds.
+
+\subsection{Parameter, structure, and external transfer checks}
+The preserved parameter analysis compares candidate rankings between the
+low and high thirds of each sampled coefficient. Separately, the structural
+experiment contrasts restoration gated on containment with restoration
+proceeding in parallel. It uses a distinct paired bank of \StructuralTrials{}
+scenarios per profile and \StructuralCandidates{} selected candidates
+(frontier members, comparators, and preference selections), rather than
+reenumerating the entire space. Membership comparisons are relative to that
+selected set and bank.
+
+For transfer beyond the hospital objectives, we use the published RE21
+four-bar truss and RE22 reinforced-concrete beam implementations
+\cite{tanabe2020}. We archive the unchanged upstream code, commit, hashes,
+and license. A committed evaluation plan specifies 128 candidates sampled
+uniformly over each problem's variable bounds, and independent objective
+intervals of $\pm1\%$, $\pm5\%$, and $\pm10\%$ of each sampled objective
+range, with nonnegative lower bounds. RE22 retains its published constraint
+violation objective; not every sampled design is feasible.
+
+Each of the six settings has 1,000 interior perturbation matrices. A separate
+two-objective sorting oracle checks frontier inclusion between $G$ and $P$.
+For the first eight candidates per problem, a second check enumerates all
+256 corners with only the second objective uncertain at 5\% bounds, requiring
+exact agreement with the frontier intersection and union. These checks
+evaluate implementation and transfer to fixed finite benchmark sets.
+The stress bounds are not measured engineering uncertainty.
+
 \subsection{Executable interpretation assertions}
 The registry gives each selected claim a source table, scope filter, expected
 groups and row count, statistic, unit, reduction, quantifier, relation, and
@@ -224,38 +312,27 @@ the source itself has scientific validity.
 \section{Conclusion}
 \input{section_conclusion}
 
+
 \section*{Artifact Availability}
-The artifact includes the original and revised manuscript sources, preserved
-trial banks, frozen protocols, an explicit retrospective analysis plan and
-sampling-design amendment, claim registry, all analysis tables, generated
-figures, and verification scripts. Existing model and historical analyses
-remain available. Raw confirmation data are stored losslessly compressed
-and restored by the supplied script.
+The artifact includes model code, preserved trial banks and protocols,
+retrospective analysis plans, the benchmark plan and licensed upstream
+functions, all result tables, manuscript sources, and verification scripts.
+Compressed raw confirmation data are restored losslessly by the supplied
+script. All reported results are generated from recorded data.
 \ifanonymous
-The identified public repository is withheld from this review copy. A
-separate anonymous artifact package still needs to be arranged before a
-double-blind submission.
+Author identities and the identified repository link are omitted from this
+manuscript copy.
 \else
-Source and data: \url{https://github.com/Dodgeboi/NazeResearchNSRI}.
-This working revision is developed on branch
-\artifactpath{research/methods-revision}; it has not been submitted.
+Source, data, and the final manuscript:
+\url{https://github.com/Dodgeboi/NazeResearchNSRI}.
 \fi
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
 
 \section*{LLM Usage Statement}
-This revision used OpenAI Codex for literature discovery, analysis design,
-code drafting, automated checks, and manuscript editing. Reported numerical
-results were computed by local scripts from preserved trial data; language
-model output was not used as a numerical observation. The assertion registry
-is deterministic and does not call an LLM. LLM assistance can introduce
-incorrect references, implementation errors, or overstatements; source
-verification and executable checks reduce but do not eliminate those risks.
-Human author review of these additions remains pending. This is a working
-draft, and this statement must be completed with verified author oversight
-before submission. Earlier editorial assistance must also be confirmed by
-the authors in the final disclosure.
+AI tools assisted with literature search, manuscript editing, and development
+and checking of additional analyses.
 
 \appendices
 \section{Reproduction and Audit Boundary}
@@ -268,11 +345,11 @@ retroactively prove that the historical code was committed before execution.
 A commit-attribution map resolves historical source identifiers after the
 repository's metadata-only attribution correction.
 
-For the final retrospective analysis, Python 3.12 and exact package versions
+For the retrospective analysis and benchmark checks, Python 3.12 and exact package versions
 are recorded in the manifest and revision environment file. The reproduction
 guide gives commands to restore the compressed bank, run the verification
-harness, regenerate analysis tables from a clean checkout, and generate
-numeric TeX and vector figures after committing those tables. The paper
+harness, regenerate the analyses and benchmark checks from clean checkouts,
+and generate numeric TeX and vector figures after committing the result tables. The paper
 generator's check mode recomputes the TeX and verifies its manifest without
 overwriting files. These checks certify specified artifact relations, not
 the correctness of every sentence.
@@ -285,7 +362,6 @@ For Eq.~\ref{eq:pairing}, set $v_h=w_h^2s^2_{D,h}/n_h$ and use approximate
 degrees of freedom $(\sum_hv_h)^2/\sum_h[v_h^2/(n_h-1)]$. The interval is
 $\widehat\Delta\pm t_{1-.05/(2\cdot\ContrastFamily),\nu}\sqrt{\sum_hv_h}$.
 
-\newpage
 \section{Objective-Subset Enumeration}
 \begin{table}[!ht]
 \centering\small

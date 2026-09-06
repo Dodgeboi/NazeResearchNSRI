@@ -1,151 +1,246 @@
-\subsection{Endpoint frequency and frontier stability separate}
+\subsection{Defense tradeoffs within the synthetic model}
 \begin{table}[t]
 \centering\small
-\caption{Confirmation candidate-average event frequencies (\%), the
-$k=1$ to $k=4$ difference (percentage points), and frontier Jaccard similarity.}
+\caption{Illustrative budget-constrained comparisons. Free and selected
+columns are mean weighted service-hours lost. Selection minimizes observed
+mean loss within the declared point budget; the final column is that
+candidate's $k=4$ event frequency.}
+\label{tab:budget}
+\begin{tabular}{@{}lrrrr@{}}\toprule
+Profile & Budget & Free & Selected & Event \%\\\midrule
+\tableinput table_budget_rows.tex
+\bottomrule\end{tabular}
+\end{table}
+Table~\ref{tab:budget} connects the six-objective experiment to a concrete
+decision question. It compares each profile's free baseline with its
+lowest-mean-loss candidate inside the profile's declared budget. This
+one-objective selection is illustrative: another objective or burden
+constraint can favor another portfolio. Comparing profiles does not estimate
+the benefit of upgrading a hospital, because their starting environments
+differ and capacity is fixed. A zero observed event frequency is not a
+zero-risk guarantee. The artifact records the selected portfolio identifiers
+and their costs and burdens alongside the generated table.
+
+\subsection{Endpoint sensitivity and certified retention}
+\begin{table}[t]
+\centering\small
+\caption{Confirmation candidate-average event frequencies (\%), their
+difference in percentage points, and frontier Jaccard similarity between
+$k=1$ and $k=4$.}
 \label{tab:endpoint}
 \begin{tabular}{@{}lrrrr@{}}\toprule
 Profile & $k=1$ & $k=4$ & Gap & Jaccard\\\midrule
 \tableinput table_endpoint_rows.tex
 \bottomrule\end{tabular}
 \end{table}
-Table~\ref{tab:endpoint} rejects the historical claim of uniformly small
-$k$ sensitivity. The stronger two profiles have double-digit percentage-point
-changes, yet their frontier membership is identical across all four values
-of $k$. In contrast, the resource-constrained frontier changes membership
-despite a smaller frequency change. An unchanged frontier means dominance
-relations survive this specification change; it does not mean the event
-being reported occurs at approximately the same frequency.
+The intermediate and high-capacity profiles have double-digit percentage-point
+changes in endpoint frequency, yet identical frontier membership across all
+four thresholds. The resource-constrained frontier changes despite a smaller
+frequency gap (Table~\ref{tab:endpoint}). Thus frequency sensitivity does
+not order decision-set sensitivity. The historical claim of uniformly small
+threshold effects is contradicted by these profile-specific results.
 % claim: gap_bounded
 % claim: high_frontier_stable
 
+\begin{table}[t]
+\centering\small
+\caption{Interval certificate with five objectives fixed and each candidate's
+outage frequency ranging independently from $k=4$ to $k=1$.
+$G$: guaranteed efficient; $F_4$: observed frontier; $P$: possibly efficient.}
+\label{tab:certificate}
+\begin{tabular}{@{}lrrrr@{}}\toprule
+Profile & Candidates & $|G|$ & $|F_4|$ & $|P|$\\\midrule
+\tableinput table_certificate_rows.tex
+\bottomrule\end{tabular}
+\end{table}
+The certificate retains \CertGuaranteedTotal{} of \CertObservedTotal{}
+observed frontier members (\CertGuaranteedPercent{}\%) throughout the
+entire declared endpoint box (Table~\ref{tab:certificate}). All
+\CertHighGuaranteed{} high-capacity members are guaranteed to remain efficient,
+but \CertHighAdditional{} other candidates could join them. This certifies
+retention, not exact invariance of the frontier. A possible dominator in the
+released candidate table explains why each remaining candidate lacks a
+guarantee; a necessary dominator explains exclusion from the possible set.
+
 \begin{figure*}[t]
 \centering\includegraphics[width=\textwidth]{endpoint_ladder.pdf}
-\caption{Separate discovery and confirmation distributions. Each point
-averages over all resolved candidates in one profile. The vertical axis
-describes digital-service events under the synthetic experiment, not real
-hospital incident prevalence. Connecting the nested thresholds shows their
-frequency sensitivity; it does not imply interpolation between integer $k$.}
+\caption{The nested endpoint ladder, separated by experimental stage.
+Each point averages the resolved candidates in one profile. These are
+digital-service event frequencies in the designed experiment, not hospital
+incident prevalence.}
 \label{fig:endpoint}
 \end{figure*}
-Candidate-weighted pooling compounds the problem. Resource-constrained
-candidates contribute \ResourceWeight{}\% of executions, intermediate candidates \IntermediateWeight{}\%, and
-high-capacity candidates \HighWeight{}\%. In discovery, the fraction with one to three
-qualifying services is \DiscoveryPooled{}\% pooled but \DiscoveryEqual{}\% with equal profile weights;
-the intermediate and high-capacity values are \IntermediateDiscoveryGap{}\% and \HighDiscoveryGap{}\%.
-In confirmation, the corresponding pooled and equal-profile values are
-\ConfirmationPooled{}\% and \ConfirmationEqual{}\%. Neither weighting is an empirical hospital mixture.
-The original discovery aggregate could therefore support neither a universal
-profile claim nor a claim about the confirmation stage. Figure~\ref{fig:endpoint}
-and Eq.~\ref{eq:identity} make both distinctions visible.
+Pooling can conceal the profile dependence. Resource-constrained candidates
+contribute \ResourceWeight{}\% of executions, intermediate candidates
+\IntermediateWeight{}\%, and high-capacity candidates \HighWeight{}\%.
+The discovery fraction with one to three qualifying services is
+\DiscoveryPooled{}\% pooled but \DiscoveryEqual{}\% with equal profile
+weights; intermediate and high-capacity values are
+\IntermediateDiscoveryGap{}\% and \HighDiscoveryGap{}\%.
+The corresponding confirmation aggregates are \ConfirmationPooled{}\%
+and \ConfirmationEqual{}\%. Equation~\ref{eq:identity} applies within each
+consistent population and weighting, not across these different aggregates.
 
-\subsection{Pairing changes the uncertainty interpretation}
+\subsection{Structural assumptions can change the decision}
+The preserved parameter analysis reports a worst low-versus-high-third
+rank correlation of \ParameterWorstRank{} across its evaluated coefficients
+and objectives. This is descriptive evidence of varying ranking stability,
+not uniform robustness across the parameter space. The separate structural
+experiment finds \StructuralOnlyGated{} candidates efficient only with
+containment-gated restoration and \StructuralOnlyParallel{} only with
+parallel restoration, within its \StructuralCandidates{} selected candidates.
+Intermediate mean loss rises from \StructuralIntermediateGated{} to
+\StructuralIntermediateParallel{} weighted service-hours when restoration
+can proceed before containment.
+
+The modeled mechanism explains the direction: restored nodes re-enter the
+network susceptible while an adversary may retain reach. Earlier restoration
+can therefore enable reinfection. The high-capacity selected frontier retains
+its membership under the alternative, although its objective values change
+slightly. Neither parameter rankings nor the endpoint certificate covers
+this structural change, because it changes more than the bounded outage
+coordinate. This distinguishes three separate claims about stability.
+
+\subsection{Transfer to independently defined benchmark problems}
+\begin{table}[t]
+\centering\small
+\caption{All planned engineering benchmark settings, with 128 sampled
+candidates per problem. Radius is a fraction of each sampled objective
+range. $F_0$ is the nominal finite frontier.}
+\label{tab:transfer}
+\begin{tabular}{@{}lrrrr@{}}\toprule
+Problem & Radius & $|G|$ & $|F_0|$ & $|P|$\\\midrule
+\tableinput table_transfer_rows.tex
+\bottomrule\end{tabular}
+\end{table}
+Every one of the \BenchmarkDraws{} perturbation frontiers contains $G$
+and lies within $P$. The two exact corner checks also match both the
+intersection and union over \BenchmarkCorners{} matrices. These numerical
+checks support the implementation of the proposition; the proposition,
+rather than random sampling, establishes the full-box inclusion.
+
+The informative negative result is visible in Table~\ref{tab:transfer}.
+RE21 retains nine guaranteed candidates at 1\% bounds, while
+\BenchmarkEmptySettings{} of the six settings have empty guaranteed sets.
+Wider intervals admit many possibly efficient designs. Empty $G$ means that
+no particular design is certified across every matrix; it does not mean
+every realized frontier is empty or that the algorithm failed.
+These benchmark cases demonstrate portability and the cost of broad bounds,
+without providing an independent hospital experiment.
+
+\subsection{Pairing changes uncertainty interpretation}
 \begin{table}[t]
 \centering\small
 \caption{Pairs meeting the one-SE proximity heuristic on all stochastic
-objectives, with identical stratification and tail-bootstrap draws.
-``Omitted'' drops covariance; ``paired'' retains it. Neither column is a
-count of statistically equivalent pairs.}
+objectives, with matched strata and bootstrap draws. Omitted drops
+covariance; paired retains it. Neither column counts statistical equivalence.}
 \label{tab:pairing}
 \begin{tabular}{@{}lrrr@{}}\toprule
 Profile & All pairs & Omitted & Paired\\\midrule
 \tableinput table_pairing_rows.tex
 \bottomrule\end{tabular}
 \end{table}
-The comparison in Table~\ref{tab:pairing} isolates covariance within the
-corrected design. It differs from comparing against historical published
-counts, which also used different resampling draws and did not preserve
-the fixed entry allocation. The large reduction in near-pair counts shows
-why calling this heuristic ``indistinguishability'' was misleading. We do
-not interpret pairs outside the heuristic as statistically ordered.
+Table~\ref{tab:pairing} isolates the effect of covariance under the fixed
+entry-category allocation. Near-pair counts decrease substantially when
+pairing is retained. Falling outside this heuristic does not establish
+statistical ordering, but its dependence on the variance calculation makes
+\emph{indistinguishability} an inappropriate label.
 
-The high-capacity candidate with the lowest observed mean loss saves
+The high-capacity candidate with lowest observed mean loss saves
 \HighSaving{} weighted service-hours against its free baseline. Its
-stratified paired SE is \HighPairedSE{}, compared with
-\HighIndependentSE{} when covariance is omitted. The approximate simultaneous
-interval across all \ContrastFamily{} baseline contrasts is
-[\HighLower{}, \HighUpper{}] hours. Thus the bank supports a positive
-within-model mean difference even under a family-wide adjustment. It does
-not establish clinical importance, affordability, or transportability.
-It also contradicts the earlier figure caption describing a vertical range
-of less than one hour: the baseline-to-best difference alone exceeds that.
+stratified paired SE is \HighPairedSE{}, versus \HighIndependentSE{} with
+covariance omitted. The approximate simultaneous interval over all
+\ContrastFamily{} baseline contrasts is [\HighLower{}, \HighUpper{}] hours.
+The positive interval supports a within-model mean difference. It also
+contradicts the historical caption's claimed under-one-hour vertical range:
+the baseline-to-best difference alone exceeds that amount.
 % claim: high_improvement
 % claim: high_positive_bound
 
-\subsection{A single observed frontier is incomplete evidence}
+\subsection{Shortlist completeness is conditional}
 \begin{table}[t]
 \centering\small
-\caption{Observed six-objective frontiers. Restricted evaluates only frozen
-finalists. Omissions are full-space efficient candidates outside the
-shortlist; artifacts are efficient only within the shortlist.}
+\caption{Observed six-objective frontiers. Restricted uses frozen finalists;
+omissions are full-space efficient candidates outside that shortlist;
+artifacts are efficient only within the shortlist.}
 \label{tab:frontier}
 \begin{tabular}{@{}lrrrr@{}}\toprule
 Profile & Full & Restricted & Omitted & Artifacts\\\midrule
 \tableinput table_frontier_rows.tex
 \bottomrule\end{tabular}
 \end{table}
-The full-space frontier has \FullFrontier{} candidates, compared with
-\RestrictedFrontier{} in the restricted view; the latter omits
-\OmittedCandidates{} full-space efficient candidates (Table~\ref{tab:frontier}).
-Across the stratified resamples, the rounded central 95\% ranges are
-\FrontierLow{}--\FrontierHigh{} for the full frontier and
-\OmittedLow{}--\OmittedHigh{} for omissions. Every resample contains an
-omission. The existence of omissions is stable under this conditional
-exercise; the exact count is not.
+The full-space frontier contains \FullFrontier{} candidates and the
+restricted frontier \RestrictedFrontier{}, with \OmittedCandidates{} omitted
+efficient candidates (Table~\ref{tab:frontier}). The rounded central 95\%
+stratified-resampling ranges are \FrontierLow{}--\FrontierHigh{} for the full
+frontier and \OmittedLow{}--\OmittedHigh{} for omissions. Every resample
+contains an omission. The existence of omissions is stable in this
+conditional exercise; their exact number is not.
 % claim: full_frontier_size
 % claim: omitted_size
 
 \begin{figure*}[t]
 \centering\includegraphics[width=\textwidth]{conditional_frontier.pdf}
-\caption{\BootstrapDraws{} stratified scenario resamples, summed across the
-three independent profile banks. Finalist labels are fixed. Dashed lines
-show original-bank counts. These are conditional resampling distributions,
-not confidence intervals for a true frontier or new hospital population.}
+\caption{\BootstrapDraws{} stratified scenario resamples, summed across
+independent profile banks, with finalist labels fixed. Dashed lines mark
+original-bank counts. These are conditional distributions, not confidence
+intervals for a population's true frontier.}
 \label{fig:bootstrap}
 \end{figure*}
-Zero restricted-view artifacts in the observed bank does not imply a
-reliably artifact-free shortlist. At least one appears in
-\ArtifactPositive{}\% of conditional resamples (Figure~\ref{fig:bootstrap}).
-This percentage is not the probability that an independently selected
-shortlist would fail: discovery is not resampled. The distinction prevents
-a reassuring zero from being generalized beyond the evidence that produced it.
+Although the observed bank has zero restricted-view artifacts, at least
+one appears in \ArtifactPositive{}\% of resamples
+(Figure~\ref{fig:bootstrap}). This is conditional on the frozen discovery
+shortlist, not the failure probability of an independently selected shortlist.
 
-\subsection{Objective and tariff choices matter}
+\subsection{Objective and tariff choices}
 \begin{table}[t]
 \centering\small
-\caption{Frontier sensitivity to \WeightDraws{} declared component-weight
-stress draws. Similarity is relative to the original six-objective frontier;
-added and removed columns are maxima across draws.}
+\caption{Frontier sensitivity to \WeightDraws{} component-weight stress
+draws. Similarity is relative to the original frontier; added and removed
+columns give maxima across draws.}
 \label{tab:weights}
 \begin{tabular}{@{}lrrrr@{}}\toprule
 Profile & Median J & Min J & Added & Removed\\\midrule
 \tableinput table_weight_rows.tex
 \bottomrule\end{tabular}
 \end{table}
-Heterogeneous tariff changes alter frontier membership in every profile
-(Table~\ref{tab:weights}). A uniform conversion of units preserves dominance,
-so varying a single common multiplier would have missed this dependence.
-The result identifies sensitivity to declared assumptions; the chosen
-perturbation interval does not supply an empirical distribution of costs.
+Heterogeneous tariffs alter membership in every profile
+(Table~\ref{tab:weights}); uniform positive unit conversion preserves
+dominance. The objective enumeration also reveals why a large frontier
+alone is not a novelty claim. Across two-objective subsets, sizes range
+from 1--16, 1--18, and 1--9 in the three profiles, versus 64, 22, and 9
+with all six objectives. Tied single-objective minima can be numerous:
+one intermediate objective has 47. Appendix B reports all dimensions.
 
-The objective ablation also cautions against treating the total frontier
-size as surprising by itself. Across two-objective subsets, frontier size
-ranges from 1--16, 1--18, and 1--9 in the three profiles. Across all six
-objectives it is 64, 22, and 9. However, tied single-objective minima can be
-numerous: one intermediate objective has 47 tied efficient candidates.
-The appendix reports every dimension. Frontier size depends on objective
-choice, dependence, and ties; this study does not provide an independent-objective
-null model that predicts 95 efficient candidates.
-
-\subsection{What the assertion audit detects}
-The preserved number/regex audit passes on the preserved manuscript despite
-the three registered contradictions: the universal small-gap claim, the
-discovery label on a confirmation figure, and the under-one-hour range.
-The new assertions reject all \HistoricalContracts{} with witness values,
-accept the \CorrectContracts{} correct cases, and reject or flag invalid
-all \MutationContracts{} controlled mutations as specified. The latter
-include a wrong stage, wrong unit, incomplete population, wrong aggregation,
-wrong bound, strict-versus-inclusive boundary, missing population, and
-unsupported operation. This is a finite regression demonstration. It
-does not show that adding more assertions will discover an unknown omitted
-claim or that a human translation of prose is correct.
+\subsection{From a sentence to a checkable conclusion}
+\begin{table*}[t]
+\centering\small
+\caption{Worked interpretation audit. Historical sentences are shortened
+faithfully from the archived manuscript. Assertions encode the stated scope,
+unit, and bound; a passing numeric-macro check alone did not test these relations.}
+\label{tab:worked}
+\begin{tabularx}{\textwidth}{@{}*{4}{>{\raggedright\arraybackslash}X}@{}}\toprule
+Historical statement & Numerical or scope evidence & Executable assertion & Corrected conclusion\\\midrule
+Endpoint values move by roughly three percentage points across $k$.
+& High-capacity confirmation gap: \HighGap{} percentage points.
+& All confirmation profiles present; $\max_p\Delta_p\leq4$ pp. Fails.
+& Frequency changes are profile-specific; unchanged frontiers do not imply small frequency gaps.\\
+The high-capacity panel spans under one service-hour.
+& Baseline-to-best mean difference: \HighSaving{} weighted service-hours.
+& High-capacity mean-loss range $<1$ hour. Fails.
+& The observed baseline-to-best span exceeds one hour; paired uncertainty is reported separately.\\
+The figure presents discovery results.
+& Plotted values come from the confirmation objective table.
+& Source stage equals discovery. Fails.
+& Identify confirmation as the plotted stage and report discovery separately.\\\bottomrule
+\end{tabularx}
+\end{table*}
+The preserved numeric audit passes on the archived paper despite all three
+contradictions in Table~\ref{tab:worked}. Explicit assertions reject all
+\HistoricalContracts{} historical cases with witnesses, accept
+\CorrectContracts{} correct controls, and reject or flag invalid all
+\MutationContracts{} single-field mutations as specified. The mutations
+cover population, unit, aggregation, bound, boundary strictness, missing data,
+and unsupported operations. This finite regression evaluation supplements
+the scientific argument with inspectable checks; it does not measure
+accuracy on previously unseen prose.

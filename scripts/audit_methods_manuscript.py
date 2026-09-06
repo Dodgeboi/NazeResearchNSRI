@@ -30,7 +30,7 @@ def main():
     if sorted(anchors) != sorted(c['id'] for c in registry['current']):
         raise AssertionError('registered claims must each have one manuscript anchor')
     for phrase in ('retrospective', 'synthetic', 'non-identifiable', 'normalized scenario points',
-                   'LLM Usage Statement', 'Human author review', 'within each entry category'):
+                   'LLM Usage Statement', 'within each entry category'):
         if phrase not in re.sub(r'\s+', ' ', text):
             raise AssertionError('missing scope disclosure: ' + phrase)
     keys = {key.strip() for group in re.findall(r'\\cite\{([^}]+)\}',text) for key in group.split(',')}

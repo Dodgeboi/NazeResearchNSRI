@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If this software or dataset supports your work, please cite the repository and manuscript."
-title: "Reproducible Values, Unstable Conclusions: An Interpretation Audit of Security Simulation"
+title: "Interpretable Defense Portfolios for Synthetic Hospital Ransomware: Separating Outcome Sensitivity from Decision Stability"
 type: software
 authors:
   - family-names: Agrawal
@@ -9,7 +9,7 @@ authors:
     given-names: Mukil
   - family-names: Upadhyay
     given-names: Naman
-version: 3.1.0-dev
+version: 3.1.0
 repository-code: "https://github.com/Dodgeboi/NazeResearchNSRI"
 license: MIT
 keywords:

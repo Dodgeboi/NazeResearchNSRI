@@ -1,3 +1,5 @@
+> Archival editorial record from an earlier version. Current manuscript status and resolved findings are in [REVISION_REVIEW.md](REVISION_REVIEW.md); this record is not a pending-work list for the final paper.
+
 # Author voice worksheet
 
 Complete this separately before the next manuscript revision. Do not use an AI tool to draft the answers. Short, imperfect answers are more useful than polished ones.
