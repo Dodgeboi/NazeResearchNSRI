@@ -107,7 +107,8 @@ def git_state(repo_root: Path | None = None) -> dict[str, Any]:
                 capture_output=True, text=True, timeout=30, check=True)
         except (subprocess.SubprocessError, FileNotFoundError, OSError):
             return None
-        return out.stdout.strip()
+        # Leading spaces are meaningful in porcelain status (" M path").
+        return out.stdout.rstrip("\r\n")
 
     commit = run("rev-parse", "HEAD")
     if commit is None:
@@ -207,6 +208,7 @@ def build_manifest(
         outputs: Iterable[str | Path],
         parameters: Mapping[str, Any] | None = None,
         protocol: Mapping[str, Any] | None = None,
+        source_state: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Assemble a manifest that binds inputs, code, environment, and outputs.
 
@@ -224,7 +226,7 @@ def build_manifest(
         "stage": stage,
         "description": description,
         "created_at": utc_now(),
-        "code": git_state(),
+        "code": dict(source_state) if source_state is not None else git_state(),
         "environment": environment_fingerprint(),
         "parameters": dict(parameters or {}),
         "protocol": dict(protocol) if protocol else None,

@@ -1,0 +1,84 @@
+\subsection{Principal finding}
+
+The central result is methodological, and it is not the frontier.
+
+Across \ConfirmTotalExecutions{} paired confirmatory executions covering
+every resolved candidate, \ConfirmFullSpaceFrontier{} portfolios are
+non-dominated and none minimizes all six objectives. That much replicates
+what the previous version reported. What is new is that the claim is now
+checkable in the way the earlier version implied but could not deliver: the
+comparison ranges over the whole resolved space, so a reader can see what was
+excluded, which is nothing.
+
+Measuring the difference between the two designs is the substantive
+contribution. \ConfirmNonFinalistsOnFrontier{} genuinely efficient candidates
+were never labelled finalists and so could never have been shown, while
+\ConfirmFinalistOnlyArtifacts{} candidates are efficient only inside the
+restricted subset. The asymmetry is instructive: a restricted comparison
+rarely promotes a candidate that does not deserve it, because it evaluates
+candidates selected for being good. What it reliably does is hide the ones it
+never looked at, and that error is undetectable from inside the design,
+because the evidence needed to detect it is exactly the evidence the design
+discarded. Evaluating the full space costs a few hours of compute and
+converts an untestable assumption into a reported quantity.
+
+A caution against reading that number as stable: an earlier version of this
+study, before the mechanism repairs and without parameter uncertainty, found
+three restricted-view artifacts where this one finds none. The count depends
+on the model and the scenario budget, so it should be measured per study
+rather than cited from one.
+
+\subsection{What the three profiles actually say}
+
+The profiles behave less like a gradient and more like three separate
+questions, and this became visible only once capacity stopped being
+purchasable.
+
+In the high-capacity environment there is very little worth buying. The
+entire purchasable improvement is
+\ConfirmHighCapacityMaxPurchasableImprovement{} weighted service-hours across
+a decision space of \ConfirmHighCapacityCandidates{} configurations, and a
+sixth of candidate pairs cannot be reliably ordered even at
+\ConfirmHighCapacityScenarios{} paired scenarios. What makes this profile
+worth reporting is not the small differences but their source: the parameter
+explaining most of the variance in its mean disruption is the false-positive
+isolation rate, at \SensitivityHighCapacityDominantEffect\%. Once an estate
+is strong enough that attacks rarely spread, the dominant modeled cost is the
+defense removing healthy systems from service. A study reporting a single
+disruption number would not have seen that, and a study reporting six
+objectives without a variance decomposition would have seen it only as noise.
+
+The intermediate profile is the only one where the decision is genuinely
+live. Moving from the profile's own posture to the best affordable portfolio
+changes modeled mean disruption by more than an order of magnitude, and the
+declared preference weights select different portfolios. If this framework
+has a use, it is here: exposing where a preference statement, rather than
+evidence, is doing the work.
+
+The resource-constrained profile produces the most uncomfortable and probably
+the most useful result. Its declared budget buys a large reduction in mean
+disruption and still leaves sustained clinical-outage probability above
+ninety percent. Under the modeled assumptions the affordable options do not
+reach the outcome the endpoint measures. The temptation is to report the best
+affordable portfolio as the answer; the honest report is that the budget and
+the endpoint are mismatched, and that a decision-maker in this position is
+choosing among options that all fail the stated criterion.
+
+\subsection{On the endpoint that caused the original defect}
+
+The sustained-outage endpoint was inverted in the previous version --- prose
+requiring four clinical services, code requiring one --- and correcting it
+turned out to change very little numerically, because within this model
+clinical services fail together. That could be read as reassurance. It should
+not be.
+
+Two things follow instead. First, the near-binary outcome distribution is an
+artifact of binary per-step service availability over a shared network
+structure, and real incidents show partial, degraded, and staggered service
+loss. The endpoint's insensitivity to $k$ is a symptom of a construct
+limitation, not evidence that the construct is robust. Second, the fact that
+a wrong definition produced almost-right numbers is precisely why the defect
+survived: nothing in the outputs looked anomalous. Semantic errors that
+change results loudly get caught. The ones that matter are quiet, and the
+only defence against them is asserting the definitions in tests rather than
+inspecting the numbers.

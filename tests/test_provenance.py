@@ -360,3 +360,33 @@ def test_a_mtime_touch_does_not_make_a_stale_archive_look_current(tmp_path):
     target = _make_bank(tmp_path, fresh, stale)
     os.utime(target, (1 << 31, 1 << 31))  # far newer than the archive
     assert _run_unpack(tmp_path).returncode == 1
+def test_build_manifest_can_preserve_clean_state_captured_before_generation(tmp_path, monkeypatch):
+    import grrc.provenance as provenance
+    source = tmp_path / "input.txt"
+    output = tmp_path / "output.txt"
+    source.write_bytes(b"input\n")
+    output.write_bytes(b"result\n")
+    before = {"available": True, "commit": "a" * 40, "dirty": False, "dirty_paths": []}
+    monkeypatch.setattr(provenance, "git_state", lambda: {"dirty": True})
+    manifest = provenance.build_manifest(run_id="test", stage="analysis",
+        description="state is captured before writing outputs", inputs=[source],
+        outputs=[output], source_state=before)
+    assert manifest["code"] == before
+    assert manifest["code"] is not before
+
+
+def test_git_state_keeps_first_character_of_modified_path(tmp_path, monkeypatch):
+    import subprocess
+    import grrc.provenance as provenance
+
+    def fake_run(command, **kwargs):
+        if "status" in command:
+            stdout = " M scripts/analysis.py\n?? results.csv\n"
+        elif "--abbrev-ref" in command:
+            stdout = "main\n"
+        else:
+            stdout = "a" * 40 + "\n"
+        return subprocess.CompletedProcess(command, 0, stdout=stdout)
+
+    monkeypatch.setattr(provenance.subprocess, "run", fake_run)
+    assert provenance.git_state(tmp_path)["dirty_paths"] == ["results.csv", "scripts/analysis.py"]

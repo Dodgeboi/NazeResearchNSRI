@@ -1,0 +1,153 @@
+% Discussion. The results-dependent opening is in section_discussion_finding.tex,
+% which is generated after the confirmatory analysis; everything below is
+% structural and does not depend on which candidates came out non-dominated.
+\input{section_discussion_finding}
+
+\subsection{Validity, separated}
+
+Conflating these is how a computational study acquires more credibility than
+it has earned, so they are reported separately and the weakest is named as
+the weakest.
+
+\textbf{Model validity.} The mechanism is an abstract epidemic process on a
+declared graph. It is defensible as a decision-analysis scaffold and it is
+not validated against internal hospital telemetry, because no representative
+public telemetry exists. Three mechanisms that previously acted where they
+could not act have been repaired, and the coefficients that remain
+unidentified now carry declared ranges that propagate into every result.
+
+What has not been addressed is structure. Assumption S1 is varied rather
+than asserted, and the result is a warning about the rest: relaxing that
+single assumption moves roughly a quarter to a third of frontier membership
+and nearly doubles modeled disruption in the two weaker profiles. Every
+other structural choice — the transition ordering within a step, the service
+dependency graph, the criticality-ordered restoration queue, the absence of
+an adaptive adversary — is asserted and unvaried, and the one assumption we
+did test gives no reason to expect the others are gentler.
+
+\textbf{Data validity.} The archived public sources are hash-verified and
+every count the registry records re-derives from the file. One source is a
+normalized export of a browser preview because the original requires
+sign-in; the recorded hash makes any substitution detectable, and replacing
+it with the depositor's original is a pre-submission task.
+
+\textbf{Construct validity.} This is the weakest link, and it is weaker than
+the previous version admitted. Binary per-step service availability cannot
+represent degraded operation, downtime procedures, or manual workarounds, and
+that limitation is not merely a caveat --- it produces the near-binary
+clinical outcome distribution reported above, which in turn is why the choice
+of $k$ makes almost no difference. Weighted service-hours are not patient
+harm. Normalized cost points are not procurement.
+
+\textbf{External validity.} Topology, transition hazards, service
+dependencies, control effects, cost, and burden are not jointly observed in
+any real hospital. Nothing here estimates what a deployed control would do.
+The frozen benchmark suite is the check on this, and most of it cannot be
+answered by a model of this shape.
+
+\textbf{Decision relevance.} The outputs support tabletop exploration of
+where a decision hinges on budget or preference. They do not support
+procurement, and a portfolio's position on a frontier is not a
+recommendation.
+
+\textbf{Computational reproducibility.} This is the strongest link, and it is
+worth being precise about what that buys. Every number above is generated
+from a committed table by script; every input and output is hashed in a
+manifest that fails rather than warns; the confirmatory protocol is
+content-addressed and was committed before any confirmatory output existed;
+and a claim audit fails the build when prose and artifacts disagree. None of
+that makes a conclusion true. A perfectly reproducible pipeline reproduces a
+wrong answer exactly. What it does is make the wrongness locatable.
+
+\subsection{Limitations}
+
+\emph{Reporting bias.} Public ransomware incident data record what was
+publicly reported and linkable. A zero operational flag may mean ``not
+reported'' rather than ``did not occur'', and 67 of 374 events in the
+incident cohort have known disruption of unknown duration
+\citep{neprash2022} --- missingness that is plausibly informative, since
+longer or more severe incidents may be less likely to have a cleanly
+reported end date.
+
+\emph{Vendor surveys.} Entry-vector and backup figures come from
+self-reported surveys spanning many countries and organization sizes, with
+non-exclusive categories that moved substantially between adjacent years.
+They are graded below administrative and peer-reviewed hospital evidence
+throughout, and they inform scenario names rather than parameter values.
+
+\emph{International transferability.} The most detailed first-party incident
+review available is from a non-U.S. health system \citep{hseconti2021}. It
+supports mechanism, not magnitude.
+
+\emph{Missing denominators.} The exploited-vulnerability catalog has no
+hospital exposure denominator, so its ransomware-tagged share is not a base
+rate and is never used as one.
+
+\emph{Interval censoring.} Recovery evidence arrives in duration bins with a
+substantial unknown-duration group. Any recovery-class model fitted to it
+must test the missingness assumption rather than dropping those events.
+
+\emph{Absent internal telemetry.} There is no representative public
+measurement of hospital internal network structure. The generated graph is a
+declared structure, not a measured one, and node counts are not a function of
+beds.
+
+\emph{Elicited thresholds.} The service-functional fraction, the outage
+duration, and the service count are declared choices without clinical
+validation. Calling any of them a clinical threshold would be false. Unlike
+the transition coefficients, these are not sampled: a threshold that moves
+between scenarios would change what the endpoint means rather than how
+uncertain it is.
+
+\emph{Declared ranges are not evidence.} Parameter uncertainty makes every
+objective marginal over ranges we chose. A wide range honestly says "we do
+not know"; it does not make the resulting interval an empirical one, and a
+reader should not treat the widened objectives as calibrated because they
+are now wider.
+
+\emph{Cost uncertainty.} Normalized points omit procurement, integration,
+training, maintenance, alert workload, and constraints specific to clinical
+technology. They are ordinal scenario weights and nothing more.
+
+\emph{Adaptive adversaries.} The model has none. An attacker who responds to
+a deployed defense is not represented, so every control effect here is an
+effect against a static process.
+
+\emph{Cross-hospital dependence.} The simulator runs one facility. The
+incident record contains multi-hospital events and documented regional
+spillover \citep{dameff2023,abouk2024}. This is a failure boundary, reported
+as one rather than absorbed.
+
+\emph{Non-causal control effects.} No number in this paper is a causal
+estimate of a control's effect. Every control effect is a conditional model
+output under declared assumptions.
+
+\subsection{What would actually improve this}
+
+Not more simulations. The binding constraint is identification, and it is
+relieved only by data this project does not have: de-identified telemetry
+from several hospitals, with denominators --- asset inventories with
+patchability and segment membership; vulnerability findings with first-seen,
+patch-available, and remediated dates; authentication events with coverage,
+method, and privileged-account class; high-confidence incident timestamps
+from initial access through recovery milestones; isolation actions with
+adjudication, release time, and clinical impact; backup architecture with
+restore-test outcomes and clean-recovery-point availability; and
+service-level availability with staffing and patient volume. A hierarchical
+model with hospital-level random effects and explicit measurement error would
+then be estimable.
+
+Failing that, structured expert elicitation with calibration questions and
+pooled uncertainty is preferable to point estimates that look empirical.
+Either way, parameter mappings should be pre-registered before outcome
+comparisons are seen, using the same freezing mechanism this study applies to
+its confirmatory protocol.
+
+Two model changes remain prerequisites rather than refinements, and are named
+in the specification: layered recovery endpoints over \AcuteHorizonHours{}
+hours, \MinimumViableHorizonDays{} days and \FullRecoveryHorizonDays{} days
+with a \TailHorizonDays-day tail, without which the model cannot be compared
+against the recovery evidence at all; and either multi-facility structure or
+an explicit narrowing of the paper's scope to a single synthetic facility.
+Beyond those, the structural sensitivity result argues for varying more than
+one structural assumption, not merely declaring the rest.

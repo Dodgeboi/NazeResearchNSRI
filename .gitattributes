@@ -1,0 +1,2 @@
+# Provenance manifests hash exact bytes. Disable checkout newline conversion.
+* -text
