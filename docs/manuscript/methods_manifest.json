@@ -2,12 +2,12 @@
   "code": {
     "available": true,
     "branch": "research/methods-revision",
-    "commit": "5ba94e1c7b1e710b6ad346deeb2fd021185d86c5",
+    "commit": "beeeb14675978b86bbbdc8229a4d82fc3b881bc5",
     "dirty": false,
     "dirty_paths": []
   },
-  "created_at": "2026-09-06T05:00:55+00:00",
-  "description": "Generated numeric TeX and vector figures for retrospective methods paper.",
+  "created_at": "2026-09-06T05:50:58+00:00",
+  "description": "Generated values, certificate and transfer tables, and figures for the final research manuscript.",
   "environment": {
     "implementation": "CPython",
     "machine": "AMD64",
@@ -27,6 +27,41 @@
       "bytes": 4667,
       "path": "configs/multiobjective_portfolio.yaml",
       "sha256": "a3dff5682e1e8277cc29d3a5836009deccf87a901d4fa60fdd1ce7c091e41e31"
+    },
+    {
+      "bytes": 4470,
+      "path": "data/frontier_certificates/certificate_manifest.json",
+      "sha256": "b0dc658e40d66a1a92a26fa0baae9f25ec57aff17ea4e9be0f5edcdc752817e6"
+    },
+    {
+      "bytes": 20921,
+      "path": "data/frontier_certificates/external_candidates.csv",
+      "sha256": "eae629643c34731def7286ad72f5ff3f87d064817ac7b20fba18da4e1ce3bb0a"
+    },
+    {
+      "bytes": 127,
+      "path": "data/frontier_certificates/external_corner_checks.csv",
+      "sha256": "bb60a364cdd3494571dbfa42b1598eb74e84b463badf3e0e24253efcd5405649"
+    },
+    {
+      "bytes": 138839,
+      "path": "data/frontier_certificates/external_perturbations.csv",
+      "sha256": "6c48fb6acf219f4fd0c58e9f32a05614a04410812c0359413f8501ae31ec2ff8"
+    },
+    {
+      "bytes": 318,
+      "path": "data/frontier_certificates/external_summary.csv",
+      "sha256": "25c5692207186e45c9a18687f97b745936ce5617d37a7a50984d58aa220b91b4"
+    },
+    {
+      "bytes": 70260,
+      "path": "data/frontier_certificates/hospital_candidates.csv",
+      "sha256": "5987a60227a1a02db6e5e3d607190ba5815f1bbe556e973c5cb68a0a398efe76"
+    },
+    {
+      "bytes": 217,
+      "path": "data/frontier_certificates/hospital_summary.csv",
+      "sha256": "ad7c89ae594234c4efc51f9514f120253c77dfaadec9c4ed605feb1850ecd8ef"
     },
     {
       "bytes": 7007,
@@ -99,14 +134,44 @@
       "sha256": "987d5c5db161eeb6f5b2e2a84f6d905aa1f04d5c58e9e8a04f0e234d2fc04df0"
     },
     {
+      "bytes": 2865,
+      "path": "data/multiobjective/confirmatory/parameter_sensitivity_manifest.json",
+      "sha256": "4868d4dffb4ca0fa27deea8d662004b5949d5d22690d2049178136e093ccbb56"
+    },
+    {
+      "bytes": 2524,
+      "path": "data/multiobjective/confirmatory/parameter_sensitivity_summary.json",
+      "sha256": "056aec96557095d66012a3952ada2ed051f890c5a3633e8c6c15805bf7338f90"
+    },
+    {
+      "bytes": 61516,
+      "path": "data/multiobjective/confirmatory/portfolio_objective_summary.csv",
+      "sha256": "cf41ebdacf092df8855edfa61893e5dcdacc19f3a76f7fc9166f3bc27b27fdab"
+    },
+    {
+      "bytes": 264,
+      "path": "data/multiobjective/structural_sensitivity/structural_frontier_agreement.csv",
+      "sha256": "37abc7d87b7415385f47ada739d76d16a5b0bcbf10115de1d3b123c95a4b6fb3"
+    },
+    {
+      "bytes": 813,
+      "path": "data/multiobjective/structural_sensitivity/structural_objective_movement.csv",
+      "sha256": "b44a02428e3a72c75e306392834b0bb939ac61c93040c00770fc3f479d71235a"
+    },
+    {
+      "bytes": 4430,
+      "path": "data/multiobjective/structural_sensitivity/structural_sensitivity_manifest.json",
+      "sha256": "1b3abfe0bf291afb7ab0c3783bee3ed38010b696231fd02a50ad494ed20a8317"
+    },
+    {
       "bytes": 2429,
       "path": "scripts/audit_interpretation_claims.py",
       "sha256": "0f8833152e0b36878e10eb2a60af9532b1381a3cdd9e74df55b0aa896442dc3c"
     },
     {
-      "bytes": 10147,
+      "bytes": 14969,
       "path": "scripts/generate_interpretation_paper.py",
-      "sha256": "1127521afe6e5ee330e1e8bb34f8111437a1cb3188985bf63a2a0a0e90c02cd4"
+      "sha256": "ebdc99675416e66b928b98d6b4573f6aaba1c7c6feb60b60655dc44d794f4866"
     },
     {
       "bytes": 3135,
@@ -121,9 +186,14 @@
   ],
   "outputs": [
     {
+      "bytes": 476,
+      "path": "docs/manuscript/budget_portfolio_selections.csv",
+      "sha256": "bc6197244de8fa87359b81a1da60284c1ce35af78d985ec95c1682de2a623f8a"
+    },
+    {
       "bytes": 62531,
       "path": "docs/manuscript/methods_figures/conditional_frontier.pdf",
-      "sha256": "6387252c8e2ca521f5fb3188215e196b833685e52069cb43bdd873855912977d"
+      "sha256": "cc69c5444cc8c9d091feedcf12cccb64ee8447e19d4bdb0e8e8d4e01516ecef6"
     },
     {
       "bytes": 40522,
@@ -133,7 +203,7 @@
     {
       "bytes": 65201,
       "path": "docs/manuscript/methods_figures/endpoint_ladder.pdf",
-      "sha256": "97511160fe3c38925549121db814a1049e0eb4a70cb656c77b81bec275824214"
+      "sha256": "e8e94c515bdb5fb9d65a455dfa8d2b2d177adc983999256bc387e954a30c039f"
     },
     {
       "bytes": 55642,
@@ -141,14 +211,24 @@
       "sha256": "ba8c52728fd295f487a01db5cf3e75dba83734934e813d3872732eb2325c0e79"
     },
     {
-      "bytes": 1236,
+      "bytes": 1869,
       "path": "docs/manuscript/methods_numbers.tex",
-      "sha256": "9446a57553d1e4c351308b1ee92fdc01a0d1b684d32b16dc37b209c12b196d7e"
+      "sha256": "6e1e1d3eeb883b74899fd4233124c9bbc89675349867b9f0af4913d293753f30"
     },
     {
       "bytes": 285,
       "path": "docs/manuscript/table_ablation_rows.tex",
       "sha256": "7b18690c4bd56c40d16a2bc230de25b92c2517b3ad8d70acd47fe536acd3310e"
+    },
+    {
+      "bytes": 218,
+      "path": "docs/manuscript/table_budget_rows.tex",
+      "sha256": "de1bbe0b8371dc885019b052f5bee63d0a267a639e37380335dc2468270a2926"
+    },
+    {
+      "bytes": 187,
+      "path": "docs/manuscript/table_certificate_rows.tex",
+      "sha256": "d8240f497b687ca4b13954f3566837f37957d576910d4b20d7ff5a0780c37b31"
     },
     {
       "bytes": 232,
@@ -164,6 +244,11 @@
       "bytes": 169,
       "path": "docs/manuscript/table_pairing_rows.tex",
       "sha256": "1a5284de5e2cb46544f90ffb0cd6916a2ee02e85cb30d4d5334ecc2c09b7246e"
+    },
+    {
+      "bytes": 247,
+      "path": "docs/manuscript/table_transfer_rows.tex",
+      "sha256": "d3cac96e173b03e1db4f5c97a2508605aac6f7f2388f9e9e595fae87d557d043"
     },
     {
       "bytes": 205,

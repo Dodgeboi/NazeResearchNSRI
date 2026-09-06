@@ -1,0 +1,81 @@
+{
+  "main": {
+    "pages": 8,
+    "format": "US letter",
+    "sha256": "3dff6a492e5838eab801b7237c8b90d33b5ea721b91a4219f84e69859f53ffd7",
+    "metadata": {
+      "/Creator": "LaTeX with hyperref",
+      "/Title": "Interpretable Defense Portfolios for Synthetic Hospital Ransomware: Separating Outcome Sensitivity from Decision Stability",
+      "/Author": "Ashish Agrawal; Mukil Dharanidharan; Naman Upadhyay",
+      "/Producer": "xdvipdfmx (0.1)",
+      "/CreationDate": "D:20260906055124-00'00'"
+    },
+    "fonts": [
+      "/AKHCZK+CMR10",
+      "/BZIVMZ+NimbusRomNo9L-Regu",
+      "/CAFSZL+CMMI7",
+      "/DDIEWW+CMR7",
+      "/DZGKAF+CMMI9",
+      "/FKPJSN+CMBX10",
+      "/FZDNHS+CMR8",
+      "/GJMHKB+CMR9",
+      "/IHAIZV+NimbusRomNo9L-Medi",
+      "/IXFAWU+NimbusRomNo9L-ReguItal",
+      "/JAGKKY+MSBM10",
+      "/KPXLOM+MSAM10",
+      "/LPOGEQ+CMMI6",
+      "/NITCSQ+CMR6",
+      "/NOMARO+CMSY7",
+      "/PVTTLK+CMEX10",
+      "/TQTHRL+NimbusRomNo9L-MediItal",
+      "/UBBQTN+CMSY9",
+      "/UTACNV+CMMI8",
+      "/VDVGTR+CMSY10",
+      "/YEUUOC+CMMI10"
+    ],
+    "defects": [],
+    "references_begin_page": 7,
+    "llm_statement_page": 8
+  },
+  "anonymous": {
+    "pages": 8,
+    "format": "US letter",
+    "sha256": "9376ca1c9c414eba92716c07011cf6fe2672f117bc4042f08c1dbd9fab867296",
+    "metadata": {
+      "/Creator": "LaTeX with hyperref",
+      "/Title": "Interpretable Defense Portfolios for Synthetic Hospital Ransomware: Separating Outcome Sensitivity from Decision Stability",
+      "/Producer": "xdvipdfmx (0.1)",
+      "/CreationDate": "D:20260906055127-00'00'"
+    },
+    "fonts": [
+      "/AKHCZK+CMR10",
+      "/BZIVMZ+NimbusRomNo9L-Regu",
+      "/CAFSZL+CMMI7",
+      "/DDIEWW+CMR7",
+      "/DZGKAF+CMMI9",
+      "/FKPJSN+CMBX10",
+      "/FZDNHS+CMR8",
+      "/GJMHKB+CMR9",
+      "/IHAIZV+NimbusRomNo9L-Medi",
+      "/IXFAWU+NimbusRomNo9L-MediItal",
+      "/JAGKKY+MSBM10",
+      "/KPXLOM+MSAM10",
+      "/LPOGEQ+CMMI6",
+      "/NITCSQ+CMR6",
+      "/NOMARO+CMSY7",
+      "/PVTTLK+CMEX10",
+      "/TQTHRL+NimbusRomNo9L-ReguItal",
+      "/UBBQTN+CMSY9",
+      "/UTACNV+CMMI8",
+      "/VDVGTR+CMSY10",
+      "/YEUUOC+CMMI10"
+    ],
+    "defects": [],
+    "references_begin_page": 7,
+    "llm_statement_page": 8
+  },
+  "preservation": {
+    "endpoint_change": "rationale metadata only; AST otherwise identical",
+    "modified_existing_raw_or_configs": ""
+  }
+}

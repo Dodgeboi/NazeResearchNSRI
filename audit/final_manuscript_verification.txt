@@ -1,0 +1,24 @@
+
+PASS         unpack compressed raw banks
+             ok       data\multiobjective\confirmatory\multiobjective_confirmatory_results.csv (matches archive, sha256 6b558145ae77)
+PASS         test suite
+             ....                                                                     [100%]
+PASS         behavioral validation
+             12/12 validation checks passed
+PASS         archived sources
+             all archived sources verify, and every recorded count re-derives from the file
+PASS         frozen protocols verify
+             multiobjective_confirmatory_v1: fdf6777e4ba6 frozen 2026-09-03T01:49:25+00:00
+             multiobjective_confirmatory_v2: 9cb7e835446a frozen 2026-09-04T01:53:46+00:00
+PASS         run manifests describe the files on disk
+             13 manifests checked
+PASS         manuscript claim audit
+             current manuscript checks passed; 14 citations resolve; baseline audit pass reproduced
+PASS         historical numeric macros re-derive from preserved trials
+             Discovery: 12,000 rows, 400 profile-candidates
+             Confirm: 160,000 rows, 400 profile-candidates
+             bimodality: 2,598 + 372 + 9,030 = 12,000
+PASS         external validation reports its failures
+             9 benchmarks: {'not_addressable': 2, 'not_scored': 3, 'fail': 2, 'scored': 2}
+
+all 9 checks passed
