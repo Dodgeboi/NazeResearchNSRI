@@ -1,0 +1,117 @@
+\section{Efficiency Proofs and Numerical Scope}
+For Eqs.~\ref{eq:guaranteed} and \ref{eq:possible}, if $L_d\prec U_c$,
+placing $d$ at its lower bound and $c$ at its upper bound makes $c$
+dominated. Conversely, a realized dominator implies $L_d\prec U_c$.
+If $U_d\prec L_c$, $d$ dominates $c$ throughout the box. Otherwise, place
+$c$ at $L_c$ and every rival at its upper bound; no rival dominates $c$.
+Independent box coordinates permit these assignments. Strict dominance
+retains exact ties.
+
+For Eq.~\ref{eq:prices}, minimizing a linear function on a constrained
+rectangle requires only its vertices: admissible box corners and the
+intersections with the minimum-gap boundary. Uncoupled coordinates choose
+the lower or upper endpoint according to the coefficient's sign. Cost,
+burden, and outcome minima can be realized simultaneously for a fixed
+rival. The existence of any such rival disproves universal retention;
+its absence proves retention. Price calculations use integer upgrade
+coefficients and round cancellation residues to 12 decimal places.
+Independent linear-programming checks agree to $10^{-10}$.
+
+The population screen follows from Hoeffding's inequality for independent
+bounded observations, including nonidentically distributed observations in
+fixed strata. A union bound over $K$ comparisons gives simultaneous coverage
+of at least $1-\alpha$. If a lower bound is strictly positive for every
+rival in some coordinate, none can dominate the candidate. No tail-mean
+concentration claim is required. An equal screened vector cannot be
+discarded, since an omitted tail coordinate could break the tie.
+
+\begin{table}[t]
+\centering\small
+\caption{All price radii. Entries give counts in R/I/H profile order.
+$B_{95}$ counts original certificates meeting the resampling-frequency
+criterion. The positive-gap extension was recorded after the first run.}
+\begin{tabular}{@{}lrrrr@{}}\toprule
+& \multicolumn{2}{c}{Monotone} & \multicolumn{2}{c}{Positive gaps}\\
+Radius \% & $G$ & $B_{95}$ & $G$ & $B_{95}$\\\midrule
+\tableinput table_joint_all_rows.tex
+\bottomrule\end{tabular}
+\end{table}
+
+\section{Engineering and Decision Diagnostics}
+\begin{table}[t]
+\centering\small
+\caption{All planned engineering settings, with 128 finite sampled
+candidates per problem. Radius scales the sampled objective range.}
+\label{tab:transfer}
+\begin{tabular}{@{}lrrrr@{}}\toprule
+Problem & Radius & $|G|$ & $|F_0|$ & $|P|$\\\midrule
+\tableinput table_transfer_rows.tex
+\bottomrule\end{tabular}
+\end{table}
+RE21 models a four-bar truss; RE22 models a reinforced-concrete beam
+and retains its constraint-violation objective \cite{tanabe2020}.
+Independent intervals perturb all objectives by $\pm1\%,\pm5\%,\pm10\%$
+of their finite sampled ranges, with nonnegative lower bounds.
+All \BenchmarkDraws{} perturbation frontiers contain $G$ and lie within
+$P$. For the first eight candidates per problem, \BenchmarkCorners{}
+total corner matrices with only the second objective uncertain reproduce
+the exact frontier intersection and union. \BenchmarkEmptySettings{} of
+six settings have empty guaranteed sets. These checks concern finite
+tables and chosen bounds, not the continuous problems' global frontiers.
+
+\begin{table}[t]
+\centering\small
+\caption{Illustrative mean-loss selection within each declared point budget.
+Free and selected columns give mean weighted service-hours lost; the
+last column gives the selected candidate's $k=4$ frequency.}
+\label{tab:budget}
+\begin{tabular}{@{}lrrrr@{}}\toprule
+Profile & Budget & Free & Selected & Event \%\\\midrule
+\tableinput table_budget_rows.tex
+\bottomrule\end{tabular}
+\end{table}
+The budget example selects the lowest observed mean loss within each
+profile's point budget. The artifact identifies the portfolios and their
+burdens. Another objective or a burden constraint can favor another choice;
+zero observed events do not imply zero risk.
+
+\begin{table}[t]
+\centering\small
+\caption{Frontier sizes over every objective subset of a given dimension,
+shown as minimum/median/maximum. Tied optima are retained.}
+\begin{tabular}{@{}crrr@{}}\toprule
+Dimensions & R & I & H\\\midrule
+\tableinput table_ablation_rows.tex
+\bottomrule\end{tabular}
+\end{table}
+Tied minima explain the large intermediate single-objective maximum.
+Adding an objective can break ties and remove a previously efficient
+candidate, so cardinality need not increase with dimension.
+
+\section{Interpretation and Reproduction}
+
+
+Each registered assertion specifies a source, population, expected groups,
+statistic, unit, quantifier, relation, and bound. Missing groups or unsupported
+operations stop verification. The eight correct assertions, three historical
+contradictions, and eight single-field mutations were constructed after
+reviewing the manuscript. They test specified behavior rather than estimate
+general detection accuracy.
+
+For paired mean-loss comparisons, let $D_{hi}$ be the candidate difference
+in entry stratum $h$, with weight $w_h=n_h/n$. Then
+\begin{equation}
+ \widehat{\mathrm{Var}}(\widehat\Delta)
+ =\sum_h w_h^2s^2_{D,h}/n_h,\quad
+ s^2_{D,h}=s^2_{a,h}+s^2_{b,h}-2s_{ab,h}. \label{eq:pairing}
+\end{equation}
+Setting $v_h=w_h^2s^2_{D,h}/n_h$ gives approximate degrees of freedom
+$(\sum_hv_h)^2/\sum_h[v_h^2/(n_h-1)]$ for the family-adjusted paired
+t intervals.
+
+Original raw banks and protocol digests remain unchanged. Added analyses
+start from committed clean source states, with code, environment, and
+file hashes recorded in manifests. The reproduction guide documents
+commands and historical provenance, including an earlier dirty source
+state. Automated checks cover specified relationships; an unregistered
+interpretation can still escape them.

@@ -1,31 +1,30 @@
-Kiesling et al.\ already combine security-control models, simulation,
-multi-objective optimization, and portfolio selection \cite{kiesling2016}.
-Our hospital-specific contribution is the explicit evidence-to-mechanism
-framework, clinical-service dependency outcomes, exhaustive paired finite
-comparison, and separation of endpoint retention from other uncertainties.
-Hospital process simulation with local observations and expert input
-\cite{willing2025} addresses a different validation level; our synthetic
-network does not inherit that empirical grounding.
+Kiesling et al.\ combine security-control models, multi-objective
+simulation-optimization, and portfolio selection \cite{kiesling2016}.
+Hlad\'ik studies efficiency under interval uncertainty \cite{hladik2017}.
+Our finite-box formulas are direct specializations of that established
+idea. Their role is to make a limited stability claim explicit and
+computable; the shared-price calculation preserves the dependency
+structure of the portfolio cost model.
 
-Necessary and possible efficiency under interval uncertainty are established
-optimization concepts \cite{hladik2017}. Equations~\ref{eq:guaranteed}--\ref{eq:possible}
-give a direct finite-box specialization, proof, and witness-producing
-implementation. The added evidence is its endpoint application and
-transparent evaluation on the published RE suite \cite{tanabe2020}.
-The benchmark perturbations assess this implementation, not the continuous
-engineering problems' global Pareto fronts.
+Simulation ranking and selection also has a substantial literature.
+Currie and Monks's BootComp uses bootstrap comparisons, permits common
+random numbers, and includes a hospital ward application \cite{currie2021}.
+Andrad\'ottir and Lee develop Pareto-set selection procedures with guaranteed
+correct-selection probabilities under independent or correlated sampling
+\cite{andradottir2021}. Our fixed-bank study does not propose a replacement
+selection algorithm. It compares deterministic retention, conditional
+resampling frequency, and a conservative simultaneous mean screen on
+the same candidate set.
 
-STRESS reporting guidance \cite{monks2019}, common random numbers
-\cite{buffalo2026}, and the distinction between prior plans and retrospective
-analysis \cite{nosek2018} inform the experimental design. Multiverse and
-specification-curve work \cite{steegen2016,simonsohn2020} motivate examining
-analytical choices; our enumeration is descriptive and does not implement
-specification-curve joint inference.
-
+The design follows the transparency goals of STRESS reporting
+\cite{monks2019}, common-random-number practice \cite{buffalo2026},
+and explicit separation of prior plans from retrospective analysis
+\cite{nosek2018}. Multiverse and specification-curve studies motivate
+examining analytical choices \cite{steegen2016,simonsohn2020};
+our study does not implement their joint inference procedures.
 Statistical consistency checks \cite{nuijten2016}, metamorphic simulation
-tests \cite{raunak2021}, and the recent ABE-Ralph experimental-fidelity
-preprint \cite{yu2026} already address relations beyond successful execution.
-Our small deterministic registry contributes case-specific scope, unit,
-and quantifier checks. Its role is to make interpretations reviewable beside
-the model and decision diagnostics, rather than to claim general automated
-scientific judgment.
+tests \cite{raunak2021}, and the ABE-Ralph experimental-fidelity preprint
+\cite{yu2026} provide context for the interpretation assertions.
+The scientific addition is the documented change in conclusions when
+several assumptions are examined together, supported by an auditable
+implementation and public construct evidence.

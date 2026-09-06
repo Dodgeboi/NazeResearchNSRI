@@ -1,21 +1,20 @@
-Choosing defenses from a security simulation requires knowing which results
-depend on its assumptions. We develop an evidence-constrained synthetic
-hospital ransomware model with pathway-specific controls, six decision
-objectives, and \RevisionExecutions{} confirmation executions paired across
-400 profile-candidates. We separate parameter uncertainty, structural choices,
-outcome definitions, and efficient-set membership. Changing the outage-service
-threshold shifts high-capacity candidate-average event frequency by
-\HighGap{} percentage points while preserving its observed Pareto frontier.
-A finite interval certificate goes further: \CertGuaranteedTotal{} of
-\CertObservedTotal{} observed efficient portfolios remain efficient throughout
-candidate-specific endpoint intervals, with five other objectives fixed.
-All \CertHighGuaranteed{} high-capacity frontier members are retained,
-although \CertHighAdditional{} additional candidates remain possibly efficient.
-Published truss and beam benchmarks provide transfer checks over
-\BenchmarkDraws{} perturbations and \BenchmarkCorners{} exact corner matrices;
-wide bounds expose when certification becomes inconclusive.
-Paired stratified analysis, structural sensitivity, and executable
-interpretation assertions complete the evaluation. The contribution is an
-inspectable model and a decision-stability analysis that distinguishes
-guaranteed retention from observed agreement. Its guarantees concern the
-declared objective bounds, not clinical effectiveness.
+An unchanged Pareto frontier can make a simulation look more robust than it
+is. We examine this problem in a single synthetic hospital model with
+pathway-specific defenses, six objectives, and \RevisionExecutions{} paired
+confirmation executions across 400 profile-candidates. Changing the clinical
+outage definition moves high-capacity event frequency by \HighGap{}
+percentage points without changing its observed frontier. An interval
+calculation retains \CertGuaranteedTotal{} of \CertObservedTotal{} efficient
+portfolios when only that endpoint varies. We then let shared component
+prices vary and recompute the stochastic objectives through paired,
+entry-stratified resampling. At $\pm50\%$ prices, even requiring every
+upgrade to retain half its nominal incremental price reduces guaranteed
+retention to \JointRetainedFloored{}. Only \JointFrequentFloored{} of the
+original certificates persist in at least 95\% of resamples. A conservative
+simultaneous bound on population means supports only the free baselines.
+An external construct audit of \CipherRecords{} public clinical-harm records
+also identifies services and time periods outside the model. The contribution
+is a reproducible joint stability study with an exact shared-price retention
+calculation and explicit separation of deterministic guarantees, resampling
+frequencies, and statistical confidence. The results identify which assumptions
+deserve scrutiny before using the simulated tradeoffs to inform a decision.

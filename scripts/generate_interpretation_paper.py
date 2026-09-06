@@ -19,6 +19,7 @@ import yaml
 
 from grrc.provenance import build_manifest, git_state, write_manifest, verify_manifest
 from audit_interpretation_claims import audit
+from generate_joint_paper import content as joint_content, figures as joint_figures
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data/interpretation"
@@ -146,6 +147,9 @@ def content():
     table('table_ablation_rows', '% Minimum/median/maximum frontier sizes across every subset of a given dimension.', [
         [str(d)] + [f"{g.min():.0f}/{g.median():g}/{g.max():.0f}" for p in PROFILES
                      for g in [ab.loc[(ab.profile == p)&(ab.dimensions == d),'frontier_size']]] for d in range(1,7)])
+    joint_generated, joint_tables = joint_content()
+    generated.update(joint_generated)
+    tables.update(joint_tables)
     return generated, tables
 
 
@@ -184,6 +188,7 @@ def figures(tables):
         ax.set(xlabel=label,ylabel='Conditional resampling draws')
         ax.legend(fontsize=7)
     save(fig,'conditional_frontier')
+    paths += joint_figures(tables, folder)
     return paths
 
 
@@ -217,6 +222,10 @@ def main():
         HIST/'structural_sensitivity/structural_sensitivity_manifest.json',
         ROOT/'study/interpretation_contracts.json', ROOT/'src/grrc/claim_contracts.py', ROOT/'configs/multiobjective_portfolio.yaml',
         Path(__file__), ROOT/'scripts/audit_interpretation_claims.py']
+    inputs += list((ROOT/'data/joint_stability').glob('*.csv')) + [
+        ROOT/'data/joint_stability/joint_manifest.json',
+        ROOT/'data/cipher/processed/coverage_manifest.json',
+        ROOT/'scripts/generate_joint_paper.py'] + list((ROOT/'data/cipher/processed').glob('*.csv'))
     manifest = build_manifest(run_id='interpretation-paper',stage='analysis',
         description='Generated values, certificate and transfer tables, and figures for the final research manuscript.',
         inputs=inputs,outputs=outputs,parameters={'scope':'registered values and assertions, not all prose'},source_state=state)

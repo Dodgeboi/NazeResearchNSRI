@@ -1,25 +1,37 @@
 # Final revision record
 
-Final manuscript version 3.1.0, September 6, 2026.
+Version 3.2.0, September 6, 2026.
 
-| Review finding | Completed change |
-|---|---|
-| The audit framing underplayed the original research | Restored the hospital model, evidence-to-parameter reasoning, mechanism design, and parameter-versus-structure findings as central contributions |
-| Observed unchanged frontiers alone were a narrow result | Added a finite interval certificate, proof, competing-candidate witnesses, and guaranteed/possible sets: 72 of 95 observed efficient portfolios certified for the declared endpoint box |
-| No second independent simulator was available | Evaluated two independently defined published engineering benchmarks with a plan committed before candidate outcomes; retained all six settings, 6,000 perturbations, and 512 exact corner matrices |
-| Transfer could be oversold | Distinguished external problem definitions from independent evaluation; reported empty guaranteed sets in five settings and limited the claims to finite objective tables |
-| The paper needed a worked example | Added a four-column original statement → evidence → executable assertion → corrected conclusion table |
-| Threshold sensitivity was generalized from pooled discovery results | Separated stage, profile, and pooling weights; reported the exact endpoint identity and frontier comparisons |
-| Paired generation was followed by covariance-omitting uncertainty | Retained fixed entry strata, shared bootstrap draws, paired covariance, and family-adjusted baseline contrasts |
-| A fixed shortlist's reassuring zero was overinterpreted | Reported conditional resampling of omissions and restricted-view artifacts, with finalist labels fixed |
-| Objective count and tariffs were insufficiently examined | Enumerated all 63 objective subsets and 500 component-tariff stress draws, with ties and positive-unit invariance explained |
-| Historical source states were unclear | Kept historical manifests intact; captured committed clean source before new analysis and final reporting generation |
-| An inherited model-specification paragraph described superseded endpoint values | Replaced that empirical claim with a link to current stage/profile results; no endpoint definition or simulation behavior changed |
-| The MFA reference had incorrect year and authorship | Corrected the current citation against the Microsoft Research page and the 2023 author preprint |
-| Assistance disclosure and draft labels distracted from the work | Replaced the disclosure with one accurate sentence and marked the current paper and documentation final |
+| Review concern | Completed revision |
+| --- | --- |
+| Endpoint-only certificates held five estimated objectives fixed | Recomputed all stochastic objectives in 1,000 paired stratified resamples per profile and combined them with endpoint intervals and shared-price uncertainty |
+| Arbitrary cost and burden assumptions received too little attention | Implemented exact pairwise price minima over two shared coefficient regions, five radii each; checked support functions against independent linear programming |
+| A reassuring deterministic result could be read as statistical confidence | Added a separate simultaneous Hoeffding screen over 276,048 ordered mean contrasts, with all three planned alpha levels and its conservative negative finding |
+| A wide price box might make upgrades free | Recorded and ran a positive-gap extension after the first results; all original-region values reproduce exactly; positive-price retention still falls from 72 to 27 |
+| External evidence was too remote from clinical constructs | Archived and analyzed the licensed CIPHER v1.0.1 dataset with a mapping recorded before aggregation, complete category counts, and source influence ranges |
+| Related work omitted direct simulation-selection precedents | Added BootComp and guaranteed Pareto-set selection; positioned the contribution as a joint study and implementation, not a new interval or concentration theorem |
+| Too many competing result sections and repeated caveats | Reorganized into four result sections with one central figure; moved proofs and secondary diagnostics into appendices; shortened headings and prose |
+| Typography and draft language undermined presentation | Removed em dashes, including automatic template punctuation; fixed a stranded table; retained final-product status |
+| The assistance statement excluded earlier code and audit work | Used one sentence covering literature review, code development and revision, verification, and manuscript preparation |
+| Historical blocking checklist appeared current | Added an archival notice and a current release-status record without deleting the original audit |
+| The CrowdStrike reference had incorrect authors | Corrected all authors, volume, issue, article number, and DOI against the publisher and PubMed |
 
-## Evidence boundary
+## What the added research establishes
 
-The hospital model remains synthetic and has no independent clinical validation. The certificate covers its stated objective bounds; Monte Carlo and structural uncertainty require separate analyses. Published benchmark checks support implementation and portability, and the assertion cases remain finite regression examples. These are properties of the completed research, not unresolved editorial placeholders.
+At ±50% shared prices, the original 72 endpoint certificates become 21 under
+monotone prices or 27 when upgrades retain at least half their nominal
+incremental price. With resampling, 8 or 12 original certificates meet a
+95% retention-frequency criterion. The family-wise population screen
+certifies only free baselines, so it does not turn these resampling results
+into a population-efficiency guarantee for purchased controls.
 
-No author roles, signatures, external reviewer endorsements, or acceptance claims have been invented. Earlier worksheets and review opinions are retained as historical material. The final paper credits the three human authors and uses a short assistance statement.
+CIPHER contributes independent source material, not an independently run
+defense experiment. Of 316 coded records, 85 concern absent explicit
+services and 97 carry annotations beyond the 72-hour horizon. Time labels
+are not outage durations. Removing one reference at a time makes the
+beyond-horizon share range from 17.4% to 31.7%, showing source concentration.
+
+The original simulation, trial banks, protocols, benchmark functions,
+failed comparisons, and historical corrections remain preserved. No
+hospital effectiveness data, author attestations, endorsements, or
+acceptance claims were invented. Earlier revision details remain in Git history.

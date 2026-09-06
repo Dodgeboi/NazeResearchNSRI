@@ -1,5 +1,10 @@
 # Decisions this rebuild deliberately did not make
 
+> Historical rebuild record, superseded for the current release by
+> [CURRENT_RELEASE_STATUS.md](CURRENT_RELEASE_STATUS.md). The blocking
+> labels and references to a draft below describe that earlier state.
+> They are preserved as audit history, not a current release checklist.
+
 The handoff lists choices an AI must not invent. Each is recorded here with
 what was assumed in the meantime, so nothing is silently decided by default.
 Anything marked **blocking** must be settled before submission.

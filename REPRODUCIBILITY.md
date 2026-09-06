@@ -52,6 +52,39 @@ The scripts reject dirty source trees unless `--allow-dirty` is explicitly suppl
 
 Historical manifests and their dirty states are not rewritten. The old generated-number manifest is retained for the archived manuscript; current macros and figures use `docs/manuscript/methods_manifest.json`. Historic source identifiers can be translated using `audit/attribution-commit-map.csv`. This preserves evidence, but cannot reconstruct uncommitted historical code.
 
+## Joint stability and external construct audit
+
+From a clean checkout, run:
+
+    python scripts/analyze_joint_stability.py
+
+The default uses 1,000 resamples per profile, seeds 2026090610 through
+2026090612, and radii 0, 0.10, 0.25, 0.50, 0.75. Both price regions use
+the same draws. The positive-gap extension was recorded after the initial
+run in study/JOINT_STABILITY_EXTENSION.md. Every original-region value
+reproduces commit 1ddd261 exactly. The separate Hoeffding screen includes
+276,048 ordered mean contrasts and all three planned alpha levels.
+Per-candidate frequencies and all draw counts are in data/joint_stability.
+
+After committing any regenerated joint results, run the external audit
+from a clean checkout:
+
+    python scripts/analyze_cipher_coverage.py
+
+The unchanged CIPHER v1.0.1 CSV and its CC BY 4.0 license are archived
+under data/cipher/raw. Its SHA-256 is checked before aggregation. The
+script reports all categories, missingness, exact duplicates, the label
+correction, and reference influence. No live download is needed.
+
+After committing regenerated analysis tables, run:
+
+    python scripts/generate_interpretation_paper.py
+    python scripts/generate_interpretation_paper.py --check
+
+This generator includes the joint-stability and CIPHER tables and central
+figure, alongside earlier supplementary graphics. No script silently
+stages or commits its outputs.
+
 ## Build the PDFs
 
 The paper uses IEEEtran 1.8b with `[conference,compsoc]`, US letter. With Tectonic 0.17.0, from the repository root:

@@ -7,7 +7,7 @@
 \usepackage[hidelinks]{hyperref}
 \newif\ifanonymous
 \ifdefined\AnonymousVersion\anonymoustrue\else\anonymousfalse\fi
-\hypersetup{pdftitle={Interpretable Defense Portfolios for Synthetic Hospital Ransomware: Separating Outcome Sensitivity from Decision Stability}}
+\hypersetup{pdftitle={Defense Portfolio Stability Under Shared Costs and Sampling Uncertainty}}
 \ifanonymous
 \hypersetup{pdfauthor={}}
 \else
@@ -15,11 +15,14 @@
 \fi
 \graphicspath{{methods_figures/}}
 \input{methods_numbers}
+\input{joint_numbers}
 \makeatletter\let\tableinput\@@input\makeatother
 \newcommand{\modelonly}{within the synthetic model}
 \newcommand{\artifactpath}[1]{\texttt{\detokenize{#1}}}
+\renewenvironment{abstract}{\par\noindent\small\bfseries Abstract: }{\par\normalfont\normalsize}
+\renewenvironment{IEEEkeywords}{\par\noindent\small\bfseries\textit{Index Terms: }}{\par\normalfont\normalsize}
 \begin{document}
-\title{Interpretable Defense Portfolios for Synthetic Hospital Ransomware:\\Separating Outcome Sensitivity from Decision Stability}
+\title{Defense Portfolio Stability Under Shared Costs and Sampling Uncertainty}
 \ifanonymous
 \author{Anonymous authors}
 \else
@@ -31,299 +34,265 @@
 \input{section_abstract}
 \end{abstract}
 \begin{IEEEkeywords}
-healthcare cybersecurity; simulation; parameter identification;
-Pareto efficiency; interval uncertainty; reproducibility
+simulation; defense portfolios; Pareto efficiency;
+shared costs; sampling uncertainty; reproducibility
 \end{IEEEkeywords}
 
 
+
 \section{Introduction}
-Hospital ransomware defense involves competing goals: reducing disruption
-and extreme losses while controlling implementation cost and operational
-burden. Incident studies document disruption \cite{neprash2022}, but those
-observations do not identify what a particular hospital would gain from a
-particular combination of controls. Simulation makes such counterfactuals
-inspectable, provided its assumptions and decision implications are explicit.
+Security investments compete for money, staff time, and operational attention.
+A simulation can compare many combinations of defenses, but an efficient
+portfolio is only as persuasive as the assumptions behind its objectives.
+Reproducing the objective table does not establish that its frontier will
+survive a different outcome definition, price schedule, or scenario sample.
 
-We develop a synthetic hospital network model with pathway-specific defenses,
-clinical-service dependencies, and paired scenario comparisons. Its evidence
-framework distinguishes observed incident quantities, evidence-informed
-context, declared technical assumptions, and normalized decision units.
-This distinction prevents an adoption survey or a guidance document from
-being treated as an estimate of control effectiveness. The finite experiment
-enumerates 400 profile-candidates and compares six objectives without
-collapsing them into a single preferred policy.
+We investigate these distinctions in a single synthetic hospital ransomware
+model. The experiment compares 400 profile-candidates on disruption, extreme
+loss, outage frequency, non-recovery, cost, and burden. An initial check
+appears reassuring: changing the outage definition leaves two profiles'
+frontiers unchanged. Yet this check holds both prices and other estimated
+objectives fixed. Our research question is therefore: \emph{how much of
+that apparent stability survives when these uncertainties are considered
+together?}
 
-The central question is: \emph{when modeled outcomes change, which portfolio
-decisions can still be defended?} Changing the service-outage definition can
-substantially change event frequency while preserving the estimated efficient
-set. Conversely, changing a restoration mechanism can alter that set even
-when parameter-based ranking checks appear reassuring. These are different
-forms of sensitivity, requiring different evidence.
+The answer changes the interpretation of the experiment. The
+\CertGuaranteedTotal{} portfolios retained under endpoint uncertainty fall to
+\JointRetainedFloored{} under a shared-price region that keeps upgrades
+strictly costly. Scenario resampling provides a further, distinct check;
+it is not a statistical guarantee. External clinical-harm data reveal where
+the modeled services and horizon fall short of reported disruption.
 
-We make three contributions. First, we provide an inspectable defense-portfolio
-experiment that links evidence classification to mechanisms, matched scenarios,
-and separate parameter and structural sensitivity analyses. Second, we derive
-and implement a finite interval certificate that bounds every admissible
-frontier between guaranteed and possible efficient sets, with competing
-portfolios as failure witnesses. Applied to the endpoint interval, it certifies
-retention of \CertGuaranteedTotal{} of the \CertObservedTotal{} observed
-efficient portfolios. Third, we evaluate the certificate on two independently
-defined engineering benchmarks and connect selected manuscript interpretations
-to executable assertions and worked corrections.
+The contribution is this joint analysis and its inspectable implementation.
+Security portfolio simulation-optimization, interval efficiency, and
+bootstrap selection are established methods
+\cite{kiesling2016,hladik2017,currie2021}. We combine them in a finite
+paired experiment, exploit the model's shared component-price structure,
+and compare the conclusions supported by three kinds of uncertainty
+analysis. The hospital reanalysis is retrospective. Its plans record which
+results were already known and when the positive-upgrade-price extension
+was added.
 
-Security portfolio simulation-optimization and necessary/possible efficiency
-are established ideas \cite{kiesling2016,hladik2017}. Our contribution is their
-concrete use to distinguish outcome sensitivity, frontier retention, and
-remaining decision uncertainty in an evidence-constrained hospital experiment.
-The added hospital analyses are retrospective. The benchmark evaluation plan
-was committed before generating its candidate outcomes; the evaluations share
-our research workflow and do not constitute independent clinical validation.
+\section{Model and Experimental Design}
+\subsection{Mechanisms and evidence}
+The model represents one facility as a network of 200--300 digital assets.
+Incidents enter through a workstation, internet-facing asset, privileged
+system, medical device, or vendor connection. Compromise, detection,
+isolation, and restoration evolve in five-minute steps over 72 hours.
+The resource-constrained, intermediate, and high-capacity profiles are
+fixed starting environments. Portfolios add controls to that environment;
+they cannot buy a different capacity profile.
 
-\section{Model and Evidence Design}
-\subsection{Evidence constrains mechanisms, not every coefficient}
-The parameter and endpoint registries separate evidence-constrained
-quantities, external comparison targets, declared assumptions, model-internal
-quantities, and normalized scenario units. A source must match both the
-quantity and the population to identify a coefficient. Incident-level recovery
-durations, for example, do not identify per-node restoration throughput.
-Sector adoption figures can inform a scenario's context without estimating
-the effectiveness of a deployed control.
+Controls follow the pathway on which they act. Patching mainly reduces
+exploit-mediated traversal, has little effect on credential-mediated
+traversal, and has partial effect on vendor pathways. Identity protection
+has separate coverage and effectiveness on eligible authentication paths.
+Isolated backups lack a normal traversal path but can suffer an incident-level
+isolation lapse or residual recovery failure. Restoration either waits for
+containment or proceeds in parallel in a separate structural experiment.
+Restored nodes become susceptible again, allowing reinfection.
 
-This rule changes model structure. Patching mainly reduces exploit-mediated
-traversal, has little effect on credential-mediated traversal, and has partial
-effect on vendor pathways. Identity protection has explicit coverage and
-effectiveness on eligible authentication pathways. Evidence about commercial
-account authentication \cite{meyer2023} is not applied as a reduction in
-whole-network ransomware probability. Isolated backups have no normal
-traversal path, but can suffer a per-incident isolation lapse or residual
-recovery failure. A small repeated traversal probability would instead model
-a delay: over $T$ independent opportunities, a per-step probability $q$
-produces cumulative probability $1-(1-q)^T$.
+An evidence register distinguishes observed quantities, contextual evidence,
+technical assumptions, and normalized decision units. Hospital incident
+studies establish that disruption occurs \cite{neprash2022}; authentication
+research informs the scope of identity protection \cite{meyer2023}.
+Neither identifies whole-network control effects in this model. Technical
+effect sizes remain non-identifiable from the available public sources.
+We sample \SampledCoefficients{} coefficients over declared ranges once per
+scenario and share the vector across candidate replays. These ranges express
+assumptions to examine, not estimates of hospital-sector effectiveness.
 
-Technical effect sizes remain non-identifiable from the available public
-sources. We sample \SampledCoefficients{} coefficients over declared ranges
-once per scenario and share that vector across candidate replays. The
-objectives therefore average over those ranges as well as event randomness.
-Guidance motivates mechanisms; it does not supply invented numerical
-effectiveness estimates. The complete register and mechanism specification
-are included in the artifact.
+\subsection{Objectives and paired scenarios}
+A service is available when at least 60\% of its supporting nodes are
+functional. Weighted service-hours lost sum unavailable time across EHR,
+laboratory, pharmacy, imaging, scheduling, identity, and backup/recovery,
+with weights $(1.0,0.8,0.9,0.7,0.4,0.9,0.6)$. The resulting loss is bounded
+by \JointLossBound{} weighted hours. Only the first four services enter the
+clinical-outage endpoint. This endpoint measures digital-service availability,
+not patient outcomes or treatment capacity.
 
-\subsection{Network, objectives, and paired experiment}
-One synthetic facility is a network of digital assets with four clinical-service
-dependencies. Incidents enter through five categories: workstation,
-internet-facing asset, privileged system, medical device, or vendor connection.
-Spread, detection, defensive isolation, and restoration evolve in five-minute
-steps over 72 hours. Each service is available when its declared 60\%
-supporting-node threshold is met. This binary digital-service construct does
-not measure patients treated or clinical harm. Weighted service-hours lost
-sum unavailable time over seven services: EHR, laboratory, pharmacy, imaging,
-scheduling, identity, and backup/recovery, with declared weights
-$(1.0,0.8,0.9,0.7,0.4,0.9,0.6)$. Only the first four enter the clinical-outage
-endpoint; supporting-service losses still contribute to total weighted loss.
+Each candidate has six minimized objectives: mean weighted loss, empirical
+upper-tail mean loss, sustained-outage frequency, non-recovery by 72 hours,
+implementation cost, and operational burden. The historical tail statistic
+averages losses at or above the empirical 90th percentile, including ties.
+Cost and burden are normalized scenario points. Segmentation, patching,
+detection, isolation, backups, and identity protection are priced as upgrades
+above the profile's existing posture. The three profiles have 288, 96,
+and 16 distinct resolved candidates.
 
-The resource-constrained, intermediate, and high-capacity profiles are fixed
-environments with 288, 96, and 16 distinct resolved candidates. Controls vary
-segmentation, patching, detection, isolation, backups, and identity protection;
-they cannot purchase a different profile. Each candidate has six minimized
-objectives: mean weighted service-hours lost, empirical upper-tail mean loss,
-sustained-outage frequency, non-recovery by 72 hours, implementation cost,
-and operational burden. The tail statistic averages losses at or above the
-empirical 90th percentile, including ties. Cost and burden are normalized
-scenario points, not monetary or staffing estimates.
-
-Discovery contains 30 scenarios per profile and 12,000 candidate executions.
-Confirmation contains \RevisionScenarios{} fresh scenarios per profile and
-\RevisionExecutions{} executions. Disjoint scenario-ID blocks separate
-profiles and stages; within a profile, all candidates share event-keyed
-random inputs. Confirmation cycles through five entry categories, giving
-80 scenarios per category. The estimand weights those categories equally.
-The independent units are the scenarios, not the individual candidate
-executions, and the designed mixture is not hospital incident prevalence.
+Discovery uses 30 scenarios per profile and 12,000 candidate executions.
+Confirmation uses \RevisionScenarios{} fresh scenarios per profile and
+\RevisionExecutions{} executions. Within a profile, all candidates share
+event-keyed random inputs. Disjoint scenario-ID blocks separate stages and
+profiles. Confirmation allocates 80 scenarios to each of five entry
+categories, defining an equally weighted scenario mixture. The independent
+units are scenarios; candidate executions are paired observations.
 % claim: independent_units
 % claim: confirmation_size
 
-\section{Decision Stability and Verification}
-\subsection{Outcome definitions and population alignment}
-Let $N_{pci}$ be the number of clinical services with an individual continuous
-outage longer than two hours in profile $p$, candidate $c$, scenario $i$.
-The event $Y^{(k)}_{pci}=\mathbf{1}\{N_{pci}\geq k\}$ requires at least $k$
-qualifying services; their outage intervals need not overlap. The primary
-endpoint uses $k=\PrimaryK$. We report all four values of $k$ and recompute the candidate-average frequency at each
-$k\in\{1,2,3,4\}$ separately for each stage and profile. Averaging over
-candidates describes this enumerated design, not an incident prevalence.
-
-For the same observations and weights, the following identity holds exactly:
+\section{Stability Analysis}
+\subsection{Endpoint definitions and interval efficiency}
+Let $N_{pci}$ count clinical services whose individual continuous outage
+exceeds two hours for profile $p$, candidate $c$, and scenario $i$.
+Define $Y^{(k)}_{pci}=\mathbf{1}\{N_{pci}\geq k\}$ for $k=1,\ldots,4$.
+The qualifying outages need not overlap. We report all four values of $k$. The primary endpoint uses
+$k=\PrimaryK$. For a fixed population and weighting,
 \begin{equation}
  \overline{Y^{(1)}}-\overline{Y^{(4)}}
- = \overline{\mathbf{1}\{1\leq N\leq 3\}}. \label{eq:identity}
+ =\overline{\mathbf{1}\{1\leq N\leq3\}}. \label{eq:identity}
 \end{equation}
-The fraction of partial-service outcomes is therefore the endpoint's
-$k=1$ versus $k=4$ sensitivity, not independent evidence for its insensitivity.
-The identity does not justify moving a pooled discovery statistic into a
-profile-specific confirmation claim. We check the identity numerically and
-report both candidate-weighted pooling and equal-profile averaging.
+The partial-outage fraction is exactly the threshold sensitivity.
+Using it to justify threshold insensitivity would be circular.
 
-\subsection{Pairing, allocation, and uncertainty}
-For two candidates, define the paired loss difference $D_{hi}$ in entry
-stratum $h$, with allocation weight $w_h=n_h/n$. The estimated mean-difference
-variance is
-\begin{equation}
- \widehat{\mathrm{Var}}(\widehat{\Delta})
- = \sum_{h=1}^{5} w_h^2\frac{s^2_{D,h}}{n_h},\qquad
- s^2_{D,h}=s^2_{a,h}+s^2_{b,h}-2s_{ab,h}. \label{eq:pairing}
-\end{equation}
-Dropping covariance changes the question's uncertainty. It can either inflate
-or deflate an estimate depending on covariance; pairing is not guaranteed to
-help for every possible model. For the nonlinear tail statistic, covariance
-is estimated from shared stratified bootstrap draws.
-
-We compare paired and covariance-omitting versions of the earlier
-``within one standard error on all four stochastic objectives'' diagnostic,
-using the same design and bootstrap draws. This is a descriptive heuristic,
-not a hypothesis test, equivalence test, or proof that portfolios can be ordered.
-For a more explicit mean-loss comparison, every nonfree candidate is compared
-with its own profile's free baseline. Approximate paired t intervals use
-Satterthwaite degrees of freedom and Bonferroni adjustment across all
-\ContrastFamily{} contrasts. This includes the observed best candidate in
-the family rather than presenting it as a prespecified isolated comparison.
-Zero observed within-stratum variance is marked unestimable, not certain.
-
-\subsection{Decision-set and specification diagnostics}
-A candidate is Pareto efficient if no other candidate is no worse on every
-included objective and strictly better on at least one. We enumerate the
-full finite space; no optimization heuristic approximates this set.
-Let $F(X)$ denote the frontier in candidate set $X$, and let $S$ be the 65
-candidates labeled finalists by the frozen discovery rule. We distinguish
-\emph{omissions}, $F(X)\setminus S$, from \emph{restricted-view artifacts},
-$F(S)\setminus F(X)$. A shortlist can omit efficient candidates without
-containing any spurious efficient candidate itself.
-
-We resample whole scenarios within each entry category, preserving all
-candidate and endpoint pairings. Each of \BootstrapDraws{} draws recomputes
-the six objectives and both frontiers. Independent profile blocks are
-resampled separately. Finalist labels remain fixed: the analysis conditions
-on the observed discovery decision and does not rerun its selection rule.
-Percentile summaries are conditional resampling ranges, not confidence sets
-for a uniquely true frontier or forecasts for other hospitals. Discrete
-dominance and selection make ordinary bootstrap coverage especially uncertain.
-
-We also enumerate all 63 nonempty subsets of the six objectives and compare
-frontier membership across $k$. Jaccard similarity is intersection size divided
-by union size. Finally, \WeightDraws{} stress draws independently multiply
-each of eight cost and eight burden coefficients by a Uniform$(0.5,1.5)$
-factor, shared across profiles. Draws reversing the cumulative order of the
-segmentation or backup tariffs are rejected (\WeightRejected{} rejections).
-These are analyst-declared perturbations, not empirical priors. Positive
-uniform scaling of cost and burden is checked separately: it preserves
-Pareto dominance algebraically, although keeping a numeric budget fixed can
-change affordability.
-
-
-\subsection{An interval certificate for frontier retention}
-Let $f_c\in\mathbb{R}^m$ be candidate $c$'s minimized objective vector, with
-componentwise bounds $L_c\leq f_c\leq U_c$. Write $a\prec b$ when $a$ is no
-worse in every coordinate and strictly better in at least one. The finite
-Cartesian box $\mathcal{B}$ permits independent choices across candidates
-and objectives. Define
+Write $a\prec b$ if $a$ is no worse in every minimized coordinate and
+strictly better in at least one. The efficient set $F$ contains candidates
+with no dominator. For independent bounds $L_c\leq f_c\leq U_c$, standard
+necessary/possible efficiency gives the finite sets
 \begin{align}
- G &= \{c:\nexists d\ne c,\ L_d\prec U_c\}, \label{eq:guaranteed}\\
- P &= \{c:\nexists d\ne c,\ U_d\prec L_c\}. \label{eq:possible}
+ G&=\{c:\nexists d\ne c,\ L_d\prec U_c\}, \label{eq:guaranteed}\\
+ P&=\{c:\nexists d\ne c,\ U_d\prec L_c\}. \label{eq:possible}
 \end{align}
-\textbf{Proposition.} $G=\bigcap_{f\in\mathcal B}F(f)$ and
-$P=\bigcup_{f\in\mathcal B}F(f)$. Consequently,
-$G\subseteq F(f)\subseteq P$ for every admissible matrix.
+Thus $G=\bigcap F$ and $P=\bigcup F$ over the full Cartesian box
+\cite{hladik2017}. Appendix A gives the short proof. The initial application
+varies each candidate's outage frequency from its $k=4$ to $k=1$ estimate
+while holding five objectives fixed. This box includes every common-$k$
+specification and additional candidate-specific combinations.
 
-\emph{Proof.} If $L_d\prec U_c$, choosing $d$ at its lower bound and $c$
-at its upper bound makes $c$ dominated. Conversely, any realized dominator
-implies $L_d\prec U_c$, so its absence guarantees efficiency. If
-$U_d\prec L_c$, $d$ dominates $c$ in every realization. If no such $d$
-exists, put $c$ at $L_c$ and every competitor at its upper bound:
-none dominates $c$, proving possible efficiency. Independence permits these
-simultaneous corner assignments. Strictness retains exact ties. $\square$
+\subsection{Shared cost and burden uncertainty}
+Independent candidate cost intervals would discard the model's pricing
+structure. Instead, write cost as $a_c^\top t$ and burden as $a_c^\top u$,
+where $a_c$ records purchased upgrades and $t,u$ are shared eight-component
+price vectors. Upgrade coefficients can be negative when subtracting the
+price of a baseline ladder rung. Every candidate and profile uses the same
+component prices within each family.
 
-The algorithm requires $O(n^2m)$ comparisons and returns a competing
-candidate for each failed guarantee or excluded possibility. These are
-finite-box instances of established necessary/possible efficiency concepts
-\cite{hladik2017}. We use them as an interpretable diagnostic, without a
-probabilistic coverage claim. If the true specification set is a correlated
-subset of $\mathcal B$, $G$ remains sufficient for retention and $P$ remains
-an outer bound; they need not be exact for that smaller set.
+For radius $\rho$, prices lie between $(1-\rho)$ and $(1+\rho)$ times
+their nominal values. Basic segmentation cannot exceed least-privilege
+segmentation, and periodic backups cannot exceed protected backups.
+We call this the \emph{monotone region}. A second region also requires
+each of these ladder gaps to retain at least $(1-\rho)$ times its nominal
+incremental price. This \emph{positive-gap region} excludes free upgrades.
+Both are declared stress regions. We evaluate
+$\rho\in\{0,0.10,0.25,0.50,0.75\}$.
 
-For the hospital application, five objectives remain fixed at their observed
-confirmation estimates. The outage coordinate of each candidate ranges
-independently from its $k=4$ frequency to its $k=1$ frequency. This contains
-all four common-$k$ specifications and additional combinations that a common
-threshold cannot produce. Certifying a candidate across this entire box
-is stronger than observing it at four thresholds. An uncertified candidate
-need not actually change membership under those four thresholds.
+For each rival $d$ and candidate $c$, compute
+\begin{equation}
+ m^t_{dc}=\min_{t\in T_\rho}(a_d-a_c)^\top t,\qquad
+ m^u_{dc}=\min_{u\in U_\rho}(a_d-a_c)^\top u. \label{eq:prices}
+\end{equation}
+Each price region separates into four scalar intervals and two constrained
+rectangles. Evaluating their vertices gives the exact linear minimum.
+Combine these minima with the lower differences in the four stochastic
+objectives. A rival can dominate under some admissible realization exactly
+when all six minima are nonpositive and at least one is negative. A candidate
+is guaranteed efficient when no rival satisfies that condition.
 
-\subsection{Parameter, structure, and external transfer checks}
-The preserved parameter analysis compares candidate rankings between the
-low and high thirds of each sampled coefficient. Separately, the structural
-experiment contrasts restoration gated on containment with restoration
-proceeding in parallel. It uses a distinct paired bank of \StructuralTrials{}
-scenarios per profile and \StructuralCandidates{} selected candidates
-(frontier members, comparators, and preference selections), rather than
-reenumerating the entire space. Membership comparisons are relative to that
-selected set and bank.
+This calculation preserves shared prices and costs $O(n^2m)$ for fixed
+price dimension. For each rival, its outcome, cost, and burden minima can
+be attained together because those three uncertainty blocks are independent.
+That suffices for guaranteed retention. It does not produce an exact
+possibly efficient set under coupled prices: avoiding each rival at a
+different price need not avoid all rivals at one price.
 
-For transfer beyond the hospital objectives, we use the published RE21
-four-bar truss and RE22 reinforced-concrete beam implementations
-\cite{tanabe2020}. We archive the unchanged upstream code, commit, hashes,
-and license. A committed evaluation plan specifies 128 candidates sampled
-uniformly over each problem's variable bounds, and independent objective
-intervals of $\pm1\%$, $\pm5\%$, and $\pm10\%$ of each sampled objective
-range, with nonnegative lower bounds. RE22 retains its published constraint
-violation objective; not every sampled design is feasible.
+\subsection{Resampling and simultaneous mean bounds}
+The deterministic calculation fixes estimated outcomes. We next resample
+whole scenarios within each entry category, preserving candidate pairing.
+Each of \BootstrapDraws{} draws per profile recomputes all four stochastic
+objectives and both endpoint extremes. We apply every price radius and
+region to those same draws. Candidate retention frequencies and count
+quantiles describe this conditional resampling experiment. We do not
+interpret the discontinuous frontier's bootstrap percentiles as confidence
+sets for population efficiency.
 
-Each of the six settings has 1,000 interior perturbation matrices. A separate
-two-objective sorting oracle checks frontier inclusion between $G$ and $P$.
-For the first eight candidates per problem, a second check enumerates all
-256 corners with only the second objective uncertain at 5\% bounds, requiring
-exact agreement with the frontier intersection and union. These checks
-evaluate implementation and transfer to fixed finite benchmark sets.
-The stress bounds are not measured engineering uncertainty.
+For a separate finite-sample check, define paired rival-minus-candidate
+differences in mean loss, non-recovery, and the conservative outage contrast
+$Y_d^{(4)}-Y_c^{(1)}$. Their ranges have widths $2M,2,2$, where
+$M=\JointLossBound$. Hoeffding's inequality and a union bound
+\cite{hoeffding1963} give simultaneous one-sided lower bounds
+\begin{equation}
+ \ell_{dc,j}=\overline D_{dc,j}
+       -R_j\sqrt{\frac{\log(K/\alpha)}{2n}}, \label{eq:hoeffding}
+\end{equation}
+where $R_j$ is the range width, $n=400$, and $K=\JointMeanFamily{}$
+includes three means for every ordered distinct pair across all profiles.
+Independent scenarios with the fixed stratum allocation suffice;
+comparisons need not be independent. We report $\alpha=0.10,0.05,0.01$,
+each defining its own simultaneous family.
 
-\subsection{Executable interpretation assertions}
-The registry gives each selected claim a source table, scope filter, expected
-groups and row count, statistic, unit, reduction, quantifier, relation, and
-bound. For example, interpreting a claim that all profile gaps are roughly
-three percentage points as $\max_p\Delta_p\leq4$ percentage points requires
-the confirmation population and every profile. Four is a generous audit
-tolerance for that wording, not a clinical cutoff. Failed assertions return
-group-specific witness values. Missing populations, unit mismatches, and
-unsupported operations are invalid and stop verification.
+We certify a candidate only if every rival has a strictly positive lower
+bound in at least one of these means or in Eq.~\ref{eq:prices}. The rival
+then cannot dominate, whatever the tail coordinate is. Requiring a strictly
+worse rival coordinate is essential: ties in all screened coordinates leave
+room for dominance on the omitted tail objective. This is a sufficient,
+potentially conservative population-efficiency screen for the declared
+scenario generator.
 
-The finite evaluation has \CorrectContracts{} correct assertions,
-\HistoricalContracts{} historical contradictions, and \MutationContracts{}
-single-field mutations of correct assertions. It includes exact-boundary,
-missing-population, and unsupported-operation cases. These were constructed
-after reviewing the paper. Detection on this set demonstrates the specified
-checks, not sensitivity or specificity on unseen manuscripts. A human must
-still judge whether an assertion captures the intended sentence and whether
-the source itself has scientific validity.
+\subsection{Structural and external checks}
+The preserved parameter analysis compares rankings between the low and
+high thirds of each sampled coefficient. A distinct paired structural bank
+of \StructuralTrials{} scenarios per profile compares containment-gated
+and parallel restoration for \StructuralCandidates{} selected candidates.
+These alternatives examine mechanisms that resampling a fixed bank cannot
+change.
+
+We also audit construct coverage against CIPHER v1.0.1, an independently
+authored public dataset of reported clinical harms \cite{cipher2025}.
+Before aggregation, we mapped its technical-domain labels to represented,
+absent, or unspecified model services. We count coded records and distinct
+reference links, correct one documented time-label typo, and report all
+categories and leave-one-reference-out influence ranges. Week 2 and First
+Month annotations extend beyond the model horizon; First Week straddles it.
+These annotations are not recovery durations. CIPHER records are not
+independent incidents, and its impact scores are not used as model weights.
+
+Two published engineering problems, RE21 and RE22 \cite{tanabe2020},
+provide separate implementation checks for Eqs.~\ref{eq:guaranteed}
+and \ref{eq:possible}. Their pre-recorded design uses 128 finite sampled
+candidates per problem, three objective-bound radii, an independent frontier
+oracle, and exact small corner enumerations. The shared-price support
+function is separately checked against linear programming, including
+positive-gap regions. Appendix B reports the benchmark settings.
 
 \section{Results}
 \input{section_results}
+\begin{table*}[t]
+\centering\small
+\caption{Worked interpretation audit. Historical sentences are shortened
+faithfully from the archived manuscript. Assertions encode the stated scope,
+unit, and bound; a passing numeric-macro check alone did not test these relations.}
+\label{tab:worked}
+\begin{tabularx}{\textwidth}{@{}*{4}{>{\raggedright\arraybackslash}X}@{}}\toprule
+Historical statement & Numerical or scope evidence & Executable assertion & Corrected conclusion\\\midrule
+Endpoint values move by roughly three percentage points across $k$.
+& High-capacity confirmation gap: \HighGap{} percentage points.
+& All confirmation profiles present; $\max_p\Delta_p\leq4$ pp. Fails.
+& Frequency changes are profile-specific; unchanged frontiers do not imply small frequency gaps.\\
+The high-capacity panel spans under one service-hour.
+& Baseline-to-best mean difference: \HighSaving{} weighted service-hours.
+& High-capacity mean-loss range $<1$ hour. Fails.
+& The observed baseline-to-best span exceeds one hour; paired uncertainty is reported separately.\\
+The figure presents discovery results.
+& Plotted values come from the confirmation objective table.
+& Source stage equals discovery. Fails.
+& Identify confirmation as the plotted stage and report discovery separately.\\\bottomrule
+\end{tabularx}
+\end{table*}
 \section{Relation to Prior Work}
 \input{section_discussion_finding}
-\section{Limitations, Ethics, and Transfer}
+\section{Discussion}
 \input{section_discussion}
 \section{Conclusion}
 \input{section_conclusion}
 
-
 \section*{Artifact Availability}
-The artifact includes model code, preserved trial banks and protocols,
-retrospective analysis plans, the benchmark plan and licensed upstream
-functions, all result tables, manuscript sources, and verification scripts.
-Compressed raw confirmation data are restored losslessly by the supplied
-script. All reported results are generated from recorded data.
+The artifact contains the original trial banks and frozen protocols,
+retrospective plans and amendments, licensed external inputs, analysis code,
+generated result tables and figures, and verification commands. The
+confirmation bank is stored compressed and restored losslessly.
 \ifanonymous
-Author identities and the identified repository link are omitted from this
-manuscript copy.
+The identified repository link is omitted from this review copy.
 \else
-Source, data, and the final manuscript:
+Source, data, and manuscript:
 \url{https://github.com/Dodgeboi/NazeResearchNSRI}.
 \fi
 
@@ -331,51 +300,9 @@ Source, data, and the final manuscript:
 \bibliography{references}
 
 \section*{LLM Usage Statement}
-AI tools assisted with literature search, manuscript editing, and development
-and checking of additional analyses.
+AI tools assisted with literature review, code development and revision,
+verification, and manuscript preparation.
 
 \appendices
-\section{Reproduction and Audit Boundary}
-The original raw banks are unchanged. New analysis starts from a committed,
-clean source state captured before output generation. Each manifest records
-the source commit, environment, input and output sizes, and SHA-256 hashes.
-The historical generated-number manifest records a dirty working tree; we
-preserve that fact. Hash agreement verifies artifact consistency but cannot
-retroactively prove that the historical code was committed before execution.
-A commit-attribution map resolves historical source identifiers after the
-repository's metadata-only attribution correction.
-
-For the retrospective analysis and benchmark checks, Python 3.12 and exact package versions
-are recorded in the manifest and revision environment file. The reproduction
-guide gives commands to restore the compressed bank, run the verification
-harness, regenerate the analyses and benchmark checks from clean checkouts,
-and generate numeric TeX and vector figures after committing the result tables. The paper
-generator's check mode recomputes the TeX and verifies its manifest without
-overwriting files. These checks certify specified artifact relations, not
-the correctness of every sentence.
-
-The retrospective plan records an amendment: early diagnostic output treated
-entry categories as randomly mixed, but source inspection established a
-fixed allocation. Final results preserve that allocation. Initial outputs
-are retained in Git history rather than relabeled as the final design.
-For Eq.~\ref{eq:pairing}, set $v_h=w_h^2s^2_{D,h}/n_h$ and use approximate
-degrees of freedom $(\sum_hv_h)^2/\sum_h[v_h^2/(n_h-1)]$. The interval is
-$\widehat\Delta\pm t_{1-.05/(2\cdot\ContrastFamily),\nu}\sqrt{\sum_hv_h}$.
-
-\section{Objective-Subset Enumeration}
-\begin{table}[!ht]
-\centering\small
-\caption{Frontier size over all objective subsets of each dimension.
-Entries are minimum/median/maximum, including tied optima. R, I, and H
-denote resource-constrained, intermediate, and high-capacity profiles.}
-\begin{tabular}{@{}crrr@{}}\toprule
-Dimensions & R & I & H\\\midrule
-\tableinput table_ablation_rows.tex
-\bottomrule\end{tabular}
-\end{table}
-The single-objective intermediate maximum is caused by tied optima.
-Adding an objective can break such ties and remove a previously efficient
-candidate. Therefore frontier cardinality need not increase monotonically
-with dimension in this discrete problem. The enumeration characterizes this
-candidate set; it is not a distribution-free prediction of frontier size.
+\input{section_appendix}
 \end{document}

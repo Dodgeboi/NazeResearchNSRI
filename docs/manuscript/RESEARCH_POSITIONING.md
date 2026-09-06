@@ -4,9 +4,35 @@ Source review updated September 6, 2026. This is a targeted review of directly r
 
 ## Contribution
 
-The project combines an evidence-constrained hospital defense model with paired finite-space portfolio analysis, separate parameter and structural sensitivity, and an interval certificate distinguishing guaranteed retention from possible additions to an efficient set. The new hospital certificate retains 72 of 95 observed efficient portfolios across the full declared endpoint box. The original model and mechanisms remain part of the contribution.
+The central result is the loss of apparent endpoint stability when shared
+costs, burdens, and sampling uncertainty are examined together. The
+implementation computes guaranteed retention while preserving shared
+component-price dependencies. It distinguishes that deterministic result
+from conditional bootstrap frequency and a separate conservative
+population-mean guarantee.
 
-Necessary/possible efficiency and security portfolio simulation-optimization predate this project. The contribution is the model-specific scientific finding, explicit finite-box derivation and witnesses, and reproducible transfer evaluation, not invention of interval optimization or general automated scientific review.
+Necessary/possible efficiency, security portfolio simulation-optimization,
+bootstrap subset selection, and concentration inequalities are prior methods.
+The novelty is the specific joint study, dependency-aware implementation,
+and documented scientific finding. This is not a claim to a new general
+optimization or statistical theory.
+
+Additional primary sources reviewed for this revision:
+
+| Primary source | Relevance and boundary |
+| --- | --- |
+| [Currie and Monks, 2021](https://doi.org/10.1145/3462187); [accepted manuscript](https://eprints.soton.ac.uk/447867/) | BootComp is a direct predecessor for bootstrap subset selection with common random numbers and includes a hospital ward application |
+| [Andradóttir and Lee, 2021](https://doi.org/10.1016/j.ejor.2020.10.021) | Pareto-set estimation with correct-selection guarantees; our fixed-bank diagnostic is not a replacement sequential selection procedure |
+| [Hoeffding, 1963](https://doi.org/10.1080/01621459.1963.10500830) | Independent bounded-observation inequality used with a union bound; no new concentration result is claimed |
+| [CIPHER v1.0.1](https://doi.org/10.5281/zenodo.17344644); [UC San Diego project](https://cyberhealth.ucsd.edu/research/cipher-platform/index.html) | Independently authored, licensed coded clinical-harm dataset; supports a construct audit, not causal effects or population incidence |
+| [Tully et al., 2025, corrected publisher article](https://jamanetwork.com/journals/jamanetworkopen/fullarticle/2836824); [PubMed](https://pubmed.ncbi.nlm.nih.gov/40682764/) | Corrected inherited citation metadata; verified 5.1-hour median is an HDO FHIR downtime construct, distinct from the services-within-six-hours statistic |
+
+For presentation, the accepted BootComp paper and the
+[Tanabe and Ishibuchi paper](https://arxiv.org/html/2009.12867v1) informed
+the progression from problem formulation through methods to numerical
+findings. Their wording, institutional identities, and publication marks
+were not copied. The manuscript uses the existing IEEEtran layout with
+shorter result headings, a central comparison figure, and technical appendices.
 
 | Primary work | Established contribution | Relation to this project |
 |---|---|---|
