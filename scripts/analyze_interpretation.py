@@ -62,7 +62,7 @@ def main() -> None:
     protocol = json.loads(protocolpath.read_text(encoding="utf-8"))
     finalists = protocol["body"]["frozen_finalist_labels"]["identities"]
     inputs += [cfgpath, costpath, burdenpath, protocolpath]
-    columns = ["profile", "portfolio", "scenario_id", "paired",
+    columns = ["profile", "portfolio", "scenario_id", "paired", "entry_point",
                "weighted_service_hours_lost", "recovered_within_horizon"] + [
         f"sustained_clinical_outage_k{k}" for k in range(1, 5)]
     stage_rows, distribution, pooling = [], [], []
@@ -187,6 +187,7 @@ def main() -> None:
     save("component_weight_draws", pd.DataFrame(weight_parameters))
     parameters = {"retrospective": True, "bootstrap": args.bootstrap, "seed": args.seed,
         "weight_draws": args.weight_draws, "weight_seed": 2026090602,
+        "sampling_design": "fixed entry-category allocation; resample scenarios within each of five strata",
         "rejected_nonmonotone_tariffs": rejected, "contrast_family_size": family,
         "source_state_captured": "before any analysis outputs were written",
         "raw_banks": raw_identifiers,

@@ -25,6 +25,7 @@ class PairedBank:
     nonrecovery: np.ndarray
     static: np.ndarray  # candidate x (cost, burden)
     finalist: np.ndarray
+    strata: np.ndarray | None = None
 
     def objectives(self, draw: np.ndarray | None = None, k: int = 4) -> np.ndarray:
         if k not in (1, 2, 3, 4):
@@ -82,10 +83,42 @@ def make_bank(raw: pd.DataFrame, summary: pd.DataFrame, profile: str,
     static = s.loc[names, ["implementation_cost_points", "operational_burden_points"]].to_numpy(float)
     if not np.isfinite(static).all() or (static < 0).any():
         raise ValueError("cost and burden must be finite and nonnegative")
+    strata = None
+    if "entry_point" in frame:
+        entries = frame.groupby("scenario_id")["entry_point"]
+        if not entries.nunique().eq(1).all() or frame.entry_point.isna().any():
+            raise ValueError("entry stratum must be present and shared within scenario")
+        strata = entries.first().reindex(scenarios).to_numpy()
     return PairedBank(profile, names, scenarios,
                       values[:, 0].reshape(shape), outage,
                       1 - values[:, 1].reshape(shape), static,
-                      np.array([n in finalists for n in names]))
+                      np.array([n in finalists for n in names]), strata)
+
+
+def stratum_indices(bank: PairedBank) -> list[np.ndarray]:
+    labels = np.zeros(len(bank.scenarios)) if bank.strata is None else bank.strata
+    if len(labels) != len(bank.scenarios):
+        raise ValueError("strata must align with scenarios")
+    groups = [np.flatnonzero(labels == label) for label in np.unique(labels)]
+    if any(len(group) < 2 for group in groups):
+        raise ValueError("at least two scenarios per stratum required")
+    return groups
+
+
+def design_covariance(values: np.ndarray, groups: list[np.ndarray]) -> np.ndarray:
+    """Covariance of a fixed-allocation stratified sample mean."""
+    n = len(values)
+    return sum((len(ix) / n) ** 2 * np.atleast_2d(np.cov(values[ix], rowvar=False, ddof=1)) / len(ix)
+               for ix in groups)
+
+
+def design_pairwise_errors(values: np.ndarray, groups: list[np.ndarray]):
+    covariance = design_covariance(values, groups)
+    variance = np.diag(covariance)
+    independent = np.sqrt(np.maximum(variance[:, None] + variance[None, :], 0))
+    paired = np.sqrt(np.maximum(independent ** 2 - 2 * covariance, 0))
+    np.fill_diagonal(paired, 0)
+    return paired, independent
 
 
 def pairwise_standard_errors(values: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
@@ -125,8 +158,9 @@ def bootstrap_bank(bank: PairedBank, *, n_boot: int, seed: int) -> tuple[pd.Data
     records = []
     tails = np.empty((n_boot, len(bank.names)))
     gaps = np.empty(n_boot)
+    groups = stratum_indices(bank)
     for b in range(n_boot):
-        draw = rng.integers(len(bank.scenarios), size=len(bank.scenarios))
+        draw = np.concatenate([rng.choice(ix, size=len(ix), replace=True) for ix in groups])
         matrix = bank.objectives(draw)
         tails[b] = matrix[:, 1]
         gaps[b] = (bank.outage[draw, :, 0] - bank.outage[draw, :, 3]).mean()
@@ -136,10 +170,11 @@ def bootstrap_bank(bank: PairedBank, *, n_boot: int, seed: int) -> tuple[pd.Data
 
 def resolution_diagnostic(bank: PairedBank, tail_draws: np.ndarray) -> dict[str, object]:
     estimates = bank.objectives()[:, :4]
-    pairs = [pairwise_standard_errors(bank.loss),
+    groups = stratum_indices(bank)
+    pairs = [design_pairwise_errors(bank.loss, groups),
              covariance_difference_se(tail_draws),
-             pairwise_standard_errors(bank.outage[:, :, 3]),
-             pairwise_standard_errors(bank.nonrecovery)]
+             design_pairwise_errors(bank.outage[:, :, 3], groups),
+             design_pairwise_errors(bank.nonrecovery, groups)]
     gap = np.abs(estimates[:, None, :] - estimates[None, :, :])
     paired = np.stack([p[0] for p in pairs], axis=2)
     independent = np.stack([p[1] for p in pairs], axis=2)
@@ -158,26 +193,32 @@ def baseline_contrasts(bank: PairedBank, family_size: int, alpha: float = .05) -
     if len(zeros) != 1 or family_size < len(bank.names) - 1:
         raise ValueError("unique free baseline and sufficient contrast family required")
     baseline = zeros[0]
-    critical = t.ppf(1 - alpha / (2 * family_size), len(bank.scenarios) - 1)
-    ordinary = t.ppf(1 - alpha / 2, len(bank.scenarios) - 1)
+    groups = stratum_indices(bank)
+    weights = np.array([len(ix) / len(bank.scenarios) for ix in groups])
+    sample_sizes = np.array([len(ix) for ix in groups])
+    covariance = design_covariance(bank.loss, groups)
     records = []
     for j, name in enumerate(bank.names):
         if j == baseline:
             continue
         difference = bank.loss[:, baseline] - bank.loss[:, j]
         effect = difference.mean()
-        se = difference.std(ddof=1) / np.sqrt(len(difference))
-        independent = np.sqrt((bank.loss[:, baseline].var(ddof=1) + bank.loss[:, j].var(ddof=1)) / len(difference))
+        contributions = weights ** 2 * np.array([difference[ix].var(ddof=1) / len(ix) for ix in groups])
+        se = np.sqrt(contributions.sum())
+        independent = np.sqrt(covariance[baseline, baseline] + covariance[j, j])
         valid = se > 0
+        df = contributions.sum() ** 2 / np.sum(contributions ** 2 / (sample_sizes - 1)) if valid else np.nan
+        critical = t.ppf(1 - alpha / (2 * family_size), df)
+        ordinary = t.ppf(1 - alpha / 2, df)
         records.append({"profile": bank.profile, "baseline": bank.names[baseline],
                         "portfolio": name, "n_scenarios": len(difference),
                         "mean_hours_saved": effect, "paired_se": se,
-                        "independent_se": independent, "family_size": family_size,
+                        "independent_se": independent, "family_size": family_size, "approximate_df": df,
                         "pointwise_lower": effect - ordinary * se if valid else np.nan,
                         "pointwise_upper": effect + ordinary * se if valid else np.nan,
                         "simultaneous_lower": effect - critical * se if valid else np.nan,
                         "simultaneous_upper": effect + critical * se if valid else np.nan,
-                        "interval_status": "approximate paired t, Bonferroni" if valid else "unestimable: zero sample variance"})
+                        "interval_status": "stratified paired t, Satterthwaite df, Bonferroni" if valid else "unestimable: zero sample variance"})
     return pd.DataFrame(records)
 
 

@@ -1,5 +1,19 @@
 # Retrospective interpretation audit
 
+## Sampling-design amendment (before manuscript generation)
+
+Code inspection after the initial diagnostics confirmed that entry categories
+are cycled, not randomly sampled: five strata of 80 scenarios per profile in
+confirmation. The final analysis resamples whole scenarios within each
+stratum, preserving its size. Mean-difference variance sums within-stratum
+variance contributions with squared allocation weights; approximate t
+intervals use Satterthwaite degrees of freedom and the same 397-contrast
+Bonferroni adjustment. Both matched uncertainty diagnostics preserve this
+allocation. Initial unstratified outputs remain in Git commit 543c5e1 and are
+superseded. This correction follows the design, not selection of a favorable
+outcome. Neither version is independent confirmation. All resampling
+references below mean stratified resampling for the final analysis.
+
 This analysis extends the already observed v2 study. It is exploratory and
 retrospective, not a new preregistered confirmation. Both external reviews
 and the authors' earlier results informed these questions. This document is

@@ -4,7 +4,23 @@ import pytest
 
 from grrc.interpretation import (PairedBank, make_bank, pairwise_standard_errors,
     covariance_difference_se, baseline_contrasts, objective_ablation,
-    frontier_counts, upper_tail_mean)
+    frontier_counts, upper_tail_mean, design_pairwise_errors, stratum_indices)
+
+
+def test_fixed_strata_remove_between_entry_variance_and_retain_pairing():
+    values = np.array([[1., 0.], [3., 1.], [101., 100.], [103., 101.]])
+    groups = [np.array([0, 1]), np.array([2, 3])]
+    paired, independent = design_pairwise_errors(values, groups)
+    expected_variance = sum(.25 * np.var((values[:, 0] - values[:, 1])[ix], ddof=1) / 2 for ix in groups)
+    assert paired[0, 1] ** 2 == pytest.approx(expected_variance)
+    assert independent[0, 1] < pairwise_standard_errors(values)[1][0, 1]
+
+
+def test_strata_require_replication():
+    bank = fixture_bank()
+    bank.strata = np.array(["a", "a", "a", "b"])
+    with pytest.raises(ValueError, match="two scenarios"):
+        stratum_indices(bank)
 
 
 def fixture_bank():
