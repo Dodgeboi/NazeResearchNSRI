@@ -1,0 +1,72 @@
+{
+  "main": {
+    "pages": 7,
+    "format": "US letter",
+    "sha256": "2e65fb76078848de44e7e0c4e6664e7973c1083f04c89e8b481806ca060854b6",
+    "metadata": {
+      "/Creator": "LaTeX with hyperref",
+      "/Title": "Reproducible Values, Unstable Conclusions: An Interpretation Audit of Security Simulation",
+      "/Author": "Ashish Agrawal; Mukil Dharanidharan; Naman Upadhyay",
+      "/Producer": "xdvipdfmx (0.1)",
+      "/CreationDate": "D:20260906050058-00'00'"
+    },
+    "fonts": [
+      "/AKHCZK+CMMI7",
+      "/BZIVMZ+NimbusRomNo9L-Regu",
+      "/CAFSZL+CMR10",
+      "/DDIEWW+CMBX10",
+      "/DZGKAF+CMSY7",
+      "/FKPJSN+CMSY10",
+      "/FZDNHS+NimbusMonL-Regu",
+      "/IHAIZV+NimbusRomNo9L-Medi",
+      "/IXFAWU+NimbusRomNo9L-ReguItal",
+      "/JAGKKY+CMMI8",
+      "/KPXLOM+CMMI9",
+      "/NOMARO+CMR8",
+      "/PVTTLK+CMEX10",
+      "/TQTHRL+NimbusRomNo9L-MediItal",
+      "/UTACNV+CMR9",
+      "/VDVGTR+CMR7",
+      "/YEUUOC+CMMI10"
+    ],
+    "defects": [],
+    "references_begin_page": 6,
+    "llm_statement_page": 7
+  },
+  "anonymous": {
+    "pages": 7,
+    "format": "US letter",
+    "sha256": "ccd1053c229cdd713442e6224ffd33361acfee340dccecb0ba07434ac850293e",
+    "metadata": {
+      "/Creator": "LaTeX with hyperref",
+      "/Title": "Reproducible Values, Unstable Conclusions: An Interpretation Audit of Security Simulation",
+      "/Producer": "xdvipdfmx (0.1)",
+      "/CreationDate": "D:20260906050100-00'00'"
+    },
+    "fonts": [
+      "/AKHCZK+CMMI7",
+      "/BZIVMZ+NimbusRomNo9L-Regu",
+      "/CAFSZL+CMR10",
+      "/DDIEWW+CMBX10",
+      "/FKPJSN+CMSY10",
+      "/FZDNHS+CMSY7",
+      "/IHAIZV+NimbusRomNo9L-Medi",
+      "/IXFAWU+NimbusRomNo9L-MediItal",
+      "/JAGKKY+CMMI8",
+      "/KPXLOM+CMMI9",
+      "/NOMARO+CMR8",
+      "/PVTTLK+CMEX10",
+      "/TQTHRL+NimbusRomNo9L-ReguItal",
+      "/UTACNV+CMR9",
+      "/VDVGTR+CMR7",
+      "/YEUUOC+CMMI10"
+    ],
+    "defects": [],
+    "references_begin_page": 6,
+    "llm_statement_page": 6
+  },
+  "preservation": {
+    "endpoint_change": "rationale metadata only; AST otherwise identical",
+    "modified_existing_raw_or_configs": ""
+  }
+}

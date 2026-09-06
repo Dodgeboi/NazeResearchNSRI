@@ -2,11 +2,11 @@
   "code": {
     "available": true,
     "branch": "research/methods-revision",
-    "commit": "cc8e932587c1e0209ba71fbad7ee6b262a745cc4",
+    "commit": "5ba94e1c7b1e710b6ad346deeb2fd021185d86c5",
     "dirty": false,
     "dirty_paths": []
   },
-  "created_at": "2026-09-06T04:55:52+00:00",
+  "created_at": "2026-09-06T05:00:55+00:00",
   "description": "Generated numeric TeX and vector figures for retrospective methods paper.",
   "environment": {
     "implementation": "CPython",
@@ -104,9 +104,9 @@
       "sha256": "0f8833152e0b36878e10eb2a60af9532b1381a3cdd9e74df55b0aa896442dc3c"
     },
     {
-      "bytes": 10111,
+      "bytes": 10147,
       "path": "scripts/generate_interpretation_paper.py",
-      "sha256": "6049506ebf2f301619892416a904095b761262ddca21d936a26268b5406e7997"
+      "sha256": "1127521afe6e5ee330e1e8bb34f8111437a1cb3188985bf63a2a0a0e90c02cd4"
     },
     {
       "bytes": 3135,
@@ -123,7 +123,7 @@
     {
       "bytes": 62531,
       "path": "docs/manuscript/methods_figures/conditional_frontier.pdf",
-      "sha256": "a7b1fa46ff661d8da97c62eb7346bdc6c1c671528355c5f182b4898e701aa094"
+      "sha256": "6387252c8e2ca521f5fb3188215e196b833685e52069cb43bdd873855912977d"
     },
     {
       "bytes": 40522,
@@ -131,14 +131,14 @@
       "sha256": "6ab60334e11b15d2c527f13eee535ffc48240b4dabe44c24f83cc112cd396777"
     },
     {
-      "bytes": 65367,
+      "bytes": 65201,
       "path": "docs/manuscript/methods_figures/endpoint_ladder.pdf",
-      "sha256": "f57ae449b47c3f6dbcd0f44c30d9f81eef45ee413026e8d6405dccc6443b09a2"
+      "sha256": "97511160fe3c38925549121db814a1049e0eb4a70cb656c77b81bec275824214"
     },
     {
-      "bytes": 55834,
+      "bytes": 55642,
       "path": "docs/manuscript/methods_figures/endpoint_ladder.png",
-      "sha256": "e7691c612c32e2f83783476ddd223b009a0187a9a836ed8481baaca17aa52384"
+      "sha256": "ba8c52728fd295f487a01db5cf3e75dba83734934e813d3872732eb2325c0e79"
     },
     {
       "bytes": 1236,
