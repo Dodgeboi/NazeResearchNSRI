@@ -132,6 +132,27 @@ class RansomwareSimulation:
         """Nodes able to provide service: not compromised, not isolated."""
         return ~self.comp & ~self.isolated
 
+    # -- extension seams (no-ops in the base engine; overridden by variants
+    #    such as grrc.adaptive.AdaptiveSimulation). They exist so alternative
+    #    defense policies can be studied without altering baseline dynamics:
+    #    for this base class every seam returns exactly the baseline value,
+    #    so all validation checks and unit tests are unaffected. --
+    def _on_step_start(self, t: int) -> None:
+        """Hook run at the top of every step, before spread. No-op here."""
+
+    def _seg_factor(self, candidates: np.ndarray) -> float:
+        """Multiplier applied to candidate-edge spread probability. 1.0 here."""
+        return 1.0
+
+    def _service_functional(self) -> np.ndarray:
+        """Node functionality used for per-step service availability.
+
+        Identical to :meth:`functional` in the base engine; a subclass may
+        subtract nodes made unavailable by a defensive action (e.g. emergency
+        segmentation breaking cross-zone clinical workflows).
+        """
+        return self.functional()
+
     # ------------------------------------------------------------------
     def _spread(self, t: int, rng: np.random.Generator) -> None:
         net = self.net
@@ -145,6 +166,7 @@ class RansomwareSimulation:
                 np.any(self.comp[self.identity_nodes])):
             mult = self.cfg.simulation.identity_breach_multiplier
         p = np.minimum(1.0, self.edge_p[candidates] * mult)
+        p = p * self._seg_factor(candidates)  # 1.0 in the base engine
         hits = candidates[rng.random(candidates.size) < p]
         if hits.size:
             self.lateral_movements += int(hits.size)
@@ -252,6 +274,7 @@ class RansomwareSimulation:
 
         for t in range(1, sim.max_steps + 1):
             steps_simulated = t
+            self._on_step_start(t)  # no-op in the base engine
             self._spread(t, rng)
             newly = self._detect(t, rng)
             self._isolate(t, newly, rng)
@@ -273,7 +296,7 @@ class RansomwareSimulation:
             self.defensive_isolation_node_steps += int(
                 (self.isolated & ~self.comp).sum())
 
-            avail = service_availability(net, self.functional(),
+            avail = service_availability(net, self._service_functional(),
                                          sim.service_functional_fraction)
             clinical_unavail_w = 0.0
             for svc in avail:
