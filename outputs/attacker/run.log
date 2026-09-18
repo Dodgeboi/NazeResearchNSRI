@@ -1,0 +1,24 @@
+Running 6 portfolios x 200 matched trials x 2 attackers = 2400 sims (focus=3.0) ...
+
+=== mean weighted service-hours lost by portfolio x attacker ===
+       portfolio attacker  mean_hours     lo     hi  p_catastrophic  p_identity
+   baseline_flat adaptive      197.88 193.65 202.16            1.00        1.00
+   baseline_flat    naive      179.38 169.95 188.08            0.89        0.90
+  fast_detection adaptive      126.57 122.17 130.76            0.96        0.96
+  fast_detection    naive       84.81  76.72  92.99            0.68        0.68
+    full_defense adaptive       13.61  10.48  16.84            0.30        0.23
+    full_defense    naive        3.74   3.11   4.39            0.03        0.06
+isolated_backups adaptive      140.49 136.11 144.97            0.99        0.99
+isolated_backups    naive      131.07 123.25 138.43            0.89        0.88
+ least_privilege adaptive      169.67 162.21 176.58            0.94        0.94
+ least_privilege    naive       67.83  57.34  78.51            0.52        0.46
+        patch_90 adaptive      192.45 186.07 198.20            0.96        0.96
+        patch_90    naive      153.77 141.25 166.38            0.74        0.74
+
+=== defense-in-depth reduction (full_defense vs baseline_flat) ===
+  naive    : baseline=  179.4  full=    3.7  reduction= 97.9%
+  adaptive : baseline=  197.9  full=   13.6  reduction= 93.1%
+
+The study reports ~98% against the naive attacker; here the naive reduction is 97.9% and the adaptive-attacker reduction is 93.1%.
+outputs in outputs/attacker/
+EXIT 0
