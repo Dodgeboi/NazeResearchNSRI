@@ -1,0 +1,19 @@
+Running 3x3 cells, 120 matched trials x 4 policies = 4320 sims (delay=6, isolation=0.7) ...
+
+=== weighted service-hours lost by policy (matched) ===
+         facility               profile   n  h_gated  h_naive  h_mvr  h_riar  riar_minus_naive   rn_lo   rn_hi  reinf_naive  reinf_riar  riar_beats_naive_sig
+   large_hospital         high_capacity 120    90.53   104.56 106.25   26.77            -77.79  -88.68  -66.37       498.30       80.58                  True
+   large_hospital intermediate_capacity 120   128.42   185.50 185.34   57.35           -128.15 -138.98 -116.49       708.98      147.47                  True
+   large_hospital  resource_constrained 120   135.55   219.82 219.82   77.71           -142.12 -150.53 -132.84       772.87      230.95                  True
+regional_hospital         high_capacity 120    83.70    85.55  90.89   26.26            -59.29  -69.44  -49.32       100.88       19.98                  True
+regional_hospital intermediate_capacity 120   104.59   139.56 135.27   48.04            -91.52 -103.31  -79.81       138.93       27.08                  True
+regional_hospital  resource_constrained 120   130.46   209.83 210.26   76.12           -133.71 -142.89 -124.03       202.07       43.91                  True
+     small_clinic         high_capacity 120    41.69    42.49  35.33   15.03            -27.46  -34.03  -21.03        11.72        1.65                  True
+     small_clinic intermediate_capacity 120    82.30    79.10  66.26   39.88            -39.22  -45.49  -33.17        13.28        4.73                  True
+     small_clinic  resource_constrained 120   118.91   108.16  90.58   63.24            -44.92  -50.70  -39.36        12.72        6.31                  True
+
+RIAR beats naive concurrent recovery (95% CI < 0) in 9/9 cells.
+Pooled RIAR - naive: -82.69 weighted service-hours [-86.78, -78.77] (-63.4% vs naive).
+Mean re-infections: naive=273.3, riar=62.5
+outputs in outputs/riar/
+EXIT 0

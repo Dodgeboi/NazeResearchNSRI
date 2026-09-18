@@ -90,9 +90,49 @@ novel nor a broadly reliable win.
 
 ---
 
+## 4. Recovery under active spread (RIAR): a large, robust in-model win — but known practice
+
+The base engine restores only after full containment, inheriting the recovery-
+sequencing literature's assumption that the disruption is *over* before recovery
+begins. Real ransomware recovery is not like that: organizations rebuild while
+the intrusion is live, and reimaged machines are routinely re-encrypted. The
+opt-in `simulation.concurrent_recovery` flag removes that assumption so
+restoration runs during active spread and re-infection becomes possible.
+
+Under that regime we compared four recovery policies on matched networks
+(`scripts/discover_riar.py`; moderate posture, detection delay 6, isolation
+0.7): `gated` (base contain-then-recover), `naive` (concurrent, criticality
+order), `mvr` (concurrent, marginal-value order), and **`riar`** (concurrent,
+marginal-value order **plus immunize-on-restore** — a restored node is hardened,
+lowering its inbound spread probability by the model's patch effectiveness).
+
+**Finding (positive, robust).** RIAR beats naive concurrent recovery in **9/9**
+cells, pooled **−63.4%** weighted service-hours [−86.78, −78.77] (120 trials),
+and repeated under fast detection (delay 3): **9/9**, pooled **−60.2%**. It also
+beats the conventional `gated` contain-then-recover baseline in essentially
+every cell. The mechanism is measured directly: naive concurrent recovery
+suffers a re-infection treadmill (mean 273 re-infections), which
+immunize-on-restore cuts to 62. Crucially, `mvr ≈ naive` while `riar ≪ both`,
+so the win is driven by **immunize-on-restore**, not the ordering. See
+`outputs/riar/riar_comparison.png`.
+
+**But it is not novel.** "Harden/patch before reconnecting, because fast
+recovery during an active incident causes re-infection" is established
+ransomware-recovery best practice (Veeam, SentinelOne, ThreatDown), and
+recovery-with-re-infection is the classic SIRS epidemic model with well-studied
+treatment/immunization control. RIAR is a faithful *quantification* of that
+known practice in this service-weighted model. Its contribution is the
+measurement — showing how badly naive concurrent recovery churns and how much
+hardening-on-restore recovers — not a new idea. It is also the one result here
+that is both large and robust, precisely because it encodes real operational
+wisdom the base model omitted.
+
 ## Limitations
 
-Single spread and cost model; one simulator. The targeting negative result is
+Single spread and cost model; one simulator. RIAR's magnitude depends on the
+modeled patch effectiveness (0.85) and the concurrent-recovery assumption; the
+robust, honest claim is directional (naive recovery-during-spread is a
+re-infection trap; hardening-on-restore fixes it), not the exact percentage. The targeting negative result is
 tied to an aggregate-over-all-services metric; MVR's effect size is tied to the
 0.60 availability threshold, the restore rate, and the defensive posture. The
 robust, honest claims are directional (targeting the segmentation lever fails;
