@@ -108,6 +108,9 @@ class RansomwareSimulation:
         self.containment_step = -1
         self.restore_carry = 0.0
         self.defensive_isolation_node_steps = 0
+        # Compromises of nodes that had previously been restored (only ever
+        # non-zero under concurrent recovery); a reporting counter only.
+        self.reinfections = 0
 
     # ------------------------------------------------------------------
     def node_states(self) -> np.ndarray:
@@ -124,6 +127,7 @@ class RansomwareSimulation:
 
     def compromise(self, nodes: np.ndarray, t: int) -> None:
         fresh = nodes[~self.comp[nodes] & ~self.isolated[nodes]]
+        self.reinfections += int(np.count_nonzero(self.restored[fresh]))
         self.comp[fresh] = True
         self.ever_comp[fresh] = True
         self.time_compromised[fresh] = t
@@ -163,6 +167,17 @@ class RansomwareSimulation:
         return candidates[np.argsort(-self.net.criticality[candidates],
                                      kind="stable")]
 
+    def _target_factor(self, candidates: np.ndarray) -> float:
+        """Per-candidate multiplier on inbound spread probability. 1.0 here.
+
+        A subclass may lower it for nodes it has hardened (e.g. immunize-on-
+        restore), abstracting post-restoration patching.
+        """
+        return 1.0
+
+    def _on_restored(self, nodes: np.ndarray) -> None:
+        """Hook called when nodes finish restoring. No-op in the base engine."""
+
     # ------------------------------------------------------------------
     def _spread(self, t: int, rng: np.random.Generator) -> None:
         net = self.net
@@ -177,6 +192,7 @@ class RansomwareSimulation:
             mult = self.cfg.simulation.identity_breach_multiplier
         p = np.minimum(1.0, self.edge_p[candidates] * mult)
         p = p * self._seg_factor(candidates)  # 1.0 in the base engine
+        p = p * self._target_factor(candidates)  # 1.0 in the base engine
         hits = candidates[rng.random(candidates.size) < p]
         if hits.size:
             self.lateral_movements += int(hits.size)
@@ -240,6 +256,7 @@ class RansomwareSimulation:
             self.restored[done] = True
             self.restoring_until[done] = -1
             self.time_restored[done] = t
+            self._on_restored(done)  # no-op in the base engine
         # start new restorations up to capacity
         rate = max(sim.restore_rate_min,
                    sim.restore_rate_fraction * self.net.n_nodes)
@@ -297,7 +314,11 @@ class RansomwareSimulation:
             contained = not bool(np.any(self.comp & ~self.isolated))
             if contained and self.containment_step < 0:
                 self.containment_step = t
-            if contained:
+            # Base engine restores only once the outbreak is fully contained.
+            # Opt-in concurrent recovery lets restoration run during active
+            # spread (realistic: orgs rebuild while the intrusion is live),
+            # which makes re-infection of restored nodes possible.
+            if contained or getattr(sim, "concurrent_recovery", False):
                 self._restore(t, backups_available)
 
             self.peak_compromised = max(self.peak_compromised,

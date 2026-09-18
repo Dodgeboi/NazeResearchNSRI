@@ -154,6 +154,11 @@ class SimulationSpec:
     service_functional_fraction: float = 0.60  # supporting-node threshold
     catastrophic_service_steps: int = 8  # continuous clinical outage > this
     early_stop: bool = True
+    # When True, restoration runs during active spread (not only after full
+    # containment), so restored nodes can be re-infected. Off by default so
+    # all existing results and validation checks are unchanged; used by the
+    # re-infection-aware recovery study (see src/grrc/riar.py).
+    concurrent_recovery: bool = False
 
     def validate(self) -> None:
         _check(self.max_steps >= 1, "max_steps must be >= 1")
