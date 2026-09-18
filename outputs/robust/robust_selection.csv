@@ -1,0 +1,4 @@
+budget,naive_pick,naive_pick_cost,naive_pick_hours_vs_adaptive,naive_pick_cat_vs_adaptive,robust_pick,robust_pick_cost,robust_pick_hours_vs_adaptive,robust_pick_cat_vs_adaptive,regret_hours,picks_differ
+5,seg-least_privilege|patch+0|det0|iso0|bak-connected|idm0,5.0,174.67645833333333,0.9666666666666667,seg-flat|patch+0|det1|iso0|bak-isolated|idm0,5.0,77.065625,0.95,97.61083333333333,True
+10,seg-least_privilege|patch+1|det1|iso0|bak-connected|idm0,10.0,70.095,0.7083333333333334,seg-least_privilege|patch+1|det1|iso0|bak-connected|idm0,10.0,70.095,0.7083333333333334,0.0,False
+15,seg-least_privilege|patch+2|det1|iso0|bak-isolated|idm0,14.0,36.71125,0.525,seg-least_privilege|patch+2|det1|iso0|bak-isolated|idm0,14.0,36.71125,0.525,0.0,False

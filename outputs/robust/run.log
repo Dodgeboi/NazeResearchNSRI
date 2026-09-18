@@ -1,0 +1,26 @@
+Evaluating deduplicated portfolio lattice x 120 trials x 2 attackers (focus=3.0) ...
+
+--- budget 5 ---
+  study's pick (best vs naive): seg-least_privilege|patch+0|det0|iso0|bak-connected|idm0 (cost 5)
+    -> vs adaptive attacker: 174.7 hours, P(catastrophic)=0.97
+  robust pick (best vs adaptive): seg-flat|patch+0|det1|iso0|bak-isolated|idm0 (cost 5)
+    -> vs adaptive attacker: 77.1 hours, P(catastrophic)=0.95
+  picks differ: True; regret of study's pick: 97.6 weighted service-hours
+
+--- budget 10 ---
+  study's pick (best vs naive): seg-least_privilege|patch+1|det1|iso0|bak-connected|idm0 (cost 10)
+    -> vs adaptive attacker: 70.1 hours, P(catastrophic)=0.71
+  robust pick (best vs adaptive): seg-least_privilege|patch+1|det1|iso0|bak-connected|idm0 (cost 10)
+    -> vs adaptive attacker: 70.1 hours, P(catastrophic)=0.71
+  picks differ: False; regret of study's pick: 0.0 weighted service-hours
+
+--- budget 15 ---
+  study's pick (best vs naive): seg-least_privilege|patch+2|det1|iso0|bak-isolated|idm0 (cost 14)
+    -> vs adaptive attacker: 36.7 hours, P(catastrophic)=0.53
+  robust pick (best vs adaptive): seg-least_privilege|patch+2|det1|iso0|bak-isolated|idm0 (cost 14)
+    -> vs adaptive attacker: 36.7 hours, P(catastrophic)=0.53
+  picks differ: False; regret of study's pick: 0.0 weighted service-hours
+
+Study's pick != robust pick in 1/3 budgets.
+outputs in outputs/robust/
+EXIT 0
