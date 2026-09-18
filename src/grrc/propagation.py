@@ -192,7 +192,7 @@ class RansomwareSimulation:
             mult = self.cfg.simulation.identity_breach_multiplier
         p = np.minimum(1.0, self.edge_p[candidates] * mult)
         p = p * self._seg_factor(candidates)  # 1.0 in the base engine
-        p = p * self._target_factor(candidates)  # 1.0 in the base engine
+        p = np.minimum(1.0, p * self._target_factor(candidates))  # 1.0 in base
         hits = candidates[rng.random(candidates.size) < p]
         if hits.size:
             self.lateral_movements += int(hits.size)
