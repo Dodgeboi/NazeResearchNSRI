@@ -21,7 +21,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Iterator
 
-from .config import Config, ProfileSpec
+from .config import ProfileSpec
 from .enums import BackupStrategy, SegmentationLevel
 
 #: Patch-coverage ladder used by upgrades and by the optimizer.

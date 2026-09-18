@@ -469,7 +469,7 @@ def optimize(cfg: Config,
         "cost_scale_factors": cfg.optimization.cost_scale_factors,
     }
     (raw_dir / f"{cfg.mode}_optimization_manifest.json").write_text(
-        json.dumps(manifest, indent=2))
+        json.dumps(manifest, indent=2), encoding="utf-8")
 
     log.info("optimization complete: %d trials, outputs in %s",
              len(raw), proc_dir)

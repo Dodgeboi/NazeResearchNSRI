@@ -5,7 +5,7 @@ documents the twelve automated behavioral checks that must pass
 before any experiment results are trusted. Each check is also
 enforced by the pytest suite (`tests/test_validation_cases.py`).
 
-Generated: 2026-07-16T19:21:05+00:00
+Generated: 2026-09-18T14:38:21+00:00
 
 | # | Check | Result | Details |
 |---|-------|--------|---------|
@@ -24,30 +24,30 @@ Generated: 2026-07-16T19:21:05+00:00
 
 ## What each check demonstrates
 
-1. **zero_spread** — with transmission probability 0 the infection
+1. **zero_spread** â€” with transmission probability 0 the infection
    cannot move: damage stays at the single entry foothold.
-2. **guaranteed_spread** — with probability 1 and no defenses, the
+2. **guaranteed_spread** â€” with probability 1 and no defenses, the
    compromised set equals exactly the graph-reachable set (the
    propagation engine respects topology, nothing more or less).
-3. **disconnected_zone** — removing all inbound paths to a zone
+3. **disconnected_zone** â€” removing all inbound paths to a zone
    makes it unreachable to the simulated attack.
-4. **isolated_backup** — offline/immutable backups can never be
+4. **isolated_backup** â€” offline/immutable backups can never be
    compromised through network propagation.
-5. **patch_immunity** — with patch effectiveness 1.0 and full
+5. **patch_immunity** â€” with patch effectiveness 1.0 and full
    coverage, patched nodes are immune (documented assumption A6:
    default effectiveness is 0.85, i.e. patching is strong but not
    perfect; this check verifies the limiting case).
-6. **isolation_blocks_spread** — isolated nodes neither spread nor
+6. **isolation_blocks_spread** â€” isolated nodes neither spread nor
    receive compromise.
-7. **reproducibility** — identical seed + parameters give
+7. **reproducibility** â€” identical seed + parameters give
    bit-identical results.
-8. **seed_variation** — different seeds explore different
+8. **seed_variation** â€” different seeds explore different
    stochastic outcomes.
-9. **service_dependency** — service availability reacts correctly
+9. **service_dependency** â€” service availability reacts correctly
    to core-node failure and identity-dependency failure.
-10. **convergence** — Monte Carlo estimates stabilize as the trial
+10. **convergence** â€” Monte Carlo estimates stabilize as the trial
     count grows (100 -> 250 -> 500 -> 1000).
-11. **budget_respected** — the optimizer never selects a portfolio
+11. **budget_respected** â€” the optimizer never selects a portfolio
     whose (scaled) cost exceeds the active budget.
-12. **data_integrity** — exported rows contain every required
+12. **data_integrity** â€” exported rows contain every required
     field with values in valid ranges.

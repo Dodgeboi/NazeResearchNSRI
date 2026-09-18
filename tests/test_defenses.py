@@ -3,11 +3,11 @@
 import pytest
 
 from grrc.config import default_config, load_defense_costs
-from grrc.defenses import (DefensePortfolio, PORTFOLIO_CATALOG,
+from grrc.defenses import (PORTFOLIO_CATALOG,
                            boosted_patch_coverage, effective_settings,
                            enumerate_portfolios, get_portfolio,
                            improved_detection_delay, portfolio_cost)
-from grrc.enums import BackupStrategy, SegmentationLevel
+from grrc.enums import SegmentationLevel
 from grrc.utilities import REPO_ROOT
 
 COSTS = {"basic_segmentation": 3, "least_privilege_segmentation": 5,

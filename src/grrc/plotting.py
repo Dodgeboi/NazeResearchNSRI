@@ -558,7 +558,8 @@ def generate_figures(cfg: Config) -> list[Path]:
     else:
         log.warning("skipping Figure 7 (run 'analyze' first)")
 
-    (figures_dir / "captions.md").write_text("\n".join(captions))
+    (figures_dir / "captions.md").write_text("\n".join(captions),
+                                              encoding="utf-8")
     written = sorted(figures_dir.glob("fig*.png"))
     log.info("wrote %d figures to %s", len(written), figures_dir)
     return written

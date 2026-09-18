@@ -153,6 +153,16 @@ class RansomwareSimulation:
         """
         return self.functional()
 
+    def _restore_order(self, candidates: np.ndarray) -> np.ndarray:
+        """Order restoration candidates (highest priority first).
+
+        The base engine restores by descending node criticality; a subclass
+        may reorder by, e.g., marginal weighted-service value. Returns the
+        same candidates permuted — the caller takes the first ``k``.
+        """
+        return candidates[np.argsort(-self.net.criticality[candidates],
+                                     kind="stable")]
+
     # ------------------------------------------------------------------
     def _spread(self, t: int, rng: np.random.Generator) -> None:
         net = self.net
@@ -243,8 +253,7 @@ class RansomwareSimulation:
                                     & (self.restoring_until < 0))
         if candidates.size == 0:
             return
-        order = candidates[np.argsort(-self.net.criticality[candidates],
-                                      kind="stable")]
+        order = self._restore_order(candidates)
         chosen = order[:k]
         self.restore_carry -= len(chosen)
         self.restoring_until[chosen] = t + sim.restore_duration

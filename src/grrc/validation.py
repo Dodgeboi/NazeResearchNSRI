@@ -21,12 +21,12 @@ import pandas as pd
 from .config import Config, default_config
 from .defenses import (DefensePortfolio, effective_settings,
                        enumerate_portfolios, get_portfolio, portfolio_cost)
-from .enums import (BackupStrategy, EntryPoint, SegmentationLevel, Service,
+from .enums import (EntryPoint, SegmentationLevel, Service,
                     Zone)
 from .models import HospitalNetwork, TrialSpec
 from .network_generator import generate_network
 from .propagation import RansomwareSimulation
-from .optimization import select_best, summarize_portfolios
+from .optimization import select_best
 from .service_dependencies import service_availability
 from .simulation import run_trial
 from .statistics import bootstrap_ci
@@ -518,5 +518,5 @@ def write_validation_report(results: list[ValidationResult],
     # ships without docs/ (e.g. the code+data bundle) must still be able to run
     # `validate` — and `reproduce` starts with it.
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text("\n".join(lines))
+    path.write_text("\n".join(lines), encoding="utf-8")
     return path

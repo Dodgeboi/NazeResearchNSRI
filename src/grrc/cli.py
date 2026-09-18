@@ -96,7 +96,6 @@ def cmd_validate(args) -> int:
         print(f"  [{status}] {r.name:<{width}}  {r.details}")
         failures += (not r.passed)
     if not args.no_report:
-        from .validation import write_validation_report
         path = write_validation_report(results)
         print(f"\nreport written: {path}")
     print(f"\n{len(results) - failures}/{len(results)} validation checks "

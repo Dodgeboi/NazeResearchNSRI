@@ -9,8 +9,6 @@ Two guarantees matter:
 """
 from __future__ import annotations
 
-import numpy as np
-
 from grrc.adaptive import AdaptiveSimulation
 from grrc.config import default_config
 from grrc.defenses import EffectiveSettings

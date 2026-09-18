@@ -232,6 +232,6 @@ def run_experiments(cfg: Config,
         "outputs": {k: str(v) for k, v in outputs.items()},
     }
     manifest_path = raw_dir / f"{cfg.mode}_manifest.json"
-    manifest_path.write_text(json.dumps(manifest, indent=2))
+    manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     outputs["manifest"] = manifest_path
     return outputs

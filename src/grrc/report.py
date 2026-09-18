@@ -15,7 +15,6 @@ import re
 from datetime import date
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 
 from .config import Config
@@ -248,7 +247,7 @@ def render_template(template: Path, out: Path,
         missing.append(key)
         return match.group(0)  # leave visible; never invent
 
-    out.write_text(TOKEN_RE.sub(sub, text))
+    out.write_text(TOKEN_RE.sub(sub, text), encoding="utf-8")
     return missing
 
 
