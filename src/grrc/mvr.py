@@ -23,13 +23,19 @@ cost and never weakens protection, so — unlike segmentation-timing policies �
 it has no regime where it can lose to the baseline; the only question is how
 much it helps.
 
-Novelty note (honest): restoration/repair prioritization is studied in
-reliability engineering, and criticality- or centrality-ordered recovery is
-common. What is new *to the best of our knowledge* is sequencing ransomware
-recovery by the **marginal gain in a service-dependency-weighted availability
-metric with hard thresholds**, evaluated greedily against the live compromise
-state. This is a simulation/engineering contribution, not a claim of global
-novelty.
+Prior art (honest): this is NOT a novel technique. Dependency-aware,
+consequence-minimizing recovery sequencing is an established field — see NIST
+SP 800-184 (Guide for Cybersecurity Event Recovery), Sandia's "Optimal
+Recovery Sequencing for Enhanced Resilience," generalized network-recovery
+optimization (arXiv:1811.07242), standard DR/ITSM restoration-order practice,
+and granted patents on application-dependency-based malware recovery. MVR is a
+faithful in-model *implementation* of that idea (a greedy on the simulator's
+threshold-based service-availability function), useful here only for measuring
+how much recovery *sequencing* can matter within this model. Its benefit is
+also regime-dependent: under strong defenses (little damage to recover) or weak
+detection (little that gets isolated and restored) it is a no-op; it helps only
+in the mid-containment regime where substantial isolation-and-restoration
+actually happens.
 """
 
 from __future__ import annotations

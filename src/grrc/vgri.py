@@ -31,13 +31,14 @@ its cost, so VGRI wins across a broader region than the all-or-nothing reactive
 policy. Whether it actually does is an empirical question the accompanying
 experiment answers honestly.
 
-Novelty note (honest): reactive segmentation, moving-target defense, and
-graph-cut / network-immunization targeting all exist in the literature
-separately. What is new *to the best of our knowledge* is the specific
-combination evaluated here — a reactive controller that selects its cut set by
-a service-value-weighted benefit/cost gradient and is scored against a
-service-availability damage metric with an explicit operational cost. This is
-an engineering/simulation contribution, not a proof of global novelty.
+Prior art (honest): this is NOT a novel technique. Crown-jewel
+microsegmentation, targeted network immunization / graph-cut hardening, and
+detection-triggered dynamic segmentation are all established (commercial
+dynamic-microsegmentation products and academic moving-target-defense work).
+VGRI/RPE are in-model implementations used here to *test whether* targeting
+the segmentation lever helps — and the experiment's answer is that it does not
+beat blunt full-network segmentation in this model. This module exists to
+document that negative result, not to claim a new method.
 """
 
 from __future__ import annotations

@@ -115,13 +115,17 @@ blue-wins-red-loses map.
   what it detects, so everything here inherits the detection model's
   assumptions.
 
-## Why this is a contribution
+## Why this is (a modest) contribution — and what it is not
 
-The main study concludes that segmentation is one of the strongest single
-controls. This experiment adds a dimension it could not see: **the *timing* of
-segmentation is itself a design choice with a quantifiable payoff boundary.**
-Reactive segmentation is not free insurance — it is a specific bet that pays
-off only when you can detect fast and when standing segmentation genuinely
-hurts operations. Characterizing that boundary (and showing that outside it
-the simple static posture wins) is a more actionable message than "segment
-more."
+**This is not a novel method.** Detection-triggered dynamic segmentation is a
+mainstream commercial category (Illumio, Zero Networks, Elisity, CrowdStrike)
+and an established academic topic (moving-target defense, RL-driven
+segmentation). We did not invent reactive segmentation.
+
+What this experiment adds is a *quantified* observation the main study could not
+see: **the timing of segmentation is a design choice with a payoff boundary**,
+and in this model reactive segmentation beats both always-open and always-on
+only in a narrow corner (fast detection **and** operationally expensive
+standing segmentation). That boundary — and the fact that outside it the simple
+static posture wins — is the contribution, not the policy. It is a
+characterization within the model, not a new defense.

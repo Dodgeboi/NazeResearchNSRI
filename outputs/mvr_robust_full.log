@@ -1,0 +1,18 @@
+Running 3x3 cells, 120 matched trials x 2 policies = 2160 sims (portfolio=full_defense) ...
+
+=== weighted service-hours lost: criticality vs MVR (matched pairs) ===
+         facility               profile   n  mean_criticality  mean_mvr  mvr_minus_base  ci_lo  ci_hi  pct_change  mvr_better_sig
+   large_hospital         high_capacity 120              6.20      6.20            0.00   0.00    0.0        0.00           False
+   large_hospital intermediate_capacity 120              6.88      6.88            0.00   0.00    0.0        0.00           False
+   large_hospital  resource_constrained 120             16.21     16.21            0.00   0.00    0.0        0.00           False
+regional_hospital         high_capacity 120              2.73      2.73            0.00   0.00    0.0        0.00           False
+regional_hospital intermediate_capacity 120              5.04      5.04            0.00   0.00    0.0        0.00           False
+regional_hospital  resource_constrained 120             11.32     11.32           -0.00  -0.00    0.0       -0.00           False
+     small_clinic         high_capacity 120              0.63      0.63            0.00   0.00    0.0        0.00           False
+     small_clinic intermediate_capacity 120              1.45      1.45            0.00   0.00    0.0        0.00           False
+     small_clinic  resource_constrained 120              5.35      5.34           -0.01  -0.03   -0.0       -0.21            True
+
+MVR significantly better (95% CI < 0) in 1/9 cells.
+Pooled paired mean change: -0.00 weighted service-hours [-0.00, -0.00] (-0.0% vs baseline).
+outputs in outputs/mvr_robust_full/
+EXIT 0
