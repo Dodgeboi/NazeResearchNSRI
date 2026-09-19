@@ -1,0 +1,151 @@
+# Vendor access mediation — opt-in exploratory design.
+#
+# This is the ONLY shipped config with vendor_mediation_enabled: true. It is
+# exploratory, not confirmatory: no protocol has been frozen for this control,
+# so nothing produced here may be reported as a confirmatory result. See
+# study/VENDOR_MEDIATION_SPECIFICATION.md section 6 for what remains undone.
+#
+# The design mirrors configs/multiobjective_portfolio.yaml so that mediated and
+# unmediated candidates are compared under the same paired scenario bank, the
+# same endpoint definitions and the same declared parameter uncertainty. Output
+# directories are separate from every frozen result path, so running this
+# cannot overwrite an archived analysis.
+mode: vendor_mediation
+seed: 5726001
+
+facilities:
+  regional_hospital:
+    min_nodes: 200
+    max_nodes: 300
+
+profiles:
+  resource_constrained:
+    patch_coverage: 0.25
+    detection_delay_steps: 72
+    isolation_success: 0.50
+    legacy_fraction: 0.35
+    base_segmentation: flat
+    backup_strategy: connected
+    budget: 5
+    complexity_factor: 1.0
+  intermediate_capacity:
+    patch_coverage: 0.50
+    detection_delay_steps: 36
+    isolation_success: 0.70
+    legacy_fraction: 0.15
+    base_segmentation: basic
+    backup_strategy: periodic
+    budget: 10
+    complexity_factor: 1.1
+  high_capacity:
+    patch_coverage: 0.75
+    detection_delay_steps: 9
+    isolation_success: 0.90
+    legacy_fraction: 0.05
+    base_segmentation: least_privilege
+    backup_strategy: isolated
+    budget: 15
+    complexity_factor: 1.25
+
+simulation:
+  max_steps: 864
+  step_minutes: 5
+  base_spread_rate: 0.1337609218
+  patch_effectiveness: 0.85
+  detection_model: geometric
+  false_positive_rate: 0.0006671116
+  false_positive_duration: 24
+  rapid_isolation_success: 0.6315968501
+  detection_improvement_factor: 0.5
+  identity_breach_multiplier: 1.5
+  restore_rate_fraction: 0.0066666667
+  restore_rate_min: 0.3333333333
+  restore_duration: 6
+  no_backup_restore_penalty: 0.25
+  service_functional_fraction: 0.60
+  sustained_outage_service_steps: 24
+  sustained_outage_min_services: 4
+  early_stop: true
+
+  # --- the control under study ---
+  # Switching this on adds the vendor-mediation dimension: the optimizer
+  # search space becomes 576 candidates, mediated candidates take a |vam1
+  # name suffix, and result rows gain a vendor_mediation column. Unmediated
+  # candidates keep their frozen names and their frozen behavior, so results
+  # here remain comparable to the archived 288-candidate runs.
+  vendor_mediation_enabled: true
+  vendor_mediation_coverage: 0.75
+  vendor_mediation_effectiveness: 0.60
+  # Inert, deliberately. Raising it hands this control the
+  # detection_improvement control's effect without paying for it, so it is a
+  # sensitivity instrument and not part of the specification.
+  vendor_mediation_detection_gain: 1.0
+
+experiment:
+  facilities: [regional_hospital]
+  profiles: [resource_constrained, intermediate_capacity, high_capacity]
+  # Named conditions: the new control alone on the common flat/connected
+  # reference base, and the all-controls condition with and without it. The
+  # frozen full_defense is kept in the list precisely so the paired contrast
+  # against full_defense_mediated isolates this one control.
+  portfolios:
+    - baseline_flat
+    - vendor_access_mediation
+    - least_privilege
+    - full_defense
+    - full_defense_mediated
+  entry_points: [workstation, internet_facing, privileged_system, medical_device, vendor_connection]
+  trials_per_cell: 1
+  workers: 0
+
+sweep:
+  enabled: false
+  facility: regional_hospital
+  profile: intermediate_capacity
+  patch_levels: [0.25]
+  detection_delays: [36]
+  trials_per_cell: 1
+
+optimization:
+  enabled: true
+  facility: regional_hospital
+  profiles: [resource_constrained, intermediate_capacity, high_capacity]
+  budgets: [5, 10, 15, 20]
+  trials_per_portfolio: 30
+  cost_scale_factors: [0.5, 0.75, 1.0, 1.25, 1.5]
+  catastrophic_target: 0.05
+
+output:
+  raw_dir: data/vendor_mediation/raw
+  processed_dir: data/vendor_mediation/processed
+  figures_dir: outputs/vendor_mediation/figures
+  tables_dir: outputs/vendor_mediation/tables
+  logs_dir: outputs/vendor_mediation/logs
+
+# Declared uncertainty over the coefficients no public evidence identifies.
+# The two vendor-mediation coefficients are in here for the same reason the
+# identity-control coefficients are: nothing transferable bounds them, so a
+# result conditional on a point estimate would overstate what is known.
+parameter_uncertainty:
+  enabled: true
+  simulation:
+    base_spread_rate: [0.07, 0.20]
+    patch_effectiveness: [0.50, 0.95]
+    patch_effectiveness_vendor: [0.05, 0.45]
+    identity_breach_multiplier: [1.1, 2.5]
+    identity_control_coverage: [0.60, 0.95]
+    identity_control_effectiveness: [0.40, 0.90]
+    rapid_isolation_success: [0.40, 0.85]
+    restore_rate_fraction: [0.002, 0.015]
+    false_positive_rate: [0.0002, 0.0020]
+    # Share of vendor support paths that can be put behind a broker. The
+    # lower end says most vendor access resists mediation; the upper end
+    # still leaves a residual, because a control that closes its own pathway
+    # completely is a modeling artifact (cf. backup_residual_failure,
+    # audit ISSUE-006).
+    vendor_mediation_coverage: [0.40, 0.95]
+    # Traversal reduction on a brokered path. Unidentified by anything, and
+    # the range says so.
+    vendor_mediation_effectiveness: [0.30, 0.85]
+  network:
+    backup_isolation_lapse: [0.02, 0.25]

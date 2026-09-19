@@ -14,6 +14,7 @@ Controls modeled:
   * Rapid automated isolation (high isolation success, same-step attempt)
   * Protected (isolated/immutable) backups
   * Identity & access restrictions
+  * Vendor access mediation (brokered third-party access)
 """
 
 from __future__ import annotations
@@ -95,6 +96,10 @@ class DefensePortfolio:
     rapid_isolation: bool = False
     backup_override: BackupStrategy | None = None
     identity_controls: bool = False
+    #: Vendor access mediation. Defaults to False so every portfolio
+    #: constructed before this control existed keeps its exact prior
+    #: meaning, price and behavior.
+    vendor_mediation: bool = False
 
 
 @dataclass(frozen=True)
@@ -108,6 +113,7 @@ class EffectiveSettings:
     isolate_same_step: bool
     backup_strategy: str
     identity_controls: bool
+    vendor_mediation: bool = False
 
 
 def _ladder_index(ladder: tuple, value: float) -> int:
@@ -199,6 +205,7 @@ def effective_settings(
         isolate_same_step=portfolio.rapid_isolation,
         backup_strategy=backup,
         identity_controls=portfolio.identity_controls,
+        vendor_mediation=portfolio.vendor_mediation,
     )
 
 
@@ -231,6 +238,10 @@ PORTFOLIO_CATALOG: dict[str, DefensePortfolio] = {p.name: p for p in [
                      backup_override=_ISO),
     DefensePortfolio("identity_controls", segmentation=_FLAT,
                      identity_controls=True, backup_override=_CONN),
+    # Single-control condition for the vendor pathway, on the same
+    # flat/connected reference base as every other single-control condition.
+    DefensePortfolio("vendor_access_mediation", segmentation=_FLAT,
+                     vendor_mediation=True, backup_override=_CONN),
     DefensePortfolio("seg_plus_patch", segmentation=_BASIC,
                      patch_coverage_override=0.90, backup_override=_CONN),
     DefensePortfolio("seg_plus_detection", segmentation=_BASIC,
@@ -244,10 +255,20 @@ PORTFOLIO_CATALOG: dict[str, DefensePortfolio] = {p.name: p for p in [
     DefensePortfolio("seg_detect_backup", segmentation=_BASIC,
                      detection_improvement=True, rapid_isolation=True,
                      backup_override=_ISO),
+    # NOTE: full_defense deliberately does NOT buy vendor mediation. Its
+    # frozen meaning is "every control the confirmatory experiment priced",
+    # and changing that would silently re-define a condition the archived
+    # results and the manuscript both report. The all-controls condition
+    # including the new control is ``full_defense_mediated`` below.
     DefensePortfolio("full_defense", segmentation=_LP,
                      patch_coverage_override=0.90,
                      detection_improvement=True, rapid_isolation=True,
                      backup_override=_ISO, identity_controls=True),
+    DefensePortfolio("full_defense_mediated", segmentation=_LP,
+                     patch_coverage_override=0.90,
+                     detection_improvement=True, rapid_isolation=True,
+                     backup_override=_ISO, identity_controls=True,
+                     vendor_mediation=True),
 ]}
 
 
@@ -312,6 +333,28 @@ def backup_increment_points(profile: ProfileSpec,
     return max(0.0, ladder[target] - ladder[baseline])
 
 
+def _vendor_mediation_points(table: dict, kind: str) -> float:
+    """Look up the vendor-mediation tariff, failing loudly if it is absent.
+
+    The key is intentionally *not* in the required-key set of
+    ``load_defense_costs`` or ``load_operational_burdens``: cost and burden
+    files written before this control existed must keep loading unchanged,
+    including the config snapshots archived beside every frozen run. But a
+    portfolio that buys the control must never be priced at zero by
+    accident, which is exactly the free-upgrade defect audit ISSUE-003 and
+    ISSUE-004 recorded. So the price is optional to *declare* and mandatory
+    to *use*.
+    """
+    try:
+        return float(table["vendor_mediation"])
+    except KeyError:
+        raise KeyError(
+            f"portfolio buys vendor mediation but the {kind} table has no "
+            "'vendor_mediation' key; add it to the file (configs/"
+            f"defense_{'costs' if kind == 'cost' else 'burdens'}.yaml) "
+            "rather than letting the control be free") from None
+
+
 def portfolio_cost(portfolio: DefensePortfolio, profile: ProfileSpec,
                    costs: dict[str, float], scale: float = 1.0) -> float:
     """Price a portfolio relative to a flat/connected, profile-baseline
@@ -342,6 +385,8 @@ def portfolio_cost(portfolio: DefensePortfolio, profile: ProfileSpec,
         total += costs["rapid_isolation"]
     if portfolio.identity_controls:
         total += costs["identity_controls"]
+    if portfolio.vendor_mediation:
+        total += _vendor_mediation_points(costs, "cost")
     return total * scale
 
 
@@ -349,11 +394,24 @@ def portfolio_cost(portfolio: DefensePortfolio, profile: ProfileSpec,
 # Optimizer search space
 # ---------------------------------------------------------------------------
 
-def enumerate_portfolios() -> Iterator[DefensePortfolio]:
+def enumerate_portfolios(
+        *, include_vendor_mediation: bool = False) -> Iterator[DefensePortfolio]:
     """All composable defense combinations searched by the optimizer.
 
     3 segmentation tiers x 4 patch boosts x 2 detection x 2 isolation x
     3 backup tiers x 2 identity = 288 candidate portfolios.
+
+    ``include_vendor_mediation`` adds the vendor-access-mediation dimension,
+    doubling the space to 576. It defaults to False, and when False this
+    function yields the original 288 candidates **in their original order
+    with their original names**. That is a hard compatibility requirement,
+    not a convenience: portfolio names are the join key between the frozen
+    result CSVs, the protocol snapshots in ``study/protocols`` and the
+    analysis scripts, and ``list(enumerate_portfolios())[-1]`` is itself
+    used as a fixture. The mediated half is therefore appended after the
+    unmediated half and is the only half that carries a ``|vam1`` suffix,
+    so an unmediated candidate's name is identical whether or not the
+    dimension is switched on.
 
     The backup dimension enumerates the full ladder (connected, periodic,
     isolated) rather than only its endpoints. Omitting the periodic rung
@@ -372,25 +430,29 @@ def enumerate_portfolios() -> Iterator[DefensePortfolio]:
     double-counted. Each portfolio is priced by :func:`portfolio_cost`;
     feasibility under a budget is decided by the optimizer, not here.
     """
-    for seg in SEGMENTATION_ORDER:
-        for patch_boost in (0, 1, 2, 3):
-            for det in (False, True):
-                for iso in (False, True):
-                    for bak in BACKUP_ORDER:
-                        for idm in (False, True):
-                            name = (
-                                f"seg-{seg.value}|patch+{patch_boost}"
-                                f"|det{int(det)}|iso{int(iso)}"
-                                f"|bak-{bak.value}|idm{int(idm)}"
-                            )
-                            yield DefensePortfolio(
-                                name=name, segmentation=seg,
-                                patch_boost_levels=patch_boost,
-                                detection_improvement=det,
-                                rapid_isolation=iso,
-                                backup_override=bak,
-                                identity_controls=idm,
-                            )
+    for vam in ((False, True) if include_vendor_mediation else (False,)):
+        for seg in SEGMENTATION_ORDER:
+            for patch_boost in (0, 1, 2, 3):
+                for det in (False, True):
+                    for iso in (False, True):
+                        for bak in BACKUP_ORDER:
+                            for idm in (False, True):
+                                name = (
+                                    f"seg-{seg.value}|patch+{patch_boost}"
+                                    f"|det{int(det)}|iso{int(iso)}"
+                                    f"|bak-{bak.value}|idm{int(idm)}"
+                                )
+                                if vam:
+                                    name += "|vam1"
+                                yield DefensePortfolio(
+                                    name=name, segmentation=seg,
+                                    patch_boost_levels=patch_boost,
+                                    detection_improvement=det,
+                                    rapid_isolation=iso,
+                                    backup_override=bak,
+                                    identity_controls=idm,
+                                    vendor_mediation=vam,
+                                )
 
 
 def describe_portfolio(p: DefensePortfolio) -> str:
@@ -410,4 +472,6 @@ def describe_portfolio(p: DefensePortfolio) -> str:
         parts.append(f"backups={p.backup_override.value}")
     if p.identity_controls:
         parts.append("identity controls")
+    if p.vendor_mediation:
+        parts.append("vendor access mediation")
     return "; ".join(parts) if parts else "profile baseline posture"

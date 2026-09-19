@@ -15,3 +15,9 @@ costs:
   periodic_backups: 1              # scheduled offline windows; partial
   protected_backups: 2             # offline / immutable backups
   identity_controls: 4             # least-privilege accounts, protected auth
+  # Vendor access mediation: brokered, scoped third-party access. Priced
+  # level with identity controls — both are estate-wide access-path programs
+  # rather than a device or a ladder rung. See
+  # study/VENDOR_MEDIATION_SPECIFICATION.md for the mechanism and for why
+  # the control cannot close its pathway completely.
+  vendor_mediation: 4

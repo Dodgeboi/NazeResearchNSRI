@@ -95,6 +95,7 @@ PORTFOLIO_LABELS = {
     "fast_detection": "Fast detect + isolate",
     "isolated_backups": "Isolated backups",
     "identity_controls": "Identity controls",
+    "vendor_access_mediation": "Vendor access mediation",
     "seg_plus_patch": "Seg. + patch 90%",
     "seg_plus_detection": "Seg. + detection",
     "detection_plus_backups": "Detection + backups",

@@ -16,12 +16,29 @@ TARIFF_KEYS = (
     "detection_improvement", "rapid_isolation", "periodic_backups",
     "protected_backups", "identity_controls",
 )
+#: Tariff keys including the vendor-mediation dimension. The screen is
+#: dimension-agnostic, but a price vector and a feature vector must agree on
+#: length, so the extended key tuple is named rather than assembled ad hoc.
+VENDOR_MEDIATION_TARIFF_KEYS = TARIFF_KEYS + ("vendor_mediation",)
+
 ORDERED_PAIRS = ((0, 1), (5, 6))
 
 
-def portfolio_features(portfolio, profile) -> np.ndarray:
-    """Integer coefficients in the original upgrade-only price function."""
-    a = np.zeros(8)
+def portfolio_features(portfolio, profile, *,
+                       include_vendor_mediation: bool = False) -> np.ndarray:
+    """Integer coefficients in the original upgrade-only price function.
+
+    With ``include_vendor_mediation`` the vector gains a ninth coordinate for
+    the vendor-mediation switch, to be paired with
+    :data:`VENDOR_MEDIATION_TARIFF_KEYS`. It defaults to False because the
+    dimension of this vector is the dimension of the price region the
+    simultaneous screen is computed over: silently widening it from 8 to 9
+    would change every published retention count, including the ones in the
+    frozen joint-stability CSVs. ``ORDERED_PAIRS`` is unchanged, because
+    vendor mediation is a switch and not a ladder, so it carries no
+    monotonicity constraint between rungs.
+    """
+    a = np.zeros(9 if include_vendor_mediation else 8)
     for baseline, target, ladder, positions in [
         (SegmentationLevel(profile.base_segmentation), portfolio.segmentation,
          SEGMENTATION_ORDER, (0, 1)),
@@ -39,6 +56,8 @@ def portfolio_features(portfolio, profile) -> np.ndarray:
                   - _ladder_index(PATCH_LADDER, profile.patch_coverage))
     a[3:5] = portfolio.detection_improvement, portfolio.rapid_isolation
     a[7] = portfolio.identity_controls
+    if include_vendor_mediation:
+        a[8] = portfolio.vendor_mediation
     return a
 
 

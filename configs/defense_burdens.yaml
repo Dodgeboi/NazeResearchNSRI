@@ -13,3 +13,9 @@ burdens:
   periodic_backups: 1
   protected_backups: 2
   identity_controls: 3
+  # Higher than its cost, and higher than identity controls: most of the
+  # work is external to the estate (renegotiating vendor access terms,
+  # re-validating device service procedures, standing up a break-glass path
+  # for the unmediable share) and therefore not on the security team's own
+  # schedule.
+  vendor_mediation: 4

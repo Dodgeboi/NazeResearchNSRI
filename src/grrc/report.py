@@ -186,7 +186,14 @@ def compute_tokens(cfg: Config) -> dict[str, str]:
             "has_rapid_isolation": "Rapid isolation",
             "has_protected_backups": "Protected backups",
             "has_identity_controls": "Identity controls",
+            "has_vendor_mediation": "Vendor access mediation",
         }
+        # Only label the controls this summary actually carries. The
+        # vendor-mediation column exists only in runs with that dimension
+        # switched on, so a report over an archived summary must not demand
+        # it — and a report over a mediated run must not silently omit it.
+        control_labels = {c: l for c, l in control_labels.items()
+                          if c in stab.columns}
         lines = ["| Control | " + " | ".join(
             PROFILE_LABELS.get(p, p) for p in stab["profile"]) + " |",
             "|---|" + "---|" * len(stab)]

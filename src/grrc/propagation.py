@@ -120,6 +120,20 @@ class RansomwareSimulation:
         # detection probability / schedule
         delay = max(1, eff.detection_delay)
         self.detect_prob = np.clip(net.detect_capability / delay, 0.0, 1.0)
+        # Brokered-session monitoring. Session recording on a mediated vendor
+        # connection is a real part of the control, but crediting it by
+        # default would let vendor mediation collect the detection_improvement
+        # control's effect without paying for it. The gain is therefore 1.0
+        # (exactly inert) in the primary specification and exists so the
+        # sensitivity analysis can raise it deliberately. The guard keeps the
+        # default path free of any arithmetic at all, so detect_prob is
+        # bit-identical to its pre-control value.
+        gain = cfg.simulation.vendor_mediation_detection_gain
+        if eff.vendor_mediation and gain != 1.0:
+            gateway = np.array(
+                [t == "vendor_gateway" for t in net.node_type], dtype=bool)
+            self.detect_prob = np.clip(
+                self.detect_prob * np.where(gateway, gain, 1.0), 0.0, 1.0)
         self.fixed_delay = delay
         self.identity_nodes = net.nodes_in_zone(Zone.IDENTITY)
         self.backup_nodes = net.nodes_in_zone(Zone.BACKUP)

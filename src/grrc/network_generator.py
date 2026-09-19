@@ -88,6 +88,29 @@ def allowed_zone_pairs(segmentation: SegmentationLevel) -> set[tuple[Zone, Zone]
     return set(REQUIRED_PATHS)
 
 
+def brokered_support_path_count(n_support_paths: int,
+                                coverage: float) -> int:
+    """How many vendor support paths a broker actually mediates.
+
+    Vendor access mediation is scoped to the vendor-gateway *support paths* —
+    the edges a third party uses to reach the estate, and the only edges in
+    the model that are exempt from the segmentation permitted-pair filter.
+    It deliberately does **not** touch the rest of the internet-facing zone:
+    a vendor remote-access broker does not mediate the patient portal, and
+    claiming otherwise would credit this control with segmentation's effect.
+
+    Which paths are brokered is chosen **deterministically** (the lowest
+    support-path indices first), not by a random draw. This is a modeling
+    decision with a reason: whether a given vendor relationship can be put
+    behind a broker is a property of the estate's contracts and device
+    inventory, not of the incident. Drawing it per trial would make the same
+    hospital brokerable in one scenario and not the next, and in the paired
+    confirmatory design it would also break matching, because two candidates
+    sharing a scenario must see the same estate.
+    """
+    return int(round(max(0.0, min(1.0, coverage)) * n_support_paths))
+
+
 def _zone_counts(n_nodes: int, spec: NetworkSpec,
                  rng: np.random.Generator) -> dict[Zone, int]:
     """Split n_nodes across zones with jitter, min per zone enforced."""
@@ -115,6 +138,7 @@ def generate_network(
     patch_coverage: float,
     backup_strategy: str,
     identity_controls: bool = False,
+    vendor_mediation: bool = False,
 ) -> HospitalNetwork:
     """Generate one synthetic facility network.
 
@@ -254,11 +278,40 @@ def generate_network(
             add_edge(s, d, float(rng.uniform(0.6, 1.0)), traversal, True)
 
     # Vendor gateway support paths.
+    #
+    # These are the edges vendor access mediation acts on. A brokered path is
+    # (M1) forced through the same segmentation permitted-pair filter as
+    # every other cross-boundary edge, losing the exemption that made this
+    # pathway uncontrollable, and (M2) weakened by
+    # ``vendor_mediation_effectiveness`` where it survives that filter,
+    # standing for a scoped, time-boxed session in place of a persistent
+    # tunnel. Unbrokered paths get nothing at all: they are the declared
+    # residual (unmediable service tunnels, legacy maintenance protocols,
+    # break-glass access).
+    #
+    # Both random draws are taken for every support path whether or not it is
+    # brokered and whether or not the control is bought, so switching the
+    # control on cannot shift this generator's random stream. With the
+    # control off, this block is draw-for-draw and edge-for-edge identical to
+    # its pre-control form.
+    n_support = int(vendor_nodes.size) * len(VENDOR_PATHS)
+    n_brokered = (brokered_support_path_count(
+        n_support, cfg.simulation.vendor_mediation_coverage)
+        if vendor_mediation else 0)
+    vam_factor = 1.0 - cfg.simulation.vendor_mediation_effectiveness
+    support_index = 0
     for v in vendor_nodes:
         for zb in VENDOR_PATHS:
             traversal = seg_mod
             d = int(rng.choice(zone_nodes[zb]))
-            add_edge(int(v), d, float(rng.uniform(0.6, 1.0)), traversal, True)
+            weight = float(rng.uniform(0.6, 1.0))
+            brokered = support_index < n_brokered
+            support_index += 1
+            if brokered:
+                if (Zone.INTERNET_FACING, zb) not in pairs:
+                    continue  # M1: the broker collapses the direct path
+                traversal *= vam_factor  # M2
+            add_edge(int(v), d, weight, traversal, True)
 
     net = HospitalNetwork(
         facility_id=f"{facility}:{profile}",
@@ -339,6 +392,7 @@ def apply_controls_to_base(
     patch_coverage: float,
     backup_strategy: str,
     identity_controls: bool = False,
+    vendor_mediation: bool = False,
 ) -> HospitalNetwork:
     """Apply one defense posture to a common flat/connected base graph.
 
@@ -353,6 +407,25 @@ def apply_controls_to_base(
     dst_zone = base.zone[base.edge_dst]
     cross = base.edge_cross_boundary
 
+    # Vendor access mediation: decide which support paths the broker
+    # mediates, over the SHARED base graph. Because the base graph is common
+    # to every candidate in a paired scenario and the choice is deterministic
+    # in base edge order, two candidates in the same scenario always agree on
+    # which vendor relationships are brokerable — the paired design stays
+    # matched, and the only thing that differs between them is whether they
+    # bought the control.
+    gateway_src = np.array(
+        [base.node_type[int(sid)] == "vendor_gateway"
+         for sid in base.edge_src], dtype=bool)
+    support_paths = gateway_src & np.isin(
+        dst_zone, [int(z) for z in VENDOR_PATHS])
+    brokered = np.zeros(base.n_edges, dtype=bool)
+    if vendor_mediation:
+        support_ids = np.flatnonzero(support_paths)
+        brokered[support_ids[:brokered_support_path_count(
+            support_ids.size,
+            cfg.simulation.vendor_mediation_coverage)]] = True
+
     keep = ~cross.copy()
     cross_ids = np.flatnonzero(cross)
     if cross_ids.size:
@@ -360,9 +433,15 @@ def apply_controls_to_base(
         for i, eid in enumerate(cross_ids):
             za = Zone(int(src_zone[eid]))
             zb = Zone(int(dst_zone[eid]))
+            # A brokered path forfeits the vendor exemption: routed through
+            # the broker it is an ordinary cross-boundary edge, and
+            # segmentation applies to it like anything else. An unbrokered
+            # path keeps the exemption, which is precisely the residual this
+            # control cannot reach.
             vendor_path = (
                 base.node_type[int(base.edge_src[eid])] == "vendor_gateway"
                 and zb in VENDOR_PATHS
+                and not brokered[eid]
             )
             permitted[i] = (za, zb) in allowed or vendor_path
         keep[cross_ids] = permitted
@@ -375,6 +454,11 @@ def apply_controls_to_base(
         traversal[sensitive] *= spec.sensitive_zone_modifier
     into_backup = cross & (dst_zone == int(Zone.BACKUP))
     traversal[into_backup] *= spec.backup_traversal[backup_strategy]
+    # A brokered session that still has a permitted route is scoped and
+    # time-boxed rather than a standing tunnel.
+    if vendor_mediation:
+        traversal[brokered] *= (
+            1.0 - cfg.simulation.vendor_mediation_effectiveness)
 
     # Classify every edge by the mechanism that traverses it, so a control
     # can act only where it could act. An edge touching the identity zone is

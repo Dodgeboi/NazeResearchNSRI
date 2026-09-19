@@ -95,7 +95,8 @@ def run_trial(cfg: Config, spec: TrialSpec,
             segmentation=eff.segmentation,
             patch_coverage=eff.patch_coverage,
             backup_strategy=eff.backup_strategy,
-            identity_controls=eff.identity_controls)
+            identity_controls=eff.identity_controls,
+            vendor_mediation=eff.vendor_mediation)
         entry_rng = trial_rng(spec.master_seed, scenario_id, stream_id=1)
         entry = entry_node if entry_node is not None else choose_entry(
             net, spec.entry_point, entry_rng)
@@ -110,7 +111,8 @@ def run_trial(cfg: Config, spec: TrialSpec,
             segmentation=eff.segmentation,
             patch_coverage=eff.patch_coverage,
             backup_strategy=eff.backup_strategy,
-            identity_controls=eff.identity_controls)
+            identity_controls=eff.identity_controls,
+            vendor_mediation=eff.vendor_mediation)
         entry = entry_node if entry_node is not None else choose_entry(
             net, spec.entry_point, rng)
         sim = RansomwareSimulation(cfg, net, eff, rng)
@@ -141,6 +143,13 @@ def run_trial(cfg: Config, spec: TrialSpec,
         "isolation_success": round(eff.isolation_success, 4),
         "backup_strategy": eff.backup_strategy,
         "identity_controls": int(eff.identity_controls),
+        # Emitted only while the vendor-mediation dimension is switched on,
+        # and keyed off the run-level config rather than this row's portfolio
+        # so that a single run never produces a ragged schema. With the
+        # dimension off the result schema is byte-for-byte what the archived
+        # runs and frozen protocols expect.
+        **({"vendor_mediation": int(eff.vendor_mediation)}
+           if cfg.simulation.vendor_mediation_enabled else {}),
         "rapid_isolation": int(eff.isolate_same_step),
         # Whether this incident's nominally isolated backups had a usable
         # path after all. Recorded so the mechanism is auditable rather than

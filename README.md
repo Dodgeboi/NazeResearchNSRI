@@ -76,6 +76,24 @@ seeds, hash checks, and PDF compilation commands. Original simulator trials
 and frozen protocols are preserved. Added analyses are retrospective and
 their design notes record when each choice was made.
 
+## Proposed extension, not part of the paper
+
+A seventh control, **vendor access mediation**, is specified in
+[study/VENDOR_MEDIATION_SPECIFICATION.md](study/VENDOR_MEDIATION_SPECIFICATION.md)
+and implemented behind a default-off switch. It exists because the rebuild left
+one traversal mechanism with no purchasable control on it: vendor-gateway
+support paths are exempt from the segmentation filter, and patching is only
+partly effective on that pathway by construction.
+
+**No result, figure, table or sentence above reflects this control.** No
+experiment has been run with it, and no protocol has been frozen for it. While
+`simulation.vendor_mediation_enabled` is false — the default everywhere — the
+control is absent rather than small: the optimizer search space stays at 288
+candidates with their original names, result schemas are unchanged, and the
+archived runs reproduce byte for byte. `configs/vendor_mediation.yaml` is the
+opt-in exploratory design; `tests/test_vendor_mediation.py` asserts both the
+mechanism and the inertness.
+
 ## Authors, licenses, and history
 
 Authors: **Ashish Agrawal, Mukil Dharanidharan, and Naman Upadhyay**.

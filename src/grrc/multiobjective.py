@@ -19,8 +19,9 @@ import yaml
 
 from .config import Config
 from .defenses import (DefensePortfolio, PATCH_LADDER, _ladder_index,
-                       backup_increment_points, enumerate_portfolios,
-                       portfolio_cost, segmentation_increment_points)
+                       _vendor_mediation_points, backup_increment_points,
+                       enumerate_portfolios, portfolio_cost,
+                       segmentation_increment_points)
 from .endpoints import (PARETO_OBJECTIVES,
                         SUSTAINED_OUTAGE_K_LADDER,
                         sustained_outage_column)
@@ -111,6 +112,14 @@ def portfolio_operational_burden(
         total += burdens["rapid_isolation"]
     if portfolio.identity_controls:
         total += burdens["identity_controls"]
+    if portfolio.vendor_mediation:
+        # Priced like every other control: nothing unless bought, and a hard
+        # failure rather than a silent zero if the tariff is undeclared.
+        # Vendor mediation carries a *higher* burden than its cost because
+        # the work is mostly external — renegotiating vendor access terms,
+        # re-validating device service procedures, and standing up a
+        # break-glass path for the share that cannot be brokered.
+        total += _vendor_mediation_points(dict(burdens), "burden")
     return float(total)
 
 
@@ -141,7 +150,8 @@ def aggregate_objectives(raw: pd.DataFrame, cfg: Config,
     missing = required - set(raw.columns)
     if missing:
         raise ValueError(f"raw results missing columns: {sorted(missing)}")
-    portfolio_map = {p.name: p for p in enumerate_portfolios()}
+    portfolio_map = {p.name: p for p in enumerate_portfolios(
+        include_vendor_mediation=cfg.simulation.vendor_mediation_enabled)}
     rows: list[dict[str, object]] = []
     for (profile_name, portfolio_name), group in raw.groupby(
             ["profile", "portfolio"], sort=True):
@@ -370,7 +380,8 @@ def build_holdout_specs(cfg: Config,
     """Build a fresh paired scenario bank for frozen discovery finalists."""
     if trials_per_candidate < 1:
         raise ValueError("trials_per_candidate must be >= 1")
-    portfolio_map = {p.name: p for p in enumerate_portfolios()}
+    portfolio_map = {p.name: p for p in enumerate_portfolios(
+        include_vendor_mediation=cfg.simulation.vendor_mediation_enabled)}
     selected: dict[str, DefensePortfolio] = {}
     specs: list[TrialSpec] = []
     trial_id = MULTIOBJECTIVE_HOLDOUT_ID_OFFSET

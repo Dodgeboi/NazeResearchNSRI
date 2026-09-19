@@ -192,6 +192,38 @@ class SimulationSpec:
     # the uncovered remainder represents (audit ISSUE-010).
     identity_control_coverage: float = 0.85
     identity_control_effectiveness: float = 0.70
+    # --- Vendor access mediation (VAM) -------------------------------
+    # The VENDOR pathway is the only traversal mechanism in the model that
+    # no purchasable control acted on: patching is partial there by
+    # construction, identity controls are gated to the credential pathway,
+    # and vendor-gateway support paths are exempt from the segmentation
+    # permitted-pair filter (see network_generator.apply_controls_to_base).
+    # Vendor access mediation is that missing control: third-party access
+    # brokered through a mediated, scoped session instead of a persistent
+    # direct tunnel.
+    #
+    # ``vendor_mediation_enabled`` is a master switch, default off. While it
+    # is false the control is inert, the optimizer search space stays at its
+    # frozen 288 candidates, and every result schema is unchanged, so the
+    # archived runs and frozen protocols reproduce byte for byte.
+    vendor_mediation_enabled: bool = False
+    # Fraction of vendor-gateway support paths that can actually be routed
+    # through a broker. The uncovered remainder is a DECLARED ASSUMPTION
+    # standing for access that cannot be mediated in practice: service
+    # tunnels contractually required by device vendors, legacy maintenance
+    # protocols, telemetry that will not traverse a proxy, and break-glass
+    # access. It is deliberately below 1.0 for the same reason
+    # ``backup_residual_failure`` is above 0.0 (audit ISSUE-006): a control
+    # that closed its pathway completely would be a modeling artifact.
+    vendor_mediation_coverage: float = 0.75
+    # Traversal reduction on the covered share of the vendor pathway.
+    vendor_mediation_effectiveness: float = 0.60
+    # Optional detection multiplier on vendor-gateway nodes, representing
+    # session recording and brokered-session monitoring. 1.0 (no effect) is
+    # the primary specification; the sensitivity analysis may raise it. It
+    # is separated from the two traversal mechanisms so that the control is
+    # not silently credited with the detection_improvement control's effect.
+    vendor_mediation_detection_gain: float = 1.0
     detection_model: str = "geometric"  # 'geometric' | 'fixed'
     false_positive_rate: float = 0.002  # per healthy node per step
     false_positive_duration: int = 8    # steps an FP isolation lasts
@@ -235,7 +267,9 @@ class SimulationSpec:
         for name in ("patch_effectiveness", "patch_effectiveness_credential",
                      "patch_effectiveness_vendor",
                      "identity_control_coverage",
-                     "identity_control_effectiveness"):
+                     "identity_control_effectiveness",
+                     "vendor_mediation_coverage",
+                     "vendor_mediation_effectiveness"):
             _check(0.0 <= getattr(self, name) <= 1.0,
                    f"{name} must be in [0,1]")
         _check(self.detection_model in ("geometric", "fixed"),
@@ -249,6 +283,8 @@ class SimulationSpec:
                "detection_improvement_factor must be in (0,1] or null")
         _check(self.identity_breach_multiplier >= 1.0,
                "identity_breach_multiplier must be >= 1")
+        _check(self.vendor_mediation_detection_gain >= 1.0,
+               "vendor_mediation_detection_gain must be >= 1")
         _check(0.0 < self.service_functional_fraction <= 1.0,
                "service_functional_fraction must be in (0,1]")
         _check(self.sustained_outage_service_steps >= 1,
