@@ -1,16 +1,50 @@
 {
   "code": {
     "available": true,
-    "branch": "research/methods-revision",
-    "commit": "06a838bff19fe9e7a17163e56615ace207da61c4",
-    "dirty": false,
-    "dirty_paths": []
+    "branch": "claude/stoic-galileo-81yrtm",
+    "commit": "a4b9519d609091317d0a38b1c135aeca61972d48",
+    "dirty": true,
+    "dirty_paths": [
+      "data/betting_bounds/baseline_comparisons.csv",
+      "data/betting_bounds/betting_bounds_manifest.json",
+      "data/betting_bounds/bound_candidates.csv",
+      "data/betting_bounds/bound_margins.csv",
+      "data/betting_bounds/bound_retention.csv",
+      "docs/manuscript/anonymous.pdf",
+      "docs/manuscript/betting_numbers.tex",
+      "docs/manuscript/main.pdf",
+      "docs/manuscript/main.tex",
+      "docs/manuscript/methods_figures/betting_comparison.pdf",
+      "docs/manuscript/methods_figures/betting_comparison.png",
+      "docs/manuscript/methods_figures/coefficient_frontiers.pdf",
+      "docs/manuscript/methods_figures/coefficient_frontiers.png",
+      "docs/manuscript/methods_figures/conditional_frontier.pdf",
+      "docs/manuscript/methods_figures/conditional_frontier.png",
+      "docs/manuscript/methods_figures/endpoint_ladder.pdf",
+      "docs/manuscript/methods_figures/endpoint_ladder.png",
+      "docs/manuscript/methods_figures/joint_stability.pdf",
+      "docs/manuscript/methods_figures/joint_stability.png",
+      "docs/manuscript/methods_figures/model_pathways.pdf",
+      "docs/manuscript/methods_figures/model_pathways.png",
+      "docs/manuscript/methods_manifest.json",
+      "docs/manuscript/methods_numbers.tex",
+      "docs/manuscript/references.bib",
+      "docs/manuscript/section_results.tex",
+      "docs/manuscript/table_betting_rows.tex",
+      "scripts/analyze_betting_bounds.py",
+      "scripts/generate_betting_paper.py",
+      "scripts/generate_interpretation_paper.py",
+      "src/grrc/betting.py",
+      "study/BETTING_BOUNDS_PLAN.md",
+      "study/interpretation_contracts.json",
+      "tests/test_betting.py"
+    ]
   },
-  "created_at": "2026-09-06T17:16:15+00:00",
+  "created_at": "2026-09-19T23:51:52+00:00",
   "description": "Generated values, certificate and transfer tables, and figures for the final research manuscript.",
   "environment": {
     "implementation": "CPython",
-    "machine": "AMD64",
+    "machine": "x86_64",
     "packages": {
       "matplotlib": "3.11.0",
       "networkx": "3.6.1",
@@ -19,14 +53,39 @@
       "scipy": "1.18.0",
       "yaml": "6.0.3"
     },
-    "platform": "Windows-11-10.0.26200-SP0",
-    "python": "3.12.14"
+    "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+    "python": "3.12.3"
   },
   "inputs": [
     {
       "bytes": 4667,
       "path": "configs/multiobjective_portfolio.yaml",
       "sha256": "a3dff5682e1e8277cc29d3a5836009deccf87a901d4fa60fdd1ce7c091e41e31"
+    },
+    {
+      "bytes": 283815,
+      "path": "data/betting_bounds/baseline_comparisons.csv",
+      "sha256": "f9d00855b9f636940f109564248e0ba6e6fcad9b15e355b5fc5cd4c4804517b7"
+    },
+    {
+      "bytes": 4905,
+      "path": "data/betting_bounds/betting_bounds_manifest.json",
+      "sha256": "49628cfa080433a51dc71f7c99a153bc1c8b897d5b327ac7cf6db78f19d13c9f"
+    },
+    {
+      "bytes": 318262,
+      "path": "data/betting_bounds/bound_candidates.csv",
+      "sha256": "c2f75f00857528380caf6abcbb26d8118e02e5f92ee10da4cbac7ae55a858075"
+    },
+    {
+      "bytes": 3543,
+      "path": "data/betting_bounds/bound_margins.csv",
+      "sha256": "7511ecab46a02056b96ba9b44fab919f2b737790515cae9216a0ca30f8d17615"
+    },
+    {
+      "bytes": 1643,
+      "path": "data/betting_bounds/bound_retention.csv",
+      "sha256": "9a4358d5e06d2c525d8e5bbd0cbe187e59f208543ae5f3a2cc0210963136c294"
     },
     {
       "bytes": 2590,
@@ -279,14 +338,19 @@
       "sha256": "0f8833152e0b36878e10eb2a60af9532b1381a3cdd9e74df55b0aa896442dc3c"
     },
     {
+      "bytes": 5240,
+      "path": "scripts/generate_betting_paper.py",
+      "sha256": "9bdad110bf1494ccedf1b58653d37ee60c8f74ac6fdbb6cd41fda3a074a6555a"
+    },
+    {
       "bytes": 9778,
       "path": "scripts/generate_comparison_paper.py",
       "sha256": "7fca54fba1ed7e569925c300aa6b3ea483a61180d532ffe0a4ee905b928edcfa"
     },
     {
-      "bytes": 15976,
+      "bytes": 16417,
       "path": "scripts/generate_interpretation_paper.py",
-      "sha256": "fd41d7a5468d337228c9a666932268276d2dcf6197820a56b6bb44b73eb8386c"
+      "sha256": "511f08a015174cc57494a469e544ce8252a95fea02227e701eb92791fd949a89"
     },
     {
       "bytes": 6183,
@@ -299,12 +363,17 @@
       "sha256": "b66238f94ac38c76fe81608ec6a47bfec004fe231be44d7ba25b68002937d23c"
     },
     {
-      "bytes": 11060,
+      "bytes": 13347,
       "path": "study/interpretation_contracts.json",
-      "sha256": "9e06e5cdb78abf7e3df7cc6a707588418c9eda0d4a395ffd6edbe34637eb1479"
+      "sha256": "558483c6c180209adb8ea60af3042e398f800ef7d590ccae83007f1a51b3376a"
     }
   ],
   "outputs": [
+    {
+      "bytes": 591,
+      "path": "docs/manuscript/betting_numbers.tex",
+      "sha256": "16d57c8f37da1ccb3a6d24b6ea849a7cb2fc186b00f6f2f8c7a03ae5544ef600"
+    },
     {
       "bytes": 476,
       "path": "docs/manuscript/budget_portfolio_selections.csv",
@@ -321,59 +390,69 @@
       "sha256": "16cb7bbe17a85cef8dd74feb4691780b20fd80b34f698773f2f5214990a15963"
     },
     {
-      "bytes": 43383,
+      "bytes": 55243,
+      "path": "docs/manuscript/methods_figures/betting_comparison.pdf",
+      "sha256": "af6d85b088a61d28187b2b77e61f458f16280018005a325187490bb4ffc3dc17"
+    },
+    {
+      "bytes": 40752,
+      "path": "docs/manuscript/methods_figures/betting_comparison.png",
+      "sha256": "569862ae9d1b1c213bcedea26c1efb3f09f0c208a8f5ad23080e76e5e6e93991"
+    },
+    {
+      "bytes": 43377,
       "path": "docs/manuscript/methods_figures/coefficient_frontiers.pdf",
-      "sha256": "de70a13fe894b85fdf2f5bd059b5d8d89261f0d30c8f61b8bccb613fcbadb5aa"
+      "sha256": "8369f056e7af7370742799099cb42ffe503e960c5fabd075aac232a537d0676c"
     },
     {
-      "bytes": 81967,
+      "bytes": 95716,
       "path": "docs/manuscript/methods_figures/coefficient_frontiers.png",
-      "sha256": "d0a07c94a8f642d4398bfbcb5b7727b792ff37ec415a9008ced6748c4dfaa102"
+      "sha256": "782667026834a99a9d65ceebd379f6ca7dc09f2b8baee8671875bc4681f25cb7"
     },
     {
-      "bytes": 62531,
+      "bytes": 62525,
       "path": "docs/manuscript/methods_figures/conditional_frontier.pdf",
-      "sha256": "932bfce026557070d8e96de697fd2f3d0ba5bb6a0ef5e6811d3957fbc920b5d3"
+      "sha256": "b9ca566eb23b5194d0a543fcb0439a4e84654f76f3b0d08ff2e85bc53570e294"
     },
     {
-      "bytes": 40522,
+      "bytes": 46271,
       "path": "docs/manuscript/methods_figures/conditional_frontier.png",
-      "sha256": "6ab60334e11b15d2c527f13eee535ffc48240b4dabe44c24f83cc112cd396777"
+      "sha256": "962c9cc530bbeb0f99764ede40ac7e9bda54f98b3f01c8b8b3c8a1df16d5ce8e"
     },
     {
-      "bytes": 65201,
+      "bytes": 65195,
       "path": "docs/manuscript/methods_figures/endpoint_ladder.pdf",
-      "sha256": "d4a9bcb835c4d8d1e1abbef7fa4a1d1b42c864550ff13f151a80650db30c94cc"
+      "sha256": "159a08319faa063101703a7e1b0bcb084d86a9569ba4f9694410dc3918436f34"
     },
     {
-      "bytes": 55642,
+      "bytes": 62480,
       "path": "docs/manuscript/methods_figures/endpoint_ladder.png",
-      "sha256": "ba8c52728fd295f487a01db5cf3e75dba83734934e813d3872732eb2325c0e79"
+      "sha256": "c2c71db102bca4a69b055629e29d2920b3901670e3fc100b09123c2b35dc4408"
     },
     {
-      "bytes": 68429,
+      "bytes": 68423,
       "path": "docs/manuscript/methods_figures/joint_stability.pdf",
-      "sha256": "59864b63b36bbd65df38e7336c0cadf37eee50553f7f9ac8b0ab52515808fd54"
+      "sha256": "65707a913f7b7557e4d27dbf7c0fa643e2a9b147a41b38b9d0a1ea35fbb79e3b"
     },
     {
-      "bytes": 116166,
+      "bytes": 129592,
       "path": "docs/manuscript/methods_figures/joint_stability.png",
-      "sha256": "92d2691edd850732091c8c7ea4dda97f112d42e58ed8941bffe570581f1f81f4"
+      "sha256": "35c4e36986836805103f090f8b094f781974d75bc0fa67223e134a4f7776e26f"
     },
     {
-      "bytes": 97719,
+      "bytes": 97713,
       "path": "docs/manuscript/methods_figures/model_pathways.pdf",
-      "sha256": "3048a7607786c348e9d96bd0bf4b35a48312cefa419cccefb0ca867d73816b2d"
+      "sha256": "9b8f25b5e896ef7a366abf366ab0088b635031362f2585d736a2ae2a3051f98d"
     },
     {
-      "bytes": 158988,
+      "bytes": 180094,
       "path": "docs/manuscript/methods_figures/model_pathways.png",
-      "sha256": "b16e7002a78303ed8abf9fb3d8c1c9771bb5f62653f07e6b53a9edfd92439bd2"
+      "sha256": "a2ed17e05312f20ac86bf44ba67346bac94825c423dda9ee6c87c19e149d6261"
     },
     {
-      "bytes": 1869,
+      "bytes": 1871,
       "path": "docs/manuscript/methods_numbers.tex",
-      "sha256": "6e1e1d3eeb883b74899fd4233124c9bbc89675349867b9f0af4913d293753f30"
+      "sha256": "cd2cbd5346b55cb93e5c187afeaf6aa08b0ae7f75a0a99e4f66ac5d4b8f814d1"
     },
     {
       "bytes": 285,
@@ -384,6 +463,11 @@
       "bytes": 886,
       "path": "docs/manuscript/table_all_coefficients_rows.tex",
       "sha256": "ee34947a4c96ebf2c05c222b7a60761d3bac81289fb43a47a590e1135c8daecd"
+    },
+    {
+      "bytes": 734,
+      "path": "docs/manuscript/table_betting_rows.tex",
+      "sha256": "6b04e6be628c8c6dcd8013b727936f32f624054b9f00a5142dadcb1e734386a6"
     },
     {
       "bytes": 582,

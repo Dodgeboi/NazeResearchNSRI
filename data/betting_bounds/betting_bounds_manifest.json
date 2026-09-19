@@ -1,0 +1,157 @@
+{
+  "code": {
+    "available": true,
+    "branch": "claude/stoic-galileo-81yrtm",
+    "commit": "a4b9519d609091317d0a38b1c135aeca61972d48",
+    "dirty": true,
+    "dirty_paths": [
+      "data/betting_bounds/",
+      "scripts/analyze_betting_bounds.py",
+      "src/grrc/betting.py",
+      "study/BETTING_BOUNDS_PLAN.md",
+      "tests/test_betting.py"
+    ]
+  },
+  "created_at": "2026-09-19T23:34:14+00:00",
+  "description": "Finite-sample betting confidence bound compared to the three frozen one-sided simultaneous margin families on the same contrast bank.",
+  "environment": {
+    "implementation": "CPython",
+    "machine": "x86_64",
+    "packages": {
+      "matplotlib": "3.11.0",
+      "networkx": "3.6.1",
+      "numpy": "2.3.5",
+      "pandas": "3.0.1",
+      "scipy": "1.18.0",
+      "yaml": "6.0.3"
+    },
+    "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "inputs": [
+    {
+      "bytes": 561,
+      "path": "configs/defense_burdens.yaml",
+      "sha256": "70647c2c1cc3d0a260ff06660c69c31b29fcffd743b16c4db40a18394730515a"
+    },
+    {
+      "bytes": 1057,
+      "path": "configs/defense_costs.yaml",
+      "sha256": "66e66f192c5e44cacd099ef747262639379006084819569353306517cc30e3e5"
+    },
+    {
+      "bytes": 4667,
+      "path": "configs/multiobjective_portfolio.yaml",
+      "sha256": "a3dff5682e1e8277cc29d3a5836009deccf87a901d4fa60fdd1ce7c091e41e31"
+    },
+    {
+      "bytes": 101343517,
+      "path": "data/multiobjective/confirmatory/multiobjective_confirmatory_results.csv",
+      "sha256": "6b558145ae770f744f21a9d4c096c02e7d205f039b101eb98084dda7f2fdce91"
+    },
+    {
+      "bytes": 61516,
+      "path": "data/multiobjective/confirmatory/portfolio_objective_summary.csv",
+      "sha256": "cf41ebdacf092df8855edfa61893e5dcdacc19f3a76f7fc9166f3bc27b27fdab"
+    },
+    {
+      "bytes": 8651,
+      "path": "scripts/analyze_betting_bounds.py",
+      "sha256": "5f4eea8fde7712578b1fccdef1cbe6f0a2c1e2a89ba30ac3665ff368eb90afaf"
+    },
+    {
+      "bytes": 6144,
+      "path": "src/grrc/betting.py",
+      "sha256": "a7c4c2ddf4c08f812cc3e77c5ce8f8d15d190ba29c7460dba89c933ecf006cd0"
+    },
+    {
+      "bytes": 3895,
+      "path": "src/grrc/comparison.py",
+      "sha256": "5cbd8513518af68e8dedcf6ca0eceb156cd9ce845f105f8b587bd9a8aac9fb8a"
+    },
+    {
+      "bytes": 27089,
+      "path": "src/grrc/config.py",
+      "sha256": "b27a182157159c824e2ff9f6be72adf6e078634cb4654d3c4fdd175c9983e2c9"
+    },
+    {
+      "bytes": 17759,
+      "path": "src/grrc/defenses.py",
+      "sha256": "b9fe7bb6f892ce00c8772907120c9d5314efc54e111059fc0bb0a55a1b6132b9"
+    },
+    {
+      "bytes": 12438,
+      "path": "src/grrc/interpretation.py",
+      "sha256": "cc8f74338f875054efabc64bbb8dc15f7a1bcafca0822e2b580f8cbcabb0de7b"
+    },
+    {
+      "bytes": 8598,
+      "path": "src/grrc/joint_stability.py",
+      "sha256": "d93666a7f738b633b1e8a9074c6d478958508b5f613c4c9cfce618eada578368"
+    },
+    {
+      "bytes": 34928,
+      "path": "src/grrc/multiobjective.py",
+      "sha256": "22053598e5453d63819b35d282482626d848ecd5880c490ab9b7e8b6c9050468"
+    },
+    {
+      "bytes": 14389,
+      "path": "src/grrc/provenance.py",
+      "sha256": "bc68c43d8d9367b0e6ce70dcfb4eb4d5a82e0c59e9a4676cae73ad9aeb664f02"
+    },
+    {
+      "bytes": 3518,
+      "path": "src/grrc/utilities.py",
+      "sha256": "3ee09640a09c3868b530c7937133334acf2897939c2349e6a7dd1bc1fc531afa"
+    },
+    {
+      "bytes": 4632,
+      "path": "study/BETTING_BOUNDS_PLAN.md",
+      "sha256": "3a775269b683ddc018cfb6e5b318bf2227c25d90b1b056df52deca17b88974e1"
+    }
+  ],
+  "outputs": [
+    {
+      "bytes": 283815,
+      "path": "data/betting_bounds/baseline_comparisons.csv",
+      "sha256": "f9d00855b9f636940f109564248e0ba6e6fcad9b15e355b5fc5cd4c4804517b7"
+    },
+    {
+      "bytes": 318262,
+      "path": "data/betting_bounds/bound_candidates.csv",
+      "sha256": "c2f75f00857528380caf6abcbb26d8118e02e5f92ee10da4cbac7ae55a858075"
+    },
+    {
+      "bytes": 3543,
+      "path": "data/betting_bounds/bound_margins.csv",
+      "sha256": "7511ecab46a02056b96ba9b44fab919f2b737790515cae9216a0ca30f8d17615"
+    },
+    {
+      "bytes": 1643,
+      "path": "data/betting_bounds/bound_retention.csv",
+      "sha256": "9a4358d5e06d2c525d8e5bbd0cbe187e59f208543ae5f3a2cc0210963136c294"
+    }
+  ],
+  "parameters": {
+    "alpha": 0.05,
+    "betting_fraction_grid": "geomspace(1e-3, 0.9, 15)",
+    "bisection_steps": 30,
+    "family_size": 276048,
+    "loss_bound": 381.59999999999997,
+    "methods": [
+      "hoeffding",
+      "empirical_bernstein",
+      "paired_t_approx",
+      "betting"
+    ],
+    "price_radii": [
+      0,
+      0.5
+    ],
+    "price_region": "positive_gaps",
+    "scope": "retrospective; finite-sample validity is the only claimed property; widths versus other families are reported, not assumed"
+  },
+  "protocol": null,
+  "run_id": "betting-bounds",
+  "stage": "analysis"
+}

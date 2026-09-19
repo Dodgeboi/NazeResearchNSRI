@@ -122,6 +122,40 @@ the original range-only bound could not: the conservatism of the inferential
 procedure and the sensitivity of relative costs. The additional retentions
 depend on approximate inference and are not promoted to exact certificates.
 
+\subsection{A finite-sample variance-adaptive bound}
+% claim: betting_below_bernstein
+The betting family keeps finite-sample coverage yet adapts to the observed
+spread. It narrows the same high-capacity best-versus-baseline margin to
+\BettingHighMargin{} weighted hours, below the empirical Bernstein
+\BettingBernsteinHighMargin{}, and its smallest mean-loss margin across profiles
+is \BettingMinMargin{} against the \BettingBernsteinFloor{}-hour empirical
+Bernstein floor. The approximate paired t value of \BettingApproxHighMargin{}
+hours for that contrast has no finite-sample guarantee.
+% claim: betting_resource_certifies
+Under the sufficient population screen the betting family certifies
+\BettingPurchasedNominal{} purchased candidates at nominal prices, all in the
+resource-constrained profile, where Hoeffding and empirical Bernstein certify
+\BettingBernsteinPurchasedNominal{} (Table~\ref{tab:betting}); the approximate
+paired t certifies \BettingApproxPurchasedNominal{}, but without finite-sample
+coverage. This makes betting the only finite-sample family here to certify a
+purchased portfolio.
+% claim: betting_high_no_certify
+In the high-capacity profile even the betting screen certifies no purchased
+candidate, so the tighter valid interval changes the certified set only where
+the shared-price geometry already permits it, not by relaxing the guarantee.
+\begin{table*}[t]
+\centering
+\caption{Four-family comparison on the same $K=\JointMeanFamily{}$ contrasts at
+$\alpha=0.05$, with the betting bound added. Columns match
+Table~\ref{tab:bounds}. The betting and the two concentration rows have
+finite-sample coverage; the paired t row is approximate.}
+\label{tab:betting}
+\begin{tabular}{@{}llrrrr@{}}\toprule
+Profile & Method & Margin & Positive comparisons & Retained, $\rho=0$ & Retained, $\rho=.5$\\\midrule
+\tableinput table_betting_rows.tex
+\bottomrule\end{tabular}
+\end{table*}
+
 \subsection{Control assumptions and the complete frontier}
 \begin{figure*}[t]
 \centering\includegraphics[width=\textwidth]{coefficient_frontiers.pdf}
