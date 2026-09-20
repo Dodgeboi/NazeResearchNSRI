@@ -2,13 +2,11 @@
   "code": {
     "available": true,
     "branch": "claude/stoic-galileo-81yrtm",
-    "commit": "c6092f3596bb1e69bb0406081e9e296cf4b7db1d",
-    "dirty": true,
-    "dirty_paths": [
-      "scripts/analyze_clinical_certificate.py"
-    ]
+    "commit": "e20afc51ffcd629c371bb56facab006282cbc385",
+    "dirty": false,
+    "dirty_paths": []
   },
-  "created_at": "2026-09-20T00:55:39+00:00",
+  "created_at": "2026-09-20T00:59:29+00:00",
   "description": "Certified clinical-impact-bounded control selection on the evidence-anchored ATT&CK-driven hospital model.",
   "environment": {
     "implementation": "CPython",
