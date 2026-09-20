@@ -136,7 +136,7 @@ def main():
         parameters=dict(attack_version=model.graph.version, base_bounds=list(BASE_BOUNDS),
                         default_eff=list(DEFAULT_EFF), evidence_eff=EVIDENCE_EFF, epsilon=EPSILON,
                         ks=list(KS), cipher_gamma=CIPHER_GAMMA, services=[s.value for s in model.services],
-                        bound="sharp k-of-n distribution-free (LP over joint atoms)",
+                        bound="sharp k-of-n distribution-free (closed form, study/KOFN_THEOREM.md; LP-verified)",
                         scope="classical aggregation bound; ATT&CK structure real; effectiveness and "
                               "degradation are evidence-anchored intervals; no incident validation"))
     write_manifest(manifest, out / "catastrophic_certificate_manifest.json")

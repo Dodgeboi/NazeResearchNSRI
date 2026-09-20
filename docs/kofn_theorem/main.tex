@@ -1,0 +1,120 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amsthm,booktabs,hyperref,microtype}
+\hypersetup{hidelinks}
+\makeatletter\let\tableinput\@@input\makeatother
+\input{kofn_numbers}
+\newtheorem{theorem}{Theorem}
+
+\title{A closed-form sharp $k$-of-$n$ outage bound}
+\author{}
+\date{2026-09-20 (working note, version 0.1.0)}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Bounding the probability that at least $k$ of $n$ services fail
+\emph{simultaneously}, given only their individual failure probabilities and no
+assumption about dependence, is a distribution-free extremal problem of classical
+Fr\'echet/Boole and Ruschendorf lineage. This note states and proves a
+\emph{closed form} for its sharp maximum, replacing the linear program over $2^n$
+outcome atoms that our catastrophic-outage certificate used with an exact
+$O(n\log n)$ sort-and-prefix-sum. We give an elementary pointwise proof of validity,
+an explicit attaining coupling and a matching linear-programming dual certificate
+for tightness, and a monotonicity corollary that turns the certificate's
+interval-corner argument from an assertion into a theorem. Everything is machine
+verified: the closed form equals the linear program to within
+\KofnMaxLpError{} on the worked marginals, and the certificate's outputs are
+byte-identical after the replacement. This is a genuine theorem of classical
+lineage, not a claim of complete originality.
+\end{abstract}
+
+\section{Statement}
+Let $X_1,\dots,X_n$ be Bernoulli with marginals $p_1,\dots,p_n$ and order
+statistics $p_{(1)}\ge\dots\ge p_{(n)}$, and let $S=\sum_i X_i$. A
+\emph{coupling} is any joint law with those marginals; nothing is assumed about
+dependence.
+
+\begin{theorem}[closed-form sharp $k$-of-$n$ bound]
+For every $1\le k\le n$,
+\[
+\max_{\text{couplings}}\Pr(S\ge k)
+ \;=\; \min\!\Big(1,\ \min_{0\le j\le k-1}\ \frac{1}{k-j}\sum_{i=j+1}^{n} p_{(i)}\Big),
+\]
+and the maximum is attained. The inner minimand at $j$ sums the $n-j$
+\emph{smallest} marginals. It equals the union bound $\min(1,\sum_i p_i)$ at $k=1$
+and $\min_i p_i$ at $k=n$.
+\end{theorem}
+
+\section{Proofs}
+\paragraph{Validity ($\le$).} Fix a coupling and $j\in\{0,\dots,k-1\}$. On the
+event $\{S\ge k\}$ the $j$ largest-marginal variables contribute at most $j$, so
+the remaining $n-j$ variables sum to at least $k-j\ge 1$; hence, at \emph{every}
+outcome,
+\[
+\mathbf 1[S\ge k]\ \le\ \frac{1}{k-j}\sum_{i\in B} X_i,
+\qquad B=\text{the }n-j\text{ smallest marginals}.
+\]
+Taking expectations (Markov) gives $\Pr(S\ge k)\le \frac{1}{k-j}\sum_{i\in B}p_i$;
+minimising over $j$ and capping at $1$ yields the bound. Equivalently this is a
+linear-programming \emph{dual certificate}: $\lambda_0=0$ and
+$\lambda_i=1/(k-j^\star)$ on the $n-j^\star$ smallest marginals is dual-feasible
+(any $k$-subset meets $B$ in $\ge k-j^\star$ indices) with objective equal to the
+bound, so weak duality reproduces~$\le$.
+
+\paragraph{Attainment ($\ge$).} Let $j^\star$ be the largest minimiser and
+$M=\frac{1}{k-j^\star}\sum_{i>j^\star}p_{(i)}$; one shows $p_{(j^\star+1)}\le M\le
+p_{(j^\star)}$. With a uniform $U$ on $[0,1)$ and circumference $c=M$ (when $M<1$):
+lay the $n-j^\star$ smallest arcs consecutively around $[0,c)$, wrapping --- total
+length $(k-j^\star)c$ and each $\le c$, so the covering depth is exactly $k-j^\star$
+throughout $[0,c)$; and let each of the $j^\star$ largest ($p_{(i)}\ge c$) cover
+$[0,c)$ fully. Then exactly $k$ events fire on $[0,c)$ and fewer than $k$ elsewhere,
+so $\Pr(S\ge k)=c=M$. When $M\ge 1$, laying all $n$ arcs around the unit circle
+gives depth $\ge k$ everywhere, so $\Pr(S\ge k)=1$. The full argument, and the
+explicit coupling as atom masses, are in \texttt{study/KOFN\_THEOREM.md} and
+\texttt{grrc.joint\_bounds.attaining\_coupling}.
+
+\section{Corollaries and worked example}
+The bound is monotone non-decreasing in each $p_i$ (each suffix sum is, and a
+capped min of non-decreasing functions is), so its worst case over an interval box
+of marginals sits at the all-high corner --- which is exactly why the catastrophic
+certificate evaluates only two corners. It is non-increasing in $k$ and never
+exceeds the Markov ($\sum p_i/k$) or union ($\sum p_i$) bounds, strictly below the
+union for $k\ge 2$ unless all marginals are equal.
+
+Table~\ref{tab:kofn} shows this on the real ATT\&CK-hospital
+(v\KofnAttackVersion{}) undefended worst-corner per-service outage marginals over
+$n=\KofnServices$ clinical services. The closed form matches the linear program to
+the last printed digit, while collapsing the ``at least one'' figure of
+\KofnEmptyUnion\% to \KofnEmptyClosedKTwo\% for two services, \KofnEmptyClosedKThree\%
+for three, and \KofnEmptyClosedKFour\% for all four --- the last strictly below the
+Markov bound \KofnEmptyMarkovKFour\% as well.
+
+\begin{table}[t]\centering
+\caption{Sharp $k$-of-$n$ bound (closed form) versus the linear-programming oracle
+and the classical union and Markov bounds, on the undefended worst-corner outage
+marginals ($n=\KofnServices$ clinical services). Percent.}\label{tab:kofn}
+\begin{tabular}{@{}rrrrr@{}}\toprule
+$k$ & Closed form & LP oracle & Union & Markov\\\midrule
+\tableinput table_kofn_bounds_rows.tex
+\bottomrule\end{tabular}
+\end{table}
+
+\section{Scope}
+The extremal problem is classical (Fr\'echet 1935/Boole; Ruschendorf 1991;
+reliability $m$-of-$n$ bounds). The contribution is a clean closed form with a
+self-contained proof of both directions and an explicit attaining coupling, machine
+verified, that removes a solver from the certificate and upgrades its corner
+argument to a proof. The marginals themselves are evidence-anchored worst-corner
+model values, not measured incident frequencies.
+
+\paragraph{Reproducibility.} All numbers are generated from committed tables;
+the analysis is deterministic and carries a provenance manifest over the pinned
+ATT\&CK bundle. The theorem is verified in \texttt{tests/test\_joint\_bounds.py}
+(closed form $=$ LP over randomised cases, validity, attainment, duality,
+monotonicity, boundaries).
+
+\end{document}

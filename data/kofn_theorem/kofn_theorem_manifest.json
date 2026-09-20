@@ -6,18 +6,15 @@
     "dirty": true,
     "dirty_paths": [
       "data/catastrophic_certificate/catastrophic_certificate_manifest.json",
-      "data/kofn_theorem/",
-      "docs/kofn_theorem/",
       "scripts/analyze_catastrophic_certificate.py",
       "scripts/analyze_kofn_theorem.py",
-      "scripts/generate_kofn_paper.py",
       "src/grrc/joint_bounds.py",
       "study/KOFN_THEOREM.md",
       "tests/test_joint_bounds.py"
     ]
   },
-  "created_at": "2026-09-20T19:45:41+00:00",
-  "description": "Sharp distribution-free k-of-n catastrophic clinical-outage certificate on the ATT&CK-driven hospital, assumed vs CIPHER-derived degradation.",
+  "created_at": "2026-09-20T19:43:18+00:00",
+  "description": "Worked example for the closed-form sharp k-of-n outage theorem: closed form vs LP oracle vs union/Markov on real hospital worst-corner marginals.",
   "environment": {
     "implementation": "CPython",
     "machine": "x86_64",
@@ -44,34 +41,14 @@
       "sha256": "ea0caa84593fc866fbe9d2bfc14290c8f9a015f7eee88f3c3d3dfe5f795e7d2c"
     },
     {
-      "bytes": 303958,
-      "path": "data/cipher/raw/cipher-v1.0.1.csv",
-      "sha256": "3ee4a39ba8e2b058832d6eadf014f569baad43851d1cba25043b7a8b85b38204"
-    },
-    {
-      "bytes": 1047,
-      "path": "data/cipher/raw/source_manifest.json",
-      "sha256": "7fdf5df49ad97bba06c38301b32f84fd98939c8acb40b430f1d5972d999874af"
-    },
-    {
-      "bytes": 6597,
-      "path": "scripts/analyze_catastrophic_certificate.py",
-      "sha256": "3e09ec60f15352e1bc4470543cd7dd094cb40b8e8d6b8a3915079e09875fe6f0"
+      "bytes": 5532,
+      "path": "scripts/analyze_kofn_theorem.py",
+      "sha256": "91d7f0a5d98776c1c4688de5cba14e0955002048e3ab8fe85be37a8b568cd249"
     },
     {
       "bytes": 6275,
       "path": "src/grrc/attack_graph.py",
       "sha256": "b0dd7abd2e58ad155e8127db72cf005a5bd626755ffe2880aac9b74818cdd023"
-    },
-    {
-      "bytes": 5216,
-      "path": "src/grrc/cipher_bounds.py",
-      "sha256": "1de486592089991c9b8d0a84a19b5ef0aca5ac2e552cafc4794218ffb3963fd6"
-    },
-    {
-      "bytes": 6868,
-      "path": "src/grrc/control_certificate.py",
-      "sha256": "8fa9811782eb6dbeb09a6767ded209d11d17b57d81c010ee155d10099cf978f2"
     },
     {
       "bytes": 4479,
@@ -97,54 +74,50 @@
       "bytes": 3518,
       "path": "src/grrc/utilities.py",
       "sha256": "3ee09640a09c3868b530c7937133334acf2897939c2349e6a7dd1bc1fc531afa"
+    },
+    {
+      "bytes": 9942,
+      "path": "study/KOFN_THEOREM.md",
+      "sha256": "fbb1d08ec85418a51ccd696dad14c44f55b8ff34825d373fffb7cb097973126e"
     }
   ],
   "outputs": [
     {
-      "bytes": 1324,
-      "path": "data/catastrophic_certificate/catastrophic_named.csv",
-      "sha256": "788d578319cfa098674b83e808ded605540ac5d7d68a827dbf4842a20deef7b8"
+      "bytes": 660,
+      "path": "data/kofn_theorem/worked_bounds.csv",
+      "sha256": "f2a1b3170ab2d6aead5d4849d61059ff2d98a09a21451dc99b73d0b3616ac6b4"
     },
     {
-      "bytes": 319,
-      "path": "data/catastrophic_certificate/catastrophic_summary.csv",
-      "sha256": "d7f0412022d54167466883e9c3bd5e25470564e76358cfde8d8d177c8e9636aa"
+      "bytes": 170,
+      "path": "data/kofn_theorem/worked_marginals.csv",
+      "sha256": "0a44ca86a472e55288e6d4587380bc06dc41877d5e9019296dd1165558c63e02"
     }
   ],
   "parameters": {
     "attack_version": "17.1",
-    "base_bounds": [
-      0.5,
-      0.9
-    ],
-    "bound": "sharp k-of-n distribution-free (closed form, study/KOFN_THEOREM.md; LP-verified)",
-    "cipher_gamma": 1.0,
-    "default_eff": [
-      0.2,
-      0.7
-    ],
-    "epsilon": 0.05,
-    "evidence_eff": {
-      "M1032": [
-        0.85,
-        0.99
+    "base_high": 0.9,
+    "eff_low": 0.2,
+    "n": 4,
+    "portfolios": {
+      "empty": [],
+      "hospital_core": [
+        "M1032",
+        "M1030",
+        "M1051",
+        "M1053",
+        "M1040"
       ]
     },
-    "ks": [
-      1,
-      2,
-      3,
-      4
-    ],
-    "scope": "classical aggregation bound; ATT&CK structure real; effectiveness and degradation are evidence-anchored intervals; no incident validation",
+    "scope": "classical Frechet/Ruschendorf lineage; closed form proved and LP-verified; marginals are evidence-anchored worst-corner values, not measured incidents",
     "services": [
       "ehr",
       "laboratory",
       "pharmacy",
       "imaging"
-    ]
+    ],
+    "theorem": "max_couplings P(sum X_i >= k) = min(1, min_j (1/(k-j)) sum of n-j smallest marginals); see study/KOFN_THEOREM.md"
   },
   "protocol": null,
-  "run_id": "catastrophic-certificate",
+  "run_id": "kofn-theorem",
   "stage": "analysis"
 }
