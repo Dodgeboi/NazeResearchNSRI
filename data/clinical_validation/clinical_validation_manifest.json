@@ -2,16 +2,11 @@
   "code": {
     "available": true,
     "branch": "claude/stoic-galileo-81yrtm",
-    "commit": "33cbe2e8558427e4ee75a2d5d947cb0f2fc0c573",
-    "dirty": true,
-    "dirty_paths": [
-      "scripts/analyze_clinical_validation.py",
-      "src/grrc/clinical_validation.py",
-      "study/CLINICAL_VALIDATION_PLAN.md",
-      "tests/test_clinical_validation.py"
-    ]
+    "commit": "28e1744ff4fc56cf63445ef609bd04f786344419",
+    "dirty": false,
+    "dirty_paths": []
   },
-  "created_at": "2026-09-20T16:27:44+00:00",
+  "created_at": "2026-09-20T16:32:01+00:00",
   "description": "First calibration of an ATT&CK-based clinical-impact model against the real CIPHER coded patient-harm corpus, with an ATT&CK clinical-resolution overlay.",
   "environment": {
     "implementation": "CPython",
