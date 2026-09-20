@@ -1,0 +1,119 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,booktabs,hyperref,microtype}
+\hypersetup{hidelinks}
+\makeatletter\let\tableinput\@@input\makeatother
+\input{clinical_numbers}
+
+\title{Certified clinical-impact bounds for security-control selection:\\
+a distribution-free method on an ATT\&CK-driven hospital model}
+\author{}
+\date{2026-09-20 (working note, version 0.1.0)}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Security-control decisions in hospitals are usually justified by abstract scores
+(CVSS, coverage counts, reachability) that say nothing about patients. We pose and
+solve a different problem: given a set of candidate defensive controls, certify ---
+distribution-free, and robustly over acknowledged parameter uncertainty --- that
+the probability of a sustained \emph{clinical-service} outage stays below a chosen
+level. The model is a better synthetic hospital: its attack surface is the real
+MITRE ATT\&CK Enterprise kill chain (v\ClinAttackVersion) with controls drawn from
+ATT\&CK's own mitigations, and its damage is patient-facing outage of the
+\ClinServices{} core clinical services through an explicit service-dependency
+structure. Because every quantity is coordinatewise monotone in the model
+parameters, adequacy is certified by evaluating the interval corners --- the
+necessary/possible argument, lifted from efficiency to clinical outcome. The
+undefended union-bound clinical outage is \ClinEmptyUnionPct\%, matching the
+independently reported 44\% care-disruption rate. Identity controls dominate: a
+four-control identity bundle certifies clinical outage $\le 5\%$, while backup,
+segmentation, or patching alone each leave the outage near the undefended level.
+The contribution is the method and problem formulation; effectiveness and
+degradation are evidence-anchored intervals, not measurements of any hospital.
+\end{abstract}
+
+\section{Problem and model}
+Let a control portfolio be a set of ATT\&CK mitigations. The adversary traverses
+the real ATT\&CK kill chain; a portfolio lowers technique success through ATT\&CK's
+\texttt{mitigates} edges. \emph{Impact reachability} $R$ is the probability of
+completing the chain to the clinical-impact tactic (T1486 encryption, T1490 inhibit
+recovery, T1489 service stop, T1485 destruction), computed as a product of
+usage-weighted stage successes. A clinical service $s$ then suffers a sustained
+outage with probability $R\cdot d_s$, where $d_s$ is a service-specific degradation
+probability. Writing $O_s=R\,d_s$, we bound clinical impact two ways: per service,
+and by the union bound $\sum_s O_s\ge \Pr(\ge 1\text{ service out})$.
+
+Every parameter is an interval anchored to a published figure (base progression
+from Mandiant/Sophos dwell data; mitigation effectiveness from the Microsoft MFA
+study and a wide prior elsewhere; degradation $d_s\in[0.17,0.44]$ from Neprash 2022
+and McGlave 2026). $O_s$ and the union bound are increasing in base and degradation
+and decreasing in effectiveness.
+
+\section{Certificate}
+Monotonicity places the extremes of every bounded quantity at the corners of the
+interval uncertainty set. A portfolio is \emph{guaranteed} clinically adequate at
+level $\varepsilon$ when, at the adverse corner (base high, effectiveness low,
+degradation high), every per-service outage \emph{and} the union bound are
+$\le\varepsilon$; it is only \emph{possible} when this holds merely at the
+favourable corner. The guarantee is distribution-free: it holds for every
+parameter value in the set, with no distributional assumption. Where incident
+counts exist, finite-sample betting bounds supply the intervals.
+
+\section{Results}
+Undefended clinical outage is \ClinEmptyUnionPct\% (union bound), a figure that
+coincides with the independently observed 44\% care-disruption rate --- a coherence
+check on the anchoring, not a fitted result. Along the certified cost-versus-outage
+frontier, \ClinMinGuardTen{} controls guarantee union outage $\le 10\%$,
+\ClinMinGuardFive{} guarantee $\le 5\%$, and \ClinMinGuardOne{} guarantee $\le 1\%$
+(Table~\ref{tab:cfront}). Of the named bundles, only the identity bundle is
+guaranteed at $5\%$ (union outage \ClinIdentityUnionPct\%); the hospital-core bundle
+reaches \ClinCoreUnionPct\%, and single-family controls barely move the outcome ---
+data backup alone leaves \ClinBackupUnionPct\% (Table~\ref{tab:cnamed}). The policy
+reading is blunt and, to our knowledge, not something prior control-scoring methods
+can state with a guarantee: for bounding \emph{patient-facing} outage, identity
+controls dominate and no single other family suffices.
+
+\begin{table}[t]\centering
+\caption{Certified cost-versus-outage frontier (first eight greedy additions):
+control added and worst-case union clinical outage after it, percent.}\label{tab:cfront}
+\begin{tabular}{@{}rllr@{}}\toprule
+Size & Mitigation & Name & Worst union outage (\%)\\\midrule
+\tableinput table_clinical_frontier_rows.tex
+\bottomrule\end{tabular}
+\end{table}
+
+\begin{table}[t]\centering
+\caption{Named control bundles: worst-case union clinical outage and certificates.}\label{tab:cnamed}
+\begin{tabular}{@{}lrrll@{}}\toprule
+Bundle & Size & Worst union (\%) & Guar.\ $\le$10\% & Guar.\ $\le$5\%\\\midrule
+\tableinput table_clinical_named_rows.tex
+\bottomrule\end{tabular}
+\end{table}
+
+\section{Sensitivity to assumed uncertainty}
+To guarantee union outage $\le 5\%$, a narrow effectiveness prior needs
+\ClinMinGuardNarrow{} controls and a wide prior needs \ClinMinGuardWide{}: the
+distribution-free guarantee demands more coverage precisely when less is known,
+which is the honest behaviour a hospital decision-maker should want.
+
+\section{Contribution and limitations}
+The novelty is the formulation and method: a distribution-free certificate on
+\emph{patient-facing clinical outage} for control portfolios, composing a real
+ATT\&CK attack graph with a hospital service-dependency model, rather than scoring
+abstract reachability. Limitations, stated plainly: ATT\&CK \texttt{mitigates} edges
+are qualitative, not effect sizes; the impact-technique-to-service mapping, the
+degradation probabilities, and the kill-chain progression are modelling choices
+anchored to published ranges, not measured on a hospital; the model is synthetic
+and unvalidated against incidents; and the union bound is deliberately conservative.
+This is decision-support with an explicit guarantee under stated uncertainty, not an
+empirical estimate of any hospital's risk.
+
+\paragraph{Reproducibility.} MITRE ATT\&CK v\ClinAttackVersion{} is used unmodified
+(Terms of Use), pinned and hashed; all outputs carry a provenance manifest and every
+number here is generated from the committed tables.
+
+\end{document}

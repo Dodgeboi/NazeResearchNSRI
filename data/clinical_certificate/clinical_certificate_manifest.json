@@ -1,0 +1,162 @@
+{
+  "code": {
+    "available": true,
+    "branch": "claude/stoic-galileo-81yrtm",
+    "commit": "c6092f3596bb1e69bb0406081e9e296cf4b7db1d",
+    "dirty": true,
+    "dirty_paths": [
+      "scripts/analyze_clinical_certificate.py"
+    ]
+  },
+  "created_at": "2026-09-20T00:55:39+00:00",
+  "description": "Certified clinical-impact-bounded control selection on the evidence-anchored ATT&CK-driven hospital model.",
+  "environment": {
+    "implementation": "CPython",
+    "machine": "x86_64",
+    "packages": {
+      "matplotlib": "3.11.0",
+      "networkx": "3.6.1",
+      "numpy": "2.3.5",
+      "pandas": "3.0.1",
+      "scipy": "1.18.0",
+      "yaml": "6.0.3"
+    },
+    "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "inputs": [
+    {
+      "bytes": 8078946,
+      "path": "data/attack/raw/enterprise-attack-17.1.json.gz",
+      "sha256": "522b09c7db81ce61887baa19dde98ea06ee4045420fe3c42f5f58f3e3382c597"
+    },
+    {
+      "bytes": 428,
+      "path": "data/attack/raw/source.json",
+      "sha256": "ea0caa84593fc866fbe9d2bfc14290c8f9a015f7eee88f3c3d3dfe5f795e7d2c"
+    },
+    {
+      "bytes": 7994,
+      "path": "scripts/analyze_clinical_certificate.py",
+      "sha256": "cf9ba207c5bf94de2a43c93fe1a4b64a95e0fc495488258ec26c143fb2d55e98"
+    },
+    {
+      "bytes": 6275,
+      "path": "src/grrc/attack_graph.py",
+      "sha256": "b0dd7abd2e58ad155e8127db72cf005a5bd626755ffe2880aac9b74818cdd023"
+    },
+    {
+      "bytes": 6144,
+      "path": "src/grrc/betting.py",
+      "sha256": "a7c4c2ddf4c08f812cc3e77c5ce8f8d15d190ba29c7460dba89c933ecf006cd0"
+    },
+    {
+      "bytes": 6868,
+      "path": "src/grrc/control_certificate.py",
+      "sha256": "8fa9811782eb6dbeb09a6767ded209d11d17b57d81c010ee155d10099cf978f2"
+    },
+    {
+      "bytes": 4479,
+      "path": "src/grrc/enums.py",
+      "sha256": "1959703e375427a1b009615125a866a00384b4efee53815bedb08ac05acbea00"
+    },
+    {
+      "bytes": 6719,
+      "path": "src/grrc/hospital_attack_model.py",
+      "sha256": "ea3197e9d8b860da4491e9fc8caa75ff44b8c50d63fd5a4338359d7eaa9d51c2"
+    },
+    {
+      "bytes": 14389,
+      "path": "src/grrc/provenance.py",
+      "sha256": "bc68c43d8d9367b0e6ce70dcfb4eb4d5a82e0c59e9a4676cae73ad9aeb664f02"
+    },
+    {
+      "bytes": 3518,
+      "path": "src/grrc/utilities.py",
+      "sha256": "3ee09640a09c3868b530c7937133334acf2897939c2349e6a7dd1bc1fc531afa"
+    },
+    {
+      "bytes": 5141,
+      "path": "study/EVIDENCE_ANCHORED_HOSPITAL.md",
+      "sha256": "1bd48e1bc20471ede3ccd68fd61bb6c1ea478c28898b1a9198fbd7ac318c2093"
+    }
+  ],
+  "outputs": [
+    {
+      "bytes": 5707,
+      "path": "data/clinical_certificate/clinical_frontier.csv",
+      "sha256": "a38db351d196419225a0adaa311141a85370e3c3d501e9b80c08b77e7dd6be73"
+    },
+    {
+      "bytes": 545,
+      "path": "data/clinical_certificate/clinical_named.csv",
+      "sha256": "872f2320c75a5ef612421b05d1b237b8fc49d8685882abbb36cd8919a14ff416"
+    },
+    {
+      "bytes": 158,
+      "path": "data/clinical_certificate/clinical_sensitivity.csv",
+      "sha256": "11dd557f7ca074379338b3649f49b8878f28593ff8838134e71c927bd81932d6"
+    },
+    {
+      "bytes": 126,
+      "path": "data/clinical_certificate/clinical_summary.csv",
+      "sha256": "cf0bd367729162704ab5518dfcf5f5e3345c197a815ec4c7f31e0bb1835b3049"
+    }
+  ],
+  "parameters": {
+    "attack_version": "17.1",
+    "base_bounds": [
+      0.5,
+      0.9
+    ],
+    "default_eff": [
+      0.2,
+      0.7
+    ],
+    "epsilons": [
+      0.1,
+      0.05,
+      0.01
+    ],
+    "evidence_eff": {
+      "M1032": [
+        0.85,
+        0.99
+      ]
+    },
+    "impact_techniques": [
+      "T1489",
+      "T1486",
+      "T1485",
+      "T1490"
+    ],
+    "scope": "ATT&CK structure real; effectiveness and clinical-degradation are evidence-anchored intervals; no hospital-specific validation",
+    "service_degradation": {
+      "ehr": [
+        0.3,
+        0.44
+      ],
+      "imaging": [
+        0.17,
+        0.35
+      ],
+      "laboratory": [
+        0.2,
+        0.4
+      ],
+      "pharmacy": [
+        0.2,
+        0.4
+      ]
+    },
+    "services": [
+      "ehr",
+      "laboratory",
+      "pharmacy",
+      "imaging"
+    ]
+  },
+  "protocol": null,
+  "run_id": "clinical-certificate",
+  "stage": "analysis"
+}

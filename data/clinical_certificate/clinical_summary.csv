@@ -1,0 +1,4 @@
+epsilon,empty_union_outage,min_guaranteed_size,named_guaranteed
+0.1,0.449062963,2,2
+0.05,0.449062963,3,1
+0.01,0.449062963,7,0
