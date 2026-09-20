@@ -1,0 +1,9 @@
+degradation,k,epsilon,empty_worst,min_guaranteed_size
+assumed,1,0.05,0.449062963,3
+assumed,2,0.05,0.2245314815,2
+assumed,3,0.05,0.1496876543,1
+assumed,4,0.05,0.09885033777,1
+cipher_gamma1,1,0.05,0.3302322364,3
+cipher_gamma1,2,0.05,0.1651161182,1
+cipher_gamma1,3,0.05,0.1100774121,1
+cipher_gamma1,4,0.05,0.06964015968,1

@@ -1,0 +1,104 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,booktabs,hyperref,microtype}
+\hypersetup{hidelinks}
+\makeatletter\let\tableinput\@@input\makeatother
+\input{catastrophic_numbers}
+
+\title{A sharp distribution-free certificate for catastrophic multi-service outage\\
+under security-control portfolios}
+\author{}
+\date{2026-09-20 (working note, version 0.1.0)}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+A hospital's concern is not that \emph{some} clinical service is disrupted but that
+\emph{several critical services fail at once}. We certify exactly that: the
+probability that at least $k$ of the $n$ clinical services suffer simultaneous
+sustained outage stays below a level $\varepsilon$, under an ATT\&CK-driven attack
+model and interval uncertainty. The bound on the $k$-of-$n$ event is the sharp
+distribution-free maximum over all joint outcomes consistent with the per-service
+marginals -- a small linear program over the $2^n$ outcome atoms -- which replaces
+the loose union bound used previously (its $k{=}1$ special case). Because the
+catastrophic event is rarer than "any one service", it is far more certifiable: at
+$\varepsilon=\CatEpsilon\%$ the minimum guaranteed control count falls from
+\CatMinGuardKOne{} controls for $k{=}1$ to \CatMinGuardKThree{} for $k{=}3$, and the
+hospital-core bundle, \emph{not} certified for "at least one service"
+(\CatCoreKOneGuar), \emph{is} certified for the two-, three-, and all-service
+catastrophic events (\CatCoreKTwoGuar/\CatCoreKThreeGuar/\CatCoreKFourGuar). The aggregation
+bound is classical (Frechet/Boole/linear programming); the contribution is the
+sharp, clinically meaningful certificate, not a new theorem.
+\end{abstract}
+
+\section{The k-of-n bound}
+Given only the per-service outage marginals $p_1,\dots,p_n$ (here
+$p_s = R\,d_s$: kill-chain impact reachability times a service's degradation
+probability), the largest possible probability that at least $k$ services fail
+together, over every joint distribution with those marginals, is
+\[
+\max_{\text{joints}} \Pr\!\Big(\textstyle\sum_s \mathbf 1[s\text{ down}] \ge k\Big),
+\]
+a linear program over the $2^n$ outcome atoms with the marginals and total mass as
+equality constraints. Its optimum is attained by an explicit joint, so the bound is
+sharp. It equals the union bound $\min(1,\sum_s p_s)$ at $k=1$, equals $\min_s p_s$
+at $k=n$, is monotone non-decreasing in each marginal, and is strictly tighter than
+the union (and than the Markov bound $\sum p_s/k$) for $k\ge 2$. Monotonicity in the
+marginals -- which are themselves monotone in the model parameters -- means the
+worst case over the interval uncertainty set is still an interval corner, so the
+sharp bound drops into the existing corner certificate unchanged.
+
+\section{Result}
+Under the ATT\&CK-driven hospital (v\CatAttackVersion) with the evidence-anchored
+intervals, the undefended probability of "at least one" clinical service in
+sustained outage is \CatEmptyKOnePct\%, but the all-four catastrophic event is only
+\CatEmptyKFourPct\%. The certifiable control burden falls sharply with the
+catastrophic threshold (Table~\ref{tab:catsum}): at $\varepsilon=\CatEpsilon\%$,
+guaranteeing "at least one service" needs \CatMinGuardKOne{} controls, "at least two"
+needs \CatMinGuardKTwo{}, and "at least three" or "all four" need \CatMinGuardKThree{}.
+The hospital-core bundle shows the same lesson at the portfolio level
+(Table~\ref{tab:catnamed}): it cannot certify the single-service event but does
+certify every genuinely catastrophic one. Grounding the degradation in the real
+CIPHER corpus lowers the burden further (final column of Table~\ref{tab:catsum}).
+The policy reading: a modest, well-chosen portfolio can \emph{provably} bound the
+risk of a system-wide clinical collapse even when it cannot bound every isolated
+disruption.
+
+\begin{table}[t]\centering
+\caption{Minimum guaranteed control count at $\varepsilon=\CatEpsilon\%$ and
+undefended worst-case probability, by catastrophic threshold $k$, under assumed and
+CIPHER-derived degradation.}\label{tab:catsum}
+\begin{tabular}{@{}rrrrr@{}}\toprule
+$k$ & Undefended (\%) & Min controls & Undefended, CIPHER (\%) & Min controls, CIPHER\\\midrule
+\tableinput table_catastrophic_summary_rows.tex
+\bottomrule\end{tabular}
+\end{table}
+
+\begin{table}[t]\centering
+\caption{Named control bundles: whether each is guaranteed at
+$\varepsilon=\CatEpsilon\%$ for the $k$-of-four catastrophic event (assumed
+degradation).}\label{tab:catnamed}
+\begin{tabular}{@{}lrllll@{}}\toprule
+Bundle & Size & $k{=}1$ & $k{=}2$ & $k{=}3$ & $k{=}4$\\\midrule
+\tableinput table_catastrophic_named_rows.tex
+\bottomrule\end{tabular}
+\end{table}
+
+\section{Limitations}
+The sharp aggregation bound is classical; this note contributes its use to certify
+the clinically defined catastrophic event and its composition with the interval
+certificate. The marginals inherit every limitation of the underlying model:
+ATT\&CK \texttt{mitigates} edges are qualitative, effectiveness and degradation are
+evidence-anchored intervals rather than measurements, and there is no incident
+validation. The bound uses only marginals, so it is agnostic to the true
+dependence between service failures -- deliberately, since that dependence is
+unknown; a validated dependence model could only tighten it.
+
+\paragraph{Reproducibility.} All numbers are generated from committed tables; the
+analysis is deterministic and carries a provenance manifest over the pinned ATT\&CK
+bundle and the CIPHER corpus.
+
+\end{document}

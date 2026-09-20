@@ -5,18 +5,15 @@
     "commit": "7ac5ecf2d8d2aab3b4ec4177664fd0ed04b59318",
     "dirty": true,
     "dirty_paths": [
-      "data/catastrophic_certificate/",
-      "docs/catastrophic_certificate/",
       "scripts/analyze_catastrophic_certificate.py",
-      "scripts/generate_catastrophic_paper.py",
       "src/grrc/hospital_attack_model.py",
       "src/grrc/joint_bounds.py",
       "tests/test_hospital_attack_model.py",
       "tests/test_joint_bounds.py"
     ]
   },
-  "created_at": "2026-09-20T16:00:49+00:00",
-  "description": "Selection-robust clinical-harm bounds from the real CIPHER corpus and their effect on the clinical-impact certificate.",
+  "created_at": "2026-09-20T15:55:32+00:00",
+  "description": "Sharp distribution-free k-of-n catastrophic clinical-outage certificate on the ATT&CK-driven hospital, assumed vs CIPHER-derived degradation.",
   "environment": {
     "implementation": "CPython",
     "machine": "x86_64",
@@ -53,9 +50,9 @@
       "sha256": "7fdf5df49ad97bba06c38301b32f84fd98939c8acb40b430f1d5972d999874af"
     },
     {
-      "bytes": 7419,
-      "path": "scripts/analyze_cipher_bounds.py",
-      "sha256": "a9bee67ea52ce57d080dd8c6cda860bfa1f27e93623246d188280d69babcdb3c"
+      "bytes": 6569,
+      "path": "scripts/analyze_catastrophic_certificate.py",
+      "sha256": "43f74780b7ed8daed82afed510957cf2be8a318eb22757d3fcd236c95e48e636"
     },
     {
       "bytes": 6275,
@@ -83,6 +80,11 @@
       "sha256": "53919b922f3413f8c09ce8153704cf522d910371c4fbf5aa2d3838baa2ed856f"
     },
     {
+      "bytes": 3429,
+      "path": "src/grrc/joint_bounds.py",
+      "sha256": "243610bd93216ea6b7d3d8bc92c9f9d440ae281612e616d0b929596d3ce3b4b0"
+    },
+    {
       "bytes": 14389,
       "path": "src/grrc/provenance.py",
       "sha256": "bc68c43d8d9367b0e6ce70dcfb4eb4d5a82e0c59e9a4676cae73ad9aeb664f02"
@@ -91,67 +93,54 @@
       "bytes": 3518,
       "path": "src/grrc/utilities.py",
       "sha256": "3ee09640a09c3868b530c7937133334acf2897939c2349e6a7dd1bc1fc531afa"
-    },
-    {
-      "bytes": 4044,
-      "path": "study/CIPHER_INFERENCE_PLAN.md",
-      "sha256": "6b074d3584c70d28e5527f83a291f173c775d0bdd44f2db993cfd58698708e61"
     }
   ],
   "outputs": [
     {
-      "bytes": 616,
-      "path": "data/cipher_inference/certificate_comparison.csv",
-      "sha256": "461d4ea781b0805c2ff76b881e4209eb72eca1f1e0dc507008f289df532987fe"
+      "bytes": 1324,
+      "path": "data/catastrophic_certificate/catastrophic_named.csv",
+      "sha256": "788d578319cfa098674b83e808ded605540ac5d7d68a827dbf4842a20deef7b8"
     },
     {
-      "bytes": 589,
-      "path": "data/cipher_inference/gamma_bounds.csv",
-      "sha256": "6947cb746b14b21d58b6cc0cb815860e15fcebfeac7ce01c92227d22cba2b63c"
-    },
-    {
-      "bytes": 155,
-      "path": "data/cipher_inference/observed_shares.csv",
-      "sha256": "c7f4b9734ab048e13e978e26acb8af7e9ff83a2b37ea0f60ccecb859300c589d"
-    },
-    {
-      "bytes": 137,
-      "path": "data/cipher_inference/time_profile.csv",
-      "sha256": "69299571d929355e2deac5c21298cd6b97e882294dc8b146d09e9fc263568ad8"
+      "bytes": 319,
+      "path": "data/catastrophic_certificate/catastrophic_summary.csv",
+      "sha256": "d7f0412022d54167466883e9c3bd5e25470564e76358cfde8d8d177c8e9636aa"
     }
   ],
   "parameters": {
-    "assumed_degradation": {
-      "ehr": [
-        0.3,
-        0.44
-      ],
-      "imaging": [
-        0.17,
-        0.35
-      ],
-      "laboratory": [
-        0.2,
-        0.4
-      ],
-      "pharmacy": [
-        0.2,
-        0.4
+    "attack_version": "17.1",
+    "base_bounds": [
+      0.5,
+      0.9
+    ],
+    "bound": "sharp k-of-n distribution-free (LP over joint atoms)",
+    "cipher_gamma": 1.0,
+    "default_eff": [
+      0.2,
+      0.7
+    ],
+    "epsilon": 0.05,
+    "evidence_eff": {
+      "M1032": [
+        0.85,
+        0.99
       ]
     },
-    "gammas": [
-      0.0,
-      0.5,
-      1.0,
-      2.0
+    "ks": [
+      1,
+      2,
+      3,
+      4
     ],
-    "high_severity_total": 128,
-    "integration_gamma": 1.0,
-    "records": 316,
-    "scope": "convenience sample of reported harms; partial identification, not incidence or causal; domain->service via repo coverage mapping",
-    "tau": 7
+    "scope": "classical aggregation bound; ATT&CK structure real; effectiveness and degradation are evidence-anchored intervals; no incident validation",
+    "services": [
+      "ehr",
+      "laboratory",
+      "pharmacy",
+      "imaging"
+    ]
   },
   "protocol": null,
-  "run_id": "cipher-inference",
+  "run_id": "catastrophic-certificate",
   "stage": "analysis"
 }

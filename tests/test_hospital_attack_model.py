@@ -5,7 +5,7 @@ import pytest
 
 from grrc.attack_graph import build_graph, load_bundle
 from grrc.hospital_attack_model import (build_model, impact_reachability, service_outage,
-                                        certify_clinical, IMPACT_TECHNIQUES)
+                                        certify_clinical, certify_catastrophic, IMPACT_TECHNIQUES)
 
 ROOT = Path(__file__).resolve().parents[1]
 BUNDLE = ROOT / "data/attack/raw/enterprise-attack-17.1.json.gz"
@@ -94,3 +94,37 @@ def test_certify_rejects_bad_epsilon(eps):
     with pytest.raises(ValueError):
         certify_clinical(np.ones((1, n), bool), (0.5, 0.9),
                          np.tile([0.2, 0.7], (n, 1)), m.degradation, m, eps)
+
+
+def test_catastrophic_k1_matches_clinical_union_column():
+    m = _model()
+    n = m.graph.n_mitigations
+    eff = np.tile([0.2, 0.7], (n, 1))
+    port = np.zeros((1, n), bool)
+    union = certify_clinical(port, (0.5, 0.9), eff, m.degradation, m, 0.5)[0][0, -1]
+    worst, _, _, _ = certify_catastrophic(port, (0.5, 0.9), eff, m.degradation, m, 1, 0.5)
+    assert worst[0] == pytest.approx(min(1.0, union))
+
+
+def test_catastrophic_nonincreasing_in_k_and_guaranteed_implies_possible():
+    m = _model()
+    n = m.graph.n_mitigations
+    eff = np.tile([0.2, 0.7], (n, 1))
+    port = np.zeros((1, n), bool)
+    vals = []
+    for k in (1, 2, 3, 4):
+        worst, best, guaranteed, possible = certify_catastrophic(
+            port, (0.5, 0.9), eff, m.degradation, m, k, 0.05)
+        vals.append(worst[0])
+        assert (best <= worst + 1e-9).all()
+        assert not (guaranteed & ~possible).any()
+    assert all(vals[i] >= vals[i + 1] - 1e-9 for i in range(3))
+
+
+@pytest.mark.parametrize("k", [0, 5, -1])
+def test_catastrophic_rejects_bad_k(k):
+    m = _model()
+    n = m.graph.n_mitigations
+    with pytest.raises(ValueError):
+        certify_catastrophic(np.ones((1, n), bool), (0.5, 0.9),
+                             np.tile([0.2, 0.7], (n, 1)), m.degradation, m, k, 0.05)

@@ -26,6 +26,7 @@ import numpy as np
 
 from grrc.attack_graph import AttackGraph, RANSOMWARE_STAGES
 from grrc.enums import CLINICAL_SERVICES, Service
+from grrc.joint_bounds import sharp_k_of_n_upper
 
 # ATT&CK impact techniques that degrade clinical care, and the effect modelled.
 IMPACT_TECHNIQUES = ("T1486", "T1490", "T1489", "T1485")
@@ -134,3 +135,43 @@ def certify_clinical(portfolios, base_bounds, eff_bounds, degradation_bounds, mo
     guaranteed = (worst <= epsilon).all(axis=1)
     possible = (best <= epsilon).all(axis=1)
     return worst, best, guaranteed, possible
+
+
+def certify_catastrophic(portfolios, base_bounds, eff_bounds, degradation_bounds,
+                         model, k, epsilon):
+    """Sharp distribution-free certificate for the k-of-n catastrophic outage.
+
+    Certifies P(at least ``k`` of the ``n`` clinical services in simultaneous
+    sustained outage) <= ``epsilon``, using the sharp k-of-n aggregation bound
+    (:func:`grrc.joint_bounds.sharp_k_of_n_upper`) on the per-service outage
+    marginals, in place of the loose union bound of :func:`certify_clinical`.
+    ``k = 1`` recovers the union bound; ``k = n`` is the tightest (min marginal),
+    matching the model's "all clinical services" catastrophic definition.
+
+    Returns ``(worst, best, guaranteed, possible)`` where worst/best are per-portfolio
+    sharp bounds on P(>= k) at the adverse and favourable interval corners. The
+    per-service outage marginals are monotone in the parameters and the sharp bound
+    is monotone in the marginals, so the corners are exact.
+    """
+    eff_bounds = np.asarray(eff_bounds, float)
+    deg_bounds = np.asarray(degradation_bounds, float)
+    base_low, base_high = float(base_bounds[0]), float(base_bounds[1])
+    n_services = len(model.services)
+    if not 0 < base_low <= base_high <= 1 or (eff_bounds[:, 0] > eff_bounds[:, 1]).any():
+        raise ValueError("degenerate base or effectiveness interval")
+    if deg_bounds.shape != (n_services, 2) or (deg_bounds[:, 0] > deg_bounds[:, 1]).any():
+        raise ValueError("degradation bounds must be [service, 2] and ordered")
+    if not isinstance(k, (int, np.integer)) or not 1 <= k <= n_services:
+        raise ValueError("k must be an integer in [1, number of clinical services]")
+    if not 0 < epsilon < 1:
+        raise ValueError("epsilon must lie strictly in (0, 1)")
+
+    def corner(base, eff, deg):
+        marg = service_outage(portfolios, base, eff, deg, model)   # [P, n_services]
+        return np.array([sharp_k_of_n_upper(row, k) for row in marg])
+
+    worst = corner(base_high, eff_bounds[:, 0], deg_bounds[:, 1])
+    best = corner(base_low, eff_bounds[:, 1], deg_bounds[:, 0])
+    if (best > worst + 1e-9).any():
+        raise AssertionError("best corner must not exceed worst corner")
+    return worst, best, worst <= epsilon, best <= epsilon

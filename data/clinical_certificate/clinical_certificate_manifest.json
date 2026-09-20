@@ -2,11 +2,21 @@
   "code": {
     "available": true,
     "branch": "claude/stoic-galileo-81yrtm",
-    "commit": "e20afc51ffcd629c371bb56facab006282cbc385",
-    "dirty": false,
-    "dirty_paths": []
+    "commit": "7ac5ecf2d8d2aab3b4ec4177664fd0ed04b59318",
+    "dirty": true,
+    "dirty_paths": [
+      "data/catastrophic_certificate/",
+      "data/cipher_inference/cipher_inference_manifest.json",
+      "docs/catastrophic_certificate/",
+      "scripts/analyze_catastrophic_certificate.py",
+      "scripts/generate_catastrophic_paper.py",
+      "src/grrc/hospital_attack_model.py",
+      "src/grrc/joint_bounds.py",
+      "tests/test_hospital_attack_model.py",
+      "tests/test_joint_bounds.py"
+    ]
   },
-  "created_at": "2026-09-20T00:59:29+00:00",
+  "created_at": "2026-09-20T16:00:51+00:00",
   "description": "Certified clinical-impact-bounded control selection on the evidence-anchored ATT&CK-driven hospital model.",
   "environment": {
     "implementation": "CPython",
@@ -59,9 +69,9 @@
       "sha256": "1959703e375427a1b009615125a866a00384b4efee53815bedb08ac05acbea00"
     },
     {
-      "bytes": 6719,
+      "bytes": 9042,
       "path": "src/grrc/hospital_attack_model.py",
-      "sha256": "ea3197e9d8b860da4491e9fc8caa75ff44b8c50d63fd5a4338359d7eaa9d51c2"
+      "sha256": "53919b922f3413f8c09ce8153704cf522d910371c4fbf5aa2d3838baa2ed856f"
     },
     {
       "bytes": 14389,
