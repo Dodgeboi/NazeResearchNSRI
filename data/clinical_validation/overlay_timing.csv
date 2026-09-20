@@ -1,0 +1,21 @@
+service,time_point,fraction
+ehr,First Hour,0.03333333333
+ehr,First Day,0.15
+ehr,First Week,0.4666666667
+ehr,Week 2,0.1666666667
+ehr,First Month,0.1833333333
+laboratory,First Hour,0.1212121212
+laboratory,First Day,0.2424242424
+laboratory,First Week,0.4545454545
+laboratory,Week 2,0.09090909091
+laboratory,First Month,0.09090909091
+pharmacy,First Hour,0
+pharmacy,First Day,0.08602150538
+pharmacy,First Week,0.5268817204
+pharmacy,Week 2,0.2580645161
+pharmacy,First Month,0.1290322581
+imaging,First Hour,0.07692307692
+imaging,First Day,0.3846153846
+imaging,First Week,0.4230769231
+imaging,Week 2,0.07692307692
+imaging,First Month,0.03846153846

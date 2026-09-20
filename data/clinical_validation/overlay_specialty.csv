@@ -1,0 +1,21 @@
+service,specialty,records,share
+ehr,All,26,0.4333333333
+ehr,Psychiatry,12,0.2
+ehr,Oncology,9,0.15
+ehr,Obstetrics; Paediatrics,3,0.05
+ehr,Oncology; General Surgery,2,0.03333333333
+laboratory,All,19,0.5757575758
+laboratory,Oncology,3,0.09090909091
+laboratory,Emergency & Acute Medicine,3,0.09090909091
+laboratory,Obstetrics,2,0.06060606061
+laboratory,General Surgery; Oncology,1,0.0303030303
+pharmacy,All,29,0.311827957
+pharmacy,Neurology,16,0.1720430108
+pharmacy,Psychiatry,15,0.1612903226
+pharmacy,General Medicine; Neurology; Psychiatry,7,0.0752688172
+pharmacy,Oncology,6,0.06451612903
+imaging,All,6,0.2307692308
+imaging,Oncology,5,0.1923076923
+imaging,Orthopaedics; Neurology; General Surgery,2,0.07692307692
+imaging,General Surgery,2,0.07692307692
+imaging,Orthopaedics,2,0.07692307692
