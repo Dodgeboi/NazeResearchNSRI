@@ -1,0 +1,45 @@
+size,added,added_name,worst_reachability,best_reachability,guaranteed_10,guaranteed_05,guaranteed_01
+1,M1032,Multi-factor Authentication,0.09781779223,6.92659638e-05,True,False,False
+2,M1031,Network Intrusion Prevention,0.05923664182,6.659666216e-06,True,False,False
+3,M1040,Behavior Prevention on Endpoint,0.03590444753,6.651021762e-07,True,True,False
+4,M1026,Privileged Account Management,0.022766126,9.754442478e-08,True,True,False
+5,M1018,User Account Management,0.01483166234,2.405422825e-08,True,True,False
+6,M1047,Audit,0.009966063075,7.798491986e-09,True,True,True
+7,M1038,Execution Prevention,0.00747225086,1.946310266e-09,True,True,True
+8,M1017,User Training,0.005630729314,8.593915865e-10,True,True,True
+9,M1021,Restrict Web-Based Content,0.004485386068,4.624566067e-10,True,True,True
+10,M1053,Data Backup,0.003588308854,1.38736982e-10,True,True,True
+11,M1051,Update Software,0.002875082024,4.58805851e-11,True,True,True
+12,M1042,Disable or Remove Feature or Program,0.002347438719,2.090678115e-11,True,True,True
+13,M1037,Filter Network Traffic,0.001942334394,8.949276485e-12,True,True,True
+14,M1057,Data Loss Prevention,0.001613389846,4.631405201e-12,True,True,True
+15,M1027,Password Policies,0.00134429299,3.383956087e-12,True,True,True
+16,M1028,Operating System Configuration,0.001160976269,2.883792506e-12,True,True,True
+17,M1049,Antivirus/Antimalware,0.001011299228,2.242099867e-12,True,True,True
+18,M1030,Network Segmentation,0.0008881715384,1.603924885e-12,True,True,True
+19,M1050,Exploit Protection,0.0007956785887,1.191715531e-12,True,True,True
+20,M1022,Restrict File and Directory Permissions,0.0007141852347,8.92984031e-13,True,True,True
+21,M1054,Software Configuration,0.0006446174997,7.530091029e-13,True,True,True
+22,M1035,Limit Access to Resource Over Network,0.0005822959691,6.067123889e-13,True,True,True
+23,M1048,Application Isolation and Sandboxing,0.0005347446269,5.574850707e-13,True,True,True
+24,M1024,Restrict Registry Permissions,0.0005030603283,3.960359555e-13,True,True,True
+25,M1045,Code Signing,0.0004736131226,3.714219277e-13,True,True,True
+26,M1041,Encrypt Sensitive Information,0.0004474627353,3.10524297e-13,True,True,True
+27,M1034,Limit Hardware Installation,0.0004227832366,2.233342257e-13,True,True,True
+28,M1016,Vulnerability Scanning,0.0003990781333,1.283230647e-13,True,True,True
+29,M1013,Application Developer Guidance,0.0003804267847,1.190588603e-13,True,True,True
+30,M1052,User Account Control,0.0003689574425,1.145541434e-13,True,True,True
+31,M1033,Limit Software Installation,0.000357767869,1.092058551e-13,True,True,True
+32,M1015,Active Directory Configuration,0.000347764124,1.061627045e-13,True,True,True
+33,M1044,Restrict Library Loading,0.0003402626517,1.047660611e-13,True,True,True
+34,M1025,Privileged Process Integrity,0.0003345433294,1.022210709e-13,True,True,True
+35,M1020,SSL/TLS Inspection,0.0003290031764,9.636679896e-14,True,True,True
+36,M1029,Remote Data Storage,0.0003237143566,9.396308905e-14,True,True,True
+37,M1036,Account Use Policies,0.000319035287,9.34460195e-14,True,True,True
+38,M1019,Threat Intelligence Program,0.000314710695,9.321878871e-14,True,True,True
+39,M1043,Credential Access Protection,0.0003108312531,9.291667303e-14,True,True,True
+40,M1046,Boot Integrity,0.000308200761,7.850787829e-14,True,True,True
+41,M1060,Out-of-Band Communications Channel,0.0003068098378,7.807115916e-14,True,True,True
+42,M1055,Do Not Mitigate,0.0003055909274,7.617807126e-14,True,True,True
+43,M1039,Environment Variable Permissions,0.0003053107997,7.607171414e-14,True,True,True
+44,M1056,Pre-compromise,0.0003053107997,7.607171414e-14,True,True,True
