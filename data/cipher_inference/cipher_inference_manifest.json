@@ -1,0 +1,153 @@
+{
+  "code": {
+    "available": true,
+    "branch": "claude/stoic-galileo-81yrtm",
+    "commit": "558986863c7577e6f693445744b295478ab07298",
+    "dirty": true,
+    "dirty_paths": [
+      "scripts/analyze_cipher_bounds.py",
+      "src/grrc/cipher_bounds.py",
+      "study/CIPHER_INFERENCE_PLAN.md",
+      "tests/test_cipher_bounds.py"
+    ]
+  },
+  "created_at": "2026-09-20T14:40:47+00:00",
+  "description": "Selection-robust clinical-harm bounds from the real CIPHER corpus and their effect on the clinical-impact certificate.",
+  "environment": {
+    "implementation": "CPython",
+    "machine": "x86_64",
+    "packages": {
+      "matplotlib": "3.11.0",
+      "networkx": "3.6.1",
+      "numpy": "2.3.5",
+      "pandas": "3.0.1",
+      "scipy": "1.18.0",
+      "yaml": "6.0.3"
+    },
+    "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "inputs": [
+    {
+      "bytes": 8078946,
+      "path": "data/attack/raw/enterprise-attack-17.1.json.gz",
+      "sha256": "522b09c7db81ce61887baa19dde98ea06ee4045420fe3c42f5f58f3e3382c597"
+    },
+    {
+      "bytes": 428,
+      "path": "data/attack/raw/source.json",
+      "sha256": "ea0caa84593fc866fbe9d2bfc14290c8f9a015f7eee88f3c3d3dfe5f795e7d2c"
+    },
+    {
+      "bytes": 303958,
+      "path": "data/cipher/raw/cipher-v1.0.1.csv",
+      "sha256": "3ee4a39ba8e2b058832d6eadf014f569baad43851d1cba25043b7a8b85b38204"
+    },
+    {
+      "bytes": 1047,
+      "path": "data/cipher/raw/source_manifest.json",
+      "sha256": "7fdf5df49ad97bba06c38301b32f84fd98939c8acb40b430f1d5972d999874af"
+    },
+    {
+      "bytes": 7419,
+      "path": "scripts/analyze_cipher_bounds.py",
+      "sha256": "a9bee67ea52ce57d080dd8c6cda860bfa1f27e93623246d188280d69babcdb3c"
+    },
+    {
+      "bytes": 6275,
+      "path": "src/grrc/attack_graph.py",
+      "sha256": "b0dd7abd2e58ad155e8127db72cf005a5bd626755ffe2880aac9b74818cdd023"
+    },
+    {
+      "bytes": 5216,
+      "path": "src/grrc/cipher_bounds.py",
+      "sha256": "1de486592089991c9b8d0a84a19b5ef0aca5ac2e552cafc4794218ffb3963fd6"
+    },
+    {
+      "bytes": 6868,
+      "path": "src/grrc/control_certificate.py",
+      "sha256": "8fa9811782eb6dbeb09a6767ded209d11d17b57d81c010ee155d10099cf978f2"
+    },
+    {
+      "bytes": 4479,
+      "path": "src/grrc/enums.py",
+      "sha256": "1959703e375427a1b009615125a866a00384b4efee53815bedb08ac05acbea00"
+    },
+    {
+      "bytes": 6719,
+      "path": "src/grrc/hospital_attack_model.py",
+      "sha256": "ea3197e9d8b860da4491e9fc8caa75ff44b8c50d63fd5a4338359d7eaa9d51c2"
+    },
+    {
+      "bytes": 14389,
+      "path": "src/grrc/provenance.py",
+      "sha256": "bc68c43d8d9367b0e6ce70dcfb4eb4d5a82e0c59e9a4676cae73ad9aeb664f02"
+    },
+    {
+      "bytes": 3518,
+      "path": "src/grrc/utilities.py",
+      "sha256": "3ee09640a09c3868b530c7937133334acf2897939c2349e6a7dd1bc1fc531afa"
+    },
+    {
+      "bytes": 4044,
+      "path": "study/CIPHER_INFERENCE_PLAN.md",
+      "sha256": "6b074d3584c70d28e5527f83a291f173c775d0bdd44f2db993cfd58698708e61"
+    }
+  ],
+  "outputs": [
+    {
+      "bytes": 616,
+      "path": "data/cipher_inference/certificate_comparison.csv",
+      "sha256": "461d4ea781b0805c2ff76b881e4209eb72eca1f1e0dc507008f289df532987fe"
+    },
+    {
+      "bytes": 589,
+      "path": "data/cipher_inference/gamma_bounds.csv",
+      "sha256": "6947cb746b14b21d58b6cc0cb815860e15fcebfeac7ce01c92227d22cba2b63c"
+    },
+    {
+      "bytes": 155,
+      "path": "data/cipher_inference/observed_shares.csv",
+      "sha256": "c7f4b9734ab048e13e978e26acb8af7e9ff83a2b37ea0f60ccecb859300c589d"
+    },
+    {
+      "bytes": 137,
+      "path": "data/cipher_inference/time_profile.csv",
+      "sha256": "69299571d929355e2deac5c21298cd6b97e882294dc8b146d09e9fc263568ad8"
+    }
+  ],
+  "parameters": {
+    "assumed_degradation": {
+      "ehr": [
+        0.3,
+        0.44
+      ],
+      "imaging": [
+        0.17,
+        0.35
+      ],
+      "laboratory": [
+        0.2,
+        0.4
+      ],
+      "pharmacy": [
+        0.2,
+        0.4
+      ]
+    },
+    "gammas": [
+      0.0,
+      0.5,
+      1.0,
+      2.0
+    ],
+    "high_severity_total": 128,
+    "integration_gamma": 1.0,
+    "records": 316,
+    "scope": "convenience sample of reported harms; partial identification, not incidence or causal; domain->service via repo coverage mapping",
+    "tau": 7
+  },
+  "protocol": null,
+  "run_id": "cipher-inference",
+  "stage": "analysis"
+}
