@@ -2,20 +2,11 @@
   "code": {
     "available": true,
     "branch": "claude/stoic-galileo-81yrtm",
-    "commit": "5b25784851062ca90312337ba2109806c21635e5",
-    "dirty": true,
-    "dirty_paths": [
-      "data/attack/",
-      "scripts/analyze_control_certificate.py",
-      "scripts/fetch_attack.py",
-      "src/grrc/attack_graph.py",
-      "src/grrc/control_certificate.py",
-      "study/CONTROL_CERTIFICATE_PLAN.md",
-      "tests/test_attack_graph.py",
-      "tests/test_control_certificate.py"
-    ]
+    "commit": "49cd69be362ff98f3225a81d6278c7ce89d45a64",
+    "dirty": false,
+    "dirty_paths": []
   },
-  "created_at": "2026-09-20T00:35:47+00:00",
+  "created_at": "2026-09-20T00:43:31+00:00",
   "description": "Distribution-free ransomware-reachability control-adequacy certificates on the pinned MITRE ATT&CK Enterprise kill chain.",
   "environment": {
     "implementation": "CPython",
