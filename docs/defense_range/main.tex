@@ -1,0 +1,123 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,booktabs,hyperref,microtype}
+\hypersetup{hidelinks}
+\makeatletter\let\tableinput\@@input\makeatother
+\input{range_numbers}
+
+\title{A certified cyber range: scoring automated defenders with\\
+provable residual-risk guarantees on real ATT\&CK structure}
+\author{}
+\date{2026-09-21 (work-in-progress, version 0.1.0)}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Autonomous cyber-defense systems are judged almost entirely by \emph{empirical}
+outcomes---attack-success rate, flags captured---which say nothing provable about
+the residual risk a defender leaves behind. We describe a small \emph{cyber range}
+that scores automated defenders with a \emph{provable} verdict instead. Built on the
+real MITRE ATT\&CK Enterprise kill chain (v\RangeAttackVersion, \RangeMitigations{}
+mitigations) and an evidence-anchored hospital-ransomware impact model, the range
+returns, for any control portfolio a defender proposes, a distribution-free
+\emph{guaranteed}/\emph{possible} adequacy certificate---the worst-case probability
+that at least $k$ clinical services suffer simultaneous sustained outage stays below
+$\varepsilon$, over all dependence structures and all parameter values in an
+interval uncertainty set. We benchmark four reference automated defenders across
+\RangeRegimes{} adaptive threat regimes (assumed vs.\ real CIPHER-derived
+degradation, an $\varepsilon$ grid, $k=1..4$). An exact optimiser certifies at a mean
+cost of \RangeOptimalMeanCost{} controls; a certificate-guided greedy defender is
+close behind (\RangeGreedyMeanCost), while a certificate-blind coverage heuristic
+(\RangeCoverageMeanCost) and a random policy (\RangeRandomMeanCost) pay much more,
+quantifying the value of certificate feedback. The defender API is agent-agnostic, so
+an agentic/LLM defender drops in unchanged---the intended next step. This is an
+evaluation-environment contribution, not a new theorem or a validated real defense.
+\end{abstract}
+
+\section{The range}
+A defender chooses a \emph{control portfolio}: a set of ATT\&CK mitigations
+(M\#\#\#\#). Via the real \texttt{mitigates} edges, each mitigation lowers the
+success probability of the techniques it covers, and the kill-chain reachability to
+the ransomware impact objective composes those into a per-clinical-service sustained-
+outage probability. The range's \texttt{score} is the certificate, not a sampled
+outcome: worst- and best-corner evaluation over the interval uncertainty set gives a
+\emph{guaranteed} verdict (adequate even at the adverse corner) and a \emph{possible}
+one (adequate only at the favourable corner); the catastrophic $k$-of-$n$ event uses
+the sharp closed-form aggregation bound (a min over dependence structures), so the
+verdict holds whatever the true correlation between service failures. The primary
+adequacy target is this catastrophic verdict, because it varies with every regime
+axis. The observation (named mitigations, techniques covered, stages touched), the
+action (add/remove a mitigation), and the certified score form an agent-agnostic API.
+
+\section{Reference defenders and regimes}
+We score four automated (non-LLM) defenders: an \emph{exact} minimum-cost optimiser
+(budget-bounded search, feasible because adequacy is monotone in the portfolio); a
+\emph{greedy} defender that adds the mitigation with the largest worst-case
+reachability reduction (certificate-guided); a \emph{coverage} heuristic that maximises
+techniques covered while ignoring the certificate; and a seeded \emph{random} policy.
+Each is scored across \RangeRegimes{} regimes: assumed vs.\ real CIPHER-derived
+degradation, adequacy levels $\varepsilon\in\{0.10,0.05,0.01\}$, and catastrophic
+thresholds $k=1..4$. The reported metric is \emph{cost-to-certify}: the smallest
+portfolio a defender reaches that the range certifies as adequate.
+
+\section{Results}
+Undefended, the worst-case ``at least one clinical service'' outage probability is
+\RangeUndefendedKOnePct\%, far above any $\varepsilon$, so defense is required.
+Table~\ref{tab:leader} ranks the defenders by cost-to-certify across the sweep: the
+exact optimum averages \RangeOptimalMeanCost{} controls, the certificate-guided greedy
+defender \RangeGreedyMeanCost, the certificate-blind coverage heuristic
+\RangeCoverageMeanCost, and random \RangeRandomMeanCost---so \emph{using the
+certificate as feedback roughly halves the control burden} relative to a
+structure-only heuristic. Grounding degradation in the real CIPHER corpus rather than
+the assumed prior lowers greedy's mean cost from \RangeGreedyAssumedCost{} to
+\RangeGreedyCipherCost{} controls. Table~\ref{tab:gap} shows the optimality gap per
+regime (assumed degradation): the greedy defender is at or within one control of the
+exact optimum almost everywhere, whereas the blind heuristic's gap is larger; at the
+headline regime ($\varepsilon=0.05$, $k=1$) the exact optimum is \RangeHeadOptimal{}
+controls versus greedy \RangeHeadGreedy{}, coverage \RangeHeadCoverage{}, and random
+\RangeHeadRandom{}. The exact optimiser is computed within the search cap in
+\RangeOptimalCertPct\% of regimes (the strictest $\varepsilon$ needs larger
+portfolios than the cap).
+
+\begin{table}[t]\centering
+\caption{Reference defenders by cost-to-certify across all \RangeRegimes{} regimes:
+fraction of regimes certified within the search, mean controls when certified, and
+the same split by assumed vs.\ real (CIPHER) degradation.}\label{tab:leader}
+\begin{tabular}{@{}lrrrr@{}}\toprule
+Defender & Certified (\%) & Mean controls & Assumed & CIPHER\\\midrule
+\tableinput table_range_leaderboard_rows.tex
+\bottomrule\end{tabular}
+\end{table}
+
+\begin{table}[t]\centering
+\caption{Cost-to-certify per regime (assumed degradation): exact optimum vs.\ the
+three heuristics. ``$>$4'' means the exact optimum exceeds the search cap.}\label{tab:gap}
+\begin{tabular}{@{}rrrrrr@{}}\toprule
+$\varepsilon$ & $k$ & Optimal & Greedy & Coverage & Random\\\midrule
+\tableinput table_range_gap_rows.tex
+\bottomrule\end{tabular}
+\end{table}
+
+\section{Scope and limitations}
+This is a first-of-kind \emph{evaluation environment}, realistically a
+work-in-progress contribution---not a new theorem (the certificate and the
+closed-form $k$-of-$n$ bound are prior work) and not a validated real-world defense.
+MITRE ATT\&CK and the CIPHER harm corpus are real; the hospital is synthetic, since
+real hospital maps and per-incident telemetry are not public. Effectiveness and
+degradation are analyst-prior intervals anchored to published figures, never incident
+measurements, and the certificate verdicts are conditional worst-case frequencies
+under those intervals, not statistical confidence levels. The reference defenders are
+deliberately simple automated policies. The value of the range is that its score is a
+\emph{provable} residual-risk bound rather than an average, and that an agentic
+defender can be dropped into the same API and held to the same guarantee---the
+natural next step.
+
+\paragraph{Reproducibility.} All numbers are generated from committed tables; the
+benchmark is deterministic (seeded random policy) and carries a provenance manifest
+over the pinned ATT\&CK bundle and the CIPHER corpus. No LLM or network access is
+used.
+
+\end{document}

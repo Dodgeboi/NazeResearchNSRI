@@ -7,6 +7,27 @@ efficient when outcome definitions, shared component prices, and scenario
 samples and assumed control effects change. The application is one synthetic hospital network
 with pathway-specific controls and six decision objectives.
 
+## Current direction: a certified cyber range for automated defenders
+
+The project's active thrust reorients this machinery toward autonomous cyber
+defense. Building on the distribution-free residual-risk certificates over real
+MITRE ATT&CK structure (below), we expose a small **cyber range** whose score is a
+*provable* guarantee rather than an empirical attack-success rate: for any control
+portfolio, a distribution-free `guaranteed`/`possible` verdict that the worst-case
+probability of at least *k* clinical services in simultaneous sustained outage stays
+below a level, over all dependence structures and all parameters in an interval
+uncertainty set. Reference **automated defenders** (exact, greedy, coverage, random)
+are benchmarked across adaptive threat regimes; the defender API is agent-agnostic,
+so an agentic/LLM defender drops in unchanged. This targets the AIDC @ ACSAC 2026
+workshop topics *adaptive evaluation environments / dynamic cyber ranges* and
+*automated defensive countermeasures*. It is an evaluation-environment
+work-in-progress, not a new theorem or a validated real-world defense.
+
+- [Cyber-range paper](docs/defense_range/main.pdf) and [source](docs/defense_range/main.tex), [design note](study/DEFENSE_RANGE_PLAN.md)
+- [Benchmark results](data/defense_range) (leaderboard, optimality gap, regime robustness) with a provenance manifest
+- Core: [`grrc.range`](src/grrc/range) (environment, reference policies, regime sweep, runner)
+- Foundations it builds on: the [control-adequacy certificate](docs/control_certificate/main.tex), the [catastrophic k-of-n certificate](docs/catastrophic_certificate/main.tex), and the [proved closed-form k-of-n theorem](study/KOFN_THEOREM.md)
+
 ## Paper and results
 
 - [Final paper](docs/manuscript/main.pdf), [editable source](docs/manuscript/main.tex), and [anonymous copy](docs/manuscript/anonymous.pdf)
