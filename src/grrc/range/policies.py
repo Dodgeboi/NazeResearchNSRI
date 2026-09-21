@@ -28,11 +28,35 @@ MAX_EXACT_SIZE = 4        # exhaustive search is only run up to this cardinality
 _BATCH = 20000            # portfolios scored per certify call in the exact search
 
 
+def certificate_greedy(env):
+    """Greedy acquisition order minimizing the env's control worst-corner reachability.
+
+    Works for either adversary; for the typical adversary it reproduces
+    :func:`grrc.control_certificate.greedy_frontier` exactly (same argmin over
+    sorted candidates), which the ``adaptive`` regimes' greedy defender reuses.
+    """
+    n = env.n_mitigations
+    chosen: list[int] = []
+    remaining = set(range(n))
+    while remaining:
+        cands = np.array(sorted(remaining))
+        base = np.zeros(n, bool)
+        base[chosen] = True
+        trials = np.tile(base, (len(cands), 1))
+        trials[np.arange(len(cands)), cands] = True
+        worst = env.control_certify(trials)[0]
+        chosen.append(int(cands[int(np.argmin(worst))]))
+        remaining.discard(chosen[-1])
+    return chosen
+
+
 def greedy_order(env):
-    order, _ = greedy_frontier(env.regime.base_bounds, env.regime.eff_bounds,
-                               env.graph.coverage, env.graph.usage,
-                               env.stage_index, env.impact_index)
-    return list(order)
+    if env.regime.adversary == "typical":
+        order, _ = greedy_frontier(env.regime.base_bounds, env.regime.eff_bounds,
+                                   env.graph.coverage, env.graph.usage,
+                                   env.stage_index, env.impact_index)
+        return list(order)
+    return certificate_greedy(env)
 
 
 def coverage_order(env):

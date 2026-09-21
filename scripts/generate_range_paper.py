@@ -24,58 +24,74 @@ def _cost(x, computed=True):
     return "none" if computed else "$>$4"
 
 
+def _gapcell(x, computed=True, feasible=True):
+    """Cost cell for the gap table: 'none' when no portfolio certifies, '>4' beyond the cap."""
+    x = int(x)
+    if x >= 0:
+        return str(x)
+    if not feasible:
+        return "none"
+    return "none" if computed else "$>$4"
+
+
 def content():
     verify_manifest(DATA / "defense_range_manifest.json")
     params = json.loads((DATA / "defense_range_manifest.json").read_text())["parameters"]
     robust = pd.read_csv(DATA / "regime_robustness.csv").set_index("policy")
     gap = pd.read_csv(DATA / "optimality_gap.csv")
-    lead = pd.read_csv(DATA / "leaderboard.csv")
 
-    assumed = gap[gap.degradation_source == "assumed"]
-    head = assumed[(assumed.epsilon == 0.05) & (assumed.k == 1)].iloc[0]   # headline regime
+    assumed_adv = gap[(gap.adversary == "adaptive") & (gap.degradation_source == "assumed")]
+    assumed_typ = gap[(gap.adversary == "typical") & (gap.degradation_source == "assumed")]
+    # The one regime where the adaptive adversary is non-trivially certifiable (k=3),
+    # illustrating greedy's gap from the exact optimum.
+    ex = assumed_adv[(assumed_adv.epsilon == 0.10) & (assumed_adv.k == 3)].iloc[0]
 
-    def one(p):
-        return f"{float(robust.loc[p, 'mean_cost_when_certified']):.1f}"
+    def undef(df):
+        return f"{100*float(df[df.k == 1].iloc[0].empty_cat_worst):.1f}"
 
     values = {
         "RangeAttackVersion": str(params["attack_version"]),
         "RangeMitigations": str(int(params["n_mitigations"])),
         "RangeRegimes": str(int(gap.shape[0])),
-        "RangeGreedyMeanCost": one("greedy"),
-        "RangeCoverageMeanCost": one("coverage"),
-        "RangeRandomMeanCost": one("random"),
-        "RangeOptimalMeanCost": one("optimal"),
-        "RangeOptimalCertPct": f"{100*float(robust.loc['optimal','certified_fraction']):.0f}",
-        "RangeGreedyAssumedCost": f"{float(robust.loc['greedy','mean_cost_assumed']):.1f}",
-        "RangeGreedyCipherCost": f"{float(robust.loc['greedy','mean_cost_cipher']):.1f}",
-        "RangeHeadOptimal": _cost(head.optimal_size, bool(head.optimal_computed)),
-        "RangeHeadGreedy": _cost(head.greedy_cost),
-        "RangeHeadCoverage": _cost(head.coverage_cost),
-        "RangeHeadRandom": _cost(head.random_cost),
-        "RangeUndefendedKOnePct": f"{100*float(assumed[assumed.k==1].iloc[0].empty_cat_worst):.1f}",
+        "RangeAdaptiveRegimes": str(int(len(assumed_adv))),
+        "RangeAdaptiveUncert": str(int((~assumed_adv.all_certifies).sum())),
+        "RangeTypicalUncert": str(int((~assumed_typ.all_certifies).sum())),
+        "RangeUndefendedTypicalKOnePct": undef(assumed_typ),
+        "RangeUndefendedAdaptiveKOnePct": undef(assumed_adv),
+        "RangeAdvExEps": f"{float(ex.epsilon):.2f}",
+        "RangeAdvExK": str(int(ex.k)),
+        "RangeAdvExOptimal": _gapcell(ex.optimal_size, bool(ex.optimal_computed), bool(ex.all_certifies)),
+        "RangeAdvExGreedy": _gapcell(ex.greedy_cost, feasible=bool(ex.all_certifies)),
+        "RangeAdvExCoverage": _gapcell(ex.coverage_cost, feasible=bool(ex.all_certifies)),
     }
+    for p in ("greedy", "coverage", "optimal", "random"):
+        values[f"Range{p.capitalize()}TypicalCost"] = f"{float(robust.loc[p,'mean_cost_typical']):.1f}"
+        values[f"Range{p.capitalize()}AdaptiveCost"] = f"{float(robust.loc[p,'mean_cost_adaptive']):.1f}"
     generated = {"range_numbers.tex": "% Generated; do not edit. Certified cyber-range benchmark.\n"
                  + "".join("\\newcommand{\\" + k + "}{" + v + "}\n" for k, v in sorted(values.items()))}
 
-    # Robustness / leaderboard table.
+    # Leaderboard table: mean cost per policy under each adversary (over certified regimes).
     rows = []
     disp = {"optimal": "Optimal (exact)", "greedy": "Greedy (certificate)",
             "coverage": "Coverage (blind)", "random": "Random"}
     for p in ("optimal", "greedy", "coverage", "random"):
         r = robust.loc[p]
         rows.append([disp[p], f"{100*float(r.certified_fraction):.0f}",
-                     f"{float(r.mean_cost_when_certified):.1f}",
-                     f"{float(r.mean_cost_assumed):.1f}", f"{float(r.mean_cost_cipher):.1f}"])
+                     f"{float(r.mean_cost_typical):.1f}", f"{float(r.mean_cost_adaptive):.1f}"])
     generated["table_range_leaderboard_rows.tex"] = "% Generated from regime_robustness.csv.\n" + "".join(
         " & ".join(r) + " \\\\\n" for r in rows)
 
-    # Optimality-gap table (assumed source).
+    # Adaptive-adversary feasibility/gap table (assumed degradation): 'none' where no
+    # portfolio certifies at any cost -- the range's key finding.
     rows = []
-    for _, r in assumed.sort_values(["epsilon", "k"], ascending=[False, True]).iterrows():
+    for _, r in assumed_adv.sort_values(["epsilon", "k"], ascending=[False, True]).iterrows():
+        feas = bool(r.all_certifies)
         rows.append([f"{r.epsilon:.2f}", str(int(r.k)),
-                     _cost(r.optimal_size, bool(r.optimal_computed)),
-                     _cost(r.greedy_cost), _cost(r.coverage_cost), _cost(r.random_cost)])
-    generated["table_range_gap_rows.tex"] = "% Generated from optimality_gap.csv (assumed source).\n" + "".join(
+                     _gapcell(r.optimal_size, bool(r.optimal_computed), feas),
+                     _gapcell(r.greedy_cost, feasible=feas),
+                     _gapcell(r.coverage_cost, feasible=feas),
+                     _gapcell(r.random_cost, feasible=feas)])
+    generated["table_range_gap_rows.tex"] = "% Generated from optimality_gap.csv (adaptive, assumed).\n" + "".join(
         " & ".join(r) + " \\\\\n" for r in rows)
     return generated
 

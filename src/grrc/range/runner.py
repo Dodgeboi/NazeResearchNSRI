@@ -59,7 +59,7 @@ def run_sweep(model, regimes, seed=20260921):
         empty_certifies = empty_score["cat_guaranteed"]
         all_certifies = all_score["cat_guaranteed"]
 
-        reg = dict(degradation_source=regime.degradation_source,
+        reg = dict(adversary=regime.adversary, degradation_source=regime.degradation_source,
                    epsilon=regime.epsilon, k=regime.k)
         for name in ("greedy", "coverage", "random"):
             c = costs[name]
@@ -98,18 +98,19 @@ def _robustness(per_policy):
     for policy, entries in per_policy.items():
         total = len(entries)
         certified = [(r, c) for r, c in entries if c is not None]
-        by_source = {}
-        for r, c in certified:
-            by_source.setdefault(r.degradation_source, []).append(c)
+
+        def mean_where(pred):
+            vals = [c for r, c in certified if pred(r)]
+            return round(float(np.mean(vals)), 3) if vals else -1
+
         rows.append(dict(
             policy=policy, regimes=total, certified=len(certified),
             certified_fraction=round(len(certified) / total, 4) if total else 0.0,
-            mean_cost_when_certified=(round(float(np.mean([c for _, c in certified])), 3)
-                                      if certified else -1),
-            mean_cost_assumed=(round(float(np.mean(by_source["assumed"])), 3)
-                               if by_source.get("assumed") else -1),
-            mean_cost_cipher=(round(float(np.mean(by_source["cipher_gamma1"])), 3)
-                              if by_source.get("cipher_gamma1") else -1)))
+            mean_cost_when_certified=mean_where(lambda r: True),
+            mean_cost_typical=mean_where(lambda r: r.adversary == "typical"),
+            mean_cost_adaptive=mean_where(lambda r: r.adversary == "adaptive"),
+            mean_cost_assumed=mean_where(lambda r: r.degradation_source == "assumed"),
+            mean_cost_cipher=mean_where(lambda r: r.degradation_source == "cipher_gamma1")))
     return rows
 
 
@@ -118,20 +119,34 @@ def _sanity(leaderboard, gaps):
     for g in gaps:
         if g["optimal_size"] >= 0 and g["greedy_cost"] >= 0:
             assert g["optimal_size"] <= g["greedy_cost"], "optimal exceeds greedy"
-    # greedy cost-to-certify is monotone (its acquisition order is regime-independent):
-    # non-increasing as k rises (fixed degradation, epsilon), and non-decreasing as
-    # epsilon tightens (fixed degradation, k). Skip uncertified (-1) entries.
+    # greedy cost-to-certify is monotone (its acquisition order is fixed per adversary):
+    # non-increasing as k rises (fixed adversary, degradation, epsilon), and
+    # non-decreasing as epsilon tightens. Skip uncertified (-1) entries.
+    advs = {r["adversary"] for r in leaderboard}
     sources = {r["degradation_source"] for r in leaderboard}
     epsilons = sorted({r["epsilon"] for r in leaderboard}, reverse=True)   # loose -> tight
     ks = sorted({r["k"] for r in leaderboard})
-    greedy = {(r["degradation_source"], r["epsilon"], r["k"]): r["cost_to_certify"]
+    greedy = {(r["adversary"], r["degradation_source"], r["epsilon"], r["k"]): r["cost_to_certify"]
               for r in leaderboard if r["policy"] == "greedy"}
-    for src in sources:
-        for eps in epsilons:
-            costs = [greedy[(src, eps, k)] for k in ks if greedy[(src, eps, k)] >= 0]
-            assert all(costs[i] >= costs[i + 1] for i in range(len(costs) - 1)), \
-                "greedy cost must not rise as k rises"
-        for k in ks:
-            costs = [greedy[(src, eps, k)] for eps in epsilons if greedy[(src, eps, k)] >= 0]
-            assert all(costs[i] <= costs[i + 1] for i in range(len(costs) - 1)), \
-                "greedy cost must not fall as epsilon tightens"
+    for adv in advs:
+        for src in sources:
+            for eps in epsilons:
+                costs = [greedy[(adv, src, eps, k)] for k in ks if greedy[(adv, src, eps, k)] >= 0]
+                assert all(costs[i] >= costs[i + 1] for i in range(len(costs) - 1)), \
+                    "greedy cost must not rise as k rises"
+            for k in ks:
+                costs = [greedy[(adv, src, eps, k)] for eps in epsilons
+                         if greedy[(adv, src, eps, k)] >= 0]
+                assert all(costs[i] <= costs[i + 1] for i in range(len(costs) - 1)), \
+                    "greedy cost must not fall as epsilon tightens"
+    # The adaptive adversary is at least as hard: for a fixed policy and regime, its
+    # cost-to-certify is >= the typical adversary's (max reachability >= mean).
+    if {"typical", "adaptive"} <= advs:
+        by_key = {}
+        for r in leaderboard:
+            by_key.setdefault((r["policy"], r["degradation_source"], r["epsilon"], r["k"]),
+                              {})[r["adversary"]] = r["cost_to_certify"]
+        for (policy, _, _, _), d in by_key.items():
+            t, a = d.get("typical", -1), d.get("adaptive", -1)
+            if t >= 0 and a >= 0:
+                assert a >= t, "adaptive cost must be >= typical cost"

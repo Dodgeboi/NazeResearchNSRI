@@ -65,12 +65,23 @@ The certificate is the deterministic, provable scorer. New around it:
    - `random` (seeded), and the trivial `empty` / `all` references.
 
 3. **Adaptive regime sweep (`src/grrc/range/regimes.py`).** A `Regime` bundles the
-   base-rate and effectiveness interval bounds, the degradation bounds, `epsilon`,
-   and the catastrophic `k`. The sweep varies: assumed vs CIPHER-derived degradation
+   adversary model, the base-rate and effectiveness interval bounds, the degradation
+   bounds, `epsilon`, and the catastrophic `k`. The sweep varies: the adversary
+   (below), assumed vs CIPHER-derived degradation
    (`grrc.cipher_bounds.degradation_bounds` at gamma=1 on the real corpus), an
-   `epsilon` grid, `k = 1..n`, and a kill-chain stage-ablation sensitivity. Every
-   defender is scored across the grid, so the benchmark reports cross-regime
-   robustness rather than a single number.
+   `epsilon` grid, and `k = 1..n`. Every defender is scored across the grid, so the
+   benchmark reports cross-regime robustness rather than a single number.
+
+3b. **Adaptive adversary (`src/grrc/range/adversary.py`, added).** Beyond the default
+   *typical* adversary (usage-weighted mean residual per stage), an *adaptive*
+   adversary best-responds to the current defense by routing through the easiest
+   uncovered technique each stage — stage success is the `max` residual, the
+   closed-form best response. It dominates the typical adversary pointwise (so the
+   guarantee is strictly stronger) and stays monotone (so the interval corners are
+   still exact); the audited certificate modules are untouched. Scoring against it
+   makes the range genuinely dynamic and surfaces the headline finding: with no
+   mitigation for some techniques, a worst-case adaptive attacker leaves most regimes
+   uncertifiable by any portfolio — which only a provable score can reveal.
 
 4. **Finite-sample scoring hook.** Where an effectiveness interval derives from
    counts, `grrc.betting.betting_margins` widens it to a finite-sample-valid

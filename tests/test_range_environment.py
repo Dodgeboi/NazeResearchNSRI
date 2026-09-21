@@ -80,7 +80,7 @@ def test_catalog_is_wellformed(env):
 def test_looser_epsilon_never_harder(model):
     """A portfolio certified at a strict epsilon certifies at a looser one (same k)."""
     regimes = {r.epsilon: r for r in default_regimes(model) if r.k == 1
-               and r.degradation_source == "assumed"}
+               and r.degradation_source == "assumed" and r.adversary == "typical"}
     strict = DefenseRange(model, regimes[0.01])
     loose = DefenseRange(model, regimes[0.10])
     port = [strict.graph.mitigations.index("M1032")] if "M1032" in strict.graph.mitigations else [0]
@@ -92,3 +92,26 @@ def test_looser_epsilon_never_harder(model):
 def test_out_of_range_index_rejected(env, bad):
     with pytest.raises(ValueError):
         env.score(bad)
+
+
+def test_adaptive_adversary_dominates_typical_and_stays_monotone(model):
+    """Adaptive (max) reachability >= typical (mean), and both fall as controls are added."""
+    from grrc.range.adversary import adaptive_control_reachability
+    from grrc.control_certificate import reachability
+
+    def a_regime(adv):
+        return next(r for r in default_regimes(model) if r.adversary == adv
+                    and r.degradation_source == "assumed" and r.epsilon == 0.05 and r.k == 2)
+
+    typ = DefenseRange(model, a_regime("typical"))
+    adv = DefenseRange(model, a_regime("adaptive"))
+    idx = [typ.graph.mitigations.index(m) for m in ("M1032", "M1030") if m in typ.graph.mitigations]
+    for port in ([], idx):
+        assert adv.score(port)["worst_reachability"] >= typ.score(port)["worst_reachability"] - 1e-12
+        assert adv.score(port)["cat_worst"] >= typ.score(port)["cat_worst"] - 1e-12
+    # Adaptive reachability is monotone: adding a control cannot raise it.
+    base = adaptive_control_reachability(np.zeros(model.graph.n_mitigations, bool),
+                                         0.9, adv.regime.eff_bounds[:, 0], model)[0]
+    grown = np.zeros(model.graph.n_mitigations, bool); grown[idx] = True
+    added = adaptive_control_reachability(grown, 0.9, adv.regime.eff_bounds[:, 0], model)[0]
+    assert added <= base + 1e-12

@@ -24,6 +24,7 @@ import numpy as np
 
 from grrc.control_certificate import certify_portfolios
 from grrc.hospital_attack_model import certify_catastrophic
+from grrc.range.adversary import adaptive_certify_control, adaptive_certify_catastrophic
 
 
 class DefenseRange:
@@ -89,8 +90,15 @@ class DefenseRange:
     # -- scoring (the provable certificate) --------------------------------
 
     def control_certify(self, portfolios):
-        """Batched control-adequacy certificate: (worst, best, guaranteed, possible)."""
+        """Batched control-adequacy certificate: (worst, best, guaranteed, possible).
+
+        Dispatches on the regime's adversary: ``typical`` uses the usage-weighted-mean
+        certificate; ``adaptive`` uses the max-aggregation best-response adversary.
+        """
         portfolios = np.atleast_2d(np.asarray(portfolios, bool))
+        if self.regime.adversary == "adaptive":
+            return adaptive_certify_control(portfolios, self.regime.base_bounds,
+                                            self.regime.eff_bounds, self.model, self.regime.epsilon)
         return certify_portfolios(portfolios, self.regime.base_bounds, self.regime.eff_bounds,
                                   self.graph.coverage, self.graph.usage,
                                   self.stage_index, self.impact_index, self.regime.epsilon)
@@ -98,6 +106,10 @@ class DefenseRange:
     def catastrophic_certify(self, portfolios):
         """Batched catastrophic k-of-n certificate: (worst, best, guaranteed, possible)."""
         portfolios = np.atleast_2d(np.asarray(portfolios, bool))
+        if self.regime.adversary == "adaptive":
+            return adaptive_certify_catastrophic(portfolios, self.regime.base_bounds,
+                                                 self.regime.eff_bounds, self.regime.deg_bounds,
+                                                 self.model, self.regime.k, self.regime.epsilon)
         return certify_catastrophic(portfolios, self.regime.base_bounds, self.regime.eff_bounds,
                                     self.regime.deg_bounds, self.model, self.regime.k,
                                     self.regime.epsilon)

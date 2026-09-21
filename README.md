@@ -17,8 +17,10 @@ portfolio, a distribution-free `guaranteed`/`possible` verdict that the worst-ca
 probability of at least *k* clinical services in simultaneous sustained outage stays
 below a level, over all dependence structures and all parameters in an interval
 uncertainty set. Reference **automated defenders** (exact, greedy, coverage, random)
-are benchmarked across adaptive threat regimes; the defender API is agent-agnostic,
-so an agentic/LLM defender drops in unchanged. This targets the AIDC @ ACSAC 2026
+are benchmarked across adaptive threat regimes, including an **adaptive adversary**
+that best-responds by routing through the easiest uncovered technique — which the
+provable score exposes as leaving most regimes uncertifiable by any portfolio. The
+defender API is agent-agnostic, so an agentic/LLM defender drops in unchanged. This targets the AIDC @ ACSAC 2026
 workshop topics *adaptive evaluation environments / dynamic cyber ranges* and
 *automated defensive countermeasures*. It is an evaluation-environment
 work-in-progress, not a new theorem or a validated real-world defense.

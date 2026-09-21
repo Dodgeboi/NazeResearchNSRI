@@ -20,11 +20,12 @@ def model():
     return build_model(build_graph(load_bundle(BUNDLE)))
 
 
-def _regime(model, source="assumed", eps=0.10, k=2):
+def _regime(model, source="assumed", eps=0.10, k=2, adversary="typical"):
     for r in default_regimes(model):
-        if r.degradation_source == source and r.epsilon == eps and r.k == k:
+        if (r.adversary == adversary and r.degradation_source == source
+                and r.epsilon == eps and r.k == k):
             return r
-    raise KeyError((source, eps, k))
+    raise KeyError((adversary, source, eps, k))
 
 
 def test_greedy_wrapper_matches_greedy_frontier(model):
@@ -103,3 +104,24 @@ def test_run_sweep_shapes_and_sanity(model):
     assert len(out["leaderboard"]) == len(regimes) * 6          # six policies per regime
     assert {r["policy"] for r in out["regime_robustness"]} == {"greedy", "coverage",
                                                                "random", "optimal"}
+    assert {r["adversary"] for r in out["leaderboard"]} == {"typical", "adaptive"}
+
+
+def test_certificate_greedy_reproduces_greedy_frontier_under_typical(model):
+    """The generic env-based greedy equals greedy_frontier for the typical adversary."""
+    env = DefenseRange(model, _regime(model, adversary="typical"))
+    order, _ = greedy_frontier(env.regime.base_bounds, env.regime.eff_bounds,
+                               env.graph.coverage, env.graph.usage,
+                               env.stage_index, env.impact_index)
+    assert policies.certificate_greedy(env) == list(order)
+
+
+def test_adaptive_costs_at_least_as_much_as_typical(model):
+    """Defending against the adaptive adversary is never cheaper than the typical one."""
+    for eps, k in [(0.10, 1), (0.10, 2), (0.05, 2)]:
+        typ = DefenseRange(model, _regime(model, eps=eps, k=k, adversary="typical"))
+        adv = DefenseRange(model, _regime(model, eps=eps, k=k, adversary="adaptive"))
+        ct = cost_to_certify(typ, policies.greedy_order(typ))
+        ca = cost_to_certify(adv, policies.greedy_order(adv))
+        if ct is not None and ca is not None:
+            assert ca >= ct

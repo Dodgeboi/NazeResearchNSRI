@@ -2,11 +2,31 @@
   "code": {
     "available": true,
     "branch": "claude/stoic-galileo-81yrtm",
-    "commit": "099af13e818129c4a6ab5609592a3332214f5357",
-    "dirty": false,
-    "dirty_paths": []
+    "commit": "23d485e3273008d3d07350445b5ced4e5556e415",
+    "dirty": true,
+    "dirty_paths": [
+      "README.md",
+      "data/defense_range/defense_range_manifest.json",
+      "data/defense_range/leaderboard.csv",
+      "data/defense_range/optimality_gap.csv",
+      "data/defense_range/regime_robustness.csv",
+      "docs/defense_range/main.pdf",
+      "docs/defense_range/main.tex",
+      "docs/defense_range/range_numbers.tex",
+      "docs/defense_range/table_range_gap_rows.tex",
+      "docs/defense_range/table_range_leaderboard_rows.tex",
+      "scripts/generate_range_paper.py",
+      "src/grrc/range/adversary.py",
+      "src/grrc/range/environment.py",
+      "src/grrc/range/policies.py",
+      "src/grrc/range/regimes.py",
+      "src/grrc/range/runner.py",
+      "study/DEFENSE_RANGE_PLAN.md",
+      "tests/test_range_environment.py",
+      "tests/test_range_policies.py"
+    ]
   },
-  "created_at": "2026-09-21T21:56:20+00:00",
+  "created_at": "2026-09-21T23:08:31+00:00",
   "description": "Certified cyber-range benchmark: reference automated defenders scored by a distribution-free residual-risk certificate across an adaptive threat-regime sweep on the real ATT&CK-driven hospital.",
   "environment": {
     "implementation": "CPython",
@@ -94,24 +114,24 @@
       "sha256": "8dfd8eaffe855a23bd99999933b5d878986004886f01c62e9298d6b9c5f1f8e1"
     },
     {
-      "bytes": 6110,
+      "bytes": 6938,
       "path": "src/grrc/range/environment.py",
-      "sha256": "6caaf52515c38f2deea62dc6afd9088fb5c5a9a2541fd635d4ed99483afc0ba9"
+      "sha256": "d97fd60654f269b462c2200bc4090ebc3f3656ff68cecbf6a553309d4a2cfbf6"
     },
     {
-      "bytes": 3726,
+      "bytes": 4647,
       "path": "src/grrc/range/policies.py",
-      "sha256": "0553c5be3c3740c7c3a4b29241b2a6a574ec5abfdd198601e0c96c5e43f0cdd9"
+      "sha256": "494ec1d3cf26278c951b08299e4de80b4160d26bbc2ec50b2f1aedc9265c2c14"
     },
     {
-      "bytes": 3438,
+      "bytes": 3932,
       "path": "src/grrc/range/regimes.py",
-      "sha256": "a0702f15a7f14338a0af76460dca493763b144451ad4f4d838cd3fba6145b9c2"
+      "sha256": "2d3b686db5d2552c6c8e068e52f359bb2ed64b51c66a1e33ba07d3728afe6942"
     },
     {
-      "bytes": 6493,
+      "bytes": 7295,
       "path": "src/grrc/range/runner.py",
-      "sha256": "6927516cb2576aa9b12c382813d769d4dc6c45e54895aecd2296b27688354c40"
+      "sha256": "fb0ec9029e9b9c4101abe4c2eac3a12390000a3c1a28bbad6ccb659cecc913cd"
     },
     {
       "bytes": 3518,
@@ -119,26 +139,26 @@
       "sha256": "3ee09640a09c3868b530c7937133334acf2897939c2349e6a7dd1bc1fc531afa"
     },
     {
-      "bytes": 7605,
+      "bytes": 8427,
       "path": "study/DEFENSE_RANGE_PLAN.md",
-      "sha256": "551bd95a2d9a91a27ebc29887555f610d1b4f93c9549dd00288d8d4509dd8faf"
+      "sha256": "f1bed5ef9ec49e5732faca4e45e2267129b0836f62f4faf18aac9ab6ad1ffedf"
     }
   ],
   "outputs": [
     {
-      "bytes": 4688,
+      "bytes": 11925,
       "path": "data/defense_range/leaderboard.csv",
-      "sha256": "70bb2a13d145f0600a43504fec9d2fffdd56b735ce5b35b1859309a45090e45c"
+      "sha256": "953c6b370bc03a2ea0f0db3c28927a3b13ace99341d4afab7648797fe88d209e"
     },
     {
-      "bytes": 1384,
+      "bytes": 3164,
       "path": "data/defense_range/optimality_gap.csv",
-      "sha256": "a96edfa9093d715f21039ac6b4675ba870397b1bff13053e39c1786bbcaf0828"
+      "sha256": "898b604edf55e26aa1cb72c5c61a5ebf6d1198ddf2f4b5c45bb5db52ce24a09d"
     },
     {
-      "bytes": 242,
+      "bytes": 335,
       "path": "data/defense_range/regime_robustness.csv",
-      "sha256": "c8e745798d569c791a5e4240b6a05c16a80235d15fc1c699c210588a3c48062a"
+      "sha256": "e1792b105d1c2fa7a562ae51b0a9ef36e9d244a0a97cc7aac73dffe8e3268697"
     }
   ],
   "parameters": {

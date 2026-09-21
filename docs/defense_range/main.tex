@@ -7,10 +7,10 @@
 \makeatletter\let\tableinput\@@input\makeatother
 \input{range_numbers}
 
-\title{A certified cyber range: scoring automated defenders with\\
-provable residual-risk guarantees on real ATT\&CK structure}
+\title{A certified cyber range for automated defenders:\\
+provable residual-risk guarantees against an adaptive adversary}
 \author{}
-\date{2026-09-21 (work-in-progress, version 0.1.0)}
+\date{2026-09-21 (work-in-progress, version 0.2.0)}
 
 \begin{document}
 \maketitle
@@ -18,23 +18,30 @@ provable residual-risk guarantees on real ATT\&CK structure}
 \begin{abstract}
 Autonomous cyber-defense systems are judged almost entirely by \emph{empirical}
 outcomes---attack-success rate, flags captured---which say nothing provable about
-the residual risk a defender leaves behind. We describe a small \emph{cyber range}
-that scores automated defenders with a \emph{provable} verdict instead. Built on the
-real MITRE ATT\&CK Enterprise kill chain (v\RangeAttackVersion, \RangeMitigations{}
-mitigations) and an evidence-anchored hospital-ransomware impact model, the range
-returns, for any control portfolio a defender proposes, a distribution-free
-\emph{guaranteed}/\emph{possible} adequacy certificate---the worst-case probability
-that at least $k$ clinical services suffer simultaneous sustained outage stays below
-$\varepsilon$, over all dependence structures and all parameter values in an
-interval uncertainty set. We benchmark four reference automated defenders across
-\RangeRegimes{} adaptive threat regimes (assumed vs.\ real CIPHER-derived
-degradation, an $\varepsilon$ grid, $k=1..4$). An exact optimiser certifies at a mean
-cost of \RangeOptimalMeanCost{} controls; a certificate-guided greedy defender is
-close behind (\RangeGreedyMeanCost), while a certificate-blind coverage heuristic
-(\RangeCoverageMeanCost) and a random policy (\RangeRandomMeanCost) pay much more,
-quantifying the value of certificate feedback. The defender API is agent-agnostic, so
-an agentic/LLM defender drops in unchanged---the intended next step. This is an
-evaluation-environment contribution, not a new theorem or a validated real defense.
+the residual risk a defender leaves behind, least of all against an adversary that
+adapts. We describe a small \emph{cyber range} that scores automated defenders with
+a \emph{provable} verdict instead. Built on the real MITRE ATT\&CK Enterprise kill
+chain (v\RangeAttackVersion, \RangeMitigations{} mitigations) and an
+evidence-anchored hospital-ransomware impact model, the range returns, for any
+control portfolio, a distribution-free \emph{guaranteed}/\emph{possible} adequacy
+certificate: the worst-case probability that at least $k$ clinical services suffer
+simultaneous sustained outage stays below $\varepsilon$, over all failure-dependence
+structures and all parameters in an interval uncertainty set. It scores each defender
+against \emph{two} adversaries---a \emph{typical} one (usage-weighted technique mix)
+and an \emph{adaptive} one that best-responds by routing through the easiest uncovered
+technique each stage. The provable score exposes something an empirical one cannot:
+against the adaptive adversary, \RangeAdaptiveUncert{} of \RangeAdaptiveRegimes{}
+threat regimes cannot be certified by \emph{any} portfolio, because some ATT\&CK
+techniques carry no mitigation and the worst-case attacker always routes through
+them. (The two adversaries coincide before any control is deployed---with no
+mitigations every technique's residual equals the base rate, so mean and maximum
+agree at \RangeUndefendedTypicalKOnePct\%---and diverge only as controls are added
+and the adaptive attacker re-routes around them.) Where certification is possible,
+using the certificate as feedback cuts a certificate-blind heuristic's control
+burden by about a third under the typical adversary, but a greedy defender tuned to
+reachability can still fall far short of the exact optimum against the adaptive one. The defender API is agent-agnostic, so an agentic/LLM defender drops in
+unchanged---the intended next step. This is an evaluation-environment contribution,
+not a new theorem or a validated real defense.
 \end{abstract}
 
 \section{The range}
@@ -45,56 +52,68 @@ the ransomware impact objective composes those into a per-clinical-service susta
 outage probability. The range's \texttt{score} is the certificate, not a sampled
 outcome: worst- and best-corner evaluation over the interval uncertainty set gives a
 \emph{guaranteed} verdict (adequate even at the adverse corner) and a \emph{possible}
-one (adequate only at the favourable corner); the catastrophic $k$-of-$n$ event uses
-the sharp closed-form aggregation bound (a min over dependence structures), so the
-verdict holds whatever the true correlation between service failures. The primary
-adequacy target is this catastrophic verdict, because it varies with every regime
-axis. The observation (named mitigations, techniques covered, stages touched), the
-action (add/remove a mitigation), and the certified score form an agent-agnostic API.
+one; the catastrophic $k$-of-$n$ event uses a sharp closed-form aggregation bound (a
+minimum over dependence structures), so the verdict holds whatever the true
+correlation between service failures. The observation (named mitigations, techniques
+covered, stages touched), the action (add/remove a mitigation), and the certified
+score form an agent-agnostic API.
+
+\section{Two adversaries}
+The certificate's default reachability is a \emph{typical} adversary: each kill-chain
+stage succeeds with the usage-weighted mean residual over its techniques. We add an
+\emph{adaptive} adversary that best-responds to the current defense---stage success
+is the \emph{maximum} residual over the stage's techniques, i.e.\ the attacker routes
+through whatever the defender left most open. This is the closed-form best response
+(no iteration): as the defender covers the easiest path, the adversary's maximum
+shifts to the next. Adaptive reachability dominates the typical one pointwise, so the
+adaptive certificate is a strictly stronger guarantee, and it stays monotone, so the
+interval-corner certificate is still exact. Scoring defenders against it makes the
+range genuinely \emph{dynamic}.
 
 \section{Reference defenders and regimes}
 We score four automated (non-LLM) defenders: an \emph{exact} minimum-cost optimiser
 (budget-bounded search, feasible because adequacy is monotone in the portfolio); a
-\emph{greedy} defender that adds the mitigation with the largest worst-case
-reachability reduction (certificate-guided); a \emph{coverage} heuristic that maximises
-techniques covered while ignoring the certificate; and a seeded \emph{random} policy.
-Each is scored across \RangeRegimes{} regimes: assumed vs.\ real CIPHER-derived
-degradation, adequacy levels $\varepsilon\in\{0.10,0.05,0.01\}$, and catastrophic
-thresholds $k=1..4$. The reported metric is \emph{cost-to-certify}: the smallest
-portfolio a defender reaches that the range certifies as adequate.
+\emph{greedy} defender adding the mitigation with the largest worst-case reachability
+reduction (certificate-guided); a \emph{coverage} heuristic maximising techniques
+covered while ignoring the certificate; and a seeded \emph{random} policy. Each is
+scored across \RangeRegimes{} regimes: both adversaries $\times$ assumed vs.\ real
+CIPHER-derived degradation $\times$ adequacy levels
+$\varepsilon\in\{0.10,0.05,0.01\}$ $\times$ catastrophic thresholds $k=1..4$. The
+metric is \emph{cost-to-certify}: the smallest portfolio a defender reaches that the
+range certifies as adequate, or ``none'' when no portfolio does.
 
 \section{Results}
-Undefended, the worst-case ``at least one clinical service'' outage probability is
-\RangeUndefendedKOnePct\%, far above any $\varepsilon$, so defense is required.
-Table~\ref{tab:leader} ranks the defenders by cost-to-certify across the sweep: the
-exact optimum averages \RangeOptimalMeanCost{} controls, the certificate-guided greedy
-defender \RangeGreedyMeanCost, the certificate-blind coverage heuristic
-\RangeCoverageMeanCost, and random \RangeRandomMeanCost---so \emph{using the
-certificate as feedback roughly halves the control burden} relative to a
-structure-only heuristic. Grounding degradation in the real CIPHER corpus rather than
-the assumed prior lowers greedy's mean cost from \RangeGreedyAssumedCost{} to
-\RangeGreedyCipherCost{} controls. Table~\ref{tab:gap} shows the optimality gap per
-regime (assumed degradation): the greedy defender is at or within one control of the
-exact optimum almost everywhere, whereas the blind heuristic's gap is larger; at the
-headline regime ($\varepsilon=0.05$, $k=1$) the exact optimum is \RangeHeadOptimal{}
-controls versus greedy \RangeHeadGreedy{}, coverage \RangeHeadCoverage{}, and random
-\RangeHeadRandom{}. The exact optimiser is computed within the search cap in
-\RangeOptimalCertPct\% of regimes (the strictest $\varepsilon$ needs larger
-portfolios than the cap).
+Under the typical adversary, using the certificate as feedback cuts the control
+burden by about a third: the greedy defender averages \RangeGreedyTypicalCost{}
+controls against \RangeCoverageTypicalCost{} for the certificate-blind coverage
+heuristic, close to the exact optimum's \RangeOptimalTypicalCost{}
+(Table~\ref{tab:leader}). The adaptive adversary changes the picture sharply. It is
+undefendable in most regimes: \RangeAdaptiveUncert{} of \RangeAdaptiveRegimes{}
+regimes admit \emph{no} certifying portfolio at any cost (Table~\ref{tab:gap}),
+because some techniques carry no ATT\&CK mitigation and the worst-case attacker
+always routes through them. Where certification \emph{is} possible
+($\varepsilon=\RangeAdvExEps$, $k=\RangeAdvExK$), the certificate-guided greedy
+defender needs \RangeAdvExGreedy{} controls against the adaptive adversary while the
+exact optimum needs \RangeAdvExOptimal{}---so a defender tuned to the reachability
+objective can be far from the catastrophic optimum, and only a provable score reveals
+either the gap or, more importantly, that no portfolio suffices. An empirical
+attack-success benchmark would report a low sampled failure rate for the same
+portfolios and hide both facts.
 
 \begin{table}[t]\centering
-\caption{Reference defenders by cost-to-certify across all \RangeRegimes{} regimes:
-fraction of regimes certified within the search, mean controls when certified, and
-the same split by assumed vs.\ real (CIPHER) degradation.}\label{tab:leader}
-\begin{tabular}{@{}lrrrr@{}}\toprule
-Defender & Certified (\%) & Mean controls & Assumed & CIPHER\\\midrule
+\caption{Reference defenders by mean cost-to-certify (over the regimes they could
+certify), under the typical and the adaptive adversary, with the fraction of all
+\RangeRegimes{} regimes certified.}\label{tab:leader}
+\begin{tabular}{@{}lrrr@{}}\toprule
+Defender & Certified (\%) & Mean (typical) & Mean (adaptive)\\\midrule
 \tableinput table_range_leaderboard_rows.tex
 \bottomrule\end{tabular}
 \end{table}
 
 \begin{table}[t]\centering
-\caption{Cost-to-certify per regime (assumed degradation): exact optimum vs.\ the
-three heuristics. ``$>$4'' means the exact optimum exceeds the search cap.}\label{tab:gap}
+\caption{Cost-to-certify per regime under the \emph{adaptive} adversary (assumed
+degradation). ``none'' means no portfolio certifies at any cost; ``$>$4'' means the
+exact optimum exceeds the search cap.}\label{tab:gap}
 \begin{tabular}{@{}rrrrrr@{}}\toprule
 $\varepsilon$ & $k$ & Optimal & Greedy & Coverage & Random\\\midrule
 \tableinput table_range_gap_rows.tex
@@ -109,11 +128,15 @@ MITRE ATT\&CK and the CIPHER harm corpus are real; the hospital is synthetic, si
 real hospital maps and per-incident telemetry are not public. Effectiveness and
 degradation are analyst-prior intervals anchored to published figures, never incident
 measurements, and the certificate verdicts are conditional worst-case frequencies
-under those intervals, not statistical confidence levels. The reference defenders are
-deliberately simple automated policies. The value of the range is that its score is a
-\emph{provable} residual-risk bound rather than an average, and that an agentic
-defender can be dropped into the same API and held to the same guarantee---the
-natural next step.
+under those intervals, not statistical confidence levels. The adaptive adversary is a
+worst-case routing model, not a learned attacker; that it renders many regimes
+undefendable is a statement about ATT\&CK mitigation \emph{coverage} under a
+worst-case assumption, not a claim that real defense is hopeless. The reference
+defenders are deliberately simple automated policies. The value of the range is that
+its score is a \emph{provable} residual-risk bound---holding even against an
+adversary that adapts, and able to say ``no portfolio suffices''---rather than an
+average, and that an agentic defender can be dropped into the same API and held to
+the same guarantee.
 
 \paragraph{Reproducibility.} All numbers are generated from committed tables; the
 benchmark is deterministic (seeded random policy) and carries a provenance manifest

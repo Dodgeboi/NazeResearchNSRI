@@ -41,10 +41,14 @@ def effectiveness_bounds(mitigations, prior=DEFAULT_EFF):
     return bounds
 
 
+ADVERSARIES = ("typical", "adaptive")
+
+
 @dataclass(frozen=True)
 class Regime:
     """One threat configuration the range scores defenders against."""
     label: str
+    adversary: str               # "typical" (usage-weighted mean) | "adaptive" (max)
     degradation_source: str      # "assumed" | "cipher_gamma1"
     base_bounds: tuple
     eff_bounds: np.ndarray        # [mitigation, 2]
@@ -53,12 +57,15 @@ class Regime:
     k: int
 
 
-def default_regimes(model, cipher_df=None, epsilons=EPSILONS, ks=None):
-    """Build the adaptive sweep: {degradation source} x {epsilon} x {k}.
+def default_regimes(model, cipher_df=None, epsilons=EPSILONS, ks=None,
+                    adversaries=ADVERSARIES):
+    """Build the adaptive sweep: {adversary} x {degradation source} x {epsilon} x {k}.
 
-    ``model`` is a :class:`grrc.hospital_attack_model.HospitalModel`. The assumed
-    degradation is ``model.degradation``; the real one is CIPHER-derived at gamma=1
-    (only included when ``cipher_df`` is given). ``ks`` defaults to ``1..n_services``.
+    ``model`` is a :class:`grrc.hospital_attack_model.HospitalModel`. The ``typical``
+    adversary is the certificate's usage-weighted-mean reachability; the ``adaptive``
+    one best-responds through the easiest uncovered technique (:mod:`grrc.range.adversary`).
+    The assumed degradation is ``model.degradation``; the real one is CIPHER-derived at
+    gamma=1 (only when ``cipher_df`` is given). ``ks`` defaults to ``1..n_services``.
     """
     eff = effectiveness_bounds(model.graph.mitigations)
     n_services = len(model.services)
@@ -68,12 +75,14 @@ def default_regimes(model, cipher_df=None, epsilons=EPSILONS, ks=None):
         from grrc.cipher_bounds import degradation_bounds
         degradations["cipher_gamma1"] = degradation_bounds(cipher_df, 1.0)
     regimes = []
-    for source, deg in degradations.items():
-        for eps in epsilons:
-            for k in ks:
-                regimes.append(Regime(
-                    label=f"{source}|eps={eps:.2f}|k={k}",
-                    degradation_source=source, base_bounds=BASE_BOUNDS,
-                    eff_bounds=eff, deg_bounds=np.asarray(deg, float),
-                    epsilon=float(eps), k=int(k)))
+    for adversary in adversaries:
+        for source, deg in degradations.items():
+            for eps in epsilons:
+                for k in ks:
+                    regimes.append(Regime(
+                        label=f"{adversary}|{source}|eps={eps:.2f}|k={k}",
+                        adversary=adversary, degradation_source=source,
+                        base_bounds=BASE_BOUNDS, eff_bounds=eff,
+                        deg_bounds=np.asarray(deg, float),
+                        epsilon=float(eps), k=int(k)))
     return regimes
