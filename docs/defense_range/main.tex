@@ -30,8 +30,8 @@ structures and all parameters in an interval uncertainty set. It scores each def
 against \emph{two} adversaries---a \emph{typical} one (usage-weighted technique mix)
 and an \emph{adaptive} one that best-responds by routing through the easiest uncovered
 technique each stage. The provable score exposes something an empirical one cannot:
-against the adaptive adversary, \RangeAdaptiveUncert{} of \RangeAdaptiveRegimes{}
-threat regimes cannot be certified by \emph{any} portfolio, because some ATT\&CK
+against the adaptive adversary, \RangeAdaptiveUncert{} of the \RangeAdaptiveRegimes{}
+adaptive regimes (assumed degradation) cannot be certified by \emph{any} portfolio, because some ATT\&CK
 techniques carry no mitigation and the worst-case attacker always routes through
 them. (The two adversaries coincide before any control is deployed---with no
 mitigations every technique's residual equals the base rate, so mean and maximum
@@ -88,17 +88,21 @@ burden by about a third: the greedy defender averages \RangeGreedyTypicalCost{}
 controls against \RangeCoverageTypicalCost{} for the certificate-blind coverage
 heuristic, close to the exact optimum's \RangeOptimalTypicalCost{}
 (Table~\ref{tab:leader}). The adaptive adversary changes the picture sharply. It is
-undefendable in most regimes: \RangeAdaptiveUncert{} of \RangeAdaptiveRegimes{}
-regimes admit \emph{no} certifying portfolio at any cost (Table~\ref{tab:gap}),
-because some techniques carry no ATT\&CK mitigation and the worst-case attacker
-always routes through them. Where certification \emph{is} possible
-($\varepsilon=\RangeAdvExEps$, $k=\RangeAdvExK$), the certificate-guided greedy
-defender needs \RangeAdvExGreedy{} controls against the adaptive adversary while the
-exact optimum needs \RangeAdvExOptimal{}---so a defender tuned to the reachability
-objective can be far from the catastrophic optimum, and only a provable score reveals
-either the gap or, more importantly, that no portfolio suffices. An empirical
-attack-success benchmark would report a low sampled failure rate for the same
-portfolios and hide both facts.
+undefendable in most regimes: \RangeAdaptiveUncert{} of the \RangeAdaptiveRegimes{}
+adaptive regimes (assumed degradation) admit \emph{no} certifying portfolio at any
+cost (Table~\ref{tab:gap}), because some techniques carry no ATT\&CK mitigation and
+the worst-case attacker always routes through them. Where certification \emph{is}
+possible ($\varepsilon=\RangeAdvExEps$, $k=\RangeAdvExK$), the certificate-guided
+greedy defender needs \RangeAdvExGreedy{} controls against the adaptive adversary
+while the exact optimum needs \RangeAdvExOptimal{}---so a defender tuned to the
+reachability objective can be far from the catastrophic optimum, and only a provable
+score reveals either the gap or, more importantly, that no portfolio suffices. Indeed,
+averaged over the adaptive regimes it can certify, greedy (\RangeGreedyAdaptiveCost{}
+controls) costs \emph{more} than the certificate-blind coverage heuristic
+(\RangeCoverageAdaptiveCost{}; Table~\ref{tab:leader}): a reachability-tuned ordering
+can actively mislead against an adaptive adversary. An empirical attack-success
+benchmark would report a low sampled failure rate for the same portfolios and hide
+all of this.
 
 \section{Why the adaptive adversary is undefendable: the reachability floor}
 The uncertifiability is not a quirk of the numbers; it has a mechanism the range makes
@@ -158,9 +162,18 @@ Stage & Techniques & No mitigation\\\midrule
 \end{table}
 
 \section{Scope and limitations}
-This is a first-of-kind \emph{evaluation environment}, realistically a
+To our knowledge this is the first to score automated defenders with a
+\emph{distribution-free, provable} residual-risk certificate rather than an empirical
+outcome; ATT\&CK-based defender-policy evaluation and optimisation-based control
+selection that minimises residual risk are established lines of work, and what is
+ownable here is the provable score and the adaptive-adversary reachability floor it
+exposes, not the idea of scoring defenders on ATT\&CK. It is realistically a
 work-in-progress contribution---not a new theorem (the certificate and the
 closed-form $k$-of-$n$ bound are prior work) and not a validated real-world defense.
+Most pointedly for an agentic-defense venue, the defenders evaluated here are
+classical search procedures, not autonomous agents: the contribution is the
+evaluation environment and the guarantee it enforces, and the agent-agnostic API is
+the intended bridge, but no agentic defender is evaluated in this draft.
 MITRE ATT\&CK and the CIPHER harm corpus are real; the hospital is synthetic, since
 real hospital maps and per-incident telemetry are not public. Effectiveness and
 degradation are analyst-prior intervals anchored to published figures, never incident
@@ -176,8 +189,8 @@ average, and that an agentic defender can be dropped into the same API and held 
 the same guarantee.
 
 \paragraph{Reproducibility.} All numbers are generated from committed tables; the
-benchmark is deterministic (seeded random policy) and carries a provenance manifest
-over the pinned ATT\&CK bundle and the CIPHER corpus. No LLM or network access is
-used.
+benchmark is deterministic (a single fixed seed for the random policy) and carries a
+provenance manifest recording the SHA-256 of every input and output over the pinned
+ATT\&CK bundle and the CIPHER corpus. No LLM or network access is used.
 
 \end{document}
