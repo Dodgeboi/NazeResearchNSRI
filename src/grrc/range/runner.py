@@ -10,7 +10,11 @@ from __future__ import annotations
 import numpy as np
 
 from grrc.range.environment import DefenseRange
-from grrc.range import policies
+from grrc.range import policies, adversary
+from grrc.range.regimes import BASE_BOUNDS, effectiveness_bounds
+
+# Effectiveness priors for the prior-independence check (mirrors analyze_control_certificate).
+EFF_PRIORS = {"narrow": (0.35, 0.55), "default": (0.20, 0.70), "wide": (0.10, 0.85)}
 
 
 def cost_to_certify(env, order):
@@ -91,6 +95,48 @@ def run_sweep(model, regimes, seed=20260921):
     robustness = _robustness(per_policy)
     return dict(leaderboard=leaderboard, optimality_gap=gaps,
                 regime_robustness=robustness)
+
+
+def coverage_report(model, epsilons, ks, deg_bounds, base_bounds=BASE_BOUNDS):
+    """The mechanism behind uncertifiability: coverage gaps, the reachability floor,
+    and its prior-independence.
+
+    Returns row lists for three tables:
+    - ``coverage_gaps``: per stage, techniques with no ATT&CK mitigation (the floor's cause);
+    - ``adaptive_floor``: the worst-corner minimum adaptive reachability (control and
+      clinical) and, per ``k``, the minimum achievable catastrophic bound (full portfolio);
+    - ``prior_robustness``: per effectiveness prior, how many adaptive ``(epsilon, k)``
+      regimes remain uncertifiable -- structural gaps make this near-constant.
+    """
+    graph = model.graph
+    full = np.ones(graph.n_mitigations, bool)[None, :]
+    gaps = adversary.stage_coverage_gaps(model)
+
+    eff = effectiveness_bounds(graph.mitigations)                 # default prior
+    ctrl_floor, clin_floor = adversary.adaptive_floor(model, base_bounds[1], eff[:, 0])
+    empty_ctrl = float(adversary.adaptive_control_reachability(
+        np.zeros(graph.n_mitigations, bool), base_bounds[1], eff[:, 0], model)[0])
+    assert 0 < ctrl_floor <= empty_ctrl + 1e-12, "floor must be the minimum reachability"
+    floor_rows = []
+    for k in ks:
+        cat = float(adversary.adaptive_certify_catastrophic(
+            full, base_bounds, eff, deg_bounds, model, k, 0.5)[0][0])
+        floor_rows.append(dict(k=int(k), control_floor=ctrl_floor,
+                               clinical_floor=clin_floor, catastrophic_floor=cat))
+
+    prior_rows = []
+    for name, prior in EFF_PRIORS.items():
+        effp = effectiveness_bounds(graph.mitigations, prior)
+        uncert = total = 0
+        for eps in epsilons:
+            for k in ks:
+                total += 1
+                cat = float(adversary.adaptive_certify_catastrophic(
+                    full, base_bounds, effp, deg_bounds, model, k, 0.5)[0][0])
+                uncert += int(cat > eps)
+        prior_rows.append(dict(prior=name, eff_low=prior[0], eff_high=prior[1],
+                               regimes=total, uncertifiable=uncert))
+    return dict(coverage_gaps=gaps, adaptive_floor=floor_rows, prior_robustness=prior_rows)
 
 
 def _robustness(per_policy):

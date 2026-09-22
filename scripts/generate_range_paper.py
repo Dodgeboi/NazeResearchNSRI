@@ -39,6 +39,9 @@ def content():
     params = json.loads((DATA / "defense_range_manifest.json").read_text())["parameters"]
     robust = pd.read_csv(DATA / "regime_robustness.csv").set_index("policy")
     gap = pd.read_csv(DATA / "optimality_gap.csv")
+    gaps = pd.read_csv(DATA / "coverage_gaps.csv")
+    afloor = pd.read_csv(DATA / "adaptive_floor.csv").set_index("k")
+    priors = pd.read_csv(DATA / "prior_robustness.csv").set_index("prior")
 
     assumed_adv = gap[(gap.adversary == "adaptive") & (gap.degradation_source == "assumed")]
     assumed_typ = gap[(gap.adversary == "typical") & (gap.degradation_source == "assumed")]
@@ -67,6 +70,19 @@ def content():
     for p in ("greedy", "coverage", "optimal", "random"):
         values[f"Range{p.capitalize()}TypicalCost"] = f"{float(robust.loc[p,'mean_cost_typical']):.1f}"
         values[f"Range{p.capitalize()}AdaptiveCost"] = f"{float(robust.loc[p,'mean_cost_adaptive']):.1f}"
+    # Mechanism: coverage gaps, the reachability floor, and prior-robustness.
+    values.update({
+        "RangeStages": str(int(len(gaps))),
+        "RangeUncoverableStages": str(int((gaps.uncoverable > 0).sum())),
+        "RangeWorstGapStage": str(gaps.loc[gaps.uncoverable.idxmax(), "stage"]),
+        "RangeWorstGapCount": str(int(gaps.uncoverable.max())),
+        "RangeWorstGapTotal": str(int(gaps.loc[gaps.uncoverable.idxmax(), "techniques"])),
+        "RangeControlFloorPct": f"{100*float(afloor['control_floor'].iloc[0]):.1f}",
+        "RangeFloorKOnePct": f"{100*float(afloor.loc[1,'catastrophic_floor']):.1f}",
+        "RangeFloorKFourPct": f"{100*float(afloor.loc[afloor.index.max(),'catastrophic_floor']):.1f}",
+        "RangePriorMinUncert": str(int(priors["uncertifiable"].min())),
+        "RangePriorRegimes": str(int(priors["regimes"].iloc[0])),
+    })
     generated = {"range_numbers.tex": "% Generated; do not edit. Certified cyber-range benchmark.\n"
                  + "".join("\\newcommand{\\" + k + "}{" + v + "}\n" for k, v in sorted(values.items()))}
 
@@ -92,6 +108,13 @@ def content():
                      _gapcell(r.coverage_cost, feasible=feas),
                      _gapcell(r.random_cost, feasible=feas)])
     generated["table_range_gap_rows.tex"] = "% Generated from optimality_gap.csv (adaptive, assumed).\n" + "".join(
+        " & ".join(r) + " \\\\\n" for r in rows)
+
+    # Coverage-gap table: per stage, techniques MITRE lists no mitigation for.
+    rows = []
+    for _, r in gaps.iterrows():
+        rows.append([str(r.stage), str(int(r.techniques)), str(int(r.uncoverable))])
+    generated["table_range_coverage_rows.tex"] = "% Generated from coverage_gaps.csv.\n" + "".join(
         " & ".join(r) + " \\\\\n" for r in rows)
     return generated
 

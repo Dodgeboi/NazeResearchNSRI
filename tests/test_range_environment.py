@@ -94,6 +94,47 @@ def test_out_of_range_index_rejected(env, bad):
         env.score(bad)
 
 
+def test_reachability_floor_is_the_full_portfolio_minimum(model):
+    """The floor equals the full-portfolio adaptive reachability and bounds all others."""
+    from grrc.range.adversary import adaptive_floor, adaptive_control_reachability
+    from grrc.range.regimes import effectiveness_bounds
+    eff = effectiveness_bounds(model.graph.mitigations)[:, 0]
+    ctrl_floor, clin_floor = adaptive_floor(model, 0.9, eff)
+    n = model.graph.n_mitigations
+    full = np.ones(n, bool)
+    assert adaptive_control_reachability(full, 0.9, eff, model)[0] == pytest.approx(ctrl_floor)
+    rng = np.random.default_rng(3)
+    for _ in range(20):                                  # no portfolio beats the floor
+        port = rng.random(n) < 0.5
+        assert adaptive_control_reachability(port, 0.9, eff, model)[0] >= ctrl_floor - 1e-12
+
+
+def test_uncoverable_technique_residual_is_base_for_every_portfolio(model):
+    """A technique MITRE lists no mitigation for keeps residual == base under any defense."""
+    from grrc.range.adversary import _residual
+    covered = model.graph.coverage.sum(axis=1)
+    uncoverable = int(np.flatnonzero(covered == 0)[0])
+    n = model.graph.n_mitigations
+    for port in (np.zeros(n, bool), np.ones(n, bool)):
+        res = _residual(port, 0.9, np.full(n, 0.5), model.graph)[0]
+        assert res[uncoverable] == pytest.approx(0.9)
+
+
+def test_coverage_gaps_and_prior_robustness_are_structural(model):
+    """Most stages have an uncoverable technique, and even the best prior leaves gaps."""
+    from grrc.range.adversary import stage_coverage_gaps
+    from grrc.range.runner import coverage_report
+    from grrc.range.regimes import EPSILONS
+    gaps = stage_coverage_gaps(model)
+    assert sum(g["uncoverable"] > 0 for g in gaps) >= 8           # structural coverage gaps
+    rep = coverage_report(model, EPSILONS, tuple(range(1, len(model.services) + 1)),
+                          np.asarray(model.degradation, float))
+    narrow = next(r for r in rep["prior_robustness"] if r["prior"] == "narrow")
+    assert narrow["uncertifiable"] > 0                            # not a pessimistic-prior artifact
+    floors = {r["k"]: r["catastrophic_floor"] for r in rep["adaptive_floor"]}
+    assert all(floors[k] >= floors[k + 1] - 1e-12 for k in floors if k + 1 in floors)
+
+
 def test_adaptive_adversary_dominates_typical_and_stays_monotone(model):
     """Adaptive (max) reachability >= typical (mean), and both fall as controls are added."""
     from grrc.range.adversary import adaptive_control_reachability

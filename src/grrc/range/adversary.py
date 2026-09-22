@@ -75,6 +75,50 @@ def adaptive_certify_control(portfolios, base_bounds, eff_bounds, model, epsilon
     return worst, best, worst <= epsilon, best <= epsilon
 
 
+def adaptive_floor(model, base, eff):
+    """The reachability floor: the minimum adaptive reachability over all portfolios.
+
+    Adaptive reachability is monotone non-increasing in the portfolio (adding a
+    mitigation only lowers residuals, so each stage's max only drops), so the *full*
+    portfolio -- every mitigation deployed -- attains the global minimum. Returns
+    ``(control_floor, clinical_floor)``: the floor for reachability to T1486 and for
+    the clinical-impact stage. No portfolio can drive reachability below this, so a
+    stage with a technique that has no mitigation floors it at the base rate.
+    """
+    full = np.ones(model.graph.n_mitigations, bool)[None, :]
+    control = float(adaptive_control_reachability(full, base, eff, model)[0])
+    clinical = float(adaptive_impact_reachability(full, base, eff, model)[0])
+    return control, clinical
+
+
+def stage_coverage_gaps(model, examples=3):
+    """Per stage, the techniques MITRE lists no mitigation for -- the uncoverable frontier.
+
+    Returns a list of dicts (one per non-impact stage plus the impact stage) with the
+    stage name, its technique count, the count with zero mitigation coverage, and up to
+    ``examples`` example uncoverable technique ids. A stage with any uncoverable
+    technique cannot have its adaptive max residual reduced below the base rate by any
+    portfolio, which is what sets the reachability floor.
+    """
+    from grrc.attack_graph import RANSOMWARE_STAGES
+    graph = model.graph
+    covered = graph.coverage.sum(axis=1)                    # mitigations per technique
+    names = [s for s in RANSOMWARE_STAGES if s != "impact"]
+    rows = []
+    for name, members in zip(names, model.stage_index):
+        members = np.asarray(members, int)
+        gap = members[covered[members] == 0]
+        rows.append(dict(stage=name, techniques=int(len(members)),
+                         uncoverable=int(len(gap)),
+                         examples="+".join(graph.techniques[t] for t in gap[:examples])))
+    impact = np.asarray(model.impact_members, int)
+    igap = impact[covered[impact] == 0]
+    rows.append(dict(stage="impact", techniques=int(len(impact)),
+                     uncoverable=int(len(igap)),
+                     examples="+".join(graph.techniques[t] for t in igap[:examples])))
+    return rows
+
+
 def adaptive_certify_catastrophic(portfolios, base_bounds, eff_bounds, deg_bounds,
                                   model, k, epsilon):
     """Catastrophic k-of-n clinical certificate under the adaptive adversary."""

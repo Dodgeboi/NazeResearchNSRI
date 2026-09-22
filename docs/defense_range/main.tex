@@ -2,7 +2,7 @@
 \usepackage[margin=1in]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
-\usepackage{amsmath,booktabs,hyperref,microtype}
+\usepackage{amsmath,booktabs,hyperref,microtype,graphicx}
 \hypersetup{hidelinks}
 \makeatletter\let\tableinput\@@input\makeatother
 \input{range_numbers}
@@ -100,6 +100,33 @@ either the gap or, more importantly, that no portfolio suffices. An empirical
 attack-success benchmark would report a low sampled failure rate for the same
 portfolios and hide both facts.
 
+\section{Why the adaptive adversary is undefendable: the reachability floor}
+The uncertifiability is not a quirk of the numbers; it has a mechanism the range makes
+explicit. Adaptive reachability is monotone in the portfolio, so deploying \emph{every}
+mitigation attains the global minimum --- the \emph{reachability floor}. A kill-chain
+stage that contains a technique MITRE lists \emph{no} mitigation for keeps that
+technique's residual at the base rate no matter what is deployed, so the floor cannot
+fall below it. In ATT\&CK v\RangeAttackVersion, \RangeUncoverableStages{} of
+\RangeStages{} stages contain such a technique (worst: \RangeWorstGapStage, with
+\RangeWorstGapCount{} of \RangeWorstGapTotal{} techniques uncovered;
+Table~\ref{tab:cov}), which floors the fully-defended adaptive reachability at
+\RangeControlFloorPct\% and the catastrophic bound at \RangeFloorKOnePct\% for $k{=}1$,
+falling to \RangeFloorKFourPct\% at $k{=}4$ (Figure~\ref{fig:floor}, right). Certification
+under the adaptive adversary is therefore possible only where the floor drops below
+$\varepsilon$ --- which is why only the largest-$k$, loosest-$\varepsilon$ regimes
+certify. This is a structural gap, not a pessimistic prior: even the most optimistic
+effectiveness prior leaves \RangePriorMinUncert{} of \RangePriorRegimes{} adaptive
+regimes uncertifiable, because no effectiveness value can cover a technique that has no
+mitigation at all.
+
+\begin{figure}[t]\centering
+\includegraphics[width=\linewidth]{figure_cost_vs_k.pdf}
+\caption{Left: under the typical adversary, cost-to-certify falls with $k$ and the
+certificate-guided greedy defender tracks the exact optimum while the blind heuristics
+lag. Right: under the adaptive adversary, the reachability floor (all controls deployed)
+sits above $\varepsilon$ for small $k$, so no portfolio certifies there.}\label{fig:floor}
+\end{figure}
+
 \begin{table}[t]\centering
 \caption{Reference defenders by mean cost-to-certify (over the regimes they could
 certify), under the typical and the adaptive adversary, with the fraction of all
@@ -117,6 +144,16 @@ exact optimum exceeds the search cap.}\label{tab:gap}
 \begin{tabular}{@{}rrrrrr@{}}\toprule
 $\varepsilon$ & $k$ & Optimal & Greedy & Coverage & Random\\\midrule
 \tableinput table_range_gap_rows.tex
+\bottomrule\end{tabular}
+\end{table}
+
+\begin{table}[t]\centering
+\caption{ATT\&CK coverage gaps per kill-chain stage: techniques modelled and how many
+carry no mitigation (the uncoverable frontier that sets the reachability
+floor).}\label{tab:cov}
+\begin{tabular}{@{}lrr@{}}\toprule
+Stage & Techniques & No mitigation\\\midrule
+\tableinput table_range_coverage_rows.tex
 \bottomrule\end{tabular}
 \end{table}
 

@@ -83,6 +83,17 @@ The certificate is the deterministic, provable scorer. New around it:
    mitigation for some techniques, a worst-case adaptive attacker leaves most regimes
    uncertifiable by any portfolio — which only a provable score can reveal.
 
+3c. **Reachability-floor mechanism (`adaptive_floor`, `stage_coverage_gaps`, added).**
+   Adaptive reachability is monotone in the portfolio, so the full portfolio attains the
+   global minimum — the reachability floor. A stage with a technique MITRE lists no
+   mitigation for keeps that technique's residual at the base rate under any defense, so
+   the floor is structural: 10 of 12 kill-chain stages carry such a technique (worst:
+   discovery, 33 of 47), flooring the fully-defended catastrophic bound at ~23% for k=1.
+   Certification under the adaptive adversary is possible only where the floor drops
+   below epsilon, and even the most optimistic effectiveness prior leaves 7 of 12
+   regimes uncertifiable — a coverage-gap fact, not a prior artifact. Reported in
+   `coverage_gaps.csv`, `adaptive_floor.csv`, `prior_robustness.csv`, and a figure.
+
 4. **Finite-sample scoring hook.** Where an effectiveness interval derives from
    counts, `grrc.betting.betting_margins` widens it to a finite-sample-valid
    interval before certification, so a "certified" verdict inherits finite-sample

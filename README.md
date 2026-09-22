@@ -18,9 +18,11 @@ probability of at least *k* clinical services in simultaneous sustained outage s
 below a level, over all dependence structures and all parameters in an interval
 uncertainty set. Reference **automated defenders** (exact, greedy, coverage, random)
 are benchmarked across adaptive threat regimes, including an **adaptive adversary**
-that best-responds by routing through the easiest uncovered technique — which the
-provable score exposes as leaving most regimes uncertifiable by any portfolio. The
-defender API is agent-agnostic, so an agentic/LLM defender drops in unchanged. This targets the AIDC @ ACSAC 2026
+that best-responds by routing through the easiest uncovered technique. The provable
+score exposes a structural limit an empirical one cannot: because most ATT&CK
+kill-chain stages contain a technique with no mitigation, a **reachability floor**
+leaves most regimes uncertifiable by any portfolio. The defender API is
+agent-agnostic, so an agentic/LLM defender drops in unchanged. This targets the AIDC @ ACSAC 2026
 workshop topics *adaptive evaluation environments / dynamic cyber ranges* and
 *automated defensive countermeasures*. It is an evaluation-environment
 work-in-progress, not a new theorem or a validated real-world defense.

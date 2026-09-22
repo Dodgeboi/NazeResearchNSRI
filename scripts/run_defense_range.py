@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from grrc.attack_graph import build_graph, load_bundle
@@ -22,7 +23,7 @@ from grrc.hospital_attack_model import build_model
 from grrc.provenance import build_manifest, git_state, write_manifest
 from grrc.range import default_regimes
 from grrc.range.regimes import BASE_BOUNDS, DEFAULT_EFF, EVIDENCE_EFF, EPSILONS
-from grrc.range.runner import run_sweep
+from grrc.range.runner import run_sweep, coverage_report
 from grrc.utilities import write_csv
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -45,18 +46,26 @@ def main():
     df = load_corpus(CIPHER)
     regimes = default_regimes(model, cipher_df=df)
     result = run_sweep(model, regimes, seed=SEED)
+    # Mechanism behind the uncertifiability: coverage gaps, the reachability floor, and
+    # its prior-independence (assumed degradation).
+    coverage = coverage_report(model, EPSILONS, tuple(range(1, len(model.services) + 1)),
+                               np.asarray(model.degradation, float))
 
     outputs = []
     for name in ("leaderboard", "optimality_gap", "regime_robustness"):
         path = out / (name + ".csv")
         write_csv(pd.DataFrame(result[name]), path)
         outputs.append(path)
+    for name in ("coverage_gaps", "adaptive_floor", "prior_robustness"):
+        path = out / (name + ".csv")
+        write_csv(pd.DataFrame(coverage[name]), path)
+        outputs.append(path)
 
     inputs = [Path(__file__), ROOT / "study/DEFENSE_RANGE_PLAN.md", BUNDLE,
               ROOT / "data/attack/raw/source.json", CIPHER,
               ROOT / "data/cipher/raw/source_manifest.json"] + [
         ROOT / ("src/grrc/range/" + m + ".py") for m in
-        ["__init__", "environment", "policies", "regimes", "runner"]] + [
+        ["__init__", "environment", "policies", "regimes", "runner", "adversary"]] + [
         ROOT / ("src/grrc/" + m + ".py") for m in
         ["attack_graph", "hospital_attack_model", "control_certificate", "joint_bounds",
          "cipher_bounds", "betting", "enums", "provenance", "utilities"]]
