@@ -21,6 +21,7 @@ from grrc.provenance import build_manifest, git_state, write_manifest, verify_ma
 from audit_interpretation_claims import audit
 from generate_joint_paper import content as joint_content, figures as joint_figures
 from generate_comparison_paper import content as comparison_content, figures as comparison_figures
+from generate_betting_paper import content as betting_content, figures as betting_figures
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data/interpretation"
@@ -154,6 +155,9 @@ def content():
     comparison_generated, comparison_tables = comparison_content()
     generated.update(comparison_generated)
     tables.update(comparison_tables)
+    betting_generated, betting_tables = betting_content()
+    generated.update(betting_generated)
+    tables.update(betting_tables)
     return generated, tables
 
 
@@ -194,6 +198,7 @@ def figures(tables):
     save(fig,'conditional_frontier')
     paths += joint_figures(tables, folder)
     paths += comparison_figures(tables, folder)
+    paths += betting_figures(tables, folder)
     return paths
 
 
@@ -233,6 +238,8 @@ def main():
         ROOT/'scripts/generate_joint_paper.py'] + list((ROOT/'data/cipher/processed').glob('*.csv'))
     inputs += list((ROOT/'data/final_comparison').glob('*.csv')) + [
         ROOT/'data/final_comparison/comparison_manifest.json', ROOT/'scripts/generate_comparison_paper.py']
+    inputs += list((ROOT/'data/betting_bounds').glob('*.csv')) + [
+        ROOT/'data/betting_bounds/betting_bounds_manifest.json', ROOT/'scripts/generate_betting_paper.py']
     manifest = build_manifest(run_id='interpretation-paper',stage='analysis',
         description='Generated values, certificate and transfer tables, and figures for the final research manuscript.',
         inputs=inputs,outputs=outputs,parameters={'scope':'registered values and assertions, not all prose'},source_state=state)

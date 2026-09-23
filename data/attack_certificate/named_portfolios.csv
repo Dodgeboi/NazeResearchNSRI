@@ -1,0 +1,7 @@
+portfolio,mitigations,size,worst_reachability,best_reachability,guaranteed_10,possible_10,guaranteed_05,possible_05,guaranteed_01,possible_01
+identity,M1032+M1027+M1018+M1026,4,0.03383009552,1.802954506e-06,True,True,True,True,False,True
+backup,M1053,1,0.2259436292,7.32421875e-05,False,True,False,True,False,True
+segmentation,M1030,1,0.2362479154,0.0001263997388,False,True,False,True,False,True
+patching,M1051,1,0.2350822573,0.0001247675468,False,True,False,True,False,True
+detection,M1040+M1049,2,0.1521906161,1.713729078e-05,False,True,False,True,False,True
+hospital_core,M1032+M1030+M1051+M1053+M1040,5,0.03375758341,6.337441901e-07,True,True,True,True,False,True

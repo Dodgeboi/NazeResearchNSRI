@@ -1,0 +1,150 @@
+{
+  "code": {
+    "available": true,
+    "branch": "claude/stoic-galileo-81yrtm",
+    "commit": "28e1744ff4fc56cf63445ef609bd04f786344419",
+    "dirty": false,
+    "dirty_paths": []
+  },
+  "created_at": "2026-09-20T16:32:01+00:00",
+  "description": "First calibration of an ATT&CK-based clinical-impact model against the real CIPHER coded patient-harm corpus, with an ATT&CK clinical-resolution overlay.",
+  "environment": {
+    "implementation": "CPython",
+    "machine": "x86_64",
+    "packages": {
+      "matplotlib": "3.11.0",
+      "networkx": "3.6.1",
+      "numpy": "2.3.5",
+      "pandas": "3.0.1",
+      "scipy": "1.18.0",
+      "yaml": "6.0.3"
+    },
+    "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "inputs": [
+    {
+      "bytes": 8078946,
+      "path": "data/attack/raw/enterprise-attack-17.1.json.gz",
+      "sha256": "522b09c7db81ce61887baa19dde98ea06ee4045420fe3c42f5f58f3e3382c597"
+    },
+    {
+      "bytes": 428,
+      "path": "data/attack/raw/source.json",
+      "sha256": "ea0caa84593fc866fbe9d2bfc14290c8f9a015f7eee88f3c3d3dfe5f795e7d2c"
+    },
+    {
+      "bytes": 303958,
+      "path": "data/cipher/raw/cipher-v1.0.1.csv",
+      "sha256": "3ee4a39ba8e2b058832d6eadf014f569baad43851d1cba25043b7a8b85b38204"
+    },
+    {
+      "bytes": 1047,
+      "path": "data/cipher/raw/source_manifest.json",
+      "sha256": "7fdf5df49ad97bba06c38301b32f84fd98939c8acb40b430f1d5972d999874af"
+    },
+    {
+      "bytes": 7253,
+      "path": "scripts/analyze_clinical_validation.py",
+      "sha256": "da24770ef65a6bc411ead1a0718b5394375c9274e10f3775c11be9c5081f81b0"
+    },
+    {
+      "bytes": 6275,
+      "path": "src/grrc/attack_graph.py",
+      "sha256": "b0dd7abd2e58ad155e8127db72cf005a5bd626755ffe2880aac9b74818cdd023"
+    },
+    {
+      "bytes": 5216,
+      "path": "src/grrc/cipher_bounds.py",
+      "sha256": "1de486592089991c9b8d0a84a19b5ef0aca5ac2e552cafc4794218ffb3963fd6"
+    },
+    {
+      "bytes": 5983,
+      "path": "src/grrc/clinical_validation.py",
+      "sha256": "1536a91485cacd32b6e998c4b7935b52eab09297eb44bb66be932623592c5050"
+    },
+    {
+      "bytes": 4479,
+      "path": "src/grrc/enums.py",
+      "sha256": "1959703e375427a1b009615125a866a00384b4efee53815bedb08ac05acbea00"
+    },
+    {
+      "bytes": 9042,
+      "path": "src/grrc/hospital_attack_model.py",
+      "sha256": "53919b922f3413f8c09ce8153704cf522d910371c4fbf5aa2d3838baa2ed856f"
+    },
+    {
+      "bytes": 14389,
+      "path": "src/grrc/provenance.py",
+      "sha256": "bc68c43d8d9367b0e6ce70dcfb4eb4d5a82e0c59e9a4676cae73ad9aeb664f02"
+    },
+    {
+      "bytes": 3518,
+      "path": "src/grrc/utilities.py",
+      "sha256": "3ee09640a09c3868b530c7937133334acf2897939c2349e6a7dd1bc1fc531afa"
+    },
+    {
+      "bytes": 4508,
+      "path": "study/CLINICAL_VALIDATION_PLAN.md",
+      "sha256": "1e1ea2cc45e2d77200c9add8168aa70eec8ad68f2963abdcdcc5ab783089bb46"
+    }
+  ],
+  "outputs": [
+    {
+      "bytes": 520,
+      "path": "data/clinical_validation/goodness_of_fit.csv",
+      "sha256": "8a0c380c1ebf9d4d113db6aa21034393f6ad3d593686c2941ea1f360dce10561"
+    },
+    {
+      "bytes": 120,
+      "path": "data/clinical_validation/overlay_severity.csv",
+      "sha256": "f0f87dba46c3cf8a7a277f6ce641653a669e786d04a961ce5499bb29650a9d9b"
+    },
+    {
+      "bytes": 788,
+      "path": "data/clinical_validation/overlay_specialty.csv",
+      "sha256": "1afca590f6c40c677981b2ceac9d00a55c20648fab86c6976d49788d279ab3e2"
+    },
+    {
+      "bytes": 640,
+      "path": "data/clinical_validation/overlay_timing.csv",
+      "sha256": "cbda3ef46b759146b4d9d97ad2e0af0cb95c91b8a16f804ae578fd5b9300dcb5"
+    },
+    {
+      "bytes": 204,
+      "path": "data/clinical_validation/profiles.csv",
+      "sha256": "5887da62d023779c3ecb4117fff446b071e59eceefd105aa16a241471d1b0e09"
+    },
+    {
+      "bytes": 462,
+      "path": "data/clinical_validation/residuals.csv",
+      "sha256": "4f9c9c8856278948b710f728256af9bcbc9ed02620f5e128ce96ed2adf6d71b9"
+    }
+  ],
+  "parameters": {
+    "attack_version": "17.1",
+    "held_out": "CIPHER used only as ground truth; predicted profiles are CIPHER-independent (uniform null and Neprash-anchored assumed)",
+    "mc_draws": 20000,
+    "mc_seed": 20260920,
+    "predicted_profiles": [
+      "uniform",
+      "assumed"
+    ],
+    "primary_tau": 7,
+    "scope": "convenience sample; consistency with this corpus, not population; small N, low power; single-label coding; not causal",
+    "services": [
+      "ehr",
+      "laboratory",
+      "pharmacy",
+      "imaging"
+    ],
+    "taus": [
+      6,
+      7,
+      8
+    ]
+  },
+  "protocol": null,
+  "run_id": "clinical-validation",
+  "stage": "validation"
+}

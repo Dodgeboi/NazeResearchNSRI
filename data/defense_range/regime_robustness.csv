@@ -1,0 +1,5 @@
+policy,regimes,certified,certified_fraction,mean_cost_when_certified,mean_cost_typical,mean_cost_adaptive,mean_cost_assumed,mean_cost_cipher
+greedy,48,30,0.625,5.533,2.583,17.333,4.286,6.625
+coverage,48,30,0.625,6.333,4.083,15.333,5.571,7
+random,48,30,0.625,12.4,10.417,20.333,12.214,12.562
+optimal,48,24,0.5,1.708,1.632,2,1.727,1.692

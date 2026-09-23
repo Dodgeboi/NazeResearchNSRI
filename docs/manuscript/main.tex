@@ -17,6 +17,7 @@
 \input{methods_numbers}
 \input{joint_numbers}
 \input{comparison_numbers}
+\input{betting_numbers}
 \makeatletter\let\tableinput\@@input\makeatother
 \makeatletter
 \setlength{\@dblfptop}{0pt}
@@ -319,7 +320,20 @@ variance of zero triggers the Hoeffding margin, avoiding an unsupported
 zero-width interval. This is a numerical safeguard, not a finite-sample
 coverage theorem for the approximate method.
 
-All three methods use the same $K=\JointMeanFamily{}$ family at
+A fourth family keeps finite-sample coverage but replaces the fixed range
+penalty with a bet \cite{waudbysmith2023}. Rescaling each paired difference to
+$[0,1]$, for any fixed fraction $\lambda\ge 0$ the capital
+$\prod_i\left(1+\lambda(y_i-m)\right)\le\exp\!\left(\lambda\sum_i(y_i-m)\right)$
+has expectation at most one whenever the average mean equals $m$, so it is a
+nonnegative e-value even for independent, non-identically distributed
+observations. An equal-weight average over a fixed geometric grid of fractions
+is again an e-value, and Markov's inequality turns $\{m:K_n(m)<1/\alpha\}$ into a
+level $1-\alpha$ set whose infimum, located by bisection, is the one-sided lower
+bound. It bounds the same average mean, under the same independence-only
+assumption, that Hoeffding and empirical Bernstein use, but its bets adapt to the
+observed spread instead of only the range.
+
+All four methods use the same $K=\JointMeanFamily{}$ family at
 $\alpha=0.05$, the same paired observations, and the same sufficient
 population screen. We report nominal prices and the positive-gap region at
 $\rho=0.50$. We also count positive lower bounds on mean-loss improvement

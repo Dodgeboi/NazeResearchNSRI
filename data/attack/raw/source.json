@@ -1,0 +1,10 @@
+{
+  "source": "MITRE ATT&CK Enterprise",
+  "version": "17.1",
+  "url": "https://raw.githubusercontent.com/mitre-attack/attack-stix-data/master/enterprise-attack/enterprise-attack-17.1.json",
+  "uncompressed_sha256": "0d1c347a4d584cf7e11ef46556c33b7689341443bf86299188d46c307274323b",
+  "uncompressed_bytes": 44879463,
+  "objects": 22653,
+  "retrieved_at": "2026-09-20T00:32:59+00:00",
+  "license": "MITRE ATT&CK Terms of Use"
+}

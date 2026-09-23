@@ -1,0 +1,111 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,booktabs,hyperref,microtype}
+\hypersetup{hidelinks}
+\makeatletter\let\tableinput\@@input\makeatother
+\input{control_numbers}
+
+\title{Distribution-free control-adequacy certificates on the MITRE ATT\&CK kill chain}
+\author{}
+\date{2026-09-20 (working note, version 0.1.0)}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We ask a decision question with a real, curated attack model rather than a
+synthetic one: which portfolios of defensive controls \emph{provably} keep a
+ransomware operation's reachability to its impact objective below a chosen level,
+when the effectiveness of each control is only known within an interval? Using the
+pinned MITRE ATT\&CK Enterprise knowledge base (v\CertAttackVersion; \CertTechniques{}
+techniques, \CertMitigations{} mitigations, and their real \texttt{mitigates}
+edges), we define a monotone kill-chain reachability function and certify
+portfolios by evaluating it at the adverse and favourable corners of the
+effectiveness uncertainty set --- the necessary/possible interval-efficiency
+argument, applied to attacker reachability. The guarantee is distribution-free and
+holds for every parameter value in the set. We report a cost-versus-guarantee
+frontier, a set of realistic named bundles, and how the minimum certifiable
+portfolio size grows with assumed uncertainty. The contribution is the method and
+its application to real ATT\&CK structure; effectiveness intervals are analyst
+priors, not incident measurements, and no claim is made about any specific
+organisation.
+\end{abstract}
+
+\section{Model}
+A ransomware operation traverses the ordered post-compromise ATT\&CK tactics from
+initial access to exfiltration and then the impact objective T1486 (Data Encrypted
+for Impact). A control portfolio is a set of ATT\&CK mitigations. Each technique's
+residual per-attempt success is $\mathrm{base}\cdot\prod_{m}(1-\mathrm{eff}_m)$ over
+the portfolio mitigations that mitigate it. A stage's success is the
+usage-weighted mean residual over its techniques (weights are the real ATT\&CK
+procedure-usage counts, so a prevalent technique matters more and partial coverage
+helps proportionally); the impact stage contributes the objective technique alone.
+Reachability $R$ is the product of stage successes. $R$ is coordinatewise monotone:
+increasing in every base rate and decreasing in every $\mathrm{eff}_m$.
+
+\section{Certificate}
+Effectiveness is uncertain, so each $\mathrm{eff}_m\in[e^{\mathrm{lo}}_m,e^{\mathrm{hi}}_m]$
+and the base rate lies in a common interval. Monotonicity places the extremes of
+$R$ at the box corners. A portfolio is \emph{guaranteed} adequate at level
+$\varepsilon$ when $R\le\varepsilon$ at the worst corner (base high, every
+effectiveness low), and only \emph{possible} when $R\le\varepsilon$ merely at the
+best corner. This is exactly the necessary/possible efficiency corner argument used
+elsewhere in this repository, here applied to reachability; where incident counts
+exist, finite-sample betting bounds supply the intervals.
+
+\section{Results}
+With a common base-rate prior $[0.5,0.9]$ and a wide effectiveness prior
+$[0.20,0.70]$ (multi-factor authentication tightened to $[0.85,0.99]$ from the
+reported account-compromise reduction), the undefended worst-case reachability is
+\CertEmptyWorstPct\%. Along the greedy cost-versus-guarantee frontier,
+\CertMinGuardTen{} mitigation guarantees $R\le 10\%$, \CertMinGuardFive{} guarantee
+$R\le 5\%$, and \CertMinGuardOne{} guarantee $R\le 1\%$ (Table~\ref{tab:frontier}).
+Among \CertNamedTotal{} realistic named bundles, \CertNamedGuardFive{} are
+guaranteed adequate at $5\%$: the identity bundle (worst case
+\CertIdentityWorstPct\%) and the hospital-core bundle (\CertCoreWorstPct\%), whereas
+data backup alone leaves \CertBackupWorstPct\% (Table~\ref{tab:named}). Identity
+controls are the dominant lever; single controls from other families do not certify
+even $R\le 10\%$.
+
+\begin{table}[t]\centering
+\caption{Greedy worst-case-reduction frontier (first eight additions): mitigation
+added and worst-case reachability after it, percent.}\label{tab:frontier}
+\begin{tabular}{@{}rllr@{}}\toprule
+Size & Mitigation & Name & Worst $R$ (\%)\\\midrule
+\tableinput table_control_frontier_rows.tex
+\bottomrule\end{tabular}
+\end{table}
+
+\begin{table}[t]\centering
+\caption{Named control bundles: size, worst-case reachability, and adequacy
+certificates.}\label{tab:named}
+\begin{tabular}{@{}lrrll@{}}\toprule
+Bundle & Size & Worst $R$ (\%) & Guar.\ $\le$10\% & Guar.\ $\le$5\%\\\midrule
+\tableinput table_control_named_rows.tex
+\bottomrule\end{tabular}
+\end{table}
+
+\section{Sensitivity to assumed uncertainty}
+The certificate's demands scale with ignorance. To guarantee $R\le 5\%$, a narrow
+effectiveness prior $[0.35,0.55]$ needs \CertMinGuardNarrow{} mitigations, while a
+wide prior $[0.10,0.85]$ needs \CertMinGuardWide{} (with undefended worst case
+\CertWideEmptyPct\%). This is the intended behaviour: a distribution-free guarantee
+buys robustness at the price of demanding more coverage when less is known.
+
+\section{Limitations}
+ATT\&CK's \texttt{mitigates} edges are qualitative expert mappings, not measured
+effect sizes; the effectiveness intervals are analyst priors, with one
+evidence-tightened exception, and the kill-chain progression is a modelling
+abstraction. There is no validation against real incidents. The result is a
+method and its application to real ATT\&CK structure with explicit uncertainty
+handling --- a decision-support certificate, not an empirical estimate of any
+organisation's risk.
+
+\paragraph{Data and reproducibility.} MITRE ATT\&CK Enterprise v\CertAttackVersion{}
+is used unmodified under the ATT\&CK Terms of Use; the pinned bundle is hashed and
+all outputs carry a provenance manifest. Every number above is generated from the
+committed result tables.
+
+\end{document}

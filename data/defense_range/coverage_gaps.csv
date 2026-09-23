@@ -1,0 +1,13 @@
+stage,techniques,uncoverable,examples
+initial-access,22,0,
+execution,43,1,T1059.012
+persistence,125,14,T1547+T1547.014+T1098.007
+privilege-escalation,108,14,T1547+T1547.014+T1098.007
+defense-evasion,211,36,T1578.004+T1014+T1600
+credential-access,67,4,T1056.001+T1555.002+T1056
+discovery,47,33,T1033+T1016.001+T1069
+lateral-movement,23,1,T1534
+collection,40,13,T1113+T1056.001+T1123
+command-and-control,45,3,T1568.001+T1568.003+T1665
+exfiltration,19,1,T1020
+impact,4,0,

@@ -1,0 +1,3 @@
+degradation,empty_union_outage,min_guaranteed_size_at_05,identity_worst_union,identity_guaranteed_05,backup_worst_union,backup_guaranteed_05,segmentation_worst_union,segmentation_guaranteed_05,patching_worst_union,patching_guaranteed_05,detection_worst_union,detection_guaranteed_05,hospital_core_worst_union,hospital_core_guaranteed_05
+assumed,0.449062963,3,0.04163334536,True,0.3794582037,False,0.3587306471,False,0.3737807891,False,0.279490457,False,0.05343973142,False
+cipher_gamma1,0.3302322364,3,0.03061635869,True,0.2790462398,False,0.2638035946,False,0.2748711786,False,0.2055318881,False,0.03929854715,True

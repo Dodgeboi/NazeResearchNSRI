@@ -1,0 +1,274 @@
+{
+  "code": {
+    "available": true,
+    "branch": "claude/stoic-galileo-81yrtm",
+    "commit": "f6e13bbfc41e9c8e1a15daa9912d0999884e4ff9",
+    "dirty": false,
+    "dirty_paths": []
+  },
+  "created_at": "2026-09-23T01:39:23+00:00",
+  "description": "MITRE ATT&CK Enterprise mitigation gaps across releases, the adaptive-adversary residual-risk floor they impose, and the minimal coverage repair.",
+  "environment": {
+    "implementation": "CPython",
+    "machine": "x86_64",
+    "packages": {
+      "matplotlib": "3.11.0",
+      "networkx": "3.6.1",
+      "numpy": "2.3.5",
+      "pandas": "3.0.1",
+      "scipy": "1.18.0",
+      "yaml": "6.0.3"
+    },
+    "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "inputs": [
+    {
+      "bytes": 5346,
+      "path": "data/attack_history/extracts/enterprise-1.0.json.gz",
+      "sha256": "4d064d3b959395084c59c69881d0d907bf0a9c778bee9363f7188c3b77131ed9"
+    },
+    {
+      "bytes": 11554,
+      "path": "data/attack_history/extracts/enterprise-10.1.json.gz",
+      "sha256": "afa6159f0c2809c68a0e9eed84da927fff6fd605b059a8dd10e36fe132ca70ef"
+    },
+    {
+      "bytes": 11771,
+      "path": "data/attack_history/extracts/enterprise-11.3.json.gz",
+      "sha256": "4cdd5ab45ca3409d939d47a52285d0180a386d58204325d2f2c22fa0b0466a0d"
+    },
+    {
+      "bytes": 12045,
+      "path": "data/attack_history/extracts/enterprise-12.1.json.gz",
+      "sha256": "b5673dabf48616e261e85b7e3a61b2e38a96a308d4f4f979b914521866602133"
+    },
+    {
+      "bytes": 12313,
+      "path": "data/attack_history/extracts/enterprise-13.1.json.gz",
+      "sha256": "874b1fb8a30bb378101bcefb7a1d194cfea0c749a79a49abf6e8407b7e59f774"
+    },
+    {
+      "bytes": 12669,
+      "path": "data/attack_history/extracts/enterprise-14.1.json.gz",
+      "sha256": "7650a6301db9ea16e1928a6df3b712fba8caeaf28b0f216eb07ad2a52450cd30"
+    },
+    {
+      "bytes": 13016,
+      "path": "data/attack_history/extracts/enterprise-15.1.json.gz",
+      "sha256": "e652ac6e802a366a25bd0960901f5f3682198b5de15176b738bbe2223fc1479d"
+    },
+    {
+      "bytes": 13513,
+      "path": "data/attack_history/extracts/enterprise-16.1.json.gz",
+      "sha256": "063fd0d9c3dfb214a3e60e8ff8de7a6ab7420808148bfa1cb04eb3a1f37093fa"
+    },
+    {
+      "bytes": 13953,
+      "path": "data/attack_history/extracts/enterprise-17.1.json.gz",
+      "sha256": "03e3892ecc46ae4ff76a2e140a19ed98c462316bf20f64338b20d96faf795f9d"
+    },
+    {
+      "bytes": 14170,
+      "path": "data/attack_history/extracts/enterprise-18.1.json.gz",
+      "sha256": "89b1260cd4bd16ce9d9d872fa64816a8e3dae08ecceb0ba8051d98441f6fcbaf"
+    },
+    {
+      "bytes": 14235,
+      "path": "data/attack_history/extracts/enterprise-19.2.json.gz",
+      "sha256": "3b4eabfdaec112f155eb572a7e78092f7e2e2d91f237bcd8799c4b02a1db5928"
+    },
+    {
+      "bytes": 6198,
+      "path": "data/attack_history/extracts/enterprise-2.0.json.gz",
+      "sha256": "4bd438d13d5376c0f58a39d82a67f2a701a5c61c2e0e18352e038a47a57ec59e"
+    },
+    {
+      "bytes": 6345,
+      "path": "data/attack_history/extracts/enterprise-3.0.json.gz",
+      "sha256": "1f9bbd8bfdb123f5681b795b17898b7fdc6f05903dbb92d7b42894748e43b3bd"
+    },
+    {
+      "bytes": 6912,
+      "path": "data/attack_history/extracts/enterprise-4.0.json.gz",
+      "sha256": "10026d17464b3a999e95ff65976674cefa9440450bb3db4f47656786d57b288c"
+    },
+    {
+      "bytes": 5646,
+      "path": "data/attack_history/extracts/enterprise-5.2.json.gz",
+      "sha256": "1f9c70cd362d61f27c4e369c243b87feb96c7d7ddaf35604ef0457df02d3dbf0"
+    },
+    {
+      "bytes": 6138,
+      "path": "data/attack_history/extracts/enterprise-6.3.json.gz",
+      "sha256": "a7614f8ce2c9ed0099acdd02d17f3a49282f197799fe0cb3ad5f3b1718608b35"
+    },
+    {
+      "bytes": 9169,
+      "path": "data/attack_history/extracts/enterprise-7.2.json.gz",
+      "sha256": "2f8a44e8de366a37ef77146f781cd0ff949ff2985549c00c8c221ba214b37ece"
+    },
+    {
+      "bytes": 10731,
+      "path": "data/attack_history/extracts/enterprise-8.2.json.gz",
+      "sha256": "13cec9cf69c53ca16d4b9505ccd6cd143604e273e076853e6f3278cd80fc15b9"
+    },
+    {
+      "bytes": 11168,
+      "path": "data/attack_history/extracts/enterprise-9.0.json.gz",
+      "sha256": "dfe44524bb0493b465b2408cde1acfd65b70c32307d39a1e3ca507237c319447"
+    },
+    {
+      "bytes": 12931,
+      "path": "data/attack_history/source_manifest.json",
+      "sha256": "584ad5dbd50802dd88e0c3151a30e3baa1b983a86ca6a07717967914eb6239ef"
+    },
+    {
+      "bytes": 12941,
+      "path": "scripts/analyze_attack_history.py",
+      "sha256": "80def955cd3d699e1016a503e6fe8dafd03ff33ef0359eb344d5aed41cc81408"
+    },
+    {
+      "bytes": 6275,
+      "path": "src/grrc/attack_graph.py",
+      "sha256": "b0dd7abd2e58ad155e8127db72cf005a5bd626755ffe2880aac9b74818cdd023"
+    },
+    {
+      "bytes": 13230,
+      "path": "src/grrc/coverage_evolution.py",
+      "sha256": "29576b02685dd29418611d311f5c229c9e65f778b9cab516cb9f1c7dcb7f5b45"
+    },
+    {
+      "bytes": 4479,
+      "path": "src/grrc/enums.py",
+      "sha256": "1959703e375427a1b009615125a866a00384b4efee53815bedb08ac05acbea00"
+    },
+    {
+      "bytes": 9042,
+      "path": "src/grrc/hospital_attack_model.py",
+      "sha256": "53919b922f3413f8c09ce8153704cf522d910371c4fbf5aa2d3838baa2ed856f"
+    },
+    {
+      "bytes": 9496,
+      "path": "src/grrc/joint_bounds.py",
+      "sha256": "622db1df5d6eab598d82051a434a02618cade5f5f64159b996bc770f029b37d6"
+    },
+    {
+      "bytes": 14389,
+      "path": "src/grrc/provenance.py",
+      "sha256": "bc68c43d8d9367b0e6ce70dcfb4eb4d5a82e0c59e9a4676cae73ad9aeb664f02"
+    },
+    {
+      "bytes": 3518,
+      "path": "src/grrc/utilities.py",
+      "sha256": "3ee09640a09c3868b530c7937133334acf2897939c2349e6a7dd1bc1fc531afa"
+    },
+    {
+      "bytes": 10187,
+      "path": "study/ATTACK_GAPS_PLAN.md",
+      "sha256": "a257251b4a9ea39f55cd70c7d72346d30229281b34c1e829bed7394e9ae6f421"
+    }
+  ],
+  "outputs": [
+    {
+      "bytes": 1555,
+      "path": "data/attack_history/coverage_by_release.csv",
+      "sha256": "636b5fb3b5b2f412aa656067f73409eba6b722c84303f873d652a395ce7e754d"
+    },
+    {
+      "bytes": 7335,
+      "path": "data/attack_history/coverage_by_tactic.csv",
+      "sha256": "126f736db5b87bf11dd79e5367368c8b8e759565285904bd2ca413ea3338cd9b"
+    },
+    {
+      "bytes": 2806,
+      "path": "data/attack_history/floor_by_release.csv",
+      "sha256": "7ded57af376f957a6c300cb37e292e8dbe822dac42b2280aaf0a63d89943dba7"
+    },
+    {
+      "bytes": 679,
+      "path": "data/attack_history/floor_changes.csv",
+      "sha256": "0cb03016a6bb8eb7fbc62f4af3b95ec1a02c4aea70d7212dc6fb784f12610d31"
+    },
+    {
+      "bytes": 23415,
+      "path": "data/attack_history/minimal_repair.csv",
+      "sha256": "92764597b92c73c51df48e8c96c3f1c425ef313f384b001e6f8291927f472188"
+    },
+    {
+      "bytes": 564,
+      "path": "data/attack_history/parameter_sensitivity.csv",
+      "sha256": "ceb46e15fe139511ad7c361f5dabbbb4557e89d8652158e2ae55a032f1d57a2d"
+    },
+    {
+      "bytes": 2493,
+      "path": "data/attack_history/repair_list_latest.csv",
+      "sha256": "dc4d79c80ccdffadc02a2d0dd02b9272499a9437d3ace90cb1051caf4b0e4f70"
+    },
+    {
+      "bytes": 2746,
+      "path": "data/attack_history/sensitivity.csv",
+      "sha256": "c251abb72b4ca7e477de8ef56b74435f65dcd63a818d2ab03dd5a923631ef528"
+    }
+  ],
+  "parameters": {
+    "base_grid": [
+      0.5,
+      0.7,
+      0.9
+    ],
+    "base_high": 0.9,
+    "crosswalk": "ATT&CK v19 stealth + defense-impairment -> defense-evasion",
+    "e_new_grid": [
+      0.1,
+      0.2,
+      0.5
+    ],
+    "eff_low": 0.2,
+    "eff_low_grid": [
+      0.1,
+      0.2,
+      0.35
+    ],
+    "epsilons": [
+      0.1,
+      0.05,
+      0.01
+    ],
+    "ks": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "placeholders": [
+      "M1055 Do Not Mitigate",
+      "M1056 Pre-compromise"
+    ],
+    "releases": [
+      "1.0",
+      "2.0",
+      "3.0",
+      "4.0",
+      "5.2",
+      "6.3",
+      "7.2",
+      "8.2",
+      "9.0",
+      "10.1",
+      "11.3",
+      "12.1",
+      "13.1",
+      "14.1",
+      "15.1",
+      "16.1",
+      "17.1",
+      "18.1",
+      "19.2"
+    ],
+    "scope": "measures the knowledge base's mitigation mapping, not whether a real-world defense exists; kill-chain stage model and worst-corner effectiveness are analyst abstractions"
+  },
+  "protocol": null,
+  "run_id": "attack-history",
+  "stage": "analysis"
+}

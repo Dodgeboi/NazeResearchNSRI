@@ -1,0 +1,13 @@
+degradation,portfolio,size,worst_k1,guaranteed_k1,worst_k2,guaranteed_k2,worst_k3,guaranteed_k3,worst_k4,guaranteed_k4
+assumed,identity,4,0.04163334536,True,0.02081667268,True,0.01387778179,True,0.009164572877,True
+assumed,backup,1,0.3794582037,False,0.1897291019,False,0.1264860679,False,0.08352853541,False
+assumed,segmentation,1,0.3587306471,False,0.1793653235,False,0.1195768824,False,0.07896586571,False
+assumed,patching,1,0.3737807891,False,0.1868903946,False,0.1245935964,False,0.08227879005,False
+assumed,detection,2,0.279490457,False,0.1397452285,False,0.09316348566,False,0.06152305657,False
+assumed,hospital_core,5,0.05343973142,False,0.02671986571,True,0.01781324381,True,0.01176346289,True
+cipher_gamma1,identity,4,0.03061635869,True,0.01530817934,True,0.0102054529,True,0.006456450559,True
+cipher_gamma1,backup,1,0.2790462398,False,0.1395231199,False,0.09301541326,False,0.05884593493,False
+cipher_gamma1,segmentation,1,0.2638035946,False,0.1319017973,False,0.08793453155,False,0.05563152966,False
+cipher_gamma1,patching,1,0.2748711786,False,0.1374355893,False,0.09162372621,False,0.0579654881,False
+cipher_gamma1,detection,2,0.2055318881,False,0.1027659441,False,0.06851062937,False,0.04334305355,True
+cipher_gamma1,hospital_core,5,0.03929854715,True,0.01964927357,True,0.01309951572,True,0.008287371118,True

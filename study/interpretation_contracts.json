@@ -29,6 +29,21 @@
         "mean_hours_saved": "weighted_service_hours",
         "simultaneous_lower": "weighted_service_hours"
       }
+    },
+    "betting_margins": {
+      "path": "data/betting_bounds/bound_margins.csv",
+      "units": {
+        "minimum": "weighted_service_hours",
+        "median": "weighted_service_hours",
+        "maximum": "weighted_service_hours"
+      }
+    },
+    "betting_retention": {
+      "path": "data/betting_bounds/bound_retention.csv",
+      "units": {
+        "retained": "portfolios",
+        "purchased_retained": "portfolios"
+      }
     }
   },
   "current": [
@@ -212,6 +227,67 @@
       "relation": "gt",
       "target": 0,
       "quantifier": "all"
+    },
+    {
+      "id": "betting_below_bernstein",
+      "source": "betting_margins",
+      "scope": {
+        "method": "betting",
+        "objective": "mean_loss"
+      },
+      "group": "profile",
+      "groups": [
+        "resource_constrained",
+        "intermediate_capacity",
+        "high_capacity"
+      ],
+      "rows": 3,
+      "column": "minimum",
+      "unit": "weighted_service_hours",
+      "reduce": "max",
+      "relation": "lt",
+      "target": 72,
+      "quantifier": "all"
+    },
+    {
+      "id": "betting_resource_certifies",
+      "source": "betting_retention",
+      "scope": {
+        "method": "betting",
+        "radius": 0.0,
+        "profile": "resource_constrained"
+      },
+      "group": "profile",
+      "groups": [
+        "resource_constrained"
+      ],
+      "rows": 1,
+      "column": "purchased_retained",
+      "unit": "portfolios",
+      "reduce": "max",
+      "relation": "eq",
+      "target": 3,
+      "quantifier": "all"
+    },
+    {
+      "id": "betting_high_no_certify",
+      "source": "betting_retention",
+      "scope": {
+        "method": "betting",
+        "radius": 0.0,
+        "profile": "high_capacity"
+      },
+      "group": "profile",
+      "groups": [
+        "high_capacity"
+      ],
+      "rows": 1,
+      "column": "purchased_retained",
+      "unit": "portfolios",
+      "reduce": "max",
+      "relation": "eq",
+      "target": 0,
+      "quantifier": "all"
     }
   ],
   "historical": [
@@ -362,6 +438,22 @@
       "base": "gap_bounded",
       "replace": {
         "reduce": "causal_effect"
+      },
+      "expected": "invalid"
+    },
+    {
+      "id": "betting_floor_too_tight",
+      "base": "betting_below_bernstein",
+      "replace": {
+        "target": 30
+      },
+      "expected": "fail"
+    },
+    {
+      "id": "betting_wrong_unit",
+      "base": "betting_below_bernstein",
+      "replace": {
+        "unit": "fraction"
       },
       "expected": "invalid"
     }

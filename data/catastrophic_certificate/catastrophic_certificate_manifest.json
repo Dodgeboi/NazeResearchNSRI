@@ -1,0 +1,140 @@
+{
+  "code": {
+    "available": true,
+    "branch": "claude/stoic-galileo-81yrtm",
+    "commit": "051131871fd6da9c15a239c53124afae6b67d521",
+    "dirty": false,
+    "dirty_paths": []
+  },
+  "created_at": "2026-09-20T19:47:23+00:00",
+  "description": "Sharp distribution-free k-of-n catastrophic clinical-outage certificate on the ATT&CK-driven hospital, assumed vs CIPHER-derived degradation.",
+  "environment": {
+    "implementation": "CPython",
+    "machine": "x86_64",
+    "packages": {
+      "matplotlib": "3.11.0",
+      "networkx": "3.6.1",
+      "numpy": "2.3.5",
+      "pandas": "3.0.1",
+      "scipy": "1.18.0",
+      "yaml": "6.0.3"
+    },
+    "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "inputs": [
+    {
+      "bytes": 8078946,
+      "path": "data/attack/raw/enterprise-attack-17.1.json.gz",
+      "sha256": "522b09c7db81ce61887baa19dde98ea06ee4045420fe3c42f5f58f3e3382c597"
+    },
+    {
+      "bytes": 428,
+      "path": "data/attack/raw/source.json",
+      "sha256": "ea0caa84593fc866fbe9d2bfc14290c8f9a015f7eee88f3c3d3dfe5f795e7d2c"
+    },
+    {
+      "bytes": 303958,
+      "path": "data/cipher/raw/cipher-v1.0.1.csv",
+      "sha256": "3ee4a39ba8e2b058832d6eadf014f569baad43851d1cba25043b7a8b85b38204"
+    },
+    {
+      "bytes": 1047,
+      "path": "data/cipher/raw/source_manifest.json",
+      "sha256": "7fdf5df49ad97bba06c38301b32f84fd98939c8acb40b430f1d5972d999874af"
+    },
+    {
+      "bytes": 6597,
+      "path": "scripts/analyze_catastrophic_certificate.py",
+      "sha256": "3e09ec60f15352e1bc4470543cd7dd094cb40b8e8d6b8a3915079e09875fe6f0"
+    },
+    {
+      "bytes": 6275,
+      "path": "src/grrc/attack_graph.py",
+      "sha256": "b0dd7abd2e58ad155e8127db72cf005a5bd626755ffe2880aac9b74818cdd023"
+    },
+    {
+      "bytes": 5216,
+      "path": "src/grrc/cipher_bounds.py",
+      "sha256": "1de486592089991c9b8d0a84a19b5ef0aca5ac2e552cafc4794218ffb3963fd6"
+    },
+    {
+      "bytes": 6868,
+      "path": "src/grrc/control_certificate.py",
+      "sha256": "8fa9811782eb6dbeb09a6767ded209d11d17b57d81c010ee155d10099cf978f2"
+    },
+    {
+      "bytes": 4479,
+      "path": "src/grrc/enums.py",
+      "sha256": "1959703e375427a1b009615125a866a00384b4efee53815bedb08ac05acbea00"
+    },
+    {
+      "bytes": 9042,
+      "path": "src/grrc/hospital_attack_model.py",
+      "sha256": "53919b922f3413f8c09ce8153704cf522d910371c4fbf5aa2d3838baa2ed856f"
+    },
+    {
+      "bytes": 9496,
+      "path": "src/grrc/joint_bounds.py",
+      "sha256": "622db1df5d6eab598d82051a434a02618cade5f5f64159b996bc770f029b37d6"
+    },
+    {
+      "bytes": 14389,
+      "path": "src/grrc/provenance.py",
+      "sha256": "bc68c43d8d9367b0e6ce70dcfb4eb4d5a82e0c59e9a4676cae73ad9aeb664f02"
+    },
+    {
+      "bytes": 3518,
+      "path": "src/grrc/utilities.py",
+      "sha256": "3ee09640a09c3868b530c7937133334acf2897939c2349e6a7dd1bc1fc531afa"
+    }
+  ],
+  "outputs": [
+    {
+      "bytes": 1324,
+      "path": "data/catastrophic_certificate/catastrophic_named.csv",
+      "sha256": "788d578319cfa098674b83e808ded605540ac5d7d68a827dbf4842a20deef7b8"
+    },
+    {
+      "bytes": 319,
+      "path": "data/catastrophic_certificate/catastrophic_summary.csv",
+      "sha256": "d7f0412022d54167466883e9c3bd5e25470564e76358cfde8d8d177c8e9636aa"
+    }
+  ],
+  "parameters": {
+    "attack_version": "17.1",
+    "base_bounds": [
+      0.5,
+      0.9
+    ],
+    "bound": "sharp k-of-n distribution-free (closed form, study/KOFN_THEOREM.md; LP-verified)",
+    "cipher_gamma": 1.0,
+    "default_eff": [
+      0.2,
+      0.7
+    ],
+    "epsilon": 0.05,
+    "evidence_eff": {
+      "M1032": [
+        0.85,
+        0.99
+      ]
+    },
+    "ks": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "scope": "classical aggregation bound; ATT&CK structure real; effectiveness and degradation are evidence-anchored intervals; no incident validation",
+    "services": [
+      "ehr",
+      "laboratory",
+      "pharmacy",
+      "imaging"
+    ]
+  },
+  "protocol": null,
+  "run_id": "catastrophic-certificate",
+  "stage": "analysis"
+}

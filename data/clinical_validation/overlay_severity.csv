@@ -1,0 +1,5 @@
+service,records,mean_impact
+ehr,60,5.416666667
+laboratory,33,7.121212121
+pharmacy,93,5.408602151
+imaging,26,6.730769231

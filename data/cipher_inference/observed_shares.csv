@@ -1,0 +1,6 @@
+service,high_severity_records,observed_share
+ehr,19,0.1484375
+laboratory,24,0.1875
+pharmacy,27,0.2109375
+imaging,18,0.140625
+unmodelled_residual,40,0.3125

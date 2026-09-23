@@ -1,0 +1,7 @@
+portfolio,size,worst_union,worst_ehr,guaranteed_10,possible_10,guaranteed_05,possible_05,guaranteed_01,possible_01
+identity,4,0.04163334536,0.01152117733,True,True,True,True,False,True
+backup,1,0.3794582037,0.1050073017,False,True,False,True,False,True
+segmentation,1,0.3587306471,0.09927137403,False,True,False,True,False,True
+patching,1,0.3737807891,0.1034361932,False,True,False,True,False,True
+detection,2,0.279490457,0.07734327111,False,True,False,True,False,True
+hospital_core,5,0.05343973142,0.01478835335,True,True,False,True,False,True

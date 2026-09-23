@@ -1,0 +1,109 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,booktabs,hyperref,microtype}
+\hypersetup{hidelinks}
+\makeatletter\let\tableinput\@@input\makeatother
+\input{cipher_numbers}
+
+\title{Selection-robust clinical-harm bounds from a real ransomware-incident corpus,\\
+and their effect on a control-adequacy certificate}
+\author{}
+\date{2026-09-20 (working note, version 0.1.0)}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Estimates of which hospital services ransomware harms most are usually read
+straight off incident reports, ignoring that reports are a selective sample. We
+take the CIPHER corpus (\CipherRecords{} coded patient-harm records from real
+hospital-ransomware incidents) and, instead of treating its shares as unbiased,
+compute \emph{partial-identification} bounds under bounded underreporting -- an
+honest interval per clinical service rather than a point rate. Among the
+\CipherHighTotal{} high-severity records (impact score $\ge \CipherTau{}$),
+pharmacy (\CipherPharmaShare\%) and laboratory (\CipherLabShare\%) carry more
+severe harm than the electronic health record (\CipherEhrShare\%), and
+\CipherResidualShare\% of severe harm falls in domains the model does not
+represent at all. Feeding these real-data-derived degradation intervals into the
+clinical-impact certificate changes a conclusion: the hospital-core control bundle,
+which is \emph{not} certified at the $5\%$ level under assumed inputs
+(\CipherCoreAssumedPct\%), \emph{is} certified under the real-data intervals
+(\CipherCoreRealPct\%). The contribution is the first inferential use of this
+corpus and the selection-aware grounding, not a new theorem.
+\end{abstract}
+
+\section{Data and why bounds}
+CIPHER (Straw, Tully, Dameff; CC-BY) codes patient-harm records from real
+hospital-ransomware incident reports, each with a clinical-impact score, harm-onset
+time point, and technical domain. It is a \textbf{convenience sample of reported
+harms}: unreported harms are missing not at random, so a naive share is biased. We
+therefore bound. Mapping technical domains to the four modelled clinical services
+uses the repository's existing coverage map (Health Records~$\to$~EHR, Laboratory
+Systems~$\to$~laboratory, ePrescribing~$\to$~pharmacy, Imaging~$\to$~imaging);
+every other domain is kept as an explicit unmodelled residual, never dropped.
+
+\section{Method}
+Among high-severity records, let $n_s$ be service $s$'s count and $T$ the total
+(including the residual). Under the assumption that any domain's true count is at
+most $(1+\gamma)$ times its observed count, service $s$'s true share lies in
+\[
+\Big[\tfrac{n_s}{n_s+(1+\gamma)(T-n_s)},\ \tfrac{n_s(1+\gamma)}{n_s(1+\gamma)+(T-n_s)}\Big].
+\]
+At $\gamma=0$ this is the observed share; it widens monotonically with $\gamma$ and
+stays in $[0,1]$. This is Manski-style partial identification; $\gamma$ is a
+transparent worst-case dial, not a fitted selection model.
+
+\section{Results}
+Observed high-severity shares invert the usual intuition: pharmacy and laboratory
+lead, not the EHR (Table~\ref{tab:shares}), and \CipherResidualShare\% of severe
+harm is in domains outside the model (infrastructure, operating rooms,
+communications). The harm-onset profile puts \CipherWeekTwoPlus\% of records at
+Week~2 or later, corroborating that a short recovery horizon understates real harm.
+
+Using the $\gamma=\CipherGamma$ intervals as the certificate's per-service
+degradation changes a decision (Table~\ref{tab:compare}): undefended union clinical
+outage moves from \CipherEmptyAssumedPct\% (assumed) to \CipherEmptyRealPct\%
+(real-data, lower because roughly a third of severe harm is unmodelled), and the
+hospital-core bundle crosses from \emph{not} certified at $5\%$
+(\CipherCoreAssumedPct\%, guaranteed: \CipherCoreAssumedGuar) to certified
+(\CipherCoreRealPct\%, guaranteed: \CipherCoreRealGuar). The point is not the
+direction of the shift but that the certificate's answer is sensitive to this
+input, and grounding it in real data --- with honest bounds --- is preferable to an
+assumption.
+
+\begin{table}[t]\centering
+\caption{High-severity harm by clinical service: observed share and the
+$\gamma=1$ partial-identification interval (percent of all high-severity records).}
+\label{tab:shares}
+\begin{tabular}{@{}lrrr@{}}\toprule
+Service & Records & Observed share (\%) & $\gamma{=}1$ interval (\%)\\\midrule
+\tableinput table_cipher_shares_rows.tex
+\bottomrule\end{tabular}
+\end{table}
+
+\begin{table}[t]\centering
+\caption{Clinical-impact certificate under assumed vs.\ CIPHER-derived degradation
+intervals.}\label{tab:compare}
+\begin{tabular}{@{}lrrl@{}}\toprule
+Degradation input & Undefended union (\%) & Hospital-core union (\%) & Core guar.\ $\le$5\%\\\midrule
+\tableinput table_cipher_compare_rows.tex
+\bottomrule\end{tabular}
+\end{table}
+
+\section{Limitations}
+CIPHER is reported harm, not incidence; the shares are relative
+severity-attribution among reported harms, not probabilities from a random sample.
+The single-$\gamma$ underreporting envelope is a worst-case device, not a fitted
+model; counts are small, so intervals are wide -- the honest consequence. The
+domain-to-service mapping is the repository's coverage mapping and leaves a large
+unmodelled residual. This is a real-data grounding of one certificate input via
+partial identification, not a new statistical method and not a validated estimate
+of any hospital's risk.
+
+\paragraph{Reproducibility.} CIPHER v1.0.1 is used unmodified (CC-BY), hashed in a
+provenance manifest with every input; all numbers here are generated from the
+committed tables.
+
+\end{document}

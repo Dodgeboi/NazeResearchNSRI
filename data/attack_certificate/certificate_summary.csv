@@ -1,0 +1,4 @@
+epsilon,empty_worst_reachability,min_guaranteed_portfolio_size,named_guaranteed,named_total
+0.1,0.2824295365,1,2,6
+0.05,0.2824295365,3,2,6
+0.01,0.2824295365,6,0,6

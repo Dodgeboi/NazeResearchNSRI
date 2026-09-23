@@ -1,0 +1,207 @@
+{
+  "code": {
+    "available": true,
+    "branch": "claude/stoic-galileo-81yrtm",
+    "commit": "d0c0bb10dd53f330e93bce02d49296c7919b4327",
+    "dirty": false,
+    "dirty_paths": []
+  },
+  "created_at": "2026-09-22T16:27:54+00:00",
+  "description": "Certified cyber-range benchmark: reference automated defenders scored by a distribution-free residual-risk certificate across an adaptive threat-regime sweep on the real ATT&CK-driven hospital.",
+  "environment": {
+    "implementation": "CPython",
+    "machine": "x86_64",
+    "packages": {
+      "matplotlib": "3.11.0",
+      "networkx": "3.6.1",
+      "numpy": "2.3.5",
+      "pandas": "3.0.1",
+      "scipy": "1.18.0",
+      "yaml": "6.0.3"
+    },
+    "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "inputs": [
+    {
+      "bytes": 8078946,
+      "path": "data/attack/raw/enterprise-attack-17.1.json.gz",
+      "sha256": "522b09c7db81ce61887baa19dde98ea06ee4045420fe3c42f5f58f3e3382c597"
+    },
+    {
+      "bytes": 428,
+      "path": "data/attack/raw/source.json",
+      "sha256": "ea0caa84593fc866fbe9d2bfc14290c8f9a015f7eee88f3c3d3dfe5f795e7d2c"
+    },
+    {
+      "bytes": 303958,
+      "path": "data/cipher/raw/cipher-v1.0.1.csv",
+      "sha256": "3ee4a39ba8e2b058832d6eadf014f569baad43851d1cba25043b7a8b85b38204"
+    },
+    {
+      "bytes": 1047,
+      "path": "data/cipher/raw/source_manifest.json",
+      "sha256": "7fdf5df49ad97bba06c38301b32f84fd98939c8acb40b430f1d5972d999874af"
+    },
+    {
+      "bytes": 5087,
+      "path": "scripts/run_defense_range.py",
+      "sha256": "dd230646c887862703c73efc1600ec42a303919c7044248c94e438bdecf8d6fc"
+    },
+    {
+      "bytes": 6275,
+      "path": "src/grrc/attack_graph.py",
+      "sha256": "b0dd7abd2e58ad155e8127db72cf005a5bd626755ffe2880aac9b74818cdd023"
+    },
+    {
+      "bytes": 6144,
+      "path": "src/grrc/betting.py",
+      "sha256": "a7c4c2ddf4c08f812cc3e77c5ce8f8d15d190ba29c7460dba89c933ecf006cd0"
+    },
+    {
+      "bytes": 5216,
+      "path": "src/grrc/cipher_bounds.py",
+      "sha256": "1de486592089991c9b8d0a84a19b5ef0aca5ac2e552cafc4794218ffb3963fd6"
+    },
+    {
+      "bytes": 6868,
+      "path": "src/grrc/control_certificate.py",
+      "sha256": "8fa9811782eb6dbeb09a6767ded209d11d17b57d81c010ee155d10099cf978f2"
+    },
+    {
+      "bytes": 4479,
+      "path": "src/grrc/enums.py",
+      "sha256": "1959703e375427a1b009615125a866a00384b4efee53815bedb08ac05acbea00"
+    },
+    {
+      "bytes": 9042,
+      "path": "src/grrc/hospital_attack_model.py",
+      "sha256": "53919b922f3413f8c09ce8153704cf522d910371c4fbf5aa2d3838baa2ed856f"
+    },
+    {
+      "bytes": 9496,
+      "path": "src/grrc/joint_bounds.py",
+      "sha256": "622db1df5d6eab598d82051a434a02618cade5f5f64159b996bc770f029b37d6"
+    },
+    {
+      "bytes": 14389,
+      "path": "src/grrc/provenance.py",
+      "sha256": "bc68c43d8d9367b0e6ce70dcfb4eb4d5a82e0c59e9a4676cae73ad9aeb664f02"
+    },
+    {
+      "bytes": 1349,
+      "path": "src/grrc/range/__init__.py",
+      "sha256": "8dfd8eaffe855a23bd99999933b5d878986004886f01c62e9298d6b9c5f1f8e1"
+    },
+    {
+      "bytes": 7748,
+      "path": "src/grrc/range/adversary.py",
+      "sha256": "4e44573dc4a25b6016be56e279b358250d82d4ac59dc29179582163b5ab261f8"
+    },
+    {
+      "bytes": 6938,
+      "path": "src/grrc/range/environment.py",
+      "sha256": "d97fd60654f269b462c2200bc4090ebc3f3656ff68cecbf6a553309d4a2cfbf6"
+    },
+    {
+      "bytes": 4647,
+      "path": "src/grrc/range/policies.py",
+      "sha256": "494ec1d3cf26278c951b08299e4de80b4160d26bbc2ec50b2f1aedc9265c2c14"
+    },
+    {
+      "bytes": 3932,
+      "path": "src/grrc/range/regimes.py",
+      "sha256": "2d3b686db5d2552c6c8e068e52f359bb2ed64b51c66a1e33ba07d3728afe6942"
+    },
+    {
+      "bytes": 9755,
+      "path": "src/grrc/range/runner.py",
+      "sha256": "8785851f68464aedef173ae8955bf5898b4da1c3d319fcc494058d327f712501"
+    },
+    {
+      "bytes": 3518,
+      "path": "src/grrc/utilities.py",
+      "sha256": "3ee09640a09c3868b530c7937133334acf2897939c2349e6a7dd1bc1fc531afa"
+    },
+    {
+      "bytes": 9289,
+      "path": "study/DEFENSE_RANGE_PLAN.md",
+      "sha256": "c4e3c96595c455fd72f8e74000bf68c9f976616798aed1f7ae3f09d5422a27ee"
+    }
+  ],
+  "outputs": [
+    {
+      "bytes": 216,
+      "path": "data/defense_range/adaptive_floor.csv",
+      "sha256": "2cecbde0b25ad56b9e9a9e7cc72655ebadb5df728b621a5e87662a8913fc3ae5"
+    },
+    {
+      "bytes": 469,
+      "path": "data/defense_range/coverage_gaps.csv",
+      "sha256": "b6396b4effdbf3af8d96e222c756b25690fd7d8194f9582fb224435338257c59"
+    },
+    {
+      "bytes": 11925,
+      "path": "data/defense_range/leaderboard.csv",
+      "sha256": "953c6b370bc03a2ea0f0db3c28927a3b13ace99341d4afab7648797fe88d209e"
+    },
+    {
+      "bytes": 3164,
+      "path": "data/defense_range/optimality_gap.csv",
+      "sha256": "898b604edf55e26aa1cb72c5c61a5ebf6d1198ddf2f4b5c45bb5db52ce24a09d"
+    },
+    {
+      "bytes": 109,
+      "path": "data/defense_range/prior_robustness.csv",
+      "sha256": "2f024faada04d0aa089ffa69e7e489ea73059e724d05355b3c2b7c4a0cc02472"
+    },
+    {
+      "bytes": 335,
+      "path": "data/defense_range/regime_robustness.csv",
+      "sha256": "e1792b105d1c2fa7a562ae51b0a9ef36e9d244a0a97cc7aac73dffe8e3268697"
+    }
+  ],
+  "parameters": {
+    "adequacy_target": "catastrophic k-of-n clinical (cat_guaranteed): worst-corner P(>=k services in sustained outage) <= epsilon",
+    "attack_version": "17.1",
+    "base_bounds": [
+      0.5,
+      0.9
+    ],
+    "default_eff": [
+      0.2,
+      0.7
+    ],
+    "epsilons": [
+      0.1,
+      0.05,
+      0.01
+    ],
+    "evidence_eff": {
+      "M1032": [
+        0.85,
+        0.99
+      ]
+    },
+    "n_mitigations": 44,
+    "policies": [
+      "greedy",
+      "coverage",
+      "random",
+      "optimal",
+      "empty",
+      "all"
+    ],
+    "scope": "evaluation-environment/benchmark (WIP tier); ATT&CK and CIPHER are real; hospital synthetic; effectiveness/degradation are analyst-prior intervals; certificate verdicts are conditional worst-case frequencies, not confidence levels; reference defenders are simple automated policies",
+    "seed": 20260921,
+    "services": [
+      "ehr",
+      "laboratory",
+      "pharmacy",
+      "imaging"
+    ]
+  },
+  "protocol": null,
+  "run_id": "defense-range",
+  "stage": "analysis"
+}
