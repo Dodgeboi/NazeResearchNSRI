@@ -32,6 +32,23 @@ work-in-progress, not a new theorem or a validated real-world defense.
 - Core: [`grrc.range`](src/grrc/range) (environment, reference policies, regime sweep, runner)
 - Foundations it builds on: the [control-adequacy certificate](docs/control_certificate/main.tex), the [catastrophic k-of-n certificate](docs/catastrophic_certificate/main.tex), and the [proved closed-form k-of-n theorem](study/KOFN_THEOREM.md)
 
+## New paper: Uncoverable by Design (ATT&CK mitigation gaps, 2019–2026)
+
+A measurement paper on real MITRE ATT&CK data across every comparable Enterprise
+release (v5.2 to v19.2): how many ransomware kill-chain techniques ATT&CK leaves with no
+mitigation, the certification floor those gaps impose on any defense built from ATT&CK
+mitigations, and the exact minimal set of techniques that would need a mitigation for a
+given guarantee to become attainable. Placeholder mitigations (M1055, M1056), the
+mitigation restructure, sub-techniques (with and without parent inheritance) and the v19
+Defense Evasion split are handled by stated rules, each with a sensitivity check. The
+floor's level depends on the assumed base-rate and effectiveness intervals; its growth
+across releases provably does not depend on the base rate. The closest prior work
+(Rahman & Williams, arXiv:2211.06500) is a single-snapshot control-mapping study.
+
+- [Paper](docs/attack_gaps/main.pdf) and [source](docs/attack_gaps/main.tex), [design note with proofs](study/ATTACK_GAPS_PLAN.md)
+- [Tables](data/attack_history) with [hash-pinned per-release extracts](data/attack_history/extracts) and [source manifest](data/attack_history/source_manifest.json)
+- Code: [`grrc.coverage_evolution`](src/grrc/coverage_evolution.py), [fetch](scripts/fetch_attack_history.py), [analysis](scripts/analyze_attack_history.py)
+
 ## Paper and results
 
 - [Final paper](docs/manuscript/main.pdf), [editable source](docs/manuscript/main.tex), and [anonymous copy](docs/manuscript/anonymous.pdf)

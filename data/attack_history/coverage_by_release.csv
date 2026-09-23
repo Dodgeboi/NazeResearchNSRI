@@ -1,0 +1,20 @@
+version,release_date,comparable,reason,real_mitigations,kill_chain_techniques,uncovered,uncovered_share,single_mitigation,parents,parents_uncovered,gap_stages
+1.0,2018-01-17,False,technique-specific mitigations (before the M-series restructure),-1,-1,-1,-1,-1,-1,-1,-1
+2.0,2018-04-18,False,technique-specific mitigations (before the M-series restructure),-1,-1,-1,-1,-1,-1,-1,-1
+3.0,2018-10-23,False,technique-specific mitigations (before the M-series restructure),-1,-1,-1,-1,-1,-1,-1,-1
+4.0,2019-04-30,False,technique-specific mitigations (before the M-series restructure),-1,-1,-1,-1,-1,-1,-1,-1
+5.2,2019-07-27,True,comparable,39,244,61,0.25,66,244,61,8
+6.3,2020-03-09,True,comparable,40,266,68,0.255639,73,266,68,9
+7.2,2020-07-15,True,comparable,40,428,84,0.196262,122,156,40,9
+8.2,2021-01-27,True,comparable,40,457,86,0.188184,127,162,41,9
+9.0,2021-04-29,True,comparable,40,473,89,0.188161,126,168,42,9
+10.1,2021-11-10,True,comparable,41,487,91,0.186858,119,171,42,9
+11.3,2022-07-07,True,comparable,41,496,91,0.183468,125,174,43,9
+12.1,2022-11-08,True,comparable,41,508,94,0.185039,127,176,43,9
+13.1,2023-05-09,True,comparable,41,519,95,0.183044,130,178,44,9
+14.1,2023-11-14,True,comparable,41,536,96,0.179104,134,183,43,9
+15.1,2024-05-02,True,comparable,41,546,95,0.173993,135,184,42,9
+16.1,2024-11-12,True,comparable,42,565,102,0.180531,129,185,42,9
+17.1,2025-05-06,True,comparable,42,588,107,0.181973,138,193,44,10
+18.1,2025-11-13,True,comparable,42,599,112,0.186978,135,197,47,10
+19.2,2026-08-05,True,comparable,42,601,114,0.189684,135,201,48,10

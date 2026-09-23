@@ -1,0 +1,7 @@
+version,prev_version,stage,factor_before,factor_after,binding_before,binding_before_name,binding_after,binding_after_name,uncovered_after
+6.3,5.2,lateral-movement,0.72,0.9,T1037,Logon Scripts,T1534,Internal Spearphishing,1
+7.2,6.3,initial-access,0.576,0.72,T1091,Replication Through Removable Media,T1078.001,Default Accounts,0
+7.2,6.3,execution,0.9,0.72,T1061,Graphical User Interface,T1059.003,Windows Command Shell,0
+7.2,6.3,command-and-control,0.72,0.9,T1001,Data Obfuscation,T1568.001,Fast Flux DNS,2
+16.1,15.1,impact,0.72,0.576,T1485,Data Destruction,T1486,Data Encrypted for Impact,0
+17.1,16.1,execution,0.72,0.9,T1059.003,Windows Command Shell,T1059.012,Hypervisor CLI,1

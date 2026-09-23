@@ -50,3 +50,6 @@ data/multiobjective/confirmatory/multiobjective_confirmatory_results.csv
 # Earlier history still contains the uncompressed blobs. History is not
 # rewritten here, so this saves space going forward only.
 data/multiobjective/confirmatory/multiobjective_confirmatory_results.csv
+
+# Raw ATT&CK release bundles (re-fetched and hash-verified by scripts/fetch_attack_history.py)
+data/attack_history/cache/
