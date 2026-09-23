@@ -2,23 +2,11 @@
   "code": {
     "available": true,
     "branch": "claude/stoic-galileo-81yrtm",
-    "commit": "18e417cc4d5735bf8fdb58bc3fd47d4423c7935e",
-    "dirty": true,
-    "dirty_paths": [
-      ".gitignore",
-      "README.md",
-      "data/attack_history/",
-      "docs/attack_gaps/",
-      "scripts/analyze_attack_history.py",
-      "scripts/fetch_attack_history.py",
-      "scripts/generate_gaps_paper.py",
-      "scripts/plot_attack_history.py",
-      "src/grrc/coverage_evolution.py",
-      "study/ATTACK_GAPS_PLAN.md",
-      "tests/test_coverage_evolution.py"
-    ]
+    "commit": "f6e13bbfc41e9c8e1a15daa9912d0999884e4ff9",
+    "dirty": false,
+    "dirty_paths": []
   },
-  "created_at": "2026-09-23T01:27:25+00:00",
+  "created_at": "2026-09-23T01:39:23+00:00",
   "description": "MITRE ATT&CK Enterprise mitigation gaps across releases, the adaptive-adversary residual-risk floor they impose, and the minimal coverage repair.",
   "environment": {
     "implementation": "CPython",
