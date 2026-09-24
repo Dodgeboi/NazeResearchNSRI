@@ -5,6 +5,7 @@
 \usepackage{microtype}
 \makeatletter\let\tableinput\@@input\makeatother
 \input{range_numbers}
+\input{range_llm_protocol}
 
 \begin{document}
 \title{A Certified Cyber Range for Automated Defenders:\\
@@ -152,6 +153,37 @@ $\varepsilon$ & $k$ & Optimal & Greedy & Coverage & Random\\\midrule
 \bottomrule\end{tabular}
 \end{table}
 
+
+\section{A language-model defender}
+To test the interface with an actual language-model agent, we run an open-weight model
+locally (served by Ollama, no external API) as a defender. Each turn it sees the regime
+(adversary, $k$, $\varepsilon$), the catalog of mitigations with the techniques and
+stages each covers, what it has deployed, and the certified worst-case bound; it replies
+with one JSON action (add, remove, or stop). It is told to reach the target with as few
+mitigations as possible and to stop if it judges the target unreachable; the
+reachability floor is not revealed. Invalid replies are no-ops and are counted. The
+protocol was fixed before any model was run: \LlmTypical{} typical and \LlmAdaptive{}
+adaptive regimes (assumed degradation), the adaptive ones one certifiable
+($\varepsilon{=}0.10$, $k{=}3$) and three that no portfolio can certify;
+\LlmSeeds{} seeds each at temperature \LlmTemperature{} (\LlmEpisodes{} episodes); at
+most \LlmMaxSteps{} turns; a \LlmContext-token context. The metrics are the share of
+episodes certified, the cost at first certification against the exact optimum and the
+greedy defender, whether the agent stops on uncertifiable regimes rather than deploying
+until the turn limit, and the rate of invalid actions. Replaying the greedy defender
+through the same text interface reproduces its benchmark costs exactly, which checks the
+harness.
+
+\IfFileExists{range_llm_numbers.tex}{\input{range_llm_numbers}
+\begin{table*}[t]\centering\footnotesize
+\caption{The language-model defender (\LlmModel, \LlmParams, \LlmQuant) per regime:
+reference costs, episodes certified, mean cost when certified, episodes in which it chose
+to stop, and invalid actions per episode.}\label{tab:llm}
+\begin{tabular}{@{}lrrrrrrrr@{}}\toprule
+Adversary & $\varepsilon$ & $k$ & Optimal & Greedy & Certified & Mean cost & Stopped & Invalid\\\midrule
+\tableinput table_range_llm_rows.tex
+\bottomrule\end{tabular}
+\end{table*}
+\input{llm_findings}}{}
 
 \section{Roadmap}
 The next step is the one this draft does not yet take: evaluating learning and

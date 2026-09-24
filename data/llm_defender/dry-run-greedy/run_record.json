@@ -1,0 +1,38 @@
+{
+  "model": "dry-run-greedy",
+  "ollama": null,
+  "temperature": null,
+  "seeds": [
+    1
+  ],
+  "max_steps": 30,
+  "quick": false,
+  "dry_run": true,
+  "regimes": [
+    "typical|assumed|eps=0.10|k=1",
+    "typical|assumed|eps=0.05|k=1",
+    "typical|assumed|eps=0.05|k=2",
+    "typical|assumed|eps=0.01|k=4",
+    "adaptive|assumed|eps=0.10|k=3",
+    "adaptive|assumed|eps=0.10|k=2",
+    "adaptive|assumed|eps=0.05|k=3",
+    "adaptive|assumed|eps=0.05|k=1"
+  ],
+  "git_commit": "f6e9c291fc3708a12376b43f594257fce0eb8bbb",
+  "python": "3.12.3",
+  "platform": "Linux",
+  "system_prompt_sha256": "9083804743faff09090caea6ea6ecbe5717f936b112e7a6d03f77c74381513b6",
+  "inputs": {
+    "scripts/run_llm_defender.py": "4697123a391bfe840e52b9eed8ad3c3dc0eeb77f04936dc7bcaeef9810fb5d97",
+    "src/grrc/range/llm_agent.py": "918b145efb443d98716e2214c8d336866d9dbb7290d4bf5587d5bda6321362de",
+    "src/grrc/range/environment.py": "d97fd60654f269b462c2200bc4090ebc3f3656ff68cecbf6a553309d4a2cfbf6",
+    "src/grrc/range/adversary.py": "4e44573dc4a25b6016be56e279b358250d82d4ac59dc29179582163b5ab261f8",
+    "src/grrc/range/regimes.py": "2d3b686db5d2552c6c8e068e52f359bb2ed64b51c66a1e33ba07d3728afe6942",
+    "data/attack/raw/enterprise-attack-17.1.json.gz": "522b09c7db81ce61887baa19dde98ea06ee4045420fe3c42f5f58f3e3382c597",
+    "data/defense_range/optimality_gap.csv": "898b604edf55e26aa1cb72c5c61a5ebf6d1198ddf2f4b5c45bb5db52ce24a09d"
+  },
+  "outputs": {
+    "data/llm_defender/dry-run-greedy/episodes.jsonl": "27aa5d6d9b831a02eb38bfdb1c0068855ffbde21498ab90e27293a1e5d11de37",
+    "data/llm_defender/dry-run-greedy/summary.csv": "99bfc353250d2fe3ae4271afa7e0f79f12b23aa3aa5efc21477340e372e9dead"
+  }
+}

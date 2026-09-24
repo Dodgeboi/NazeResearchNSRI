@@ -1,0 +1,9 @@
+model,regime,adversary,epsilon,k,seed,certified,cost_to_certify,steps,invalid_actions,stop_reason,final_cost,final_cat_worst,prompt_tokens,completion_tokens,certifiable,optimal_size,optimal_computed,greedy_cost,coverage_cost,random_cost
+dry-run-greedy,typical|assumed|eps=0.10|k=1,typical,0.1,1,1,True,2.0,2,0,certified,2,0.08217751227754834,0,0,True,2,True,2,3,9
+dry-run-greedy,typical|assumed|eps=0.05|k=1,typical,0.05,1,1,True,4.0,4,0,certified,4,0.03603977348002254,0,0,True,3,True,4,6,17
+dry-run-greedy,typical|assumed|eps=0.05|k=2,typical,0.05,2,1,True,2.0,2,0,certified,2,0.04108875613877417,0,0,True,2,True,2,3,9
+dry-run-greedy,typical|assumed|eps=0.01|k=4,typical,0.01,4,1,True,4.0,4,0,certified,4,0.007933283470445213,0,0,True,4,True,4,7,18
+dry-run-greedy,adaptive|assumed|eps=0.10|k=2,adaptive,0.1,2,1,False,,30,0,step_cap,30,0.1149601185292263,0,0,False,-1,False,-1,-1,-1
+dry-run-greedy,adaptive|assumed|eps=0.10|k=3,adaptive,0.1,3,1,True,26.0,26,0,certified,26,0.09580009877435523,0,0,True,4,True,26,26,33
+dry-run-greedy,adaptive|assumed|eps=0.05|k=1,adaptive,0.05,1,1,False,,30,0,step_cap,30,0.2299202370584526,0,0,False,-1,False,-1,-1,-1
+dry-run-greedy,adaptive|assumed|eps=0.05|k=3,adaptive,0.05,3,1,False,,30,0,step_cap,30,0.0766400790194842,0,0,False,-1,False,-1,-1,-1

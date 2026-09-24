@@ -30,6 +30,11 @@ They are distinct contributions and cite each other only anonymously.
 
 ## What only you can do
 
+0. **Run the LLM defender on your computer** (free, about 1–3 hours) following
+   [`docs/LLM_DEFENDER_RUN.md`](LLM_DEFENDER_RUN.md) and push `data/llm_defender`. Paper B
+   has a pre-declared protocol section; its results table and findings appear only once
+   real results are pushed, and Claude then writes the findings and updates the abstract
+   and limitations. Do not submit Paper B without this step, or remove the section.
 1. Create or confirm HotCRP accounts and register both submissions before the deadline.
 2. Enter the real author lists and conflicts in HotCRP (not in the PDFs).
 3. Decide whether to keep the AI-use statements, and check ACSAC's AI policy.
