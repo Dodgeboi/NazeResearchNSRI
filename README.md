@@ -48,6 +48,7 @@ ATT&CK's own procedure examples, nearly all documented ransomware uses at least 
 uncovered technique, and a technique-level survival analysis shows gaps almost never close.
 
 - [Paper](docs/attack_gaps/main.pdf) and [source](docs/attack_gaps/main.tex), [design note with proofs](study/ATTACK_GAPS_PLAN.md)
+- Both papers are formatted for AIDC @ ACSAC 2026 (IEEE two-column, anonymized); see the [submission checklist](docs/SUBMISSION_AIDC.md)
 - [Tables](data/attack_history) with [hash-pinned per-release extracts](data/attack_history/extracts) and [source manifest](data/attack_history/source_manifest.json)
 - Code: [`grrc.coverage_evolution`](src/grrc/coverage_evolution.py), [fetch](scripts/fetch_attack_history.py), [analysis](scripts/analyze_attack_history.py)
 

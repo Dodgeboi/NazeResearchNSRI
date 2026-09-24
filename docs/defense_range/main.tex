@@ -1,48 +1,56 @@
-\documentclass[11pt]{article}
-\usepackage[margin=1in]{geometry}
+\documentclass[conference,compsoc]{IEEEtran}
 \usepackage[T1]{fontenc}
-\usepackage{lmodern}
-\usepackage{amsmath,booktabs,hyperref,microtype,graphicx}
-\hypersetup{hidelinks}
+\usepackage{amsmath,booktabs,graphicx}
+\usepackage[hidelinks,pdfauthor={},pdftitle={A Certified Cyber Range for Automated Defenders}]{hyperref}
+\usepackage{microtype}
 \makeatletter\let\tableinput\@@input\makeatother
 \input{range_numbers}
 
-\title{A certified cyber range for automated defenders:\\
-provable residual-risk guarantees against an adaptive adversary}
-\author{}
-\date{2026-09-21 (work-in-progress, version 0.2.0)}
-
 \begin{document}
+\title{A Certified Cyber Range for Automated Defenders:\\
+Provable Residual-Risk Scores Against an Adaptive Adversary}
+\author{\IEEEauthorblockN{Anonymous Author(s)}\IEEEauthorblockA{Anonymized for double-blind review}}
 \maketitle
 
 \begin{abstract}
-Autonomous cyber-defense systems are judged almost entirely by \emph{empirical}
-outcomes---attack-success rate, flags captured---which say nothing provable about
-the residual risk a defender leaves behind, least of all against an adversary that
-adapts. We describe a small \emph{cyber range} that scores automated defenders with
-a \emph{provable} verdict instead. Built on the real MITRE ATT\&CK Enterprise kill
-chain (v\RangeAttackVersion, \RangeMitigations{} mitigations) and an
-evidence-anchored hospital-ransomware impact model, the range returns, for any
-control portfolio, a distribution-free \emph{guaranteed}/\emph{possible} adequacy
-certificate: the worst-case probability that at least $k$ clinical services suffer
-simultaneous sustained outage stays below $\varepsilon$, over all failure-dependence
-structures and all parameters in an interval uncertainty set. It scores each defender
-against \emph{two} adversaries---a \emph{typical} one (usage-weighted technique mix)
-and an \emph{adaptive} one that best-responds by routing through the easiest uncovered
-technique each stage. The provable score exposes something an empirical one cannot:
-against the adaptive adversary, \RangeAdaptiveUncert{} of the \RangeAdaptiveRegimes{}
-adaptive regimes (assumed degradation) cannot be certified by \emph{any} portfolio, because some ATT\&CK
-techniques carry no mitigation and the worst-case attacker always routes through
-them. (The two adversaries coincide before any control is deployed---with no
-mitigations every technique's residual equals the base rate, so mean and maximum
-agree at \RangeUndefendedTypicalKOnePct\%---and diverge only as controls are added
-and the adaptive attacker re-routes around them.) Where certification is possible,
-using the certificate as feedback cuts a certificate-blind heuristic's control
-burden by about a third under the typical adversary, but a greedy defender tuned to
-reachability can still fall far short of the exact optimum against the adaptive one. The defender API is agent-agnostic, so an agentic/LLM defender drops in
-unchanged---the intended next step. This is an evaluation-environment contribution,
-not a new theorem or a validated real defense.
+Autonomous cyber defenders are judged almost entirely by \emph{empirical} outcomes
+(attack-success rates, flags captured), which say nothing provable about the residual
+risk a defender leaves, least of all against an attacker that adapts. This
+work-in-progress describes a small cyber range that scores defenders with a
+\emph{provable} verdict instead. Built on the real MITRE ATT\&CK Enterprise kill chain
+(v\RangeAttackVersion, \RangeMitigations{} mitigations) and a hospital-ransomware impact
+model, it returns for any control portfolio a distribution-free
+\emph{guaranteed}/\emph{possible} certificate that the worst-case probability of at least
+$k$ clinical services in simultaneous sustained outage stays below $\varepsilon$, over
+all failure-dependence structures and every parameter in an interval uncertainty set.
+Defenders are scored against a \emph{typical} adversary and an \emph{adaptive} one that
+best-responds by routing through the most open technique at each stage. The provable
+score exposes what an empirical one cannot: \RangeAdaptiveUncert{} of
+\RangeAdaptiveRegimes{} adaptive regimes admit no certifying portfolio at any cost. Using
+the certificate as feedback cuts a certificate-blind heuristic's control burden by about
+a third against the typical adversary, yet the same greedy defender can fall far short
+of the exact optimum against the adaptive one. The defender interface is
+agent-agnostic, so learning and LLM-based defenders can be held to the same guarantee.
 \end{abstract}
+
+\begin{IEEEkeywords}
+autonomous cyber defense, evaluation environments, cyber range, certification,
+MITRE ATT\&CK, adaptive adversary
+\end{IEEEkeywords}
+
+\section{Introduction}
+Autonomous defense agents are trained and compared in simulated
+networks~\cite{standen2021cyborg}, and language-model agents now automate offensive
+steps~\cite{deng2024pentestgpt}. Their scores are sampled outcomes. Two defenders with
+the same attack-success rate can leave very different worst-case risk, and a sampled
+score cannot say that \emph{no} defense would meet a target. We describe a range whose
+score is a certificate instead, built on ATT\&CK~\cite{strom2018} and on public data
+about patient harm during hospital cyberattacks~\cite{straw2025cipher}.
+\textbf{Contributions:} (i) an environment whose score is a distribution-free
+guaranteed/possible certificate for $k$-of-$n$ clinical outage; (ii) a closed-form
+adaptive adversary that makes the range dynamic while keeping the certificate exact;
+(iii) a benchmark of four reference defenders across \RangeRegimes{} regimes, including
+their optimality gap against an exact optimiser.
 
 \section{The range}
 A defender chooses a \emph{control portfolio}: a set of ATT\&CK mitigations
@@ -52,9 +60,9 @@ the ransomware impact objective composes those into a per-clinical-service susta
 outage probability. The range's \texttt{score} is the certificate, not a sampled
 outcome: worst- and best-corner evaluation over the interval uncertainty set gives a
 \emph{guaranteed} verdict (adequate even at the adverse corner) and a \emph{possible}
-one; the catastrophic $k$-of-$n$ event uses a sharp closed-form aggregation bound (a
-minimum over dependence structures), so the verdict holds whatever the true
-correlation between service failures. The observation (named mitigations, techniques
+one; the catastrophic $k$-of-$n$ event uses the sharp Fr\'echet-type bound on the
+probability that at least $k$ of $n$ dependent events occur~\cite{ruschendorf1991}, so
+the verdict holds whatever the true correlation between service failures. The observation (named mitigations, techniques
 covered, stages touched), the action (add/remove a mitigation), and the certified
 score form an agent-agnostic API.
 
@@ -104,34 +112,27 @@ can actively mislead against an adaptive adversary. An empirical attack-success
 benchmark would report a low sampled failure rate for the same portfolios and hide
 all of this.
 
-\section{Why the adaptive adversary is undefendable: the reachability floor}
-The uncertifiability is not a quirk of the numbers; it has a mechanism the range makes
-explicit. Adaptive reachability is monotone in the portfolio, so deploying \emph{every}
-mitigation attains the global minimum --- the \emph{reachability floor}. A kill-chain
-stage that contains a technique MITRE lists \emph{no} mitigation for keeps that
-technique's residual at the base rate no matter what is deployed, so the floor cannot
-fall below it. In ATT\&CK v\RangeAttackVersion, \RangeUncoverableStages{} of
-\RangeStages{} stages contain such a technique (worst: \RangeWorstGapStage, with
-\RangeWorstGapCount{} of \RangeWorstGapTotal{} techniques uncovered;
-Table~\ref{tab:cov}), which floors the fully-defended adaptive reachability at
-\RangeControlFloorPct\% and the catastrophic bound at \RangeFloorKOnePct\% for $k{=}1$,
-falling to \RangeFloorKFourPct\% at $k{=}4$ (Figure~\ref{fig:floor}, right). Certification
-under the adaptive adversary is therefore possible only where the floor drops below
-$\varepsilon$ --- which is why only the largest-$k$, loosest-$\varepsilon$ regimes
-certify. This is a structural gap, not a pessimistic prior: even the most optimistic
-effectiveness prior leaves \RangePriorMinUncert{} of \RangePriorRegimes{} adaptive
-regimes uncertifiable, because no effectiveness value can cover a technique that has no
-mitigation at all.
+\section{Why the adaptive adversary is undefendable}
+Adaptive reachability is monotone in the portfolio, so deploying every mitigation
+attains its minimum. A stage containing a technique that ATT\&CK maps to no mitigation
+keeps that technique at the base rate whatever is deployed, which floors the
+fully-defended catastrophic bound at \RangeFloorKOnePct\% for $k{=}1$ and
+\RangeFloorKFourPct\% for $k{=}4$ in v\RangeAttackVersion{} (Figure~\ref{fig:floor},
+right). Certification is possible only where that floor lies below $\varepsilon$, and
+no effectiveness prior changes this: even the most optimistic leaves
+\RangePriorMinUncert{} of \RangePriorRegimes{} adaptive regimes uncertifiable. A
+concurrent submission~\cite{anon2026gaps} measures these gaps across seven years of
+ATT\&CK releases; here the point is only that a provable score surfaces them.
 
-\begin{figure}[t]\centering
-\includegraphics[width=\linewidth]{figure_cost_vs_k.pdf}
+\begin{figure*}[t]\centering
+\includegraphics[width=0.8\textwidth]{figure_cost_vs_k.pdf}
 \caption{Left: under the typical adversary, cost-to-certify falls with $k$ and the
 certificate-guided greedy defender tracks the exact optimum while the blind heuristics
 lag. Right: under the adaptive adversary, the reachability floor (all controls deployed)
 sits above $\varepsilon$ for small $k$, so no portfolio certifies there.}\label{fig:floor}
-\end{figure}
+\end{figure*}
 
-\begin{table}[t]\centering
+\begin{table}[t]\centering\footnotesize
 \caption{Reference defenders by mean cost-to-certify (over the regimes they could
 certify), under the typical and the adaptive adversary, with the fraction of all
 \RangeRegimes{} regimes certified.}\label{tab:leader}
@@ -141,8 +142,8 @@ Defender & Certified (\%) & Mean (typical) & Mean (adaptive)\\\midrule
 \bottomrule\end{tabular}
 \end{table}
 
-\begin{table}[t]\centering
-\caption{Cost-to-certify per regime under the \emph{adaptive} adversary (assumed
+\begin{table}[t]\centering\footnotesize
+\caption{Cost-to-certify per regime under the adaptive adversary (assumed
 degradation). ``none'' means no portfolio certifies at any cost; ``$>$4'' means the
 exact optimum exceeds the search cap.}\label{tab:gap}
 \begin{tabular}{@{}rrrrrr@{}}\toprule
@@ -151,15 +152,15 @@ $\varepsilon$ & $k$ & Optimal & Greedy & Coverage & Random\\\midrule
 \bottomrule\end{tabular}
 \end{table}
 
-\begin{table}[t]\centering
-\caption{ATT\&CK coverage gaps per kill-chain stage: techniques modelled and how many
-carry no mitigation (the uncoverable frontier that sets the reachability
-floor).}\label{tab:cov}
-\begin{tabular}{@{}lrr@{}}\toprule
-Stage & Techniques & No mitigation\\\midrule
-\tableinput table_range_coverage_rows.tex
-\bottomrule\end{tabular}
-\end{table}
+
+\section{Roadmap}
+The next step is the one this draft does not yet take: evaluating learning and
+language-model defenders. The interface already exposes a textual observation (named
+mitigations, techniques covered, stages touched) and a discrete action space, so an LLM
+agent can act through it without changes to the scorer. We plan to report each agent's
+certified risk as a multiple of the fully-defended floor, which separates what an agent
+failed to do from what ATT\&CK does not allow; to add adversaries that learn rather than
+best-respond in closed form; and to add further impact models beyond the hospital.
 
 \section{Scope and limitations}
 To our knowledge this is the first to score automated defenders with a
@@ -168,8 +169,8 @@ outcome; ATT\&CK-based defender-policy evaluation and optimisation-based control
 selection that minimises residual risk are established lines of work, and what is
 ownable here is the provable score and the adaptive-adversary reachability floor it
 exposes, not the idea of scoring defenders on ATT\&CK. It is realistically a
-work-in-progress contribution---not a new theorem (the certificate and the
-closed-form $k$-of-$n$ bound are prior work) and not a validated real-world defense.
+work-in-progress contribution---not a new theorem (interval-corner certificates and the
+$k$-of-$n$ bound are standard) and not a validated real-world defense.
 Most pointedly for an agentic-defense venue, the defenders evaluated here are
 classical search procedures, not autonomous agents: the contribution is the
 evaluation environment and the guarantee it enforces, and the agent-agnostic API is
@@ -188,9 +189,37 @@ adversary that adapts, and able to say ``no portfolio suffices''---rather than a
 average, and that an agentic defender can be dropped into the same API and held to
 the same guarantee.
 
-\paragraph{Reproducibility.} All numbers are generated from committed tables; the
+\paragraph{Reproducibility and AI use} All numbers are generated from committed tables; the
 benchmark is deterministic (a single fixed seed for the random policy) and carries a
 provenance manifest recording the SHA-256 of every input and output over the pinned
-ATT\&CK bundle and the CIPHER corpus. No LLM or network access is used.
+ATT\&CK bundle and the CIPHER corpus. No LLM or network access is used by the range or
+the defenders. Code and data will be released on publication. The code and draft text
+were produced with the assistance of an AI system (Claude); all results are reproduced
+by automated tests.
+
+\begin{thebibliography}{9}
+\bibitem{standen2021cyborg} M.~Standen, M.~Lucas, D.~Bowman, T.~J. Richer, J.~Kim, and
+D.~Marriott.
+\newblock CybORG: A gym for the development of autonomous cyber agents.
+\newblock arXiv:2108.09118, 2021.
+\bibitem{deng2024pentestgpt} G.~Deng, Y.~Liu, V.~Mayoral-Vilches, P.~Liu, Y.~Li, Y.~Xu,
+T.~Zhang, Y.~Liu, M.~Pinzger, and S.~Rass.
+\newblock PentestGPT: Evaluating and harnessing large language models for automated
+penetration testing.
+\newblock In \emph{USENIX Security Symposium}, 2024.
+\bibitem{strom2018} B.~E. Strom et al.
+\newblock MITRE ATT\&CK: Design and Philosophy.
+\newblock MITRE Technical Report, 2018 (revised 2020).
+\bibitem{straw2025cipher} I.~Straw.
+\newblock CIPHER dataset v1: Patient harms during hospital cyberattacks (v1.0.0).
+\newblock The CIPHER Platform, 2025. Data set, CC BY 4.0.
+\bibitem{ruschendorf1991} L.~R\"uschendorf.
+\newblock Bounds for distributions with multivariate marginals.
+\newblock In \emph{Stochastic Orders and Decision under Risk}, IMS Lecture Notes, 1991.
+\bibitem{anon2026gaps} Anonymous.
+\newblock Uncoverable by design: The ceiling that seven years of MITRE ATT\&CK
+mitigation gaps place on autonomous cyber defense.
+\newblock Concurrent submission to AIDC 2026.
+\end{thebibliography}
 
 \end{document}

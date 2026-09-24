@@ -2,11 +2,31 @@
   "code": {
     "available": true,
     "branch": "claude/stoic-galileo-81yrtm",
-    "commit": "f61d13e3b410c2b4409555c795f1721d9889178d",
-    "dirty": false,
-    "dirty_paths": []
+    "commit": "7eab84deffe7f97ac0b7a51851de73c9a9b912c4",
+    "dirty": true,
+    "dirty_paths": [
+      "README.md",
+      "data/attack_history/attack_history_manifest.json",
+      "data/attack_history/greedy_curve_latest.csv",
+      "data/attack_history/greedy_defender.csv",
+      "docs/SUBMISSION_AIDC.md",
+      "docs/attack_gaps/figure_coverage_floor.pdf",
+      "docs/attack_gaps/figure_persistence_usage.pdf",
+      "docs/attack_gaps/figure_repair.pdf",
+      "docs/attack_gaps/gaps_numbers.tex",
+      "docs/attack_gaps/main.pdf",
+      "docs/attack_gaps/main.tex",
+      "docs/defense_range/main.pdf",
+      "docs/defense_range/main.tex",
+      "scripts/analyze_attack_history.py",
+      "scripts/generate_gaps_paper.py",
+      "scripts/plot_attack_history.py",
+      "src/grrc/coverage_evolution.py",
+      "study/ATTACK_GAPS_PLAN.md",
+      "tests/test_coverage_evolution.py"
+    ]
   },
-  "created_at": "2026-09-24T03:28:18+00:00",
+  "created_at": "2026-09-24T03:52:01+00:00",
   "description": "MITRE ATT&CK Enterprise mitigation gaps across releases, the adaptive-adversary residual-risk floor they impose, the minimal coverage repair, documented ransomware use of the gaps, and how rarely gaps close.",
   "environment": {
     "implementation": "CPython",
@@ -224,9 +244,9 @@
       "sha256": "050ec3533c78567e606fd45fe3ab7d8bedb42272d095ce5498284014d394f8f2"
     },
     {
-      "bytes": 18019,
+      "bytes": 19733,
       "path": "scripts/analyze_attack_history.py",
-      "sha256": "fd510442a8ef701f9c3c0157088e9203f8361abb525552005c91ab133a632ad2"
+      "sha256": "9bc2e853b4dc5ab399d549a8951d7422ec4dedd8e0178fc65f30c363d373f732"
     },
     {
       "bytes": 6275,
@@ -234,9 +254,9 @@
       "sha256": "b0dd7abd2e58ad155e8127db72cf005a5bd626755ffe2880aac9b74818cdd023"
     },
     {
-      "bytes": 19219,
+      "bytes": 21150,
       "path": "src/grrc/coverage_evolution.py",
-      "sha256": "0506d4ef2ebfbaed3fade8dafcd2e12983a527ace550fb99c7a9f30e4f607488"
+      "sha256": "46656509e2b134f8ee302a5021afa64c93fe4414c25fc376fc6a3c4ae5800b49"
     },
     {
       "bytes": 4479,
@@ -264,9 +284,9 @@
       "sha256": "3ee09640a09c3868b530c7937133334acf2897939c2349e6a7dd1bc1fc531afa"
     },
     {
-      "bytes": 12139,
+      "bytes": 12878,
       "path": "study/ATTACK_GAPS_PLAN.md",
-      "sha256": "24c85cbdc4f6ddfb7e50e65f92b248f03e4337eb631aefc1a3dfe910294c966a"
+      "sha256": "ee54f61bb5aaeaf39898b79ab7e9febc5328b00ac2f8021aaff624132412ae94"
     }
   ],
   "outputs": [
@@ -304,6 +324,16 @@
       "bytes": 1455,
       "path": "data/attack_history/gap_survival.csv",
       "sha256": "a57a546001a63fe08e01583b07af60499710f63fa479ed941612f4e2b49641c2"
+    },
+    {
+      "bytes": 1203,
+      "path": "data/attack_history/greedy_curve_latest.csv",
+      "sha256": "7fe463355bf4691bceea54efae2a92ca6d8b1501a93bffc89bac903283c9ecdf"
+    },
+    {
+      "bytes": 1005,
+      "path": "data/attack_history/greedy_defender.csv",
+      "sha256": "9a3530d2c47c9fec0735f028e79a38821352b940c2d9a7f01cfbc46be42cdb61"
     },
     {
       "bytes": 23415,

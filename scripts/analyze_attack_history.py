@@ -20,7 +20,8 @@ import pandas as pd
 
 from grrc.coverage_evolution import (
     BASE_HIGH, EFF_LOW, SPLIT_STAGE_MAP, STAGE_MAP, catastrophic_floor, comparable,
-    closure_events, coverage_profile, floors, gap_history, inherit_parent_mitigations,
+    closure_events, coverage_profile, floors, gap_history, greedy_defender,
+    inherit_parent_mitigations,
     kaplan_meier, kill_chain_techniques, load_extract, minimal_repair, mitigations_by_technique,
     stage_binding, stage_gaps, technique_usage_counts, time_to_mitigation, uncovered_techniques,
     usage_exposure)
@@ -220,6 +221,28 @@ def main():
                                       spells=len(sp), mitigated=sum(s["mitigated"] for s in sp)))
     spell_rows = [dict(s, years=round(s["years"], 6)) for s in spells]
 
+    # A reference autonomous defender on every comparable release: greedy control
+    # selection against the adaptive adversary, until it reaches the floor (the ceiling
+    # on what any defender choosing from ATT&CK's mitigations can certify).
+    greedy_rows, greedy_curve_rows = [], []
+    for rec, ex in comparable_releases:
+        curve = greedy_defender(ex)
+        fl = curve[-1]["clinical_reachability"]
+        reach = [r["clinical_reachability"] for r in curve]
+        greedy_rows.append(dict(
+            version=rec["version"], release_date=rec["release_date"],
+            candidate_mitigations=len({m for t in kill_chain_techniques(ex)
+                                       for m in mitigations_by_technique(ex).get(t, [])}),
+            steps_to_floor=curve[-1]["step"],
+            improving_steps=sum(b < a * (1 - 1e-12) for a, b in zip(reach, reach[1:])),
+            empty_catastrophic_k1=catastrophic_floor(reach[0], 1),
+            floor_catastrophic_k1=catastrophic_floor(fl, 1),
+            certified_gain=reach[0] / fl))
+        if rec["version"] == latest_rec["version"]:
+            greedy_curve_rows = [dict(version=rec["version"], **r,
+                                      catastrophic_k1=catastrophic_floor(r["clinical_reachability"], 1))
+                                 for r in curve]
+
     # The prioritised repair list on the latest release at the headline targets.
     list_rows = []
     for eps, k in HEADLINE:
@@ -255,6 +278,9 @@ def main():
     for variant in {r["variant"] for r in survival_rows}:
         curve = [r["survival"] for r in survival_rows if r["variant"] == variant]
         assert all(0 <= b <= a <= 1 for a, b in zip(curve, curve[1:])), "KM must not increase"
+    for r, f in zip(greedy_rows, floor_rows):     # the greedy defender stops at the floor
+        assert abs(r["floor_catastrophic_k1"] - f["catastrophic_floor_k1"]) < 1e-12
+        assert 1 <= r["improving_steps"] <= r["steps_to_floor"] <= r["candidate_mitigations"]
     # Cross-study gate: with placeholders counted, v17.1 reproduces the cyber-range
     # study's per-stage gap counts (non-impact stages).
     range_gaps = ROOT / "data/defense_range/coverage_gaps.csv"
@@ -273,7 +299,8 @@ def main():
                        ("floor_changes", change_rows), ("parameter_sensitivity", param_rows),
                        ("usage_exposure", exposure_rows), ("usage_by_stage_latest", stage_usage_rows),
                        ("uncovered_usage_latest", unc_usage_rows), ("gap_closure", closure_rows),
-                       ("gap_spells", spell_rows), ("gap_survival", survival_rows)]:
+                       ("gap_spells", spell_rows), ("gap_survival", survival_rows),
+                       ("greedy_defender", greedy_rows), ("greedy_curve_latest", greedy_curve_rows)]:
         path = OUT / (name + ".csv")
         write_csv(pd.DataFrame(rows), path)
         outputs.append(path)

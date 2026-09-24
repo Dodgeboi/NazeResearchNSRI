@@ -249,3 +249,17 @@ def test_closure_and_time_to_mitigation_on_a_synthetic_history():
     assert not spells["T2"]["mitigated"] and spells["T2"]["years"] == 0.0   # censored at removal
     assert spells["T3"]["entry_version"] == "b" and not spells["T3"]["mitigated"]
     assert not spells["T4"]["left_truncated"]
+
+
+@pytest.mark.parametrize("v", ["5.2", "19.2"])
+def test_greedy_defender_reaches_exactly_the_floor_and_never_goes_below(v):
+    from grrc.coverage_evolution import greedy_defender
+    ex = _ex(v)
+    curve = greedy_defender(ex)
+    reach = [r["clinical_reachability"] for r in curve]
+    floor = floors(ex)["clinical_floor"]
+    assert all(b <= a + 1e-15 for a, b in zip(reach, reach[1:]))     # monotone
+    assert reach[-1] == pytest.approx(floor, rel=1e-12)               # ends at the floor
+    assert min(reach) >= floor * (1 - 1e-12)                          # never below it
+    assert reach[0] == pytest.approx(BASE_HIGH ** len(floors(ex)["stage_factors"]))
+    assert len({r["mitigation"] for r in curve[1:]}) == len(curve) - 1

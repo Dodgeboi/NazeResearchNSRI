@@ -49,7 +49,7 @@ def _breaks(ax, cov):
 
 def _style(ax):
     ax.grid(True, alpha=0.25, lw=0.6)
-    ax.xaxis.set_major_locator(mdates.YearLocator())
+    ax.xaxis.set_major_locator(mdates.YearLocator(2))
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
 
 

@@ -46,6 +46,7 @@ def content():
     closure = pd.read_csv(DATA / "gap_closure.csv", dtype={"version": str, "prev_version": str})
     spells = pd.read_csv(DATA / "gap_spells.csv", dtype={"entry_version": str, "exit_version": str})
     surv = pd.read_csv(DATA / "gap_survival.csv")
+    greedy = _read("greedy_defender.csv").set_index("version")
 
     first, last = cov.iloc[0], cov.iloc[-1]
     fv, lv = first.version, last.version
@@ -181,6 +182,15 @@ def content():
         "UseTopCount": str(int(top_use.ransomware_entities)),
         "UseRepairMax": str(int(rep_use.ransomware_entities.max())),
         "UseRepairUnused": str(int((rep_use.ransomware_entities == 0).sum())),
+        # A reference autonomous defender (greedy) against the adaptive adversary.
+        "GreedySteps": str(int(greedy.loc[lv, "steps_to_floor"])),
+        "GreedyStepsFirst": str(int(greedy.loc[fv, "steps_to_floor"])),
+        "GreedyImproving": str(int(greedy.loc[lv, "improving_steps"])),
+        "GreedyImprovingMax": str(int(greedy.improving_steps.max())),
+        "GreedyCandidates": str(int(greedy.loc[lv, "candidate_mitigations"])),
+        "GreedyEmpty": _pct(greedy.loc[lv, "empty_catastrophic_k1"]),
+        "GreedyGainFirst": f"{greedy.loc[fv, 'certified_gain']:.2f}",
+        "GreedyGainLast": f"{greedy.loc[lv, 'certified_gain']:.2f}",
         # Persistence of gaps across releases.
         "CloseTransitions": str(len(closure)), "CloseTotal": str(int(closure.closed.sum())),
         "CloseReversed": str(int(closure.reversed.sum())),

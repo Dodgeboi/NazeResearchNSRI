@@ -141,6 +141,17 @@ adversaries and whether they close; both are descriptive and use ATT&CK only.
   The transition accounting is checked exactly: uncovered(next) = uncovered(prev) -
   closed - removed + reversed + new uncovered.
 
+## Reference autonomous defender (added 2026-09-24, for the AIDC framing)
+
+`greedy_defender` deploys real mitigations one at a time, each time the one that most
+lowers the adaptive clinical reachability (ties: the largest drop in total technique
+residual, then id), until the floor of Proposition 1 is reached; tested to be monotone,
+to end exactly at the floor and never below it. `greedy_defender.csv` reports, per
+comparable release, the steps to the floor, how many steps lowered the certified risk,
+and the certified gain (empty-portfolio reachability over the floor, which is free of
+the base rate by Proposition 3). `greedy_curve_latest.csv` holds the latest curve. It
+is a reference policy, not a claim of optimal portfolio size.
+
 ## Prior work and search record
 
 Searched September 2026 (web and arXiv search for ATT&CK with mitigation coverage,

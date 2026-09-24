@@ -401,3 +401,40 @@ def km_at(curve, t) -> float:
         if row["years"] <= t + 1e-12:
             s = row["survival"]
     return s
+
+
+# ---------------------------------------------------------------------------
+# A reference autonomous defender: greedy control selection against the adaptive adversary.
+
+
+def greedy_defender(ex, base=BASE_HIGH, eff_low=EFF_LOW, overrides=None,
+                    exclude_placeholders=True, stage_map=STAGE_MAP) -> list[dict]:
+    """Deploy real mitigations one at a time, each time the one that most lowers the
+    adaptive clinical reachability (ties: the largest drop in total technique residual,
+    then mitigation id), until the floor of Proposition 1 is reached. Returns the curve
+    ``[{step, mitigation, clinical_reachability}]``, starting from the empty portfolio."""
+    overrides = EFF_OVERRIDES if overrides is None else overrides
+    by = mitigations_by_technique(ex, exclude_placeholders)
+    members = stage_members(ex, stage_map)
+    stages = _non_impact(stage_map) + ("impact",)
+    techs = sorted(set().union(*members.values()))
+    candidates = sorted({m for t in techs for m in by.get(t, [])})
+    keep = {m: 1.0 - overrides.get(m, eff_low) for m in candidates}
+
+    def evaluate(portfolio):
+        res = {t: base * float(np.prod([keep[m] for m in by.get(t, []) if m in portfolio]))
+               for t in techs}
+        reach = float(np.prod([max(res[t] for t in members[s]) for s in stages]))
+        return reach, sum(res.values())
+
+    portfolio: set = set()
+    reach, _ = evaluate(portfolio)
+    target = evaluate(set(candidates))[0]
+    curve = [dict(step=0, mitigation="", clinical_reachability=reach)]
+    while reach > target * (1 + 1e-12) and len(portfolio) < len(candidates):
+        best = min(((evaluate(portfolio | {m}), m) for m in candidates if m not in portfolio),
+                   key=lambda x: (x[0][0], x[0][1], x[1]))
+        (reach, _), m = best
+        portfolio.add(m)
+        curve.append(dict(step=len(portfolio), mitigation=m, clinical_reachability=reach))
+    return curve
