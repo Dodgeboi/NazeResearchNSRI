@@ -44,6 +44,12 @@ def _resolved_key(eff) -> tuple:
         bool(eff.isolate_same_step),
         eff.backup_strategy,
         bool(eff.identity_controls),
+        # Without this element an islanded and a non-islanded candidate that
+        # agree on every other posture would hash to one configuration, and
+        # deduplication would silently discard one of them. With the dimension
+        # off every candidate contributes the same constant False, so the
+        # partition into distinct configurations is identical to the frozen one.
+        bool(eff.islanding),
     )
 
 
@@ -109,7 +115,8 @@ def distinct_portfolios_for_profile(
         )
 
     seen: dict[tuple, tuple] = {}
-    for p in enumerate_portfolios():
+    for p in enumerate_portfolios(
+            include_islanding=cfg.simulation.islanding_enabled):
         eff = effective_settings(
             prof, p,
             rapid_isolation_success=cfg.simulation.rapid_isolation_success,
@@ -122,8 +129,16 @@ def distinct_portfolios_for_profile(
     return [portfolio for _, portfolio in seen.values()]
 
 
-def _portfolio_components(p: DefensePortfolio) -> dict[str, int]:
-    """Binary indicators of which controls a portfolio contains."""
+def _portfolio_components(p: DefensePortfolio,
+                          include_islanding: bool = False) -> dict[str, int]:
+    """Binary indicators of which controls a portfolio contains.
+
+    The islanding indicator is added only when that dimension is on, so
+    summaries written before it existed keep their exact column set.
+    """
+    if include_islanding:
+        return {**_portfolio_components(p),
+                ISLANDING_COLUMN: int(p.islanding)}
     return {
         "has_basic_segmentation":
             int(p.segmentation == SegmentationLevel.BASIC),
@@ -139,11 +154,29 @@ def _portfolio_components(p: DefensePortfolio) -> dict[str, int]:
     }
 
 
+#: Frozen control-indicator columns. Do not extend this list: it is the
+#: column set the archived optimizer summaries were written with.
 CONTROL_COLUMNS = [
     "has_basic_segmentation", "has_least_privilege", "has_patch_upgrade",
     "has_detection_improvement", "has_rapid_isolation",
     "has_protected_backups", "has_identity_controls",
 ]
+
+#: Indicator column for the islanding dimension, present only in summaries
+#: produced with that dimension switched on.
+ISLANDING_COLUMN = "has_islanding"
+
+
+def control_columns(frame: pd.DataFrame) -> list[str]:
+    """Control-indicator columns actually present in ``frame``.
+
+    Read off the frame rather than a config, so re-analysing an archived
+    summary works without knowing which switch produced it.
+    """
+    cols = list(CONTROL_COLUMNS)
+    if ISLANDING_COLUMN in frame.columns:
+        cols.append(ISLANDING_COLUMN)
+    return cols
 
 
 def build_candidate_specs(
@@ -195,7 +228,9 @@ def evaluate_candidate_portfolios(cfg: Config) -> pd.DataFrame:
 def summarize_portfolios(raw: pd.DataFrame, cfg: Config,
                          costs: dict[str, float]) -> pd.DataFrame:
     """Aggregate trials into one row per (profile, portfolio)."""
-    portfolios = {p.name: p for p in enumerate_portfolios()}
+    isl = cfg.simulation.islanding_enabled
+    portfolios = {p.name: p
+                  for p in enumerate_portfolios(include_islanding=isl)}
     rows = []
     for (profile, name), grp in raw.groupby(["profile", "portfolio"]):
         p = portfolios[name]
@@ -223,7 +258,7 @@ def summarize_portfolios(raw: pd.DataFrame, cfg: Config,
             "mean_pct_compromised": float(grp["pct_compromised"].mean()),
             "backup_compromise_prob":
                 float(grp["backup_compromised"].mean()),
-            **_portfolio_components(p),
+            **_portfolio_components(p, include_islanding=isl),
         })
     return pd.DataFrame(rows)
 
@@ -303,7 +338,7 @@ def select_best(summary: pd.DataFrame, profile: str, budget: float,
             "hours_preserved_per_point":
                 float(row["hours_preserved_per_point"])
                 if np.isfinite(row["hours_preserved_per_point"]) else np.nan,
-            **{c: int(row[c]) for c in CONTROL_COLUMNS},
+            **{c: int(row[c]) for c in control_columns(feasible)},
         })
     return rows
 
@@ -517,7 +552,7 @@ def optimize(cfg: Config,
     # Defense-inclusion stability across cost scenarios (min-disruption
     # criterion): how often does each control appear in the winner?
     stab = (best[best["criterion"] == "min_expected_disruption"]
-            .groupby("profile")[CONTROL_COLUMNS].mean().reset_index())
+            .groupby("profile")[control_columns(best)].mean().reset_index())
     stab_path = proc_dir / f"{cfg.mode}_cost_sensitivity.csv"
     write_csv(stab, stab_path)
 

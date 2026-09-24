@@ -1,0 +1,33 @@
+{
+  "kendall_tau": 0.5137830903923016,
+  "p_value": 0.028783965875738362,
+  "n_agents": 11,
+  "best_by_containment": "q_soft_replicas",
+  "best_by_clinical": "q_soft_replicas",
+  "order_by_containment": [
+    "q_soft_replicas",
+    "q_containment_replicas",
+    "q_containment_today",
+    "q_clinical_replicas",
+    "q_soft_today",
+    "islands",
+    "disconnect",
+    "q_clinical_today",
+    "zone_lockdown",
+    "passive",
+    "passive_replicas"
+  ],
+  "order_by_clinical": [
+    "q_soft_replicas",
+    "q_clinical_replicas",
+    "q_containment_replicas",
+    "q_soft_today",
+    "islands",
+    "q_clinical_today",
+    "passive",
+    "zone_lockdown",
+    "passive_replicas",
+    "q_containment_today",
+    "disconnect"
+  ]
+}

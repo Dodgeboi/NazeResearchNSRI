@@ -1,0 +1,89 @@
+% Discussion. Qualitative claims here must match data/agentic/RESULTS.md;
+% every number is a macro from generated_numbers.tex.
+
+\textbf{Measure self-inflicted harm, not only containment.} Containment is
+a reasonable proxy on average, and that is what makes it dangerous: it is
+right often enough to be trusted, and wrong on exactly the defenders whose
+containment comes from stranding services. A containment leaderboard would
+have ranked the containment-trained learner \numQContainmentTodayRankContainment\
+of \numRankAgents; the hospital would rank it \numQContainmentTodayRankClinical.
+Evaluations of autonomous defenders for critical services should report
+the mission outcome alongside containment. They should also report the
+self-inflicted share of that outcome, which only a dependency model can
+compute, because it is the part of the harm the defender chose.
+
+\textbf{Who may take the bet.} Our central result is that self-inflicted
+outage is a gamble whose sign depends on the estate. An early cut that
+strands services buys containment, and where detection is slow that
+containment is worth far more than the stranded service. Where detection is
+fast it buys almost nothing. A learner trained across estates takes the same
+gamble everywhere. The dependency-closure shield forbids the gamble, which
+protects every fast-detection hospital we simulated and forfeits large gains
+in slow ones. Neither ``always'' nor ``never'' is right. The structural
+answer is to make the shield the default and let a person who knows the
+estate lift it: per deployment (``this hospital's detection is slow; the
+defender may self-inflict''), or per incident, with the shield escalating a
+blocked cut to an on-call operator rather than silently refusing it. The
+agent proposes the gamble; a human with accountability for the estate
+authorises it. The shield is what makes that allocation enforceable rather
+than advisory. On these data, a shield enabled only in the fast-detection
+profile beats both ``always'' and ``never'' for \numPosthocFastOnlyBestCount\
+of the \numPosthocDefenders\ defenders. For the other
+\numPosthocAlwaysBestCount, the disconnect playbook and the containment
+learner on today's estate, ``always'' is better, because their cuts do harm
+even in intermediate hospitals. So no fixed rule is right for every
+defender, which is itself the case for authorising per deployment rather
+than fixing a policy. We chose these rules after seeing the data and
+evaluated them on the same data, so they motivate the design and are not
+evidence for it.
+
+\textbf{Hard constraint or soft penalty.} The soft-penalty learners show
+what an availability term in the reward does: it prices self-inflicted
+outage without preventing it (\numQSoftTodaySelfPct\ and
+\numQSoftReplicasSelfPct\ of episodes). That can be the right behaviour,
+and those learners are among the best on average. But a penalty offers no
+guarantee for any particular hospital, and its weight is set before
+deployment by someone who cannot know every estate it will run on. A shield
+offers the guarantee and none of the judgement. The combination we would
+deploy trains with shaping, so that good cuts are likely, and runs with an
+operator-liftable shield, so that the judgement stays with a person.
+
+\textbf{A dependency specification is a deployment prerequisite.} The
+shield needs nothing but the service-dependency graph and the availability
+rule. Those are exactly what an organisation must write down before any
+automated responder may cut its network, and exactly what most hospitals do
+not have in machine-readable form. Every intervention is an auditable event:
+the responder asked to cut, and the dependency graph said the cut would
+strand these named services. A wrong or incomplete specification is the
+shield's failure mode, as the micro lockdown shows, so it must be versioned
+and reviewed like any other safety case.
+
+\textbf{Agent-agnostic by construction.} The shield screens proposed
+response modes and never inspects the policy that proposed them. The same
+monitor applies unchanged to a language-model responder, at the tool
+boundary where the agent's ``disconnect'' call becomes a firewall change.
+A language-model responder's reasoning cannot be verified; the effect of its
+proposed action on a declared dependency graph can.
+
+\textbf{Design the estate so the safe action is also the effective one.}
+The shield removes the harmful cut; it cannot supply a harmless one. The
+islands playbook cuts as hard as the disconnect playbook and loses
+\numKeyDisconnectToIslandsHoursAbs\ fewer clinical service-hours, and on the
+replica estate every shielded learner beats passive in every profile. The
+cost of safe autonomy is partly an architectural property, decided long
+before any incident.
+
+\textbf{The shield is myopic, by design.} It forbids an action whose
+\emph{immediate} effect removes service, even when accepting that loss would
+pay off later. That is the source of both its guarantee and its price. A
+shield that looked ahead would need a model of the attacker's future, and
+its guarantee would inherit that model's errors. We chose checkability and
+report what it costs; the operator override above is how the cost is
+recovered where it is worth recovering.
+
+\textbf{Beyond hospitals.} Any estate whose availability flows through
+shared dependencies has the same structure: industrial control with a
+central historian, a bank with one identity provider, an airline with one
+reservation system. Wherever a containment cut can strand a service from
+what it depends on, an autonomous defender needs the same guard and the
+same question answered: who may accept the outage.

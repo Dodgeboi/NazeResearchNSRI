@@ -1,0 +1,542 @@
+\documentclass[conference,compsoc]{IEEEtran}
+% AIDC'26 -- IEEEtran 1.8b, [conference,compsoc], US Letter. Double-blind:
+% no author names, affiliations, acknowledgements, or identifying links.
+
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit}
+\usepackage[hidelinks]{hyperref}
+
+\newtheorem{definition}{Definition}
+\newtheorem{proposition}{Proposition}
+
+% Every number in the results is generated from the data by
+% scripts/analyze_defenders.py; none is typed by hand.
+\input{generated_numbers}
+
+\begin{document}
+
+\title{Containment Is Not Safety: Self-Inflicted Outages and a\\
+Dependency-Closure Shield for Autonomous Cyber Defenders}
+
+\author{\IEEEauthorblockN{Anonymous Authors}
+\IEEEauthorblockA{Submission to AIDC'26}}
+
+\maketitle
+
+\begin{abstract}
+Autonomous cyber defenders are trained and ranked on how well they contain
+an intrusion. In a hospital, the strongest containment action, cutting the
+network, can itself take clinical services offline, by stranding them from
+the identity service and application cores they depend on. We make this
+\emph{self-inflicted} harm measurable. In a hospital cyber range with an
+explicit service-dependency model, on \numEvalScenarios\ matched ransomware
+scenarios, a disconnect-on-alert playbook improves containment by
+\numVsDisconnectSpreadAbs\ points while adding \numVsDisconnectHoursAbs\
+weighted clinical service-hours, and a Q-learning defender trained on a
+containment reward self-inflicts clinical outages in
+\numQContainmentTodaySelfPct\ of episodes. Containment ranks defenders
+reasonably on average (Kendall's $\tau=\numRankTau$) but misranks exactly
+these. We propose a \emph{dependency-closure shield}: a runtime monitor,
+derived from a machine-readable dependency specification, that admits a
+network response only if the response makes no available clinical service
+unavailable by itself. Its guarantee holds at every simulation step, and
+we verify it independently. The shield is a strict safety floor where
+detection is fast: in high-capacity hospitals it reduced clinical
+service-hours for all \numPosthocDefenders\ defenders it guarded, by up to
+\numShieldDisconnectHighCapacityHoursAbs\ hours. Where detection is slow,
+self-inflicted cuts are often good bets, and the shield forfeits them, at a
+cost of up to \numShieldQContainmentReplicasResourceConstrainedHoursAbs\
+hours. Whether to accept a self-inflicted outage should therefore be
+neither left to the agent nor forbidden outright. It is a decision for each
+estate's operator, and the shield is the mechanism that enforces who makes
+it. All results are exploratory and concern a synthetic model.
+\end{abstract}
+
+% =========================================================================
+\section{Introduction}
+
+Ransomware attacks on hospitals disrupt care: they are followed by
+diversions, delayed treatment and higher in-hospital mortality among
+admitted patients~\cite{neprash2022,neprash2026}, and the disruption
+spreads to neighboring emergency departments~\cite{dameff2023,abouk2024,pham2024}.
+Autonomous defenders, whether reinforcement-learning agents trained in
+cyber ranges~\cite{standen2021,cage4,cyberbattlesim} or language-model
+agents that plan and execute incident response~\cite{castro2025}, promise
+to act inside the minutes in which ransomware spreads. Both kinds are
+trained and compared on how well they \emph{contain} an intrusion.
+
+In a hospital, containment and safety come apart. The standard response
+to ransomware is to isolate affected systems~\cite{cisa2023}, and the
+strongest network action available is to disconnect whole segments. But a
+disconnected segment keeps its workstations and servers while losing the
+identity service that authenticates every clinical application, and the
+application cores that serve it. The disconnected part is clean and cannot
+work. The defender has caused the outage it was meant to prevent, and
+nothing in a containment score shows it.
+
+This paper makes that failure measurable and proposes a runtime safeguard.
+Our contributions are:
+
+\begin{enumerate}
+\item \textbf{A hospital cyber range for autonomous defenders}
+(Sec.~\ref{sec:range}). It exposes an explicit service-dependency model:
+four clinical services, their application cores, a shared identity
+dependency, and a capacity threshold. It uses a paired design in which
+every defender faces the same attacker and the same random draws, so any
+difference between two defenders is attributable to their decisions. The
+environment reproduces the underlying simulator exactly, which we test.
+
+\item \textbf{A dependency-closure shield} (Sec.~\ref{sec:shield}). A
+runtime monitor admits a network response only if the response, by
+itself, makes no available clinical service unavailable. It is enforced at
+every step, holds by construction under the model, and is checked
+independently in our tests. It is state-dependent: it admits disconnection
+exactly when no clinical service remains to lose.
+
+\item \textbf{Evidence on what containment misses, and what the shield
+costs} (Sec.~\ref{sec:results}). On \numEvalScenarios\ matched scenarios
+per condition, two playbooks with the same containment
+(\numDisconnectSpread\% and \numIslandsSpread\% of nodes compromised) differ
+by \numKeyDisconnectToIslandsHoursAbs\ clinical service-hours, and the
+difference is dependency closure. Containment ranks defenders reasonably
+on average, but a learner trained on it self-inflicts outages in
+\numQContainmentTodaySelfPct\ of episodes. We find that self-inflicted outage is often a good bet where
+detection is slow and a ruinous one where it is fast. Measured on
+\numPosthocDefenders\ defenders, the shield is a strict safety floor in the second case and
+forfeits real gains in the first.
+\end{enumerate}
+
+The shield itself is a simple check; its value lies in what it makes
+visible and who it lets decide. A dependency specification is a
+precondition for deploying an autonomous responder in a clinical network,
+because without one neither the responder nor any monitor can tell a
+protective cut from a harmful one. And because the same cut can be the
+right call in one hospital and a disaster in another, the decision to
+accept a self-inflicted outage should rest with each estate's operator,
+not with the agent, and not with a blanket rule.
+
+% =========================================================================
+\section{Related Work}
+\label{sec:related}
+
+\textbf{Autonomous cyber defence.} CybORG~\cite{standen2021} and the CAGE
+challenges~\cite{cage4} provide gym environments in which defender agents
+learn to restore, block and decoy; CyberBattleSim~\cite{cyberbattlesim}
+does the same for lateral movement. CAGE~4 penalises a defender when
+simulated users cannot work, including when the defender's own blocking or
+restoring takes a host out of service~\cite{cage4}. That is a \emph{soft}
+availability term in the reward, and reward design for such agents is
+itself an active topic~\cite{bates2023}. Castro et al.~\cite{castro2025}
+evaluate language-model defenders in CAGE~4. Hicks and
+Mavroudis~\cite{hicks2024} question how far game-like environments
+transfer to real defence. The AICA reference architecture~\cite{kott2018aica}
+notes that an autonomous defender may itself break friendly systems. Our
+range differs in modelling the \emph{dependency structure} of the defended
+services, which is what makes self-inflicted outage expressible.
+
+\textbf{Safe RL and shields.} Shields restrict a learning agent to actions
+that satisfy a formal safety specification~\cite{alshiekh2018}, including
+probabilistic variants~\cite{jansen2018}; safe RL more broadly is surveyed
+in~\cite{garcia2015}, and constrained MDPs~\cite{altman1999} trade a
+constraint against reward. In cyber defence, Dutta et al.~\cite{dutta2021}
+steer an RL defender with SMT-checked safety and security requirements,
+and Hsain and Almuhammadi~\cite{hsain2026} use shield synthesis to analyse
+whether an adversarial network admits a safe defence at all. Those
+specifications protect the network \emph{from the attacker}. Ours protects
+the mission \emph{from the defender}: the specification is the
+service-dependency closure of the defender's own response.
+
+\textbf{Specification gaming.} An agent optimising a proxy objective can
+satisfy it in ways its designers did not intend~\cite{amodei2016}.
+Containment is such a proxy for clinical continuity, and we show a learner
+exploiting the gap.
+
+\textbf{Hospitals and islanding.} Helfrich and Grass~\cite{helfrich2026}
+optimise hospital-network resilience with a defender--attacker--defender
+model over service capacities, patient transfer and backup capacity. That
+is strategic planning, not in-incident response. Power grids contain
+cascading failures by \emph{controlled islanding}, opening pre-planned
+breakers so each island balances generation and load, including against
+an adversary~\cite{niu2021}. We adapt the idea to clinical networks, where
+the balance condition becomes dependency closure (Sec.~\ref{sec:islands}).
+
+% =========================================================================
+\section{A Hospital Cyber Range for Autonomous Defenders}
+\label{sec:range}
+
+\subsection{Network, services and dependencies}
+
+Each scenario is a synthetic 200--300-node hospital network in ten zones
+(workstations, EHR, laboratory, pharmacy, imaging, medical devices,
+administration, identity, backup, internet-facing). Edges are labeled by
+the mechanism that traverses them: exploiting a vulnerability, using a
+credential, or passing through a vendor gateway. Each control acts only on
+its own pathway. Seven services are modelled; four are \emph{clinical}
+(EHR, laboratory, pharmacy, imaging).
+
+A service $s$ has supporting nodes $N_s$ (its zone), a core node $c_s$,
+and, for all four clinical services, a dependency on the identity service.
+With $f(v)\in\{0,1\}$ indicating that node $v$ is functional (neither
+compromised nor isolated) and threshold $\theta$, the \emph{connected}
+availability rule is
+\begin{equation}
+A(s,x)=f(c_s)\wedge\Bigl[\tfrac{1}{|N_s|}\textstyle\sum_{v\in N_s}f(v)\ge\theta\Bigr]
+\wedge\bigl(\delta_s\Rightarrow A(\mathrm{id},x)\bigr),
+\label{eq:avail}
+\end{equation}
+where $x$ is the network state and $\delta_s$ marks identity dependence.
+We use the model's declared $\theta=0.60$: a declared capacity assumption,
+not a clinical threshold. The rule is binary, so the model cannot represent
+degraded operation or paper downtime procedures.
+
+\subsection{Attacker and node-level response}
+
+Compromise spreads from one entry node along edges, with per-edge
+probabilities depending on privilege, pathway, patch state and target
+vulnerability; a compromised identity zone accelerates credential-pathway
+spread. Detection is geometric with a profile-dependent delay; detected
+nodes are isolated with a profile-dependent success rate; healthy nodes
+are isolated by false positives. Restoration begins once the estate is
+contained, prioritised by clinical criticality, and is slower without
+usable backups. One step is five minutes; the horizon is 72 hours. Three
+capacity profiles (resource-constrained, intermediate, high) differ in
+patching, detection delay, isolation success, segmentation and backups.
+Coefficients no public evidence identifies are drawn per scenario from
+declared ranges. Every coefficient is a declared assumption; none is
+identified by hospital data.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  box/.style={draw, rounded corners=2pt, align=center, font=\footnotesize,
+              minimum height=2.8em, text width=6.2em, inner sep=2pt},
+  arr/.style={-{Stealth[length=4pt]}, semithick},
+  lab/.style={font=\scriptsize, align=center}]
+% One row: defender -> shield -> range. Specification below the shield.
+\node[box] (agent) {Autonomous defender\\{\scriptsize(scripted, RL, LLM)}};
+\node[box, right=1.5em of agent] (shield) {Dependency-closure shield};
+\node[box, right=1.5em of shield] (range) {Cyber range\\{\scriptsize(paired scenario)}};
+\node[box, below=1.8em of shield] (spec) {Dependency\\specification};
+\draw[arr] (agent) -- node[lab, above] {mode} (shield);
+\draw[arr] (shield) -- node[lab, above] {admitted} (range);
+\draw[arr] (spec) -- (shield);
+% Per-step re-check, arcing over the top of the row.
+\draw[arr, dashed] (range.north) to[bend right=40]
+  node[lab, above] {per-step check} (shield.north);
+% Observations: down from the range, under the specification, up to the agent.
+\coordinate (low) at ([yshift=-1.2em]spec.south);
+\draw[arr] (range.south) |- (low) -| node[lab, below, pos=0.25]
+  {observations} (agent.south);
+\end{tikzpicture}
+\caption{The defender proposes a network response mode each simulated
+hour. The shield admits it only if it causes no self-inflicted clinical
+outage, and re-checks the mode in force at every simulation step against
+the dependency specification.}
+\label{fig:overview}
+\end{figure}
+
+\subsection{The defender interface}
+
+The node-level response above always runs. An autonomous defender adds
+the \emph{network-level} decision that playbooks and automated responders
+take: whether to cut the network, and how. Every hour of simulated time (12
+steps) it observes what a security operations centre sees, never the true
+compromise: cumulative detections, unresolved alerts, isolated nodes, and
+whether clinical or identity services are down. It then chooses a
+\emph{response mode}, held until its next decision:
+
+\begin{itemize}
+\item \textsf{connected}: no network action; the reference.
+\item \textsf{disconnect}: sever the estate into three segments. This is the
+``disconnect affected systems'' step. The segments hold no replicas, so
+two of them lose the identity service and every application core.
+\item \textsf{zone lockdown}: keep only the architecture's required
+cross-zone paths. Services keep working because their dependencies stay
+reachable, and for exactly that reason those paths stay open to the
+attacker.
+\item \textsf{islands} (replica estates only): dependency-closed islanding
+(Sec.~\ref{sec:islands}).
+\end{itemize}
+
+While the estate is severed (\textsf{disconnect} or \textsf{islands}), a
+segment with no active compromise cannot be reinfected, so restoration may
+begin inside it before the whole estate is contained. Every other segment
+stays under the global containment gate.
+
+A fifth mode, \textsf{micro lockdown}, also cuts every intra-zone edge. We
+never offer it to a learning defender. The model cannot represent the
+dependency it breaks (an application server and its database share a
+zone), so the action would be rewarded for free. It appears only as a
+scripted, labeled upper bound.
+
+Fig.~\ref{fig:overview} summarises the loop.
+
+\textbf{Paired design.} An episode replays one scenario: topology, entry
+node, per-step random fields and parameter draws are functions of the
+scenario identifier alone. Every defender facing a scenario therefore faces
+the same attacker and the same luck, and a difference between two
+defenders is a within-scenario difference. With the \textsf{connected}
+policy the environment reproduces the underlying simulator exactly, on all
+metric columns; a test asserts this.
+
+\subsection{Dependency-closed islands}
+\label{sec:islands}
+
+Segmentation cuts \emph{between} functions, so any cut that severs a
+required path severs a service chain. Islands cut \emph{across} functions:
+island $i$ holds a slice of every zone, a core replica $c_s^i$ for every
+service, and an identity replica. Replicas are standby in connected
+operation, so they change nothing until the breakers open. Once severed, a
+node serves only if its own island has a functional core and a functional
+identity replica:
+\begin{equation}
+A_{\pi}(s,x)=\Bigl[\tfrac{1}{|N_s|}\textstyle\sum_{v\in N_s}
+f(v)\,\kappa^{\pi(v)}_s(x)\ge\theta\Bigr],
+\label{eq:islanded}
+\end{equation}
+where $\pi$ assigns nodes to islands and $\kappa^i_s(x)=f(c^i_s)\wedge
+(\delta_s\Rightarrow\iota^i(x))$, with $\iota^i$ island $i$'s identity
+availability. With one island, (\ref{eq:islanded}) reduces exactly to
+(\ref{eq:avail}); a property test checks this on $10^4$ random states.
+\textsf{disconnect} is (\ref{eq:islanded}) with no replicas: every island
+but one has $c^i_s=\bot$.
+
+\begin{proposition}[Island count]
+With $k$ equal islands, the loss of one whole island leaves every service
+available only if $k\ge 1/(1-\theta)$.
+\end{proposition}
+\begin{proof}
+Losing one island leaves at most $(k-1)/k$ of $N_s$ serving, and
+(\ref{eq:islanded}) requires at least $\theta$.
+\end{proof}
+At $\theta=0.60$ this needs three islands. Two cannot survive the loss of
+either, however clean the other is. The arithmetic is trivial, but it is the
+first thing an islanding design gets wrong.
+
+Replicas of one directory share one credential store, so we let a
+compromised identity node accelerate credential spread in every island.
+That is the conservative choice. Islanding is not new to engineering. What
+is specific here is the closure condition: a partition is protective only
+if each part carries its own dependencies.
+
+% =========================================================================
+\section{The Dependency-Closure Shield}
+\label{sec:shield}
+
+\begin{definition}[Self-inflicted unavailability]
+For response mode $m$ in state $x$, let
+$\mathrm{SI}(m,x)=\{s\in C: A(s,x)=1\wedge A_m(s,x)=0\}$, where $C$ is the set of
+clinical services and $A_m$ is the availability rule under $m$:
+(\ref{eq:avail}) for \textsf{connected} and the lockdowns, (\ref{eq:islanded})
+for \textsf{disconnect} and \textsf{islands}.
+\end{definition}
+
+$\mathrm{SI}$ compares two modes on the \emph{same} node states. It
+isolates the part of the outage the defender's response causes by itself,
+separately from the attacker's.
+
+\textbf{Property.} Let $m_t$ be the mode in force when the availability
+of step $t$ is recorded. The shield enforces
+\[
+\Phi:\quad \forall t:\ \mathrm{SI}(m_t,x_t)=\emptyset .
+\]
+
+\textbf{Enforcement.} The shield acts twice. When the defender proposes a
+mode, the shield rejects it if $\mathrm{SI}\neq\emptyset$ in the current
+state (\emph{admission}). The state then keeps changing between decisions:
+a replica may be compromised, or a service may recover while the estate
+stays severed. So a runtime monitor also re-checks the mode in force at
+every simulation step, after the state update and before availability is
+recorded, and falls back to \textsf{connected} the moment $\Phi$ would fail.
+
+\begin{proposition}[Guarantee]
+Under the shield, $\Phi$ holds at every recorded step of every episode.
+\end{proposition}
+\begin{proof}
+At step $t$ the monitor sees $x_t$ before availability is recorded. If
+$\mathrm{SI}(m,x_t)=\emptyset$ it keeps $m$. Otherwise it sets
+$m_t=\textsf{connected}$, and $\mathrm{SI}(\textsf{connected},x)=\emptyset$ for
+every $x$ because $A_{\textsf{connected}}=A$.
+\end{proof}
+
+The proof is short because the property is chosen to be checkable:
+availability is a deterministic function of node states and the declared
+dependencies, and the monitor has both. We do not rely on the proof alone.
+Our tests re-derive $\Phi$ on every step of shielded episodes through a
+second, independent monitor, and confirm that unshielded episodes violate
+it, so the check is not vacuous.
+
+\begin{proposition}[What the shield admits]
+The lockdowns are always admitted. \textsf{disconnect} is admitted exactly
+when no clinical service is available.
+\end{proposition}
+\begin{proof}
+The lockdowns keep every declared cross-zone dependency path open, so the
+connected rule (\ref{eq:avail}) applies to them and $\mathrm{SI}=\emptyset$. Under \textsf{disconnect}, only
+the island holding the primary cores can serve. It holds at most
+$\lceil |N_s|/3\rceil$ of $N_s$, below $\theta|N_s|$ for every clinical service
+in our networks, so every available clinical service is lost, and none are
+when none is available.
+\end{proof}
+
+So the shield does not ban cutting. It permits the strongest containment
+action exactly when that action has nothing left to cost, and it forces a
+reconnection when a severed estate starts to cost service. Against
+\textsf{islands}, it intervenes when an island loses a dependency the
+connected estate still has: a failed replica, or too few functional
+identity nodes within the island.
+
+\textbf{What the shield does not guarantee.} First, it does not guarantee
+fewer outages overall: blocking a cut lets the attacker keep spreading,
+which can cost more later. Whether shielding helps on balance is an
+empirical question, answered in Sec.~\ref{sec:results}. Second, it knows
+only the dependencies it is given. The micro lockdown passes the shield in
+our model because the model declares no intra-zone dependency, not because
+the action is safe. The shield is exactly as good as the dependency
+specification. Third, its guarantee is per step of this model, not of a
+real network.
+
+% =========================================================================
+\section{Defenders}
+\label{sec:defenders}
+
+\textbf{Scripted responders} stand for what automated response does today:
+one network action taken when an alert fires, released once no detected
+node has gone un-isolated for two consecutive decisions. We evaluate
+\textsf{passive}, \textsf{disconnect}, \textsf{zone lockdown}, the micro
+lockdown upper bound and, on replica estates, \textsf{islands}.
+
+\textbf{Learned defenders} are tabular Q-learners~\cite{watkins1992}. The
+observation is abstracted to 32 discrete situations (four detection-count
+buckets, and whether clinical services, identity, or unresolved alerts are
+present), crossed with the current mode. Each learner trains for
+\numTrainEpisodes\ episodes on a scenario bank disjoint from evaluation,
+cycling through every profile and entry point, with $\epsilon$-greedy
+exploration decaying from 1.0 to 0.05, learning rate 0.1 and discount 0.95
+per hourly decision. We train three reward functions:
+\begin{itemize}
+\item \emph{containment}: minus the number of newly compromised nodes, the
+signal autonomous-defence benchmarks optimise;
+\item \emph{soft}: containment minus $\lambda$ times clinical service-hours
+lost ($\lambda=1$), a CAGE-4-style availability penalty;
+\item \emph{clinical}: minus clinical service-hours lost, the objective
+that matters. A real defender cannot observe it this directly.
+\end{itemize}
+Each is trained on today's estate (\textsf{connected}, \textsf{disconnect},
+\textsf{zone lockdown}) and on a replica estate that adds \textsf{islands},
+giving six learners. Every defender is evaluated with and without the
+shield. The learners are trained unshielded and shielded only at
+deployment, so the comparison isolates what the shield does to a fixed
+policy.
+
+We chose a small tabular learner on purpose. The question is not how
+capable a defender can be made, but what a defender learns from the signal
+it is given. The shield is agent-agnostic: it screens proposed modes and
+does not inspect the policy that proposed them, so it applies unchanged
+to a language-model defender.
+
+% =========================================================================
+\section{Experimental Design}
+\label{sec:design}
+
+Every condition replays the same evaluation bank: three profiles $\times$
+five entry points (workstation, internet-facing, privileged system, medical
+device, vendor connection) $\times$ \numScenariosPerCell\ scenarios, i.e.
+\numEvalScenarios\ paired scenarios and \numEpisodes\ episodes in total.
+The bank's seed is disjoint from training.
+
+\textbf{Metrics.} \emph{Containment}: the share of nodes ever compromised.
+\emph{Clinical}: weighted service-hours lost, and the probability of a
+sustained outage, meaning at least $k$ of the four clinical services each
+down continuously for more than two hours ($k=4$ primary; $k=1$ also
+reported). \emph{Self-inflicted}: the share of episodes with any step in
+which $\mathrm{SI}\neq\emptyset$. \emph{Shield interventions}: fallbacks per episode.
+
+\textbf{Inference.} Contrasts are within-scenario differences with 95\%
+percentile bootstrap intervals (2{,}000 resamples of scenarios within
+profile $\times$ entry cells). \textbf{The study is exploratory}: no protocol
+was frozen and there are many contrasts, so the intervals are descriptive,
+not tests.
+
+% =========================================================================
+\section{Results}
+\label{sec:results}
+
+\input{results_section}
+
+% =========================================================================
+\section{Discussion}
+\label{sec:discussion}
+
+\input{discussion_section}
+
+% =========================================================================
+\section{Limitations}
+\label{sec:limitations}
+
+\textbf{Synthetic model.} Every coefficient is declared, not identified from
+hospital data; results are properties of the simulator under its
+assumptions. The binary availability rule cannot represent degraded
+operation or downtime procedures.
+
+\textbf{Attacker.} The attacker spreads epidemically while detection runs,
+and is not adaptive. Ransomware that dwells, pre-positions everywhere and
+encrypts at once would reach every island before any cut, and would erase
+much of the containment value of any network response. It does not change
+the shield's guarantee. It does change the shield's cost, which falls when
+cutting has less to offer.
+
+\textbf{Dependencies.} The shield knows only declared dependencies. Our
+model declares them at zone level, which is why the micro lockdown passes
+the shield without being safe.
+
+\textbf{Defenders.} Tabular learners with a coarse observation are far from
+state of the art. They were chosen to make the effect of the reward signal
+legible, not to bound what a capable defender could achieve.
+
+\textbf{Operations.} Islanded operation brings replica consistency,
+reconciliation after reconnection, and clinicians who cannot reach records
+held in another island. None of these is modelled. Neither is the cost of
+false trips: every episode is an incident.
+
+\textbf{Design choices not varied.} One availability-penalty weight
+($\lambda=1$), one decision interval, one island count, and learners trained
+across all profiles with no feature naming the profile. A learner told its
+estate's detection speed might gamble selectively, and would change the
+shield's price.
+
+\textbf{Statistics.} The study is exploratory, with one evaluation bank and
+many contrasts; the head-to-head comparisons and the deployment rules in
+Sec.~\ref{sec:discussion} were chosen after seeing results.
+
+% =========================================================================
+\section{Conclusion}
+
+Containment is the natural score for an autonomous defender, and in a
+clinical network it misses the harm the defender causes itself. That harm
+is measurable once the service dependencies are written down, and it is
+not simply a mistake: accepting a self-inflicted outage can be the better
+bet where detection is slow and a ruinous one where it is fast. A
+dependency-closure shield enforces, exactly and at every step, that the
+defender never takes that bet on its own. It is a strict safety floor where
+cutting has little to stop, and it forfeits real gains where cutting pays.
+The lesson for deployment is about allocation. An autonomous responder in a
+hospital needs a machine-readable model of what depends on what, so that a
+harmful cut can be recognised at all. And the decision to accept one needs
+an owner who knows the estate, which the shield makes enforceable.
+
+\textbf{Artifact.} Simulator, environment, shield, defenders, trained
+models, raw episode data and analysis scripts are available in an
+anonymized repository (link withheld for review). Every number in this
+paper is generated from the data by the analysis scripts.
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

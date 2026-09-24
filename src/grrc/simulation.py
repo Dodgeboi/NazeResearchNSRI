@@ -15,6 +15,7 @@ from .config import Config
 from .defenses import (DefensePortfolio, effective_settings, get_portfolio)
 from .enums import BackupStrategy, EntryPoint, SegmentationLevel, Zone
 from .models import HospitalNetwork, TrialSpec
+from .islanding import plan_islands
 from .network_generator import apply_controls_to_base, generate_network
 from .propagation import RansomwareSimulation
 from .uncertainty import apply_parameters, sample_parameters
@@ -30,6 +31,37 @@ def choose_entry(net: HospitalNetwork, entry_point: str,
     if candidates.size == 0:
         candidates = np.arange(net.n_nodes)
     return int(rng.choice(candidates))
+
+
+def _island_plan(cfg: Config, net: HospitalNetwork, eff):
+    """The island plan for a trial that bought islanding, else None.
+
+    Built from the network the trial actually runs on. In the paired design
+    that network shares node attributes with the scenario's common base
+    graph, and the plan depends only on zones and core nodes, so every
+    candidate replaying the scenario gets the same islands and replicas.
+    """
+    if not eff.islanding:
+        return None
+    return plan_islands(net, cfg.simulation.island_count,
+                        cfg.simulation.island_dependency_closed,
+                        cfg.simulation.island_partition,
+                        cfg.simulation.island_micro_within)
+
+
+def _island_columns(cfg: Config, eff, sim: RansomwareSimulation) -> dict:
+    return {
+        "islanding": int(eff.islanding),
+        "island_count": int(cfg.simulation.island_count),
+        "island_dependency_closed":
+            int(cfg.simulation.island_dependency_closed),
+        "island_local_restore": int(cfg.simulation.island_local_restore),
+        "island_partition": cfg.simulation.island_partition,
+        "island_micro_within": int(cfg.simulation.island_micro_within),
+        "island_trip_step": sim.island_trip_step,
+        "island_reconnect_step": sim.island_reconnect_step,
+        "islanded_steps": sim.islanded_steps,
+    }
 
 
 def run_trial(cfg: Config, spec: TrialSpec,
@@ -102,7 +134,8 @@ def run_trial(cfg: Config, spec: TrialSpec,
         sim_rng = trial_rng(spec.master_seed, scenario_id, stream_id=2)
         sim = RansomwareSimulation(
             cfg, net, eff, sim_rng,
-            random_field_key=(spec.master_seed, scenario_id))
+            random_field_key=(spec.master_seed, scenario_id),
+            island_plan=_island_plan(cfg, net, eff))
     else:
         rng = trial_rng(spec.master_seed, spec.trial_id)
         net = generate_network(
@@ -113,7 +146,8 @@ def run_trial(cfg: Config, spec: TrialSpec,
             identity_controls=eff.identity_controls)
         entry = entry_node if entry_node is not None else choose_entry(
             net, spec.entry_point, rng)
-        sim = RansomwareSimulation(cfg, net, eff, rng)
+        sim = RansomwareSimulation(cfg, net, eff, rng,
+                                   island_plan=_island_plan(cfg, net, eff))
     metrics = sim.run(entry)
 
     return {
@@ -142,6 +176,13 @@ def run_trial(cfg: Config, spec: TrialSpec,
         "backup_strategy": eff.backup_strategy,
         "identity_controls": int(eff.identity_controls),
         "rapid_isolation": int(eff.isolate_same_step),
+        # Islanding columns exist only while the islanding dimension is
+        # switched on, keyed off the run-level config rather than this row's
+        # portfolio so that one run never produces a ragged schema. With the
+        # switch off the schema is byte for byte what the archived runs and
+        # frozen protocols expect.
+        **(_island_columns(cfg, eff, sim)
+           if cfg.simulation.islanding_enabled else {}),
         # Whether this incident's nominally isolated backups had a usable
         # path after all. Recorded so the mechanism is auditable rather than
         # hidden inside a compromise flag.

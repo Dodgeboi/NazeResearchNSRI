@@ -50,3 +50,8 @@ data/multiobjective/confirmatory/multiobjective_confirmatory_results.csv
 # Earlier history still contains the uncompressed blobs. History is not
 # rewritten here, so this saves space going forward only.
 data/multiobjective/confirmatory/multiobjective_confirmatory_results.csv
+
+# Islanding experiment checkpoints (combined file is data/islanding/raw/islanding_experiment.csv.gz)
+data/islanding/raw/parts/
+# Defender-evaluation checkpoints (combined file is data/agentic/raw/defender_evaluation.csv.gz)
+data/agentic/raw/parts/

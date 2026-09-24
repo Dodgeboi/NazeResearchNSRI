@@ -1,0 +1,124 @@
+{
+  "status": "EXPLORATORY - no protocol frozen before this run",
+  "config": "configs/multiobjective_portfolio.yaml",
+  "config_sha256": "a3dff5682e1e8277cc29d3a5836009deccf87a901d4fa60fdd1ce7c091e41e31",
+  "eval_seed": 20260924,
+  "eval_scenario_offset": 60000000,
+  "scenarios_per_cell": 40,
+  "decision_interval_steps": 12,
+  "conditions": {
+    "passive": {
+      "architecture": "today",
+      "shielded": false,
+      "kind": "scripted"
+    },
+    "passive_replicas": {
+      "architecture": "replicas",
+      "shielded": false,
+      "kind": "scripted"
+    },
+    "disconnect": {
+      "architecture": "today",
+      "shielded": false,
+      "kind": "scripted"
+    },
+    "disconnect_shielded": {
+      "architecture": "today",
+      "shielded": true,
+      "kind": "scripted"
+    },
+    "zone_lockdown": {
+      "architecture": "today",
+      "shielded": false,
+      "kind": "scripted"
+    },
+    "micro_lockdown_upper_bound": {
+      "architecture": "today",
+      "shielded": false,
+      "kind": "scripted"
+    },
+    "islands": {
+      "architecture": "replicas",
+      "shielded": false,
+      "kind": "scripted"
+    },
+    "islands_shielded": {
+      "architecture": "replicas",
+      "shielded": true,
+      "kind": "scripted"
+    },
+    "q_containment_today": {
+      "architecture": "today",
+      "shielded": false,
+      "kind": "learned"
+    },
+    "q_containment_today_shielded": {
+      "architecture": "today",
+      "shielded": true,
+      "kind": "learned"
+    },
+    "q_containment_replicas": {
+      "architecture": "replicas",
+      "shielded": false,
+      "kind": "learned"
+    },
+    "q_containment_replicas_shielded": {
+      "architecture": "replicas",
+      "shielded": true,
+      "kind": "learned"
+    },
+    "q_soft_today": {
+      "architecture": "today",
+      "shielded": false,
+      "kind": "learned"
+    },
+    "q_soft_today_shielded": {
+      "architecture": "today",
+      "shielded": true,
+      "kind": "learned"
+    },
+    "q_soft_replicas": {
+      "architecture": "replicas",
+      "shielded": false,
+      "kind": "learned"
+    },
+    "q_soft_replicas_shielded": {
+      "architecture": "replicas",
+      "shielded": true,
+      "kind": "learned"
+    },
+    "q_clinical_today": {
+      "architecture": "today",
+      "shielded": false,
+      "kind": "learned"
+    },
+    "q_clinical_today_shielded": {
+      "architecture": "today",
+      "shielded": true,
+      "kind": "learned"
+    },
+    "q_clinical_replicas": {
+      "architecture": "replicas",
+      "shielded": false,
+      "kind": "learned"
+    },
+    "q_clinical_replicas_shielded": {
+      "architecture": "replicas",
+      "shielded": true,
+      "kind": "learned"
+    }
+  },
+  "model_sha256": {
+    "q_clinical_replicas.json": "f13f7f7b5f4dcaf57e26541c946cd5db9bc0fec3c491e113bee8474b70d4458e",
+    "q_clinical_today.json": "72c9d22c57607b6541ffb7a25841d26ab726d6d7f700f8796b697394135793d2",
+    "q_containment_replicas.json": "4010e30e50ee6db206f567af4b0181ec03366778890c502ee8b8c10c43e2ea42",
+    "q_containment_today.json": "eb30bc19634a8055ea7a759089ac45723458325c402ba3cdd8584a96157f3694",
+    "q_soft_replicas.json": "6ab501ffd8e6f2af1f2e86792eb0570548b31550e115dd85f8ba09e08973e4fb",
+    "q_soft_today.json": "5a0c5b404269f77b707a3731f040799419bdaf5c14598f2096af04e64f296a92"
+  },
+  "rows": 12000,
+  "raw_text_sha256": "11a1fb804c8b1207e2854b7ee8b52b8d082cc86bb338ac61b448ec76ba985422",
+  "git_commit": "a4b9519d609091317d0a38b1c135aeca61972d48",
+  "git_dirty": true,
+  "source_sha256": "6791bd807662015f3754c86fdb7dac6a064b371518cf1a3bc2a197141727a133"
+}

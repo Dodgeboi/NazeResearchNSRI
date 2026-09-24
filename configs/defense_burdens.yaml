@@ -13,3 +13,6 @@ burdens:
   periodic_backups: 1
   protected_backups: 2
   identity_controls: 3
+  # Replica upkeep, per-island downtime workflows and breaker drills. An
+  # islanding plan that has never been exercised is not a control.
+  islanding: 5

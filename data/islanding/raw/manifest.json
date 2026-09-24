@@ -1,0 +1,111 @@
+{
+  "status": "EXPLORATORY - no protocol frozen before this run",
+  "specification": "study/ISLANDING_SPECIFICATION.md",
+  "config": "configs/multiobjective_portfolio.yaml",
+  "config_sha256": "a3dff5682e1e8277cc29d3a5836009deccf87a901d4fa60fdd1ce7c091e41e31",
+  "master_seed": 20260922,
+  "scenario_id_offset": 90000000,
+  "scenarios_per_cell": 100,
+  "profiles": [
+    "resource_constrained",
+    "intermediate_capacity",
+    "high_capacity"
+  ],
+  "entry_points": [
+    "workstation",
+    "internet_facing",
+    "privileged_system",
+    "medical_device",
+    "vendor_connection"
+  ],
+  "conditions": {
+    "none": {
+      "portfolio": "profile_baseline",
+      "overrides": {}
+    },
+    "zone": {
+      "portfolio": "profile_baseline_islanded",
+      "overrides": {
+        "island_partition": "zone"
+      }
+    },
+    "crude3": {
+      "portfolio": "profile_baseline_islanded",
+      "overrides": {
+        "island_count": 3,
+        "island_dependency_closed": false
+      }
+    },
+    "dcci3": {
+      "portfolio": "profile_baseline_islanded",
+      "overrides": {
+        "island_count": 3
+      }
+    },
+    "dcci2": {
+      "portfolio": "profile_baseline_islanded",
+      "overrides": {
+        "island_count": 2
+      }
+    },
+    "dcci4": {
+      "portfolio": "profile_baseline_islanded",
+      "overrides": {
+        "island_count": 4
+      }
+    },
+    "dcci3_nolocal": {
+      "portfolio": "profile_baseline_islanded",
+      "overrides": {
+        "island_count": 3,
+        "island_local_restore": false
+      }
+    },
+    "none_ungated": {
+      "portfolio": "profile_baseline",
+      "overrides": {
+        "restore_requires_containment": false
+      }
+    },
+    "zone_ungated": {
+      "portfolio": "profile_baseline_islanded",
+      "overrides": {
+        "island_partition": "zone",
+        "restore_requires_containment": false
+      }
+    },
+    "dcci3_ungated": {
+      "portfolio": "profile_baseline_islanded",
+      "overrides": {
+        "island_count": 3,
+        "restore_requires_containment": false
+      }
+    },
+    "none_theta45": {
+      "portfolio": "profile_baseline",
+      "overrides": {
+        "service_functional_fraction": 0.45
+      }
+    },
+    "dcci2_theta45": {
+      "portfolio": "profile_baseline_islanded",
+      "overrides": {
+        "island_count": 2,
+        "service_functional_fraction": 0.45
+      }
+    },
+    "dcci3_theta45": {
+      "portfolio": "profile_baseline_islanded",
+      "overrides": {
+        "island_count": 3,
+        "service_functional_fraction": 0.45
+      }
+    }
+  },
+  "rows": 19500,
+  "raw_sha256": "beaf51988f6f0baa7b8f3af8db4c977a329411ee7d356bdada36464310a3e1d5",
+  "git_commit": "a4b9519d609091317d0a38b1c135aeca61972d48",
+  "git_dirty": true,
+  "source_sha256": "a4e2a58cd306f2039e8f78fb184d428f7a01d71316928c156c3280ef1901ef1f",
+  "wall_seconds": 1638.6
+}

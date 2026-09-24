@@ -76,6 +76,57 @@ seeds, hash checks, and PDF compilation commands. Original simulator trials
 and frozen protocols are preserved. Added analyses are retrospective and
 their design notes record when each choice was made.
 
+## Proposed method, not part of the paper: dependency-closed islanding
+
+[study/ISLANDING_SPECIFICATION.md](study/ISLANDING_SPECIFICATION.md) specifies
+a response method adapted from power-grid *controlled islanding*. When
+compromise is first detected, the network splits into pre-planned islands.
+Each island holds a slice of every clinical zone plus its own core and
+identity replicas, so each island that stays clean keeps serving. The claim it
+makes testable: **disconnection protects only if what is disconnected is
+dependency-closed.** Severing part of a hospital from its central identity and
+EHR core is itself an outage, and that is what disconnecting an affected site
+does today.
+
+One **exploratory** experiment compares the method, on matched scenarios,
+with crude disconnection and with the closest prior art (tightening to least
+privilege on detection). It also tests the island-count rule
+k ≥ 1/(1 − θ) with the spread confound removed. Results:
+[data/islanding/RESULTS.md](data/islanding/RESULTS.md), generated from the
+data, not typed. **No protocol was frozen, no result above reflects this
+method, and the simulated attacker spreads while detection runs.** A
+dwell-then-detonate attacker, the likeliest way to overturn the result, is not
+modeled. Specification section 0 separates what is new from what has
+precedents; section 3 lists the limitations that bear on the result.
+
+While `simulation.islanding_enabled` is false, the default everywhere, the
+method is absent: the 288-candidate search space, the result schemas and the
+archived runs are unchanged, byte for byte.
+
+## Autonomous defenders and the dependency-closure shield (AIDC'26 draft)
+
+The simulator is exposed as a cyber range for autonomous defenders
+([`src/grrc/agent_env.py`](src/grrc/agent_env.py)). A defender observes what
+a security operations centre sees and chooses a network response every
+simulated hour: stay connected, disconnect, lock down zones, or (on estates
+provisioned for it) split into dependency-closed islands. The environment
+replays the paired scenario design, so every defender faces the same
+attacker and the same random draws. With no network action it reproduces
+`run_trial` exactly, which a test asserts.
+
+[`src/grrc/shield.py`](src/grrc/shield.py) is a runtime monitor that admits
+a response only if the response, by itself, makes no available clinical
+service unavailable. It is enforced at every simulation step, and
+[`tests/test_shield.py`](tests/test_shield.py) re-derives the property
+independently on every step. Scripted responders and tabular Q-learning
+defenders ([`src/grrc/defender_agents.py`](src/grrc/defender_agents.py)) are
+trained with `scripts/train_defenders.py`, evaluated with and without the
+shield by `scripts/evaluate_defenders.py`, and analysed by
+`scripts/analyze_defenders.py`, which also generates every number the paper
+draft in [`docs/aidc26`](docs/aidc26) quotes. Results:
+[`data/agentic/RESULTS.md`](data/agentic/RESULTS.md). **Exploratory; no
+protocol was frozen.**
+
 ## Authors, licenses, and history
 
 Authors: **Ashish Agrawal, Mukil Dharanidharan, and Naman Upadhyay**.

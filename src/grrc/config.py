@@ -192,6 +192,35 @@ class SimulationSpec:
     # the uncovered remainder represents (audit ISSUE-010).
     identity_control_coverage: float = 0.85
     identity_control_effectiveness: float = 0.70
+    # --- Dependency-closed controlled islanding (grrc.islanding) ----------
+    # Specification: study/ISLANDING_SPECIFICATION.md. Master switch, default
+    # off. While it is false the method is absent rather than small: the
+    # search space stays at its frozen 288 candidates, result schemas are
+    # unchanged, and the archived runs reproduce byte for byte.
+    islanding_enabled: bool = False
+    # Number of pre-planned islands. At the declared 0.60 service threshold,
+    # fewer than 3 cannot keep any service up once one island is lost
+    # (grrc.islanding.minimum_island_count); 3 is the smallest useful value.
+    island_count: int = 3
+    # True: every island carries a core replica for every service and an
+    # identity replica (the proposed method). False: islands are severed
+    # without replicas — the crude "disconnect the affected site" response,
+    # modeled so the two can be compared on matched scenarios.
+    island_dependency_closed: bool = True
+    # Cumulative detections that trip the breakers.
+    island_trigger_detections: int = 1
+    # Whether a severed, contained island may begin restoring before global
+    # containment. Separated so its share of any effect can be reported on
+    # its own, because it interacts with structural assumption S1.
+    island_local_restore: bool = True
+    # "service_chain" is the method. "zone" is the comparator it must beat:
+    # detection-triggered tightening to least-privilege segmentation, the
+    # closest prior art. Selectable so both run on matched scenarios.
+    island_partition: str = "service_chain"
+    # "zone_micro" also cuts every intra-zone edge: an upper-bound
+    # micro-segmentation lockdown. island_micro_within applies that same
+    # lockdown inside each service-chain island.
+    island_micro_within: bool = False
     detection_model: str = "geometric"  # 'geometric' | 'fixed'
     false_positive_rate: float = 0.002  # per healthy node per step
     false_positive_duration: int = 8    # steps an FP isolation lasts
@@ -249,6 +278,13 @@ class SimulationSpec:
                "detection_improvement_factor must be in (0,1] or null")
         _check(self.identity_breach_multiplier >= 1.0,
                "identity_breach_multiplier must be >= 1")
+        _check(self.island_count >= 1, "island_count must be >= 1")
+        _check(self.island_trigger_detections >= 1,
+               "island_trigger_detections must be >= 1")
+        _check(self.island_partition in ("service_chain", "zone",
+                                         "zone_micro"),
+               "island_partition must be 'service_chain', 'zone' or "
+               "'zone_micro'")
         _check(0.0 < self.service_functional_fraction <= 1.0,
                "service_functional_fraction must be in (0,1]")
         _check(self.sustained_outage_service_steps >= 1,

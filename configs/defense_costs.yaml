@@ -15,3 +15,9 @@ costs:
   periodic_backups: 1              # scheduled offline windows; partial
   protected_backups: 2             # offline / immutable backups
   identity_controls: 4             # least-privilege accounts, protected auth
+  # Dependency-closed controlled islanding: an identity replica and a core
+  # replica for every clinical service in each island, plus pre-staged
+  # breaker automation. The most expensive single decision in the table,
+  # because it duplicates the estate's two single points of failure.
+  # See study/ISLANDING_SPECIFICATION.md.
+  islanding: 6

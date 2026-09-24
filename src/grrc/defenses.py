@@ -14,6 +14,7 @@ Controls modeled:
   * Rapid automated isolation (high isolation success, same-step attempt)
   * Protected (isolated/immutable) backups
   * Identity & access restrictions
+  * Dependency-closed controlled islanding (grrc.islanding)
 """
 
 from __future__ import annotations
@@ -95,6 +96,10 @@ class DefensePortfolio:
     rapid_isolation: bool = False
     backup_override: BackupStrategy | None = None
     identity_controls: bool = False
+    #: Dependency-closed controlled islanding. Defaults to False so every
+    #: portfolio constructed before this method existed keeps its exact
+    #: prior meaning, price and behavior.
+    islanding: bool = False
 
 
 @dataclass(frozen=True)
@@ -108,6 +113,7 @@ class EffectiveSettings:
     isolate_same_step: bool
     backup_strategy: str
     identity_controls: bool
+    islanding: bool = False
 
 
 def _ladder_index(ladder: tuple, value: float) -> int:
@@ -199,6 +205,7 @@ def effective_settings(
         isolate_same_step=portfolio.rapid_isolation,
         backup_strategy=backup,
         identity_controls=portfolio.identity_controls,
+        islanding=portfolio.islanding,
     )
 
 
@@ -231,6 +238,9 @@ PORTFOLIO_CATALOG: dict[str, DefensePortfolio] = {p.name: p for p in [
                      backup_override=_ISO),
     DefensePortfolio("identity_controls", segmentation=_FLAT,
                      identity_controls=True, backup_override=_CONN),
+    # Single-method condition on the common flat/connected reference base.
+    DefensePortfolio("controlled_islanding", segmentation=_FLAT,
+                     islanding=True, backup_override=_CONN),
     DefensePortfolio("seg_plus_patch", segmentation=_BASIC,
                      patch_coverage_override=0.90, backup_override=_CONN),
     DefensePortfolio("seg_plus_detection", segmentation=_BASIC,
@@ -244,10 +254,19 @@ PORTFOLIO_CATALOG: dict[str, DefensePortfolio] = {p.name: p for p in [
     DefensePortfolio("seg_detect_backup", segmentation=_BASIC,
                      detection_improvement=True, rapid_isolation=True,
                      backup_override=_ISO),
+    # full_defense deliberately does NOT buy islanding: its frozen meaning is
+    # "every control the confirmatory experiment priced", and the archived
+    # results and the manuscript both report it. The all-controls condition
+    # with islanding is full_defense_islanded.
     DefensePortfolio("full_defense", segmentation=_LP,
                      patch_coverage_override=0.90,
                      detection_improvement=True, rapid_isolation=True,
                      backup_override=_ISO, identity_controls=True),
+    DefensePortfolio("full_defense_islanded", segmentation=_LP,
+                     patch_coverage_override=0.90,
+                     detection_improvement=True, rapid_isolation=True,
+                     backup_override=_ISO, identity_controls=True,
+                     islanding=True),
 ]}
 
 
@@ -312,6 +331,27 @@ def backup_increment_points(profile: ProfileSpec,
     return max(0.0, ladder[target] - ladder[baseline])
 
 
+def optional_tariff(table: dict, key: str, kind: str) -> float:
+    """Look up a tariff that older tables may not declare, failing loudly.
+
+    Tariff keys for methods added after the confirmatory run are not in the
+    required-key sets of ``load_defense_costs`` or
+    ``load_operational_burdens``: files written before those methods existed,
+    including the config snapshots archived beside every frozen run, must keep
+    loading. But a portfolio that *buys* the method must never be priced at
+    zero by accident — the free-upgrade defect audit ISSUE-003 and ISSUE-004
+    recorded. So the key is optional to declare and mandatory to use.
+    """
+    try:
+        return float(table[key])
+    except KeyError:
+        filename = "costs" if kind == "cost" else "burdens"
+        raise KeyError(
+            f"portfolio buys {key!r} but the {kind} table does not declare "
+            f"it; add {key!r} to configs/defense_{filename}.yaml rather "
+            "than letting it be free") from None
+
+
 def portfolio_cost(portfolio: DefensePortfolio, profile: ProfileSpec,
                    costs: dict[str, float], scale: float = 1.0) -> float:
     """Price a portfolio relative to a flat/connected, profile-baseline
@@ -342,6 +382,8 @@ def portfolio_cost(portfolio: DefensePortfolio, profile: ProfileSpec,
         total += costs["rapid_isolation"]
     if portfolio.identity_controls:
         total += costs["identity_controls"]
+    if portfolio.islanding:
+        total += optional_tariff(costs, "islanding", "cost")
     return total * scale
 
 
@@ -349,11 +391,19 @@ def portfolio_cost(portfolio: DefensePortfolio, profile: ProfileSpec,
 # Optimizer search space
 # ---------------------------------------------------------------------------
 
-def enumerate_portfolios() -> Iterator[DefensePortfolio]:
+def enumerate_portfolios(
+        *, include_islanding: bool = False) -> Iterator[DefensePortfolio]:
     """All composable defense combinations searched by the optimizer.
 
     3 segmentation tiers x 4 patch boosts x 2 detection x 2 isolation x
     3 backup tiers x 2 identity = 288 candidate portfolios.
+
+    ``include_islanding`` adds the islanding dimension, doubling the space to
+    576. When False this yields the original 288 candidates **in their
+    original order with their original names** — a hard requirement, because
+    names are the join key to the frozen result CSVs and protocol snapshots.
+    The islanded half is appended after the original half and is the only
+    half carrying a ``|isl1`` suffix.
 
     The backup dimension enumerates the full ladder (connected, periodic,
     isolated) rather than only its endpoints. Omitting the periodic rung
@@ -372,25 +422,29 @@ def enumerate_portfolios() -> Iterator[DefensePortfolio]:
     double-counted. Each portfolio is priced by :func:`portfolio_cost`;
     feasibility under a budget is decided by the optimizer, not here.
     """
-    for seg in SEGMENTATION_ORDER:
-        for patch_boost in (0, 1, 2, 3):
-            for det in (False, True):
-                for iso in (False, True):
-                    for bak in BACKUP_ORDER:
-                        for idm in (False, True):
-                            name = (
-                                f"seg-{seg.value}|patch+{patch_boost}"
-                                f"|det{int(det)}|iso{int(iso)}"
-                                f"|bak-{bak.value}|idm{int(idm)}"
-                            )
-                            yield DefensePortfolio(
-                                name=name, segmentation=seg,
-                                patch_boost_levels=patch_boost,
-                                detection_improvement=det,
-                                rapid_isolation=iso,
-                                backup_override=bak,
-                                identity_controls=idm,
-                            )
+    for isl in ((False, True) if include_islanding else (False,)):
+        for seg in SEGMENTATION_ORDER:
+            for patch_boost in (0, 1, 2, 3):
+                for det in (False, True):
+                    for iso in (False, True):
+                        for bak in BACKUP_ORDER:
+                            for idm in (False, True):
+                                name = (
+                                    f"seg-{seg.value}|patch+{patch_boost}"
+                                    f"|det{int(det)}|iso{int(iso)}"
+                                    f"|bak-{bak.value}|idm{int(idm)}"
+                                )
+                                if isl:
+                                    name += "|isl1"
+                                yield DefensePortfolio(
+                                    name=name, segmentation=seg,
+                                    patch_boost_levels=patch_boost,
+                                    detection_improvement=det,
+                                    rapid_isolation=iso,
+                                    backup_override=bak,
+                                    identity_controls=idm,
+                                    islanding=isl,
+                                )
 
 
 def describe_portfolio(p: DefensePortfolio) -> str:
@@ -410,4 +464,6 @@ def describe_portfolio(p: DefensePortfolio) -> str:
         parts.append(f"backups={p.backup_override.value}")
     if p.identity_controls:
         parts.append("identity controls")
+    if p.islanding:
+        parts.append("dependency-closed islanding")
     return "; ".join(parts) if parts else "profile baseline posture"

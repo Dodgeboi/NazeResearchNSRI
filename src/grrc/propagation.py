@@ -35,6 +35,9 @@ from .endpoints import (max_streak_column, sustained_outage_column,
 from .enums import (CLINICAL_SERVICES, NodeState, Pathway, Privilege,
                     Service, Zone)
 from .models import HospitalNetwork
+from .islanding import (IslandPlan, contained_island_mask,
+                        island_restore_priority,
+                        islanded_service_availability)
 from .service_dependencies import service_availability
 from .utilities import event_uniform
 
@@ -60,7 +63,8 @@ class RansomwareSimulation:
 
     def __init__(self, cfg: Config, net: HospitalNetwork,
                  eff: EffectiveSettings, rng: np.random.Generator,
-                 random_field_key: tuple[int, int] | None = None) -> None:
+                 random_field_key: tuple[int, int] | None = None,
+                 island_plan: IslandPlan | None = None) -> None:
         self.cfg = cfg
         self.net = net
         self.eff = eff
@@ -131,6 +135,28 @@ class RansomwareSimulation:
         self.restore_carry = 0.0
         self.defensive_isolation_node_steps = 0
 
+        # Dependency-closed controlled islanding (grrc.islanding). With no
+        # plan every attribute below is inert: the island mask is never
+        # consulted, and restore_priority is the network's own criticality
+        # array — the same object, not a copy — so restoration order is
+        # untouched.
+        self.island_plan = island_plan
+        # False when an external agent owns the breakers (grrc.agent_env).
+        self.auto_breakers = True
+        # Called once per step before availability is recorded (grrc.shield).
+        self.step_monitor = None
+        self.islanded = False
+        self.island_trip_step = -1
+        self.island_reconnect_step = -1
+        self.islanded_steps = 0
+        self.total_detected = 0
+        if island_plan is not None:
+            self.restore_priority = island_restore_priority(net, island_plan)
+            self.primary_cores = np.array(
+                sorted(set(island_plan.primaries.values())), dtype=np.int64)
+        else:
+            self.restore_priority = net.criticality
+
     # ------------------------------------------------------------------
     def node_states(self) -> np.ndarray:
         """Derive the NodeState enum value for every node (reporting)."""
@@ -159,7 +185,17 @@ class RansomwareSimulation:
         net = self.net
         active_src = self.comp[net.edge_src] & ~self.isolated[net.edge_src]
         susceptible = ~self.comp[net.edge_dst] & ~self.isolated[net.edge_dst]
-        candidates = np.flatnonzero(active_src & susceptible)
+        eligible = active_src & susceptible
+        if self.islanded:
+            # Breakers open. For service-chain islands every inter-island edge
+            # is cut, including intra-zone edges between islands, which
+            # segmentation never cuts. For the segmentation comparators only
+            # edges outside the required paths are cut (and, for the
+            # micro-segmentation lockdown, every intra-zone edge as well). The credential boost below
+            # is deliberately left global: replicas of one directory share one
+            # credential store.
+            eligible &= self.island_plan.traversable
+        candidates = np.flatnonzero(eligible)
         if candidates.size == 0:
             return
         # A compromised identity zone accelerates traversal on the pathways
@@ -252,7 +288,14 @@ class RansomwareSimulation:
         self.fp_release[hits] = t + sim.false_positive_duration
         self.time_isolated[hits] = t
 
-    def _restore(self, t: int, backups_available: bool) -> None:
+    def _restore(self, t: int, backups_available: bool,
+                 eligible: np.ndarray | None = None) -> None:
+        """Complete and start restorations.
+
+        ``eligible`` restricts which nodes may *start* restoring; it is used
+        only while islands are severed, to restore inside islands that are
+        contained. ``None`` is the original global behavior, unchanged.
+        """
         sim = self.cfg.simulation
         # complete restorations that finish this step
         done = np.flatnonzero((self.restoring_until >= 0)
@@ -269,6 +312,9 @@ class RansomwareSimulation:
                    sim.restore_rate_fraction * self.net.n_nodes)
         if not backups_available:
             rate *= sim.no_backup_restore_penalty
+        if eligible is not None:
+            self._restore_within(t, rate, eligible)
+            return
         self.restore_carry += rate
         k = int(self.restore_carry)
         if k <= 0:
@@ -277,16 +323,62 @@ class RansomwareSimulation:
                                     & (self.restoring_until < 0))
         if candidates.size == 0:
             return
-        order = candidates[np.argsort(-self.net.criticality[candidates],
+        order = candidates[np.argsort(-self.restore_priority[candidates],
                                       kind="stable")]
         chosen = order[:k]
         self.restore_carry -= len(chosen)
         self.restoring_until[chosen] = t + sim.restore_duration
         self.time_restored[chosen] = -1.0
 
+    def _restore_within(self, t: int, rate: float,
+                        eligible: np.ndarray) -> None:
+        """Start restorations inside contained islands only.
+
+        Capacity accrues only on steps that actually have work, and at most
+        one step's worth is banked. Without that cap, capacity would pile up
+        across steps with nothing to restore and then release in a burst,
+        which would credit islanding with restoration throughput the estate
+        does not have.
+        """
+        candidates = np.flatnonzero(self.comp & self.isolated
+                                    & (self.restoring_until < 0) & eligible)
+        if candidates.size == 0:
+            return
+        self.restore_carry = min(self.restore_carry + rate, max(1.0, rate))
+        k = int(self.restore_carry)
+        if k <= 0:
+            return
+        order = candidates[np.argsort(-self.restore_priority[candidates],
+                                      kind="stable")]
+        chosen = order[:k]
+        self.restore_carry -= len(chosen)
+        self.restoring_until[chosen] = t + self.cfg.simulation.restore_duration
+        self.time_restored[chosen] = -1.0
+
+    def _availability(self) -> dict:
+        """Service availability under the current breaker state."""
+        threshold = self.cfg.simulation.service_functional_fraction
+        if self.islanded and self.island_plan.severs_dependencies:
+            return islanded_service_availability(
+                self.net, self.functional(), threshold, self.island_plan)
+        return service_availability(self.net, self.functional(), threshold)
+
     # ------------------------------------------------------------------
     def run(self, entry_node: int) -> dict:
-        """Simulate from a single initial foothold; return the metric row."""
+        """Simulate from a single initial foothold; return the metric row.
+
+        ``start``, ``advance`` and ``finish`` are this method's three parts,
+        exposed so that an external defender agent can act between steps
+        (grrc.agent_env). ``run`` is exactly the three called in sequence.
+        """
+        self.start(entry_node)
+        for t in range(1, self.cfg.simulation.max_steps + 1):
+            if self.advance(t):
+                break
+        return self.finish()
+
+    def start(self, entry_node: int) -> None:
+        """Seed the incident and initialise the loop-carried state."""
         cfg = self.cfg
         sim = cfg.simulation
         net = self.net
@@ -325,10 +417,46 @@ class RansomwareSimulation:
         backup_compromised = backup_residual_failed
         steps_simulated = 0
 
-        for t in range(1, sim.max_steps + 1):
+        self._weights = weights
+        self._clinical_w = clinical_w
+        self._backup_residual_failed = backup_residual_failed
+        self._rec = rec
+        self._weighted_clinical_lost_sum = weighted_clinical_lost_sum
+        self._last_clinical_unavail = last_clinical_unavail
+        self._clinical_avail_at_end = clinical_avail_at_end
+        self._backup_compromised = backup_compromised
+        self._steps_simulated = steps_simulated
+        self.last_avail: dict = {}
+
+    def advance(self, t: int) -> bool:
+        """Simulate step ``t``; return True once the steady state is reached.
+
+        The body is the original loop body, unchanged apart from indentation
+        and ``break`` becoming ``return True``.
+        """
+        sim = self.cfg.simulation
+        net = self.net  # noqa: F841 - kept so the moved body is unchanged
+        rng = self.rng
+        weights = self._weights
+        clinical_w = self._clinical_w
+        rec = self._rec
+        weighted_clinical_lost_sum = self._weighted_clinical_lost_sum
+        last_clinical_unavail = self._last_clinical_unavail
+        clinical_avail_at_end = self._clinical_avail_at_end
+        backup_compromised = self._backup_compromised
+        try:
             steps_simulated = t
             self._spread(t, rng)
             newly = self._detect(t, rng)
+            if (self.auto_breakers and self.island_plan is not None
+                    and self.island_trip_step < 0):
+                # Breakers trip on the step the trigger count is reached, so
+                # the first spread they stop is next step's. They trip once:
+                # after containment no active node remains to be detected.
+                self.total_detected += int(newly.size)
+                if self.total_detected >= sim.island_trigger_detections:
+                    self.islanded = True
+                    self.island_trip_step = t
             self._isolate(t, newly, rng)
             self._false_positives(t, rng)
 
@@ -349,14 +477,31 @@ class RansomwareSimulation:
             # actively compromised and reachable.
             if contained or not sim.restore_requires_containment:
                 self._restore(t, backups_available)
+            elif (self.islanded and sim.island_local_restore
+                  and self.island_plan.severs_dependencies):
+                # A severed island with no active compromise cannot be
+                # reinfected while the breakers stay open, so restoring inside
+                # it does not violate the containment gate's purpose. This is
+                # a consequence of islanding, not a relaxation of S1: the
+                # global gate still binds every island that is not contained.
+                self._restore(t, backups_available,
+                              eligible=contained_island_mask(
+                                  self.island_plan, self.comp & ~self.isolated))
 
             self.peak_compromised = max(self.peak_compromised,
                                         int(self.comp.sum()))
             self.defensive_isolation_node_steps += int(
                 (self.isolated & ~self.comp).sum())
 
-            avail = service_availability(net, self.functional(),
-                                         sim.service_functional_fraction)
+            if self.step_monitor is not None:
+                # Runtime monitor for an external defender (grrc.shield). It
+                # runs after the state update and before availability is
+                # recorded, so it can revert an unsafe response mode before
+                # the step counts. None in every run() call: inert.
+                self.step_monitor(t)
+            avail = self._availability()
+            if self.islanded:
+                self.islanded_steps += 1
             clinical_unavail_w = 0.0
             for svc in avail:
                 if avail[svc]:
@@ -373,15 +518,45 @@ class RansomwareSimulation:
                 last_clinical_unavail = t
             clinical_avail_at_end = clinical_unavail_w == 0
 
+            # Reconnect once the estate is contained and every primary core
+            # is functional again. Reconnecting earlier could strand an
+            # island whose replica is serving while the primary it would fall
+            # back to is still down.
+            if (self.auto_breakers and self.islanded and contained
+                    and bool(self.functional()[self.primary_cores].all())):
+                self.islanded = False
+                self.island_reconnect_step = t
+
             if (sim.early_stop and contained and not bool(self.comp.any())
                     and not bool(self.fp_isolated.any())
                     and all(avail.values())):
-                break  # steady state: remaining steps add no downtime
+                return True  # steady state: remaining steps add no downtime
+        finally:
+            self._weighted_clinical_lost_sum = weighted_clinical_lost_sum
+            self._last_clinical_unavail = last_clinical_unavail
+            self._clinical_avail_at_end = clinical_avail_at_end
+            self._backup_compromised = backup_compromised
+            self._steps_simulated = steps_simulated
+            self.last_avail = avail
+        return False
+
+    def finish(self) -> dict:
+        """Compute the metric row from the loop-carried state."""
+        cfg = self.cfg
+        sim = cfg.simulation
+        net = self.net
+        weights = self._weights
+        rec = self._rec
+        weighted_clinical_lost_sum = self._weighted_clinical_lost_sum
+        last_clinical_unavail = self._last_clinical_unavail
+        clinical_avail_at_end = self._clinical_avail_at_end
+        backup_compromised = self._backup_compromised
+        backup_residual_failed = self._backup_residual_failed
+        steps_simulated = self._steps_simulated
 
         # ---- final metrics ------------------------------------------------
         functional = self.functional()
-        final_avail = service_availability(
-            net, functional, sim.service_functional_fraction)
+        final_avail = self._availability()
         # Sustained clinical outage. The k-of-n rule is defined once in
         # grrc.endpoints and evaluated here at every k, so a reader can read
         # any k off the results without rerunning anything. The primary k is

@@ -20,7 +20,8 @@ import yaml
 from .config import Config
 from .defenses import (DefensePortfolio, PATCH_LADDER, _ladder_index,
                        backup_increment_points, enumerate_portfolios,
-                       portfolio_cost, segmentation_increment_points)
+                       optional_tariff, portfolio_cost,
+                       segmentation_increment_points)
 from .endpoints import (PARETO_OBJECTIVES,
                         SUSTAINED_OUTAGE_K_LADDER,
                         sustained_outage_column)
@@ -111,6 +112,10 @@ def portfolio_operational_burden(
         total += burdens["rapid_isolation"]
     if portfolio.identity_controls:
         total += burdens["identity_controls"]
+    if portfolio.islanding:
+        # Islanded operation is a practiced procedure, not a switch: replica
+        # upkeep, per-island downtime workflows, and breaker drills.
+        total += optional_tariff(dict(burdens), "islanding", "burden")
     return float(total)
 
 
@@ -141,7 +146,8 @@ def aggregate_objectives(raw: pd.DataFrame, cfg: Config,
     missing = required - set(raw.columns)
     if missing:
         raise ValueError(f"raw results missing columns: {sorted(missing)}")
-    portfolio_map = {p.name: p for p in enumerate_portfolios()}
+    portfolio_map = {p.name: p for p in enumerate_portfolios(
+        include_islanding=cfg.simulation.islanding_enabled)}
     rows: list[dict[str, object]] = []
     for (profile_name, portfolio_name), group in raw.groupby(
             ["profile", "portfolio"], sort=True):
@@ -370,7 +376,8 @@ def build_holdout_specs(cfg: Config,
     """Build a fresh paired scenario bank for frozen discovery finalists."""
     if trials_per_candidate < 1:
         raise ValueError("trials_per_candidate must be >= 1")
-    portfolio_map = {p.name: p for p in enumerate_portfolios()}
+    portfolio_map = {p.name: p for p in enumerate_portfolios(
+        include_islanding=cfg.simulation.islanding_enabled)}
     selected: dict[str, DefensePortfolio] = {}
     specs: list[TrialSpec] = []
     trial_id = MULTIOBJECTIVE_HOLDOUT_ID_OFFSET

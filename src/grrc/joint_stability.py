@@ -16,12 +16,24 @@ TARIFF_KEYS = (
     "detection_improvement", "rapid_isolation", "periodic_backups",
     "protected_backups", "identity_controls",
 )
+#: Tariff keys including the islanding dimension. A price vector and a
+#: feature vector must agree on length, so the extended tuple is named.
+ISLANDING_TARIFF_KEYS = TARIFF_KEYS + ("islanding",)
+
 ORDERED_PAIRS = ((0, 1), (5, 6))
 
 
-def portfolio_features(portfolio, profile) -> np.ndarray:
-    """Integer coefficients in the original upgrade-only price function."""
-    a = np.zeros(8)
+def portfolio_features(portfolio, profile, *,
+                       include_islanding: bool = False) -> np.ndarray:
+    """Integer coefficients in the original upgrade-only price function.
+
+    ``include_islanding`` adds a ninth coordinate, to be paired with
+    :data:`ISLANDING_TARIFF_KEYS`. It defaults to False because this vector's
+    length is the dimension of the price region the simultaneous screen is
+    computed over; widening it silently would change every published
+    retention count.
+    """
+    a = np.zeros(9 if include_islanding else 8)
     for baseline, target, ladder, positions in [
         (SegmentationLevel(profile.base_segmentation), portfolio.segmentation,
          SEGMENTATION_ORDER, (0, 1)),
@@ -39,6 +51,8 @@ def portfolio_features(portfolio, profile) -> np.ndarray:
                   - _ladder_index(PATCH_LADDER, profile.patch_coverage))
     a[3:5] = portfolio.detection_improvement, portfolio.rapid_isolation
     a[7] = portfolio.identity_controls
+    if include_islanding:
+        a[8] = portfolio.islanding
     return a
 
 

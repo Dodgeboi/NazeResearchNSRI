@@ -186,7 +186,12 @@ def compute_tokens(cfg: Config) -> dict[str, str]:
             "has_rapid_isolation": "Rapid isolation",
             "has_protected_backups": "Protected backups",
             "has_identity_controls": "Identity controls",
+            "has_islanding": "Dependency-closed islanding",
         }
+        # Label only the controls this summary carries: the islanding column
+        # exists only in runs with that dimension on.
+        control_labels = {c: l for c, l in control_labels.items()
+                          if c in stab.columns}
         lines = ["| Control | " + " | ".join(
             PROFILE_LABELS.get(p, p) for p in stab["profile"]) + " |",
             "|---|" + "---|" * len(stab)]
