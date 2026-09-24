@@ -12,7 +12,7 @@
 \title{Uncoverable by Design: Seven Years of Mitigation Gaps in MITRE ATT\&CK,\\
 the Certification Floor They Impose, and Their Minimal Repair}
 \author{}
-\date{2026-09-23 (preprint draft, version 0.2.0)}
+\date{2026-09-23 (preprint draft, version 0.3.0)}
 
 \begin{document}
 \maketitle
@@ -27,8 +27,13 @@ ATT\&CK maps to no mitigation. The kill chain grew from \GapFirstTech{} to \GapL
 techniques while real mitigations grew from \GapFirstMit{} to \GapLastMit; techniques
 with no mitigation rose from \GapFirstUnc{} to \GapLastUnc{} (+\GapUncGrowthPct\%) when
 each technique is judged by its own mapping, and from \GapInhFirstUnc{} to \GapInhUnc{}
-(+\GapInhGrowthPct\%) when sub-techniques inherit their parent's mitigations. Because an
-adaptive adversary can route through an unmitigated technique, these gaps impose a
+(+\GapInhGrowthPct\%) when sub-techniques inherit their parent's mitigations. Gaps
+rarely close: across \CloseTransitions{} release transitions only \CloseTotal{}
+uncovered techniques ever gained a mitigation, and an estimated \SurvFive\% remain
+without one five years after they are first observed. They are not hypothetical routes:
+\UseExposed{} of the \UseEntities{} software entries, groups and campaigns that ATT\&CK
+documents as encrypting data for impact are documented using at least one uncovered
+technique. Because an adaptive adversary can route through an unmitigated technique, these gaps impose a
 \emph{certification floor}: when the per-technique base rate is only known to lie in
 $[0.5,0.9]$ and control effectiveness is interval-uncertain, no portfolio of ATT\&CK
 mitigations can be certified to keep the worst-case probability of a clinical-service
@@ -53,8 +58,8 @@ no mitigation cannot be covered by any portfolio of mapped mitigations, however 
 so every tool that reasons only from the mapping inherits it as a permanent gap.
 
 This paper asks four questions of that defensive half, using real ATT\&CK data across
-releases. \textbf{(Q1)} How many ransomware kill-chain techniques have no mitigation, and
-is the gap closing? \textbf{(Q2)} What lower bound on certifiable worst-case residual
+releases. \textbf{(Q1)} How many ransomware kill-chain techniques have no mitigation, do
+individual gaps ever close, and does documented ransomware use them? \textbf{(Q2)} What lower bound on certifiable worst-case residual
 risk do those gaps force on \emph{any} defense built from ATT\&CK mitigations?
 \textbf{(Q3)} What is the smallest set of techniques that would need a mitigation for a
 given guarantee to become attainable, and which are they? \textbf{(Q4)} Which of these
@@ -63,8 +68,9 @@ answers depend on counting conventions and model parameters, and which do not?
 \paragraph{Contributions.} (i) A longitudinal measurement of mitigation coverage over
 \GapComparable{} comparable Enterprise releases (\GapFirstDate--\GapLastDate), handling
 the mitigation restructure, the arrival of sub-techniques, the v19 split of Defense
-Evasion, and placeholder mitigations explicitly, under two sub-technique conventions.
-(ii) A distribution-free certification floor per release
+Evasion, and placeholder mitigations explicitly, under two sub-technique conventions,
+with a technique-level survival analysis of how long gaps persist and a measurement of
+how often ATT\&CK's own procedure examples for ransomware use them. (ii) A distribution-free certification floor per release
 (Proposition~\ref{prop:floor}) and a factorisation showing that its growth across
 releases is free of the base rate (Proposition~\ref{prop:base}). (iii) An exact minimal
 repair, justified by a structural result that partial repair of a stage is worthless
@@ -106,6 +112,21 @@ applies. A kill-chain technique is \emph{uncovered} if it has no real mitigation
 default each technique, including each sub-technique, is judged by its own mapping; the
 \emph{inheritance} convention instead lets an unmapped sub-technique inherit its parent's
 mitigations, as a coverage tool that rolls sub-techniques up to parents would.
+
+\paragraph{Documented usage.} ATT\&CK records procedure examples as \texttt{uses}
+relationships from software, groups and campaigns to techniques. We call an entity
+\emph{ransomware} if it is documented as using T1486, and for each release count the
+ransomware entities with documented use of an uncovered kill-chain technique and the
+share of their kill-chain technique uses that fall on uncovered techniques.
+
+\paragraph{Gap persistence.} Following each technique across comparable releases, a
+\emph{gap spell} starts in the first release in which the technique is on the kill chain
+without a mitigation and ends in the first later release in which it has one; it is
+censored when the technique leaves the kill chain (deprecated, revoked, or restructured
+into sub-techniques) or at the latest release. We estimate the share of gaps still open
+$t$ years after they are first observed with the Kaplan--Meier estimator. Spells already
+open in v\GapFirstVersion{} may predate the series; we report the estimate with and
+without them.
 
 \paragraph{Structural breaks.} Sub-techniques arrive in v7, so technique counts jump; we
 report parent-technique counts alongside. ATT\&CK v19 splits Defense Evasion into
@@ -199,7 +220,9 @@ contain a gap. The direction holds under both conventions; the size does not.
 certified to keep the worst-case probability that at least one of the four clinical
 services suffers sustained outage below \GapFloorFirstKOne\% with v\GapFirstVersion{}
 mitigations and \GapFloorLastKOne\% with v\GapLastVersion{} mitigations
-(\GapFloorLastKFour\% for all four services at once). With inheritance the latest floor
+(\GapFloorLastKFour\% for all four services at once). The hospital model is not what
+drives this: the floor on reaching T1486 itself, which uses no impact model, rose from
+\GapControlFirst\% to \GapControlLast\% (\GapControlGrowth-fold). With inheritance the latest floor
 is \GapInhFloor\% (a \GapInhFloorGrowth-fold rise instead of \GapFloorGrowth-fold). The
 floor is set stage by stage by a single \emph{binding} technique --- the adversary's best
 route --- so it moves only when one mapping decision changes a binding technique; across
@@ -212,6 +235,36 @@ and returned the floor to \GapRiseFloor\%. A single unmitigated technique was en
 cancel that improvement. If every gap were closed with a mitigation as strong as the
 existing ones, the floor would fall to \GapFloorRepairedLastKOne\% --- a
 \GapFloorRatio-fold reduction.
+
+\paragraph{Gaps rarely close.} Table~\ref{tab:release} counts gaps release by release;
+following individual techniques shows that they almost never close
+(Figure~\ref{fig:persist}, left). Across \CloseTransitions{} release transitions,
+\CloseTotal{} uncovered techniques gained a mitigation, \CloseReversed{} covered technique lost all of its
+mitigations, and \CloseNewUnc{} techniques entered the kill chain without a mitigation. None
+has closed since v\CloseLastVersion{}, \CloseQuietReleases{} releases ago. Of the
+\GapFirstUnc{} techniques uncovered in v\GapFirstVersion, \CloseFirstStill{} are still
+uncovered, \CloseFirstCovered{} gained a mitigation and \CloseFirstRemoved{} left the
+kill chain at v7, when techniques were restructured into sub-techniques; of the
+\CloseEntrantSpells{} gap spells that began later, \CloseNewLater{} ended with a
+mitigation. Over all \SurvSpells{} spells, the estimated share still open is
+\SurvThree\% after three years and \SurvFive\% after five (\SurvFiveAtRisk{} spells
+still followed at five years); \SurvEntrantsFive\% excluding spells open at the start of
+the series and \SurvInhFive\% with parent inheritance, where a parent gaining a
+mitigation closes its sub-techniques' gaps at once.
+
+\paragraph{Documented ransomware uses the gaps.} Figure~\ref{fig:persist} (right): in
+v\GapLastVersion, \UseExposed{} of the \UseEntities{} entities documented as using T1486
+are also documented using at least one uncovered kill-chain technique, and
+\UseSharePct\% of their documented kill-chain technique uses fall on uncovered
+techniques (\UseInhExposed{} and \UseInhSharePct\% with inheritance). The exposure has
+been at least \UseMinExposedPct\% in every release, from \UseFirstExposed{} of
+\UseFirstEntities{} entities in v\GapFirstVersion. It is concentrated where the gaps
+are (Table~\ref{tab:usage}): \UseDiscUnc{} of the \UseDiscAll{} ransomware entities with
+documented Discovery use an uncovered Discovery technique, and \UseDEUnc{} of
+\UseDEAll{} do so in Defense Evasion; the most used, \UseTopName{} (\UseTopTech), is
+documented for \UseTopCount{} of them. Documented use is not proof of a successful
+attack path, but it shows the adaptive adversary's routes are ones real ransomware is
+recorded as taking.
 
 \paragraph{The minimal repair is small for moderate targets.} Figure~\ref{fig:repair}:
 in v\GapLastVersion, mitigating \GapRepTenOne{} techniques across \GapRepTenOneStages{}
@@ -226,7 +279,12 @@ v\GapRepHistMaxVersion, and is \GapRepTenOne{} today. At $e_{\mathrm{new}}=0.2$ 
 $0.5$ the repair costs are identical, because a repaired stage then binds on its weakest
 existing mapping; a weaker new mitigation ($e_{\mathrm{new}}=0.1$) raises the 10\%
 repair to \GapRepWeakTenOne{} techniques and makes the 5\% certificate
-\GapRepWeakFiveOne.
+\GapRepWeakFiveOne. The cheapest repair is not the most used: it closes small gap sets in
+stages that most ransomware is not documented using, and its techniques are documented
+for at most \UseRepairMax{} ransomware entities each (\UseRepairUnused{} for none,
+Table~\ref{tab:repair}), while Discovery --- where the documented use concentrates ---
+stays open because closing it would take \GapWorstShareUnc{} techniques. A certificate
+needs every stage's route cut somewhere; it does not need the most travelled one cut.
 
 \paragraph{Levels are assumption-driven; the trend is not.} Table~\ref{tab:params}
 varies the upper end of the base-rate interval and the lower end of mitigation
@@ -265,6 +323,27 @@ attainable, per release ($e_{\mathrm{new}}=0.2$). The target $\varepsilon=0.05$,
 coincides with $\varepsilon=0.10$, $k=1$ and is omitted. Dotted lines as in
 Figure~\ref{fig:coverage}.}\label{fig:repair}
 \end{figure}
+
+\begin{figure}[t]\centering
+\includegraphics[width=\linewidth]{figure_persistence_usage.pdf}
+\caption{Left: Kaplan--Meier estimate of the share of gaps still open $t$ years after a
+technique is first observed on the kill chain without a mitigation, over all gap spells,
+over spells beginning after v\GapFirstVersion, and with parent inheritance; curves end at
+the longest follow-up. Right: among entities ATT\&CK documents as using T1486, the share
+documented using at least one uncovered kill-chain technique, and the share of their
+documented kill-chain technique uses that fall on uncovered techniques. Dotted lines as
+in Figure~\ref{fig:coverage}.}\label{fig:persist}
+\end{figure}
+
+\begin{table}[t]\centering\small
+\caption{The uncovered kill-chain techniques most often documented for ransomware in
+v\GapLastVersion: the number of entities documented as using both the technique and
+T1486. Tactics are as published (v19 names Stealth and Defense Impairment).}\label{tab:usage}
+\begin{tabular}{@{}llp{3.9cm}r@{}}\toprule
+Technique & Name & Tactics & Entities\\\midrule
+\tableinput table_gaps_usage_rows.tex
+\bottomrule\end{tabular}
+\end{table}
 
 \begin{table}[t]\centering\small
 \caption{Per release: kill-chain techniques, real mitigations, uncovered techniques
@@ -312,9 +391,10 @@ Ver. & Stage & Factor & Binding before & Binding after\\\midrule
 
 \begin{table}[t]\centering\small
 \caption{The minimal repair in v\GapLastVersion{} for a 10\% single-service certificate:
-the techniques that would need a mitigation.}\label{tab:repair}
-\begin{tabular}{@{}lll@{}}\toprule
-Technique & Name & Stage\\\midrule
+the techniques that would need a mitigation, and the number of ransomware entities
+documented as using each.}\label{tab:repair}
+\begin{tabular}{@{}lllr@{}}\toprule
+Technique & Name & Stage & Entities\\\midrule
 \tableinput table_gaps_repair_rows.tex
 \bottomrule\end{tabular}
 \end{table}
@@ -322,7 +402,8 @@ Technique & Name & Stage\\\midrule
 \section{Discussion}
 For the maintainers of ATT\&CK, the repair list is a candidate authoring agenda: a
 handful of mitigation mappings would change what any ATT\&CK-driven defense can be
-certified to achieve under our model, whereas the long tail of Discovery techniques ---
+certified to achieve under our model, although it is not a list of the most used
+gaps, whereas the long tail of Discovery techniques ---
 routine enumeration of the environment --- is where preventive mitigations are hardest
 to write and where detection must carry the load. For builders of control-selection and
 coverage tools, every uncovered technique is a gap inherited by construction; tools
@@ -354,6 +435,14 @@ parameters.
 on whether sub-techniques inherit their parent's mitigations
 (+\GapUncGrowthPct\% versus +\GapInhGrowthPct\%). Placeholder mitigations and the v19
 split are handled by stated rules, with alternatives reported.
+
+\paragraph{Documented usage and persistence.} ATT\&CK's procedure examples record what
+has been publicly reported, so they are biased toward well-studied families and toward
+techniques that are easy to observe, such as Discovery; absence of a documented use is not
+evidence of non-use. Using T1486 is a proxy for ransomware and also captures some
+encrypting wipers. The survival analysis treats a restructure into sub-techniques as
+censoring, assumes censoring is unrelated to whether a gap would have closed, and has
+few spells followed for the full period.
 
 \paragraph{Adversary.} The adaptive adversary is worst case: it knows the defense and
 always uses the easiest technique at each stage. Real adversaries are less informed, so

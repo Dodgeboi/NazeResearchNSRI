@@ -43,7 +43,9 @@ mitigation restructure, sub-techniques (with and without parent inheritance) and
 Defense Evasion split are handled by stated rules, each with a sensitivity check. The
 floor's level depends on the assumed base-rate and effectiveness intervals; its growth
 across releases provably does not depend on the base rate. The closest prior work
-(Rahman & Williams, arXiv:2211.06500) is a single-snapshot control-mapping study.
+(Rahman & Williams, arXiv:2211.06500) is a single-snapshot control-mapping study. Using
+ATT&CK's own procedure examples, nearly all documented ransomware uses at least one
+uncovered technique, and a technique-level survival analysis shows gaps almost never close.
 
 - [Paper](docs/attack_gaps/main.pdf) and [source](docs/attack_gaps/main.tex), [design note with proofs](study/ATTACK_GAPS_PLAN.md)
 - [Tables](data/attack_history) with [hash-pinned per-release extracts](data/attack_history/extracts) and [source manifest](data/attack_history/source_manifest.json)

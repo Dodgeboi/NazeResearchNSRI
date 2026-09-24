@@ -3,7 +3,8 @@
 
 Reads only the committed per-release extracts (``data/attack_history/extracts``) and
 ``source_manifest.json`` written by ``scripts/fetch_attack_history.py``, so a fresh
-clone reproduces every number without network access. Writes six tables and a
+clone reproduces every number without network access; the documented-usage analysis
+reads the companion ``usage`` extracts the same way. Writes the tables and a
 provenance manifest to ``data/attack_history/``. Deterministic.
 
 See ``study/ATTACK_GAPS_PLAN.md`` for definitions, comparability rules and proofs.
@@ -11,6 +12,7 @@ See ``study/ATTACK_GAPS_PLAN.md`` for definitions, comparability rules and proof
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import json
 from pathlib import Path
 
@@ -18,14 +20,17 @@ import pandas as pd
 
 from grrc.coverage_evolution import (
     BASE_HIGH, EFF_LOW, SPLIT_STAGE_MAP, STAGE_MAP, catastrophic_floor, comparable,
-    coverage_profile, floors, inherit_parent_mitigations, kill_chain_techniques, load_extract,
-    minimal_repair, mitigations_by_technique, stage_binding, stage_gaps)
+    closure_events, coverage_profile, floors, gap_history, inherit_parent_mitigations,
+    kaplan_meier, kill_chain_techniques, load_extract, minimal_repair, mitigations_by_technique,
+    stage_binding, stage_gaps, technique_usage_counts, time_to_mitigation, uncovered_techniques,
+    usage_exposure)
 from grrc.provenance import build_manifest, git_state, write_manifest
 from grrc.utilities import write_csv
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "data/attack_history"
 SOURCE = OUT / "source_manifest.json"
+USAGE_SOURCE = OUT / "usage/source_manifest.json"
 EPSILONS = (0.10, 0.05, 0.01)
 KS = (1, 2, 3, 4)
 E_NEW_GRID = (0.10, 0.20, 0.50)          # assumed worst-corner strength of a new mitigation
@@ -163,16 +168,67 @@ def main():
                         uncovered_after=len(gaps_now[stage])))
         prev = (rec, bind, names)
 
-    # The prioritised repair list on the latest release at the headline targets.
+    # Documented use of the gaps: ATT&CK's own ``uses`` edges from the software, groups
+    # and campaigns documented as using T1486, under both sub-technique conventions.
+    usage_src = json.loads(USAGE_SOURCE.read_text())
+    usage = {rec["version"]: load_extract(ROOT / rec["extract"]) for rec in usage_src["releases"]}
+    exposure_rows = []
+    for rec, ex in comparable_releases:
+        for variant, e in (("default", ex), ("parent_inheritance", inherit_parent_mitigations(ex))):
+            x = usage_exposure(e, usage[rec["version"]])
+            exposure_rows.append(dict(version=rec["version"], release_date=rec["release_date"],
+                                      variant=variant, **{k: v for k, v in x.items() if k != "stages"}))
+    latest_x = usage_exposure(latest, usage[latest_rec["version"]])
+    stage_usage_rows = [dict(version=latest_rec["version"], **r) for r in latest_x["stages"]]
+    counts = technique_usage_counts(latest, usage[latest_rec["version"]])
     names = {t["id"]: t["name"] for t in latest["techniques"]}
     gaps = stage_gaps(latest)
+    repair10 = set(minimal_repair(latest, 0.10, 1)["techniques"])
+    kc_latest = kill_chain_techniques(latest)
+    unc_usage_rows = sorted(
+        (dict(version=latest_rec["version"], technique=t, name=names.get(t, ""),
+              tactics="+".join(kc_latest[t]["tactics"]), ransomware_entities=counts.get(t, 0),
+              on_repair_list_10_k1=t in repair10)
+         for t in uncovered_techniques(latest)),
+        key=lambda r: (-r["ransomware_entities"], r["technique"]))
+
+    # Persistence: do gaps close? Closure events per transition and time to first
+    # mitigation (Kaplan-Meier), default convention, entrants only, and inheritance.
+    dates = {rec["version"]: dt.date.fromisoformat(rec["release_date"])
+             for rec, _ in comparable_releases}
+    history = gap_history({rec["version"]: ex for rec, ex in comparable_releases})
+    closure_rows = closure_events(history)
+    spells = time_to_mitigation(history, dates)
+    inh_spells = time_to_mitigation(gap_history(
+        {rec["version"]: inherit_parent_mitigations(ex) for rec, ex in comparable_releases}), dates)
+    survival_rows = []
+    for variant, sp in (("default", spells),
+                        ("default_entrants_only", [s for s in spells if not s["left_truncated"]]),
+                        ("parent_inheritance", inh_spells)):
+        survival_rows.append(dict(variant=variant, years=0.0, at_risk=len(sp), events=0,
+                                  survival=1.0, spells=len(sp),
+                                  mitigated=sum(s["mitigated"] for s in sp)))
+        curve = kaplan_meier([s["years"] for s in sp], [s["mitigated"] for s in sp])
+        for r in curve:
+            survival_rows.append(dict(variant=variant, **r, spells=len(sp),
+                                      mitigated=sum(s["mitigated"] for s in sp)))
+        horizon = max(s["years"] for s in sp)          # end of follow-up (no event there)
+        if not curve or horizon > curve[-1]["years"]:
+            survival_rows.append(dict(variant=variant, years=horizon,
+                                      at_risk=sum(s["years"] >= horizon for s in sp), events=0,
+                                      survival=curve[-1]["survival"] if curve else 1.0,
+                                      spells=len(sp), mitigated=sum(s["mitigated"] for s in sp)))
+    spell_rows = [dict(s, years=round(s["years"], 6)) for s in spells]
+
+    # The prioritised repair list on the latest release at the headline targets.
     list_rows = []
     for eps, k in HEADLINE:
         rr = minimal_repair(latest, eps, k)
         for tid in rr["techniques"]:
             list_rows.append(dict(version=latest_rec["version"], epsilon=eps, k=k, technique=tid,
                                   name=names.get(tid, ""),
-                                  stages="+".join(s for s in gaps if tid in gaps[s])))
+                                  stages="+".join(s for s in gaps if tid in gaps[s]),
+                                  ransomware_entities=counts.get(tid, 0)))
 
     # Sanity gates.
     cmp_rows = [r for r in coverage if r["comparable"]]
@@ -189,6 +245,16 @@ def main():
         costs = [r["cost"] if r["feasible"] else float("inf")
                  for r in sorted(rows, key=lambda r: -r["epsilon"])]
         assert costs == sorted(costs), "repair cost must not fall as epsilon tightens"
+    for r in exposure_rows:
+        assert 0 <= r["exposed"] <= r["entities"] and 0 <= r["uncovered_uses"] <= r["kill_chain_uses"]
+    unc_by_version = {r["version"]: r["uncovered"] for r in cmp_rows}
+    for r in closure_rows:                     # the transition accounting balances exactly
+        assert unc_by_version[r["version"]] == (unc_by_version[r["prev_version"]] - r["closed"]
+                                                - r["removed_uncovered"] + r["reversed"]
+                                                + r["new_uncovered"])
+    for variant in {r["variant"] for r in survival_rows}:
+        curve = [r["survival"] for r in survival_rows if r["variant"] == variant]
+        assert all(0 <= b <= a <= 1 for a, b in zip(curve, curve[1:])), "KM must not increase"
     # Cross-study gate: with placeholders counted, v17.1 reproduces the cyber-range
     # study's per-stage gap counts (non-impact stages).
     range_gaps = ROOT / "data/defense_range/coverage_gaps.csv"
@@ -204,7 +270,10 @@ def main():
     for name, rows in [("coverage_by_release", coverage), ("coverage_by_tactic", tactic_rows),
                        ("floor_by_release", floor_rows), ("minimal_repair", repair_rows),
                        ("repair_list_latest", list_rows), ("sensitivity", sens_rows),
-                       ("floor_changes", change_rows), ("parameter_sensitivity", param_rows)]:
+                       ("floor_changes", change_rows), ("parameter_sensitivity", param_rows),
+                       ("usage_exposure", exposure_rows), ("usage_by_stage_latest", stage_usage_rows),
+                       ("uncovered_usage_latest", unc_usage_rows), ("gap_closure", closure_rows),
+                       ("gap_spells", spell_rows), ("gap_survival", survival_rows)]:
         path = OUT / (name + ".csv")
         write_csv(pd.DataFrame(rows), path)
         outputs.append(path)
@@ -212,17 +281,21 @@ def main():
               ROOT / "src/grrc/coverage_evolution.py", ROOT / "src/grrc/joint_bounds.py",
               ROOT / "src/grrc/attack_graph.py", ROOT / "src/grrc/hospital_attack_model.py",
               ROOT / "src/grrc/enums.py", ROOT / "src/grrc/provenance.py",
-              ROOT / "src/grrc/utilities.py"] + [ROOT / rec["extract"] for rec, _ in releases]
+              ROOT / "src/grrc/utilities.py", USAGE_SOURCE] + [
+                  ROOT / rec["extract"] for rec, _ in releases] + [
+                  ROOT / rec["extract"] for rec in usage_src["releases"]]
     manifest = build_manifest(
         run_id="attack-history", stage="analysis",
         description="MITRE ATT&CK Enterprise mitigation gaps across releases, the adaptive-"
-                    "adversary residual-risk floor they impose, and the minimal coverage repair.",
+                    "adversary residual-risk floor they impose, the minimal coverage repair, documented "
+                    "ransomware use of the gaps, and how rarely gaps close.",
         inputs=inputs, outputs=outputs, source_state=state,
         parameters=dict(releases=[rec["version"] for rec, _ in releases],
                         base_high=BASE_HIGH, eff_low=EFF_LOW, epsilons=list(EPSILONS),
                         ks=list(KS), e_new_grid=list(E_NEW_GRID),
                         base_grid=list(BASE_GRID), eff_low_grid=list(EFF_LOW_GRID),
                         placeholders=["M1055 Do Not Mitigate", "M1056 Pre-compromise"],
+                        ransomware_proxy="entities documented as using T1486",
                         crosswalk="ATT&CK v19 stealth + defense-impairment -> defense-evasion",
                         scope="measures the knowledge base's mitigation mapping, not whether a "
                               "real-world defense exists; kill-chain stage model and worst-corner "

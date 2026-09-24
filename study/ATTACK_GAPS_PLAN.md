@@ -117,6 +117,30 @@ taken before costing, not a per-stage additive knapsack.
   ends {0.10, 0.20, 0.35} (`parameter_sensitivity.csv`). The level of the floor is
   assumption-driven; by Proposition 3 its growth ratio is not.
 
+## Documented usage and gap persistence (added 2026-09-24, after the first results)
+
+Added after the first version of the paper, to test whether the gaps matter to real
+adversaries and whether they close; both are descriptive and use ATT&CK only.
+
+- **Usage extracts.** `scripts/fetch_attack_history.py --usage-only` writes
+  `data/attack_history/usage/enterprise-<v>.json.gz` (active `uses` edges from active
+  malware, tools, groups and campaigns to active techniques) with its own
+  `usage/source_manifest.json`; the coverage extracts are untouched.
+- **Ransomware proxy.** An entity is *ransomware* if ATT&CK documents it as using T1486.
+  This also captures some encrypting wipers; documented use reflects public reporting.
+- **Exposure** (`usage_exposure`): per release, ransomware entities with documented use
+  of an uncovered kill-chain technique, and the share of their kill-chain technique uses
+  on uncovered techniques; per stage for the latest release; both conventions.
+- **Persistence** (`gap_history`, `closure_events`, `time_to_mitigation`,
+  `kaplan_meier`): a gap spell starts in the first comparable release in which a
+  technique is on the kill chain without a real mitigation and ends at the first later
+  release in which it has one; it is censored when the technique leaves the kill chain
+  (deprecated, revoked, restructured) or at the latest release. Durations are years
+  between release dates. Spells open in the first comparable release are left-truncated
+  and reported with and without them; the parent-inheritance convention is reported too.
+  The transition accounting is checked exactly: uncovered(next) = uncovered(prev) -
+  closed - removed + reversed + new uncovered.
+
 ## Prior work and search record
 
 Searched September 2026 (web and arXiv search for ATT&CK with mitigation coverage,
@@ -136,7 +160,8 @@ release at `e_new = 0.20`; the latest release also at `e_new ∈ {0.10, 0.50}`),
 `repair_list_latest.csv` (the prioritised techniques), `sensitivity.csv` (placeholders
 counted; sub-techniques inheriting parent mitigations; the v19 split kept),
 `floor_changes.csv` (every change of a binding technique), `parameter_sensitivity.csv`,
-and `attack_history_manifest.json`.
+`usage_exposure.csv`, `usage_by_stage_latest.csv`, `uncovered_usage_latest.csv`,
+`gap_closure.csv`, `gap_spells.csv`, `gap_survival.csv`, and `attack_history_manifest.json`.
 
 ## Verification
 
@@ -148,7 +173,9 @@ useless); the bisection inverts the catastrophic map; `minimal_repair` equals a 
 force over every subset of uncovered techniques on a synthetic release with a shared
 technique; repair cost is monotone in `epsilon`; the repair's fast evaluator equals
 the direct floor at non-default parameters; Proposition 3 (`F(0.5)/F(0.9) = (5/9)^n`);
-parent inheritance only adds edges to unmapped sub-techniques of mapped parents. Inline gates in the analysis also
+parent inheritance only adds edges to unmapped sub-techniques of mapped parents; usage
+extract hashes; exposure, Kaplan-Meier and closure accounting against hand-computed
+synthetic cases. Inline gates in the analysis also
 check that v17.1 reproduces the cyber-range study's per-stage gap counts.
 
 ## Scope

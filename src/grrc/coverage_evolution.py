@@ -269,3 +269,135 @@ def inherit_parent_mitigations(ex, exclude_placeholders=True):
             for m in by.get(t["id"].split(".")[0], []):
                 edges.add((m, t["id"]))
     return dict(ex, mitigates=sorted([list(e) for e in edges]))
+
+
+# ---------------------------------------------------------------------------
+# Documented use of the gaps (ATT&CK ``uses`` edges) and gap persistence over releases.
+
+
+def uncovered_techniques(ex, exclude_placeholders=True, stage_map=STAGE_MAP) -> set:
+    by = mitigations_by_technique(ex, exclude_placeholders)
+    return {t for t in kill_chain_techniques(ex, stage_map) if t not in by}
+
+
+def ransomware_entities(usage, objective=IMPACT_TECHNIQUE) -> dict:
+    """``{entity_id: techniques}`` for the software, groups and campaigns that ATT&CK
+    documents as using the ransomware objective (by default T1486)."""
+    by: dict[str, set] = {}
+    for ent, tid in usage["uses"]:
+        by.setdefault(ent, set()).add(tid)
+    return {e: ts for e, ts in by.items() if objective in ts}
+
+
+def usage_exposure(ex, usage, exclude_placeholders=True, stage_map=STAGE_MAP) -> dict:
+    """How documented ransomware behaviour meets the gaps in one release: entities using
+    at least one uncovered kill-chain technique, the share of their kill-chain technique
+    uses that fall on uncovered techniques, and the same per stage."""
+    techs = kill_chain_techniques(ex, stage_map)
+    unc = uncovered_techniques(ex, exclude_placeholders, stage_map)
+    ents = ransomware_entities(usage)
+    kc_uses = {e: ts & set(techs) for e, ts in ents.items()}
+    exposed = sum(bool(ts & unc) for ts in kc_uses.values())
+    total = sum(len(ts) for ts in kc_uses.values())
+    on_unc = sum(len(ts & unc) for ts in kc_uses.values())
+    stages = []
+    for stage, tactics in stage_map.items():
+        members = {t for t, r in techs.items() if set(r["tactics"]) & tactics}
+        stages.append(dict(stage=stage,
+                           entities_using_stage=sum(bool(ts & members) for ts in kc_uses.values()),
+                           entities_using_uncovered=sum(bool(ts & members & unc)
+                                                        for ts in kc_uses.values())))
+    return dict(entities=len(ents), exposed=exposed,
+                exposed_share=exposed / len(ents) if ents else float("nan"),
+                kill_chain_uses=total, uncovered_uses=on_unc,
+                uncovered_use_share=on_unc / total if total else float("nan"), stages=stages)
+
+
+def technique_usage_counts(ex, usage, stage_map=STAGE_MAP) -> dict:
+    """Number of ransomware entities documented as using each kill-chain technique."""
+    techs = set(kill_chain_techniques(ex, stage_map))
+    counts: dict[str, int] = {}
+    for ts in ransomware_entities(usage).values():
+        for t in ts & techs:
+            counts[t] = counts.get(t, 0) + 1
+    return counts
+
+
+def gap_history(extracts, exclude_placeholders=True, stage_map=STAGE_MAP) -> dict:
+    """``{version: {technique: covered?}}`` over kill-chain techniques, for an ordered
+    mapping ``{version: extract}``."""
+    out = {}
+    for v, ex in extracts.items():
+        unc = uncovered_techniques(ex, exclude_placeholders, stage_map)
+        out[v] = {t: t not in unc for t in kill_chain_techniques(ex, stage_map)}
+    return out
+
+
+def closure_events(history) -> list[dict]:
+    """Per release transition: uncovered techniques that gained a mitigation (closed),
+    covered ones that lost every mitigation (reversed), uncovered ones that left the
+    kill chain (removed, e.g. deprecated or restructured), and techniques that entered."""
+    versions = list(history)
+    rows = []
+    for a, b in zip(versions, versions[1:]):
+        ha, hb = history[a], history[b]
+        both = set(ha) & set(hb)
+        new = set(hb) - set(ha)
+        rows.append(dict(
+            prev_version=a, version=b,
+            closed=sum(not ha[t] and hb[t] for t in both),
+            reversed=sum(ha[t] and not hb[t] for t in both),
+            removed_uncovered=sum(not ha[t] for t in set(ha) - set(hb)),
+            new=len(new), new_uncovered=sum(not hb[t] for t in new)))
+    return rows
+
+
+def time_to_mitigation(history, dates) -> list[dict]:
+    """One spell per technique: from the first release in which it is on the kill chain
+    without a mitigation, to the first later release in which it has one (event), or
+    censored at the last release in which it was observed. ``dates`` maps version to a
+    ``datetime.date``; durations are in years. Spells starting in the first release are
+    flagged ``left_truncated`` (the gap may predate the series)."""
+    versions = list(history)
+    spells = []
+    for t in sorted(set().union(*history.values())):
+        start = next((i for i, v in enumerate(versions)
+                      if t in history[v] and not history[v][t]), None)
+        if start is None:
+            continue
+        end, observed = start, False
+        for i in range(start + 1, len(versions)):
+            if t not in history[versions[i]]:
+                break
+            end = i
+            if history[versions[i]][t]:
+                observed = True
+                break
+        years = (dates[versions[end]] - dates[versions[start]]).days / 365.25
+        spells.append(dict(technique=t, entry_version=versions[start],
+                           exit_version=versions[end], years=years, mitigated=observed,
+                           left_truncated=start == 0))
+    return spells
+
+
+def kaplan_meier(durations, observed) -> list[dict]:
+    """Product-limit estimate of P(duration > t) at each distinct event time. Subjects
+    censored at t are at risk at t (the usual convention)."""
+    d = np.asarray(durations, float)
+    e = np.asarray(observed, bool)
+    surv, out = 1.0, []
+    for t in np.unique(d[e]):
+        at_risk = int(np.sum(d >= t))
+        events = int(np.sum((d == t) & e))
+        surv *= 1.0 - events / at_risk
+        out.append(dict(years=float(t), at_risk=at_risk, events=events, survival=surv))
+    return out
+
+
+def km_at(curve, t) -> float:
+    """The Kaplan-Meier step function evaluated at ``t``."""
+    s = 1.0
+    for row in curve:
+        if row["years"] <= t + 1e-12:
+            s = row["survival"]
+    return s

@@ -1,0 +1,178 @@
+{
+  "source": "MITRE ATT&CK Enterprise (mitre-attack/attack-stix-data)",
+  "license": "MITRE ATT&CK Terms of Use",
+  "content": "active 'uses' relationships from software, groups and campaigns",
+  "releases": [
+    {
+      "version": "1.0",
+      "release_date": "2018-01-17",
+      "uncompressed_sha256": "72ffe9d2b643355ea96353226e62c511f3e242d43833237efb208f73518cc98c",
+      "extract": "data/attack_history/usage/enterprise-1.0.json.gz",
+      "extract_sha256": "8cfcc0f4f3cc02b03de08282c51434219da01b53e4ddb96cf5e8e249476adb1a",
+      "entities": 249,
+      "uses_edges": 1748
+    },
+    {
+      "version": "2.0",
+      "release_date": "2018-04-18",
+      "uncompressed_sha256": "85ce93d153ee41a93b8709b0d0adc3d1b6cd45a4b5c54c6ab43733165f5a28f5",
+      "extract": "data/attack_history/usage/enterprise-2.0.json.gz",
+      "extract_sha256": "c207bdbe7cbd9da3d7a40daab546bd6f57b0f6a4d2787c9c50ab98157de63e72",
+      "entities": 301,
+      "uses_edges": 2211
+    },
+    {
+      "version": "3.0",
+      "release_date": "2018-10-23",
+      "uncompressed_sha256": "aae9f90cf5ebb98411459a234ccd9e0f695c7cf3252848b92c81dfe2c4586f62",
+      "extract": "data/attack_history/usage/enterprise-3.0.json.gz",
+      "extract_sha256": "f2ddae31bbb24432aa37f4112d963b628927e15c0b7f056169e38b84269521b9",
+      "entities": 361,
+      "uses_edges": 3157
+    },
+    {
+      "version": "4.0",
+      "release_date": "2019-04-30",
+      "uncompressed_sha256": "8ee1a5fa97d9e14d38d00e94d5b1da9bb0fb04839e500cf4e05d348d25ed10ca",
+      "extract": "data/attack_history/usage/enterprise-4.0.json.gz",
+      "extract_sha256": "4aafa3f59277f004cbfe7082b8caa59bad2c48585c764773d7261f3540e3c61d",
+      "entities": 418,
+      "uses_edges": 4192
+    },
+    {
+      "version": "5.2",
+      "release_date": "2019-07-27",
+      "uncompressed_sha256": "29f07e21808a4f20f031a14afb60a09949c5eb485eac25d2735b9e2852685191",
+      "extract": "data/attack_history/usage/enterprise-5.2.json.gz",
+      "extract_sha256": "f5f3aebc16cfcdda9eede97e16e28727e2036e49ede5ee75eb0a9b514439427f",
+      "entities": 442,
+      "uses_edges": 4564
+    },
+    {
+      "version": "6.3",
+      "release_date": "2020-03-09",
+      "uncompressed_sha256": "91a073f92d1f814385d0acf4b403d36965c0cb7613b1188e2995c8d27d170752",
+      "extract": "data/attack_history/usage/enterprise-6.3.json.gz",
+      "extract_sha256": "409082a6734036a966bc0f7dfaa22a166bd82161681aa6087749176636217697",
+      "entities": 457,
+      "uses_edges": 4827
+    },
+    {
+      "version": "7.2",
+      "release_date": "2020-07-15",
+      "uncompressed_sha256": "04728e4b995ee7e2d6459fa91716607ac53d254d23d4dc10ed7e2d85a9046e00",
+      "extract": "data/attack_history/usage/enterprise-7.2.json.gz",
+      "extract_sha256": "c03020d7a3518177ebbe189d5b42b7ffbf029bd409f65ab927b9f9fced117aab",
+      "entities": 517,
+      "uses_edges": 5965
+    },
+    {
+      "version": "8.2",
+      "release_date": "2021-01-27",
+      "uncompressed_sha256": "8af8ba82d52c2735b1ae6804ab4f2cb8812121d8cdc37e5523ffba671d9ea69b",
+      "extract": "data/attack_history/usage/enterprise-8.2.json.gz",
+      "extract_sha256": "44952fc085cb87e2fead8371d36b6a409ffd866c6bbe2a7394930436b089e9c2",
+      "entities": 553,
+      "uses_edges": 6739
+    },
+    {
+      "version": "9.0",
+      "release_date": "2021-04-29",
+      "uncompressed_sha256": "a41aea2db10ec3839a288947813f87a4fe5008992abc687c5e7072735ac0a5b5",
+      "extract": "data/attack_history/usage/enterprise-9.0.json.gz",
+      "extract_sha256": "d4d4ceaa90d4f0efe51ed4dc92cd8ad0ed396818845fd28b30c416c2c908e8e3",
+      "entities": 615,
+      "uses_edges": 8104
+    },
+    {
+      "version": "10.1",
+      "release_date": "2021-11-10",
+      "uncompressed_sha256": "0a999035f26f4326ad670ec51727014fd42c21fca4bda4be784ac6ad0510fcb6",
+      "extract": "data/attack_history/usage/enterprise-10.1.json.gz",
+      "extract_sha256": "8e79ce890ad0c234fa240e3350d38a608c39ecc9639d29959bc62d903ade95da",
+      "entities": 673,
+      "uses_edges": 9316
+    },
+    {
+      "version": "11.3",
+      "release_date": "2022-07-07",
+      "uncompressed_sha256": "4bb7a2bc26246e029f2cb722e5fc8637571322e33e920b1d2337921b2be8e688",
+      "extract": "data/attack_history/usage/enterprise-11.3.json.gz",
+      "extract_sha256": "b6bd0b5dcdadbb74d40d70bacdadac104d6140a84e4f1a53e4d95aa032beb36f",
+      "entities": 714,
+      "uses_edges": 10359
+    },
+    {
+      "version": "12.1",
+      "release_date": "2022-11-08",
+      "uncompressed_sha256": "e84679af4bc46bba2ba92f60182101f146d5b966898e47924de7321e6bffeaa1",
+      "extract": "data/attack_history/usage/enterprise-12.1.json.gz",
+      "extract_sha256": "4fcb82ddc8a810bf4268882675409dd19341c1915aa53fb9a1d5bdd7172602c5",
+      "entities": 768,
+      "uses_edges": 11407
+    },
+    {
+      "version": "13.1",
+      "release_date": "2023-05-09",
+      "uncompressed_sha256": "5ec90131dc595ef7f2dd6ae0ee24074fbd5e317ed3261f9465660e04f97d426d",
+      "extract": "data/attack_history/usage/enterprise-13.1.json.gz",
+      "extract_sha256": "3b6cd94cc0fd8cf8bec0d5a4d52069acbaa248645983e57a30e39dd3b7264f65",
+      "entities": 793,
+      "uses_edges": 11984
+    },
+    {
+      "version": "14.1",
+      "release_date": "2023-11-14",
+      "uncompressed_sha256": "13af7514ad1bcb59deba6b6b46571168544bbe674eb52f41361916bb1cd9c3d6",
+      "extract": "data/attack_history/usage/enterprise-14.1.json.gz",
+      "extract_sha256": "1fb6a9d404b2701e72cc86eb8a5b8c2f346611d26236911794c919cb9b7e5941",
+      "entities": 814,
+      "uses_edges": 12481
+    },
+    {
+      "version": "15.1",
+      "release_date": "2024-05-02",
+      "uncompressed_sha256": "a57988bffe402bb3e19d92dbe80a12143e1970b814e013e080f9df2fa5a3f6bc",
+      "extract": "data/attack_history/usage/enterprise-15.1.json.gz",
+      "extract_sha256": "c7d0bb097ac9437e7c67be2b7c0f2480ae41b14d601afd431c565c13d1777eb1",
+      "entities": 855,
+      "uses_edges": 12999
+    },
+    {
+      "version": "16.1",
+      "release_date": "2024-11-12",
+      "uncompressed_sha256": "8423d8dac3fc2feb825bb07d26e5f5d905e08a88f6fe4652cc20834cbe982813",
+      "extract": "data/attack_history/usage/enterprise-16.1.json.gz",
+      "extract_sha256": "6ca5c893e4f83253dedc6a0a933f4e3721385f731a67e4afb10bf62bdb526536",
+      "entities": 905,
+      "uses_edges": 14008
+    },
+    {
+      "version": "17.1",
+      "release_date": "2025-05-06",
+      "uncompressed_sha256": "0d1c347a4d584cf7e11ef46556c33b7689341443bf86299188d46c307274323b",
+      "extract": "data/attack_history/usage/enterprise-17.1.json.gz",
+      "extract_sha256": "028f84495e39308931cce41fb9ef2cedee400075483a4d6d5caa892b2182a564",
+      "entities": 968,
+      "uses_edges": 15049
+    },
+    {
+      "version": "18.1",
+      "release_date": "2025-11-13",
+      "uncompressed_sha256": "f857d8f78f2f0c0b7db321a711a39fba98546c1e3076a657684850c83d0962fb",
+      "extract": "data/attack_history/usage/enterprise-18.1.json.gz",
+      "extract_sha256": "4814e2391a0da390744af657eaae91ea185281f31669eecd4c66d46cee1727d5",
+      "entities": 1008,
+      "uses_edges": 16017
+    },
+    {
+      "version": "19.2",
+      "release_date": "2026-08-05",
+      "uncompressed_sha256": "dc1639caa5501d720e280cf1cbd8fbe009884a0c9b3e6e9ed9d0c25166c3d8f4",
+      "extract": "data/attack_history/usage/enterprise-19.2.json.gz",
+      "extract_sha256": "c291939cb0e8e66110537509e00d6ba83b8cc8b401b3637d448ea11a7b8dcb51",
+      "entities": 1057,
+      "uses_edges": 17136
+    }
+  ]
+}

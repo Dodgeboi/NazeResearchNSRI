@@ -8,6 +8,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from grrc.coverage_evolution import km_at
 from grrc.provenance import verify_manifest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -39,6 +40,12 @@ def content():
     sens = _read("sensitivity.csv")
     ch = pd.read_csv(DATA / "floor_changes.csv", dtype={"version": str, "prev_version": str})
     par = _read("parameter_sensitivity.csv")
+    expo = _read("usage_exposure.csv")
+    use_stage = _read("usage_by_stage_latest.csv").set_index("stage")
+    unc_use = _read("uncovered_usage_latest.csv")
+    closure = pd.read_csv(DATA / "gap_closure.csv", dtype={"version": str, "prev_version": str})
+    spells = pd.read_csv(DATA / "gap_spells.csv", dtype={"entry_version": str, "exit_version": str})
+    surv = pd.read_csv(DATA / "gap_survival.csv")
 
     first, last = cov.iloc[0], cov.iloc[-1]
     fv, lv = first.version, last.version
@@ -78,6 +85,19 @@ def content():
     dip = ch.loc[down[-1]]
     rise = next(ch.loc[i] for i in range(down[-1] + 1, len(ch))
                 if ch.loc[i].factor_after > ch.loc[i].factor_before)
+
+    ex_d = expo[expo.variant == "default"].set_index("version")
+    ex_i = expo[expo.variant == "parent_inheritance"].set_index("version")
+
+    def km(variant, years):
+        rows = surv[(surv.variant == variant) & (surv.events > 0)]
+        return km_at([dict(years=r.years, survival=r.survival) for _, r in rows.iterrows()], years)
+
+    top_use = unc_use.iloc[0]
+    rep_use = rlist[(rlist.epsilon == 0.10) & (rlist.k == 1)]
+    closed_rows = closure[closure.closed > 0]
+    firsts = spells[spells.entry_version == fv]
+    entrants = spells[spells.entry_version != fv]
 
     values = {
         "GapReleases": str(len(source["releases"])),
@@ -139,6 +159,43 @@ def content():
         "GapParamWeakFloor": _pct(par_row(0.9, 0.1).catastrophic_floor_k1),
         "GapParamWeakRep": cost(par_row(0.9, 0.1).repair_10_k1),
         "GapParamSubsetAll": "every" if bool(par.repair_10_k1_within_default.all()) else "not every",
+        # Model-free floor: reachability to T1486 itself (no hospital impact model).
+        "GapControlFirst": _pct(flo.loc[fv, "control_floor"]),
+        "GapControlLast": _pct(flo.loc[lv, "control_floor"]),
+        "GapControlGrowth": f"{flo.loc[lv, 'control_floor'] / flo.loc[fv, 'control_floor']:.2f}",
+        # Documented ransomware (entities ATT&CK documents as using T1486) meets the gaps.
+        "UseEntities": str(int(ex_d.loc[lv, "entities"])), "UseExposed": str(int(ex_d.loc[lv, "exposed"])),
+        "UseExposedPct": f"{100 * ex_d.loc[lv, 'exposed_share']:.0f}",
+        "UseSharePct": f"{100 * ex_d.loc[lv, 'uncovered_use_share']:.0f}",
+        "UseFirstEntities": str(int(ex_d.loc[fv, "entities"])),
+        "UseFirstExposed": str(int(ex_d.loc[fv, "exposed"])),
+        "UseFirstSharePct": f"{100 * ex_d.loc[fv, 'uncovered_use_share']:.0f}",
+        "UseMinExposedPct": f"{100 * ex_d.exposed_share.min():.0f}",
+        "UseInhExposed": str(int(ex_i.loc[lv, "exposed"])),
+        "UseInhSharePct": f"{100 * ex_i.loc[lv, 'uncovered_use_share']:.0f}",
+        "UseDiscUnc": str(int(use_stage.loc["discovery", "entities_using_uncovered"])),
+        "UseDiscAll": str(int(use_stage.loc["discovery", "entities_using_stage"])),
+        "UseDEUnc": str(int(use_stage.loc["defense-evasion", "entities_using_uncovered"])),
+        "UseDEAll": str(int(use_stage.loc["defense-evasion", "entities_using_stage"])),
+        "UseTopTech": str(top_use.technique), "UseTopName": str(top_use["name"]),
+        "UseTopCount": str(int(top_use.ransomware_entities)),
+        "UseRepairMax": str(int(rep_use.ransomware_entities.max())),
+        "UseRepairUnused": str(int((rep_use.ransomware_entities == 0).sum())),
+        # Persistence of gaps across releases.
+        "CloseTransitions": str(len(closure)), "CloseTotal": str(int(closure.closed.sum())),
+        "CloseReversed": str(int(closure.reversed.sum())),
+        "CloseNewUnc": str(int(closure.new_uncovered.sum())),
+        "CloseNewLater": str(int(entrants.mitigated.sum())), "CloseEntrantSpells": str(len(entrants)),
+        "CloseLastVersion": str(closed_rows.iloc[-1].version),
+        "CloseQuietReleases": str(int(len(closure) - closure.index[closure.closed > 0][-1] - 1)),
+        "CloseFirstStill": str(int(((~firsts.mitigated) & (firsts.exit_version == lv)).sum())),
+        "CloseFirstRemoved": str(int(((~firsts.mitigated) & (firsts.exit_version != lv)).sum())),
+        "CloseFirstCovered": str(int(firsts.mitigated.sum())),
+        "SurvSpells": str(len(spells)), "SurvMitigated": str(int(spells.mitigated.sum())),
+        "SurvThree": _pct(km("default", 3.0), 0), "SurvFive": _pct(km("default", 5.0), 0),
+        "SurvFiveAtRisk": str(int((spells.years >= 5.0).sum())),
+        "SurvEntrantsFive": _pct(km("default_entrants_only", 5.0), 0),
+        "SurvInhFive": _pct(km("parent_inheritance", 5.0), 0),
         # The floor is b^12 times a coverage-only term, so its growth ratio is free of b.
         "GapFloorGrowth": f"{flo.loc[lv, 'clinical_floor'] / flo.loc[fv, 'clinical_floor']:.2f}",
     }
@@ -182,8 +239,16 @@ def content():
 
     rows = []
     for _, r in rlist[(rlist.epsilon == 0.10) & (rlist.k == 1)].iterrows():
-        rows.append([r.technique, str(r["name"]).replace("&", "\\&"), str(r.stages)])
+        rows.append([r.technique, str(r["name"]).replace("&", "\\&"), str(r.stages),
+                     str(int(r.ransomware_entities))])
     generated["table_gaps_repair_rows.tex"] = "% Generated from repair_list_latest.csv (eps=0.10, k=1).\n" + "".join(
+        " & ".join(r) + " \\\\\n" for r in rows)
+
+    rows = []
+    for _, r in unc_use.head(10).iterrows():
+        rows.append([r.technique, str(r["name"]).replace("&", "\\&"),
+                     str(r.tactics).replace("+", ", "), str(int(r.ransomware_entities))])
+    generated["table_gaps_usage_rows.tex"] = "% Generated from uncovered_usage_latest.csv (top 10).\n" + "".join(
         " & ".join(r) + " \\\\\n" for r in rows)
     return generated
 

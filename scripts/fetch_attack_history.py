@@ -6,7 +6,8 @@ For the latest patch of every major Enterprise ATT&CK release (pinned explicitly
 mitre-attack/attack-stix-data repository into a gitignored cache, record its SHA-256,
 and write a small deterministic extract with only what the coverage analysis needs:
 active techniques (id, name, tactics, sub-technique flag), active mitigations (id,
-name) and active ``mitigates`` edges. The extracts and ``source_manifest.json`` are
+name) and active ``mitigates`` edges; a second extract per release keeps ATT&CK's
+documented ``uses`` edges (software, groups, campaigns to techniques). The extracts and ``source_manifest.json`` are
 committed; the ~50 MB raw bundles are not. Re-running with a warm cache re-verifies
 each bundle's hash and reproduces byte-identical extracts.
 
@@ -33,6 +34,8 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "data/attack_history"
 CACHE = OUT / "cache"
 EXTRACTS = OUT / "extracts"
+USAGE = OUT / "usage"
+USAGE_TYPES = ("malware", "tool", "intrusion-set", "campaign")
 BASE_URL = ("https://raw.githubusercontent.com/mitre-attack/attack-stix-data/master/"
             "enterprise-attack/enterprise-attack-{v}.json")
 # Latest patch of each major Enterprise release, per the repository's index.json
@@ -110,6 +113,34 @@ def extract(bundle: dict, version: str) -> dict:
                 mitigates=sorted([list(e) for e in edges]))
 
 
+def extract_usage(bundle: dict, version: str) -> dict:
+    """ATT&CK's documented procedure examples: active ``uses`` edges from active software,
+    groups and campaigns to active techniques (entity id, name, type; technique id)."""
+    objects = bundle["objects"]
+    tech_by_ref = {o["id"]: _external_id(o) for o in objects
+                   if o.get("type") == "attack-pattern" and _active(o) and _external_id(o)}
+    entities, ent_by_ref = [], {}
+    for o in objects:
+        if o.get("type") not in USAGE_TYPES or not _active(o):
+            continue
+        ext = _external_id(o)
+        if ext is None:
+            continue
+        ent_by_ref[o["id"]] = ext
+        entities.append(dict(id=ext, name=o.get("name", ""), type=o["type"]))
+    edges = set()
+    for o in objects:
+        if o.get("type") != "relationship" or o.get("relationship_type") != "uses":
+            continue
+        if not _active(o):
+            continue
+        e, t = ent_by_ref.get(o.get("source_ref")), tech_by_ref.get(o.get("target_ref"))
+        if e is not None and t is not None:
+            edges.add((e, t))
+    return dict(version=version, entities=sorted(entities, key=lambda r: r["id"]),
+                uses=sorted([list(e) for e in edges]))
+
+
 def _write_extract(data: dict, path: Path) -> str:
     """Deterministic gzip JSON (fixed mtime, sorted keys); returns the sha256 of the bytes."""
     raw = json.dumps(data, sort_keys=True, separators=(",", ":")).encode("utf-8")
@@ -123,14 +154,28 @@ def _write_extract(data: dict, path: Path) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--versions", nargs="*", default=list(VERSIONS))
+    parser.add_argument("--usage-only", action="store_true",
+                        help="write only the usage extracts, leaving the coverage extracts "
+                             "and their manifest untouched")
     args = parser.parse_args()
     EXTRACTS.mkdir(parents=True, exist_ok=True)
-    records = []
+    USAGE.mkdir(parents=True, exist_ok=True)
+    records, usage_records = [], []
     for version in args.versions:
         payload = _download(version)
         bundle = json.loads(payload)
         if bundle.get("type") != "bundle" or "objects" not in bundle:
             raise SystemExit(f"release {version} is not a STIX bundle")
+        usage = extract_usage(bundle, version)
+        usage_target = USAGE / f"enterprise-{version}.json.gz"
+        usage_records.append(dict(
+            version=version, release_date=RELEASE_DATES.get(version),
+            uncompressed_sha256=hashlib.sha256(payload).hexdigest(),
+            extract=str(usage_target.relative_to(ROOT)),
+            extract_sha256=_write_extract(usage, usage_target),
+            entities=len(usage["entities"]), uses_edges=len(usage["uses"])))
+        if args.usage_only:
+            continue
         data = extract(bundle, version)
         target = EXTRACTS / f"enterprise-{version}.json.gz"
         extract_sha = _write_extract(data, target)
@@ -144,6 +189,14 @@ def main() -> int:
             mitigates_edges=len(data["mitigates"])))
         print(f"  v{version}: {len(data['techniques'])} techniques, "
               f"{len(data['mitigations'])} mitigations, {len(data['mitigates'])} edges", flush=True)
+    (USAGE / "source_manifest.json").write_text(json.dumps(dict(
+        source="MITRE ATT&CK Enterprise (mitre-attack/attack-stix-data)",
+        license="MITRE ATT&CK Terms of Use",
+        content="active 'uses' relationships from software, groups and campaigns",
+        releases=usage_records), indent=2) + "\n", encoding="utf-8")
+    print(f"wrote {len(usage_records)} usage extracts")
+    if args.usage_only:
+        return 0
     (OUT / "source_manifest.json").write_text(json.dumps(dict(
         source="MITRE ATT&CK Enterprise (mitre-attack/attack-stix-data)",
         license="MITRE ATT&CK Terms of Use", retrieved_at=utc_now(),

@@ -1,0 +1,115 @@
+version,technique,name,tactics,ransomware_entities,on_repair_list_10_k1
+19.2,T1083,File and Directory Discovery,discovery,45,False
+19.2,T1057,Process Discovery,discovery,35,False
+19.2,T1082,System Information Discovery,discovery,35,False
+19.2,T1140,Deobfuscate/Decode Files or Information,stealth,30,False
+19.2,T1070.004,File Deletion,stealth,28,False
+19.2,T1016,System Network Configuration Discovery,discovery,23,False
+19.2,T1547.001,Registry Run Keys / Startup Folder,persistence+privilege-escalation,22,False
+19.2,T1018,Remote System Discovery,discovery,20,False
+19.2,T1680,Local Storage Discovery,discovery,17,False
+19.2,T1033,System Owner/User Discovery,discovery,16,False
+19.2,T1614.001,System Language Discovery,discovery,15,False
+19.2,T1529,System Shutdown/Reboot,impact,14,False
+19.2,T1480,Execution Guardrails,stealth,13,False
+19.2,T1518.001,Security Software Discovery,discovery,13,False
+19.2,T1036.004,Masquerade Task or Service,stealth,12,False
+19.2,T1553.002,Code Signing,defense-impairment,11,False
+19.2,T1007,System Service Discovery,discovery,10,False
+19.2,T1012,Query Registry,discovery,10,False
+19.2,T1049,System Network Connections Discovery,discovery,10,False
+19.2,T1124,System Time Discovery,discovery,10,False
+19.2,T1069.002,Domain Groups,discovery,9,False
+19.2,T1056.001,Keylogging,collection+credential-access,8,False
+19.2,T1120,Peripheral Device Discovery,discovery,7,False
+19.2,T1564.001,Hidden Files and Directories,stealth,7,False
+19.2,T1480.002,Mutual Exclusion,stealth,6,False
+19.2,T1497.001,System Checks,discovery+stealth,6,False
+19.2,T1074.001,Local Data Staging,collection,5,False
+19.2,T1113,Screen Capture,collection,5,False
+19.2,T1497.003,Time Based Checks,discovery+stealth,5,False
+19.2,T1070.006,Timestomp,stealth,4,False
+19.2,T1087.003,Email Account,discovery,4,False
+19.2,T1620,Reflective Code Loading,stealth,4,False
+19.2,T1622,Debugger Evasion,discovery+stealth,4,False
+19.2,T1027.003,Steganography,stealth,3,False
+19.2,T1069,Permission Groups Discovery,discovery,3,False
+19.2,T1074,Data Staged,collection,3,False
+19.2,T1098.007,Additional Local or Domain Groups,persistence+privilege-escalation,3,False
+19.2,T1217,Browser Information Discovery,discovery,3,False
+19.2,T1531,Account Access Removal,impact,3,False
+19.2,T1679,Selective Exclusion,stealth,3,False
+19.2,T1016.001,Internet Connection Discovery,discovery,2,False
+19.2,T1027.001,Binary Padding,stealth,2,False
+19.2,T1027.007,Dynamic API Resolution,stealth,2,False
+19.2,T1039,Data from Network Shared Drive,collection,2,False
+19.2,T1059.012,Hypervisor CLI,execution,2,True
+19.2,T1115,Clipboard Data,collection,2,False
+19.2,T1125,Video Capture,collection,2,False
+19.2,T1496.001,Compute Hijacking,impact,2,False
+19.2,T1497,Virtualization/Sandbox Evasion,discovery+stealth,2,False
+19.2,T1614,System Location Discovery,discovery,2,False
+19.2,T1652,Device Driver Discovery,discovery,2,False
+19.2,T1673,Virtual Machine Discovery,discovery,2,False
+19.2,T1010,Application Window Discovery,discovery,1,False
+19.2,T1014,Rootkit,stealth,1,False
+19.2,T1016.002,Wi-Fi Discovery,discovery,1,False
+19.2,T1036.006,Space after Filename,stealth,1,False
+19.2,T1056,Input Capture,collection+credential-access,1,False
+19.2,T1069.001,Local Groups,discovery,1,False
+19.2,T1070.005,Network Share Connection Removal,stealth,1,False
+19.2,T1074.002,Remote Data Staging,collection,1,False
+19.2,T1123,Audio Capture,collection,1,False
+19.2,T1134.004,Parent PID Spoofing,privilege-escalation+stealth,1,False
+19.2,T1480.001,Environmental Keying,stealth,1,False
+19.2,T1497.002,User Activity Based Checks,discovery+stealth,1,False
+19.2,T1518,Software Discovery,discovery,1,False
+19.2,T1526,Cloud Service Discovery,discovery,1,False
+19.2,T1546.016,Installer Packages,persistence+privilege-escalation,1,False
+19.2,T1568.001,Fast Flux DNS,command-and-control,1,True
+19.2,T1665,Hide Infrastructure,command-and-control,1,True
+19.2,T1678,Delay Execution,stealth,1,False
+19.2,T1020,Automated Exfiltration,exfiltration,0,True
+19.2,T1027.004,Compile After Delivery,stealth,0,False
+19.2,T1027.005,Indicator Removal from Tools,stealth,0,False
+19.2,T1027.008,Stripped Payloads,stealth,0,False
+19.2,T1027.018,Invisible Unicode,stealth,0,False
+19.2,T1036.002,Right-to-Left Override,stealth,0,False
+19.2,T1036.009,Break Process Trees,stealth,0,False
+19.2,T1036.011,Overwrite Process Arguments,stealth,0,False
+19.2,T1056.004,Credential API Hooking,collection+credential-access,0,False
+19.2,T1069.003,Cloud Groups,discovery,0,False
+19.2,T1070.010,Relocate Malware,stealth,0,False
+19.2,T1202,Indirect Command Execution,stealth,0,False
+19.2,T1207,Rogue Domain Controller,defense-impairment,0,False
+19.2,T1496,Resource Hijacking,impact,0,False
+19.2,T1496.002,Bandwidth Hijacking,impact,0,False
+19.2,T1496.004,Cloud Service Hijacking,impact,0,False
+19.2,T1518.002,Backup Software Discovery,discovery,0,False
+19.2,T1534,Internal Spearphishing,lateral-movement,0,True
+19.2,T1546.001,Change Default File Association,persistence+privilege-escalation,0,False
+19.2,T1546.005,Trap,persistence+privilege-escalation,0,False
+19.2,T1546.007,Netsh Helper DLL,persistence+privilege-escalation,0,False
+19.2,T1546.012,Image File Execution Options Injection,persistence+privilege-escalation,0,False
+19.2,T1546.015,Component Object Model Hijacking,persistence+privilege-escalation,0,False
+19.2,T1546.017,Udev Rules,persistence+privilege-escalation,0,False
+19.2,T1546.018,Python Startup Hooks,persistence+privilege-escalation,0,False
+19.2,T1547,Boot or Logon Autostart Execution,persistence+privilege-escalation,0,False
+19.2,T1547.010,Port Monitors,persistence+privilege-escalation,0,False
+19.2,T1547.014,Active Setup,persistence+privilege-escalation,0,False
+19.2,T1547.015,Login Items,persistence+privilege-escalation,0,False
+19.2,T1555.002,Securityd Memory,credential-access,0,False
+19.2,T1560.002,Archive via Library,collection,0,False
+19.2,T1560.003,Archive via Custom Method,collection,0,False
+19.2,T1564.005,Hidden File System,stealth,0,False
+19.2,T1564.010,Process Argument Spoofing,stealth,0,False
+19.2,T1564.011,Ignore Process Interrupts,stealth,0,False
+19.2,T1564.013,Bind Mounts,stealth,0,False
+19.2,T1568.003,DNS Calculation,command-and-control,0,True
+19.2,T1578.004,Revert Cloud Instance,defense-impairment,0,False
+19.2,T1600,Weaken Encryption,defense-impairment,0,False
+19.2,T1600.001,Reduce Key Space,defense-impairment,0,False
+19.2,T1600.002,Disable Crypto Hardware,defense-impairment,0,False
+19.2,T1615,Group Policy Discovery,discovery,0,False
+19.2,T1668,Exclusive Control,persistence,0,False
+19.2,T1687,Exploitation for Defense Impairment,defense-impairment,0,False

@@ -8,6 +8,9 @@ Figure 1 (two panels, release date on x):
       deployed) versus the counterfactual with every gap repaired -- both in percent.
 Figure 2: the minimal number of techniques needing a new mitigation for certification
 to become possible, per release, at three targets.
+Figure 3 (two panels): (A) Kaplan-Meier estimate that an uncovered technique is still
+without a mitigation t years after it is first observed uncovered (three conventions);
+(B) documented ransomware (entities using T1486) meeting the gaps, per release.
 
 Structural breaks (sub-techniques at v7; the v19 Defense Evasion split) are marked.
 Okabe-Ito colourblind-safe palette; deterministic PDFs; not manifest-tracked.
@@ -102,6 +105,34 @@ def main():
     fig.autofmt_xdate(rotation=0, ha="center")
     fig.tight_layout()
     fig.savefig(OUT / "figure_repair.pdf", metadata={"CreationDate": None})
+
+    surv = pd.read_csv(DATA / "gap_survival.csv")
+    expo = _read("usage_exposure.csv")
+    expo = expo[expo.variant == "default"].sort_values("date")
+    fig, (axa, axb) = plt.subplots(1, 2, figsize=(7.4, 3.0))
+    for variant, col, ls, label in [("default", VERMILLION, "-", "own mapping"),
+                                    ("default_entrants_only", BLUE, "--", "own mapping, entrants"),
+                                    ("parent_inheritance", GREEN, ":", "parent inheritance")]:
+        c = surv[surv.variant == variant].sort_values("years")
+        axa.step(c.years, c.survival, where="post", lw=2, ls=ls, color=col, label=label)
+    axa.set_xlabel("years since first observed uncovered")
+    axa.set_ylabel("share still without a mitigation")
+    axa.set_title("Gaps rarely close (Kaplan-Meier)", fontsize=10)
+    axa.set_ylim(0, 1.02); axa.set_xlim(0, None)
+    axa.grid(True, alpha=0.25, lw=0.6)
+    axa.legend(frameon=False, fontsize=7.5, loc="lower left")
+    axb.plot(expo.date, 100 * expo.exposed_share, marker="o", ms=4, lw=2, color=VERMILLION,
+             label="entities using $\\geq$1 uncovered technique")
+    axb.plot(expo.date, 100 * expo.uncovered_use_share, marker="s", ms=4, lw=2, color=BLUE,
+             label="their kill-chain uses on uncovered ones")
+    _breaks(axb, cov)
+    axb.set_ylabel("% of documented ransomware")
+    axb.set_title("Documented ransomware uses the gaps", fontsize=10)
+    axb.set_ylim(0, 105); _style(axb)
+    axb.legend(frameon=False, fontsize=7.5, loc="center right")
+    fig.autofmt_xdate(rotation=0, ha="center")
+    fig.tight_layout()
+    fig.savefig(OUT / "figure_persistence_usage.pdf", metadata={"CreationDate": None})
     print(f"wrote figures to {OUT.relative_to(ROOT)}")
 
 

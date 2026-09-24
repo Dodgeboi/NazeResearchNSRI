@@ -193,3 +193,59 @@ def test_proposition3_floor_is_base_power_times_coverage_term(v):
     assert (f5 / floors(_ex("5.2"), base=0.5)["clinical_floor"]) == pytest.approx(
         f9 / floors(_ex("5.2"), base=0.9)["clinical_floor"], rel=1e-12)
     assert g == pytest.approx((0.5 / 0.9) ** n, rel=1e-12)
+
+
+USAGE_SOURCE = ROOT / "data/attack_history/usage/source_manifest.json"
+
+
+def test_usage_extracts_match_their_manifest():
+    recs = json.loads(USAGE_SOURCE.read_text())["releases"]
+    assert [r["version"] for r in recs] == RELEASES
+    for rec in recs:
+        data = (ROOT / rec["extract"]).read_bytes()
+        assert hashlib.sha256(data).hexdigest() == rec["extract_sha256"]
+
+
+def test_usage_exposure_on_a_synthetic_release():
+    from grrc.coverage_evolution import technique_usage_counts, usage_exposure
+    ex = _synthetic()                       # T8001..T8005 uncovered; T90xx and impact covered
+    usage = dict(uses=[["S1", "T1486"], ["S1", "T8003"], ["S1", "T9000"],   # ransomware, exposed
+                       ["S2", "T1486"], ["S2", "T9001"],                  # ransomware, not exposed
+                       ["S3", "T8004"]])                                  # not ransomware
+    got = usage_exposure(ex, usage)
+    assert (got["entities"], got["exposed"]) == (2, 1)
+    assert (got["kill_chain_uses"], got["uncovered_uses"]) == (5, 1)
+    stages = {r["stage"]: r for r in got["stages"]}
+    assert stages["discovery"]["entities_using_uncovered"] == 1
+    assert stages["collection"]["entities_using_uncovered"] == 0      # S3 is not ransomware
+    assert stages["impact"]["entities_using_stage"] == 2
+    assert technique_usage_counts(ex, usage) == {"T1486": 2, "T8003": 1, "T9000": 1, "T9001": 1}
+
+
+def test_kaplan_meier_matches_hand_computation():
+    from grrc.coverage_evolution import kaplan_meier, km_at
+    # times 1(e), 2(c), 2(e), 3(e), 4(c): S(1)=4/5, S(2)=4/5*3/4, S(3)=that*1/2
+    curve = kaplan_meier([1, 2, 2, 3, 4], [True, False, True, True, False])
+    assert [r["at_risk"] for r in curve] == [5, 4, 2]
+    assert km_at(curve, 0.5) == 1.0
+    assert km_at(curve, 2.5) == pytest.approx(0.8 * 0.75)
+    assert km_at(curve, 10) == pytest.approx(0.8 * 0.75 * 0.5)
+
+
+def test_closure_and_time_to_mitigation_on_a_synthetic_history():
+    import datetime as dt
+    from grrc.coverage_evolution import closure_events, time_to_mitigation
+    history = {"a": {"T1": False, "T2": False, "T3": True},
+               "b": {"T1": True, "T3": False, "T4": False},      # T1 closed, T2 removed, T3 reversed
+               "c": {"T1": True, "T3": False, "T4": False}}
+    dates = {"a": dt.date(2020, 1, 1), "b": dt.date(2021, 1, 1), "c": dt.date(2022, 1, 1)}
+    ev = closure_events(history)
+    assert ev[0] == dict(prev_version="a", version="b", closed=1, reversed=1,
+                         removed_uncovered=1, new=1, new_uncovered=1)
+    assert ev[1]["closed"] == ev[1]["reversed"] == ev[1]["new"] == 0
+    spells = {s["technique"]: s for s in time_to_mitigation(history, dates)}
+    assert spells["T1"]["mitigated"] and spells["T1"]["left_truncated"]
+    assert spells["T1"]["years"] == pytest.approx(366 / 365.25)
+    assert not spells["T2"]["mitigated"] and spells["T2"]["years"] == 0.0   # censored at removal
+    assert spells["T3"]["entry_version"] == "b" and not spells["T3"]["mitigated"]
+    assert not spells["T4"]["left_truncated"]
