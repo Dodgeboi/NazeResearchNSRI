@@ -127,3 +127,40 @@ def test_ollama_client_against_a_fake_server(model):
     assert traj["turns"][0]["deployed"] == ["M1032"]
     assert meta == dict(ollama_version="0.0-test", model="fake:1b", digest="abc123",
                         family="fake", parameter_size="1B", quantization="Q4_0")
+
+
+def test_claude_cli_agent_against_a_fake_executable(model, tmp_path):
+    from grrc.range.llm_agent import ClaudeCLIAgent
+    log = tmp_path / "calls.jsonl"
+    fake = tmp_path / "claude"
+    fake.write_text(f"""#!{__import__('sys').executable}
+import json, os, sys
+prompt = sys.stdin.read()
+with open({str(log)!r}, "a") as fh:
+    fh.write(json.dumps({{"argv": sys.argv[1:], "cwd": os.getcwd(), "prompt": prompt}}) + "\\n")
+n = prompt.count("[You]")
+reply = {{"action": "add", "mitigation": "M1032"}} if n == 0 else {{"action": "stop"}}
+print(json.dumps({{"is_error": False, "result": json.dumps(reply), "total_cost_usd": 0.01,
+                  "usage": {{"input_tokens": 5, "cache_read_input_tokens": 95, "output_tokens": 7}}}}))
+""")
+    fake.chmod(0o755)
+    work = tmp_path / "empty"
+    agent = ClaudeCLIAgent("claude-test", workdir=work, executable=str(fake))
+    metrics, traj = run_episode(_env(model, "typical", 0.05, 1), agent, max_steps=5)
+    calls = [json.loads(line) for line in log.read_text().splitlines()]
+    assert len(calls) == 2 and all(c["cwd"] == str(work) for c in calls)
+    assert list(work.iterdir()) == []                                   # nothing to read
+    argv = calls[0]["argv"]
+    assert argv[:3] == ["-p", "--tools", ""] and "--no-session-persistence" in argv
+    assert argv[argv.index("--model") + 1] == "claude-test"
+    assert argv[argv.index("--setting-sources") + 1] == ""
+    assert "[You]" not in calls[0]["prompt"] and calls[1]["prompt"].count("[You]") == 1
+    assert metrics["stop_reason"] == "agent_stop" and metrics["final_cost"] == 1
+    assert metrics["cost_usd"] == pytest.approx(0.02) and metrics["prompt_tokens"] == 200
+
+    broken = tmp_path / "broken"
+    broken.write_text(f"#!{__import__('sys').executable}\nprint('not json')\n")
+    broken.chmod(0o755)
+    bad = ClaudeCLIAgent("x", workdir=work, executable=str(broken), retries=1)
+    metrics, _ = run_episode(_env(model, "typical", 0.05, 1), bad, max_steps=2)
+    assert metrics["invalid_actions"] == 2 and metrics["final_cost"] == 0

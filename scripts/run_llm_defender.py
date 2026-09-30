@@ -9,6 +9,7 @@ to the local Ollama server.
     python scripts/run_llm_defender.py --dry-run                 # seconds, no Ollama
     python scripts/run_llm_defender.py --model qwen2.5:7b        # the evaluation
     python scripts/run_llm_defender.py --model qwen2.5:7b --quick
+    python scripts/run_llm_defender.py --agent claude --model claude-sonnet-5 --budget-usd 8
 
 Outputs go to ``data/llm_defender/<model>/``: ``episodes.jsonl`` (one line per episode
 with the full transcript), ``summary.csv`` (one row per episode, joined to the reference
@@ -30,8 +31,8 @@ import pandas as pd
 from grrc.attack_graph import build_graph, load_bundle
 from grrc.hospital_attack_model import build_model
 from grrc.range import DefenseRange, default_regimes
-from grrc.range.llm_agent import (SYSTEM_PROMPT, OllamaAgent, ScriptedAgent, ollama_metadata,
-                                  run_episode)
+from grrc.range.llm_agent import (SYSTEM_PROMPT, ClaudeCLIAgent, OllamaAgent, ScriptedAgent,
+                                  claude_cli_version, ollama_metadata, run_episode)
 from grrc.range.policies import greedy_order
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -70,13 +71,20 @@ def _git_commit():
 def main():
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--model", default="qwen2.5:7b", help="Ollama model tag")
+    parser.add_argument("--agent", choices=("ollama", "claude"), default="ollama",
+                        help="a local Ollama model, or Claude through the Claude Code CLI")
+    parser.add_argument("--model", default=None,
+                        help="Ollama tag (default qwen2.5:7b) or Claude model (default claude-sonnet-5)")
+    parser.add_argument("--budget-usd", type=float, default=8.0,
+                        help="Claude only: stop starting new episodes once this much is spent")
     parser.add_argument("--host", default="http://localhost:11434")
     parser.add_argument("--quick", action="store_true", help="4 regimes x 1 seed")
     parser.add_argument("--dry-run", action="store_true",
                         help="replay the reference greedy defender instead of an LLM")
     args = parser.parse_args()
 
+    if args.model is None:
+        args.model = "claude-sonnet-5" if args.agent == "claude" else "qwen2.5:7b"
     regimes_wanted = QUICK if args.quick else REGIMES
     seeds = SEEDS[:1] if (args.quick or args.dry_run) else SEEDS
     name = "dry-run-greedy" if args.dry_run else args.model
@@ -85,7 +93,11 @@ def main():
     episodes_path = out / "episodes.jsonl"
 
     meta = None
-    if not args.dry_run:
+    if args.agent == "claude" and not args.dry_run:
+        meta = dict(interface="Claude Code CLI (claude -p), no tools, no settings, empty cwd",
+                    cli_version=claude_cli_version(), model=args.model,
+                    sampling="CLI defaults (temperature and seed not settable)")
+    elif not args.dry_run:
         try:
             meta = ollama_metadata(args.model, host=args.host)
         except OSError as exc:
@@ -101,18 +113,28 @@ def main():
             rec = json.loads(line)
             done.add((rec["regime"], rec["seed"]))
 
+    spent = sum(json.loads(line).get("cost_usd") or 0
+                for line in episodes_path.read_text().splitlines()) if episodes_path.exists() else 0.0
     total = len(regimes_wanted) * len(seeds)
     n = 0
-    for adversary, eps, k in regimes_wanted:
-        label = f"{adversary}|assumed|eps={eps:.2f}|k={k}"
-        for seed in seeds:
+    budget_hit = False
+    # Seed-major order, so that a run cut short still covers every regime once.
+    for seed in seeds:
+        for adversary, eps, k in regimes_wanted:
+            label = f"{adversary}|assumed|eps={eps:.2f}|k={k}"
             n += 1
             if (label, seed) in done:
                 print(f"[{n}/{total}] {label} seed={seed}: already done", flush=True)
                 continue
+            if args.agent == "claude" and spent >= args.budget_usd:
+                budget_hit = True
+                print(f"[{n}/{total}] budget of ${args.budget_usd:g} reached; stopping", flush=True)
+                break
             env = DefenseRange(model, by_label[label])
             if args.dry_run:
                 agent = ScriptedAgent([env.graph.mitigations[i] for i in greedy_order(env)])
+            elif args.agent == "claude":
+                agent = ClaudeCLIAgent(args.model)
             else:
                 agent = OllamaAgent(args.model, host=args.host, temperature=TEMPERATURE, seed=seed,
                                     num_ctx=NUM_CTX)
@@ -121,9 +143,12 @@ def main():
                        model=name, **metrics, transcript=traj)
             with episodes_path.open("a", encoding="utf-8") as fh:
                 fh.write(json.dumps(rec) + "\n")
+            spent += metrics.get("cost_usd") or 0
             print(f"[{n}/{total}] {label} seed={seed}: {metrics['stop_reason']}, "
                   f"cost={metrics['cost_to_certify']}, steps={metrics['steps']}, "
-                  f"invalid={metrics['invalid_actions']}", flush=True)
+                  f"invalid={metrics['invalid_actions']}, spent=${spent:.2f}", flush=True)
+        if budget_hit:
+            break
 
     # Summary joined to the reference defenders (committed benchmark).
     rows = [json.loads(line) for line in episodes_path.read_text().splitlines()]
@@ -137,6 +162,7 @@ def main():
             "model", "regime", "adversary", "epsilon", "k", "seed", "certified",
             "cost_to_certify", "steps", "invalid_actions", "stop_reason", "final_cost",
             "final_cat_worst", "prompt_tokens", "completion_tokens")} | dict(
+            cost_usd=r.get("cost_usd") or 0.0,
             certifiable=bool(ref.all_certifies), optimal_size=int(ref.optimal_size),
             optimal_computed=bool(ref.optimal_computed), greedy_cost=int(ref.greedy_cost),
             coverage_cost=int(ref.coverage_cost), random_cost=int(ref.random_cost)))
@@ -145,7 +171,10 @@ def main():
     summary.to_csv(out / "summary.csv", index=False)
 
     record = dict(
-        model=name, ollama=meta, temperature=None if args.dry_run else TEMPERATURE,
+        model=name, agent="scripted" if args.dry_run else args.agent,
+        interface=meta, total_cost_usd=round(float(summary.cost_usd.sum()), 4),
+        budget_usd=args.budget_usd if args.agent == "claude" else None, budget_hit=budget_hit,
+        temperature=TEMPERATURE if (args.agent == "ollama" and not args.dry_run) else None,
         seeds=list(seeds), max_steps=MAX_STEPS, num_ctx=NUM_CTX, quick=args.quick, dry_run=args.dry_run,
         regimes=[f"{a}|assumed|eps={e:.2f}|k={k}" for a, e, k in regimes_wanted],
         git_commit=_git_commit(), python=sys.version.split()[0], platform=platform.system(),

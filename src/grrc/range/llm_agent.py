@@ -12,7 +12,10 @@ outage) <= epsilon over the whole uncertainty set). This module supplies
 - :func:`run_episode`, which drives any agent with a ``reply(messages)`` method and
   records the full trajectory;
 - :class:`OllamaAgent`, a client for a local Ollama server (``POST /api/chat`` with
-  JSON output), using only the standard library; and
+  JSON output), using only the standard library;
+- :class:`ClaudeCLIAgent`, which asks Claude through the Claude Code command-line tool
+  with no tools, no settings and an empty working directory, so the model sees only
+  the prompt; and
 - :class:`ScriptedAgent`, which replays a fixed policy order through the same text
   interface (used for tests and dry runs).
 
@@ -22,8 +25,11 @@ at all is part of what the agent must judge.
 from __future__ import annotations
 
 import json
+import subprocess
+import tempfile
 import time
 import urllib.request
+from pathlib import Path
 
 SYSTEM_PROMPT = """You are an autonomous cyber-defense agent protecting a hospital network \
 against ransomware. You choose which MITRE ATT&CK mitigations to deploy. Each turn you see \
@@ -140,6 +146,7 @@ def run_episode(env, agent, max_steps=30):
                                cat_guaranteed=score["cat_guaranteed"],
                                prompt_tokens=reply.get("prompt_tokens"),
                                completion_tokens=reply.get("completion_tokens"),
+                               cost_usd=reply.get("cost_usd"),
                                seconds=reply.get("seconds")))
         if act["action"] == "stop":
             break
@@ -151,7 +158,8 @@ def run_episode(env, agent, max_steps=30):
                    steps=steps, invalid_actions=invalid, stop_reason=stop_reason,
                    final_cost=score["cost"], final_cat_worst=score["cat_worst"],
                    prompt_tokens=sum(t["prompt_tokens"] or 0 for t in trajectory),
-                   completion_tokens=sum(t["completion_tokens"] or 0 for t in trajectory))
+                   completion_tokens=sum(t["completion_tokens"] or 0 for t in trajectory),
+                   cost_usd=round(sum(t["cost_usd"] or 0 for t in trajectory), 6))
     return metrics, dict(messages=messages, turns=trajectory)
 
 
@@ -193,6 +201,71 @@ class OllamaAgent:
                     prompt_tokens=out.get("prompt_eval_count"),
                     completion_tokens=out.get("eval_count"),
                     seconds=round(time.monotonic() - t0, 3))
+
+
+def render_transcript(messages) -> str:
+    """The conversation after the system prompt, as one text prompt (for single-turn
+    interfaces); the last environment message is the current turn."""
+    parts = []
+    for m in messages[1:]:
+        who = "Environment" if m["role"] == "user" else "You"
+        parts.append(f"[{who}]\n{m['content']}")
+    return ("This is the conversation so far; continue it.\n\n" + "\n\n".join(parts)
+            + "\n\nReply with your next action as one JSON object and nothing else.")
+
+
+class ClaudeCLIAgent:
+    """Ask Claude through the Claude Code CLI (``claude -p``). Every call runs in an empty
+    working directory with no tools, no MCP servers, no settings and no slash commands, and
+    with our system prompt in place of the default, so the model sees only the transcript.
+    A failed call returns an empty reply, which the episode counts as an invalid action."""
+
+    def __init__(self, model="claude-sonnet-5", workdir=None, executable="claude",
+                 max_call_usd=0.25, timeout=300, retries=2):
+        self.model, self.executable = model, executable
+        # An empty directory outside any repository, so no project files or memory load.
+        self.workdir = Path(workdir) if workdir else Path(tempfile.mkdtemp(prefix="llm-defender-"))
+        self.max_call_usd, self.timeout, self.retries = max_call_usd, timeout, retries
+
+    def command(self):
+        return [self.executable, "-p", "--tools", "", "--strict-mcp-config",
+                "--setting-sources", "", "--disable-slash-commands",
+                "--system-prompt", SYSTEM_PROMPT, "--model", self.model,
+                "--output-format", "json", "--no-session-persistence",
+                "--max-budget-usd", f"{self.max_call_usd:g}"]
+
+    def reply(self, messages):
+        self.workdir.mkdir(parents=True, exist_ok=True)
+        prompt = render_transcript(messages)
+        t0, cost, out = time.monotonic(), 0.0, {}
+        for _ in range(self.retries + 1):
+            try:
+                proc = subprocess.run(self.command(), input=prompt, capture_output=True,
+                                      text=True, cwd=self.workdir, timeout=self.timeout)
+                out = json.loads(proc.stdout)
+            except (subprocess.TimeoutExpired, json.JSONDecodeError, OSError):
+                out = {}
+                continue
+            cost += float(out.get("total_cost_usd") or 0)
+            if not out.get("is_error"):
+                break
+        ok = bool(out) and not out.get("is_error")
+        usage = out.get("usage", {}) if ok else {}
+        return dict(text=out.get("result", "") if ok else "",
+                    prompt_tokens=(usage.get("input_tokens", 0)
+                                   + usage.get("cache_read_input_tokens", 0)
+                                   + usage.get("cache_creation_input_tokens", 0)) if ok else None,
+                    completion_tokens=usage.get("output_tokens") if ok else None,
+                    cost_usd=round(cost, 6), seconds=round(time.monotonic() - t0, 3),
+                    error=None if ok else str(out.get("result", "no output"))[:200])
+
+
+def claude_cli_version(executable="claude"):
+    try:
+        return subprocess.run([executable, "--version"], capture_output=True, text=True,
+                              timeout=60).stdout.strip()
+    except OSError:
+        return None
 
 
 def ollama_metadata(model, host="http://localhost:11434", timeout=30):

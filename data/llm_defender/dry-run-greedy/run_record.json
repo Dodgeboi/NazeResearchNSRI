@@ -1,11 +1,16 @@
 {
   "model": "dry-run-greedy",
-  "ollama": null,
+  "agent": "scripted",
+  "interface": null,
+  "total_cost_usd": 0.0,
+  "budget_usd": null,
+  "budget_hit": false,
   "temperature": null,
   "seeds": [
     1
   ],
   "max_steps": 30,
+  "num_ctx": 16384,
   "quick": false,
   "dry_run": true,
   "regimes": [
@@ -18,13 +23,13 @@
     "adaptive|assumed|eps=0.05|k=3",
     "adaptive|assumed|eps=0.05|k=1"
   ],
-  "git_commit": "f6e9c291fc3708a12376b43f594257fce0eb8bbb",
+  "git_commit": "f8e6b9077dd718d5d89adf2f967a52f9980640de",
   "python": "3.12.3",
   "platform": "Linux",
   "system_prompt_sha256": "9083804743faff09090caea6ea6ecbe5717f936b112e7a6d03f77c74381513b6",
   "inputs": {
-    "scripts/run_llm_defender.py": "4697123a391bfe840e52b9eed8ad3c3dc0eeb77f04936dc7bcaeef9810fb5d97",
-    "src/grrc/range/llm_agent.py": "918b145efb443d98716e2214c8d336866d9dbb7290d4bf5587d5bda6321362de",
+    "scripts/run_llm_defender.py": "69b1313b2dece4e1d80828ca917cfd489811cc6fa1011f91b192accfc9ff8549",
+    "src/grrc/range/llm_agent.py": "d485e00a4e0b4c758ba0539848a9434c286f65b8b7b32a9d09089ea3142e276f",
     "src/grrc/range/environment.py": "d97fd60654f269b462c2200bc4090ebc3f3656ff68cecbf6a553309d4a2cfbf6",
     "src/grrc/range/adversary.py": "4e44573dc4a25b6016be56e279b358250d82d4ac59dc29179582163b5ab261f8",
     "src/grrc/range/regimes.py": "2d3b686db5d2552c6c8e068e52f359bb2ed64b51c66a1e33ba07d3728afe6942",
@@ -33,6 +38,6 @@
   },
   "outputs": {
     "data/llm_defender/dry-run-greedy/episodes.jsonl": "27aa5d6d9b831a02eb38bfdb1c0068855ffbde21498ab90e27293a1e5d11de37",
-    "data/llm_defender/dry-run-greedy/summary.csv": "99bfc353250d2fe3ae4271afa7e0f79f12b23aa3aa5efc21477340e372e9dead"
+    "data/llm_defender/dry-run-greedy/summary.csv": "806574bc6d45e891a1d3ac380c45e43c98c1ad20eb6a3f83f4b06e54ff8dade6"
   }
 }
