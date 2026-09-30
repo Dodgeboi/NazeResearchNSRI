@@ -175,11 +175,12 @@ harness.
 
 \IfFileExists{range_llm_numbers.tex}{\input{range_llm_numbers}
 \begin{table*}[t]\centering\footnotesize
-\caption{The language-model defender (\LlmModel, \LlmParams, \LlmQuant) per regime:
-reference costs, episodes certified, mean cost when certified, episodes in which it chose
-to stop, and invalid actions per episode.}\label{tab:llm}
-\begin{tabular}{@{}lrrrrrrrr@{}}\toprule
-Adversary & $\varepsilon$ & $k$ & Optimal & Greedy & Certified & Mean cost & Stopped & Invalid\\\midrule
+\caption{Language-model defenders per regime: the reference costs (exact optimum,
+greedy), episodes certified, mean portfolio size when certified, episodes in which the
+agent chose to stop, and invalid actions per episode. ``none'': no portfolio
+certifies.}\label{tab:llm}
+\begin{tabular}{@{}llrrrrrrrr@{}}\toprule
+Model & Adversary & $\varepsilon$ & $k$ & Optimal & Greedy & Certified & Mean size & Stopped & Invalid\\\midrule
 \tableinput table_range_llm_rows.tex
 \bottomrule\end{tabular}
 \end{table*}

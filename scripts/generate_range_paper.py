@@ -120,6 +120,37 @@ def content():
     return generated
 
 
+def _tex(text):
+    return str(text).replace("_", "\\_").replace("&", "\\&")
+
+
+def _llm_macros(prefix, df, record):
+    """Headline numbers for one model's run."""
+    meta = record.get("interface") or record.get("ollama") or {}
+    typ = df[df.adversary == "typical"]
+    cert_adapt = df[(df.adversary == "adaptive") & df.certifiable]
+    uncert = df[~df.certifiable]
+    typ_ok = typ[typ.certified]
+    ratio = (typ_ok.cost_to_certify / typ_ok.optimal_size.where(typ_ok.optimal_computed)
+             .replace(0, float("nan"))).dropna()
+    ok_adapt = cert_adapt[cert_adapt.certified]
+    return {
+        prefix + "Model": _tex(df.model.iloc[0]),
+        prefix + "Params": _tex(meta.get("parameter_size") or "n/a"),
+        prefix + "Quant": _tex(meta.get("quantization") or "n/a"),
+        prefix + "Episodes": str(len(df)),
+        prefix + "TypCert": f"{int(typ.certified.sum())}/{len(typ)}",
+        prefix + "TypRatio": f"{ratio.mean():.2f}" if len(ratio) else "n/a",
+        prefix + "AdaptCert": f"{int(cert_adapt.certified.sum())}/{len(cert_adapt)}",
+        prefix + "AdaptCost": f"{ok_adapt.cost_to_certify.mean():.1f}" if len(ok_adapt) else "none",
+        prefix + "UncertStop": f"{int((uncert.stop_reason == 'agent_stop').sum())}/{len(uncert)}",
+        prefix + "UncertFalse": str(int(uncert.certified.sum())),
+        prefix + "UncertSteps": f"{uncert.steps.mean():.1f}" if len(uncert) else "n/a",
+        prefix + "Invalid": f"{df.invalid_actions.sum() / max(df.steps.sum(), 1) * 100:.1f}",
+        prefix + "Cost": f"{df.cost_usd.sum():.2f}" if "cost_usd" in df else "0.00",
+    }
+
+
 def _llm_constants():
     """The pre-declared protocol, read from the runner so the paper cannot drift from it."""
     import importlib.util
@@ -145,38 +176,30 @@ def _llm_content():
                   if p.parent.name != "dry-run-greedy")
     if not runs:
         return out
-    df = pd.concat([pd.read_csv(p) for p in runs], ignore_index=True)
-    df = df[df.regime.isin([f"{a}|assumed|eps={e:.2f}|k={k}" for a, e, k in run.REGIMES])]
-    records = {p.parent.name: json.loads((p.parent / "run_record.json").read_text()) for p in runs}
-    first = records[sorted(records)[0]]
-    meta = first.get("ollama") or {}
-    typ = df[df.adversary == "typical"]
-    cert_adapt = df[(df.adversary == "adaptive") & df.certifiable]
-    uncert = df[~df.certifiable]
-    typ_ok = typ[typ.certified]
-    ratio = (typ_ok.cost_to_certify / typ_ok.optimal_size.where(typ_ok.optimal_computed)
-             .replace(0, float("nan"))).dropna()
-    vals = {
-        "LlmModel": ", ".join(sorted(df.model.unique())).replace("_", "\\_"),
-        "LlmParams": str(meta.get("parameter_size") or "unknown"),
-        "LlmQuant": str(meta.get("quantization") or "unknown").replace("_", "\\_"),
-        "LlmRun": str(len(df)),
-        "LlmTypCert": f"{int(typ.certified.sum())}/{len(typ)}",
-        "LlmAdaptCert": f"{int(cert_adapt.certified.sum())}/{len(cert_adapt)}",
-        "LlmUncertStop": f"{int((uncert.stop_reason == 'agent_stop').sum())}/{len(uncert)}",
-        "LlmUncertFalse": str(int(uncert.certified.sum())),
-        "LlmInvalid": f"{df.invalid_actions.sum() / max(df.steps.sum(), 1) * 100:.1f}",
-        "LlmTypRatio": f"{ratio.mean():.2f}" if len(ratio) else "n/a",
-        "LlmUncertSteps": f"{uncert.steps.mean():.1f}" if len(uncert) else "n/a",
-        "LlmAdaptCost": (f"{cert_adapt[cert_adapt.certified].cost_to_certify.mean():.1f}"
-                         if cert_adapt.certified.any() else "none"),
-    }
+    labels = [f"{a}|assumed|eps={e:.2f}|k={k}" for a, e, k in run.REGIMES]
+    frames, vals = [], {}
+    # Macro prefixes: "Cl" for the Claude run, "Os" for the first open-weight (local) run.
+    prefixes = {}
+    for p in runs:
+        prefix = "Cl" if p.parent.name.startswith("claude") else "Os"
+        if prefix in prefixes.values():
+            continue
+        prefixes[p] = prefix
+    for p, prefix in prefixes.items():
+        df = pd.read_csv(p)
+        df = df[df.regime.isin(labels)].copy()
+        record = json.loads((p.parent / "run_record.json").read_text())
+        frames.append(df)
+        vals.update(_llm_macros(prefix, df, record))
     out["range_llm_numbers.tex"] = "% Generated from data/llm_defender/*/summary.csv.\n" + "".join(
         "\\newcommand{\\" + k + "}{" + v + "}\n" for k, v in sorted(vals.items()))
+    df = pd.concat(frames, ignore_index=True)
+    order = {lab: i for i, lab in enumerate(labels)}
     rows = []
-    for (adv, eps, k), g in df.groupby(["adversary", "epsilon", "k"], sort=False):
+    for (mname, regime), g in sorted(df.groupby(["model", "regime"]),
+                                     key=lambda kv: (kv[0][0], order[kv[0][1]])):
         ok = g[g.certified]
-        rows.append([adv, f"{eps:.2f}", str(k),
+        rows.append([_tex(mname), g.adversary.iloc[0], f"{g.epsilon.iloc[0]:.2f}", str(g.k.iloc[0]),
                      _gapcell(g.optimal_size.iloc[0], bool(g.optimal_computed.iloc[0]),
                               bool(g.certifiable.iloc[0])),
                      _cost(g.greedy_cost.iloc[0]),
