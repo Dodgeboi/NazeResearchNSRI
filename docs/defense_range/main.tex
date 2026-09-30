@@ -6,6 +6,7 @@
 \makeatletter\let\tableinput\@@input\makeatother
 \input{range_numbers}
 \input{range_llm_protocol}
+\IfFileExists{range_llm_numbers.tex}{\input{range_llm_numbers}}{}
 
 \begin{document}
 \title{A Certified Cyber Range for Automated Defenders:\\
@@ -30,8 +31,13 @@ score exposes what an empirical one cannot: \RangeAdaptiveUncert{} of
 \RangeAdaptiveRegimes{} adaptive regimes admit no certifying portfolio at any cost. Using
 the certificate as feedback cuts a certificate-blind heuristic's control burden by about
 a third against the typical adversary, yet the same greedy defender can fall far short
-of the exact optimum against the adaptive one. The defender interface is
-agent-agnostic, so learning and LLM-based defenders can be held to the same guarantee.
+of the exact optimum against the adaptive one. Because the interface is agent-agnostic, we
+also run a language-model defender (Claude Sonnet~5) through it: it certified every
+typical regime, though with larger portfolios than the greedy defender; it certified the
+one adaptive regime that admits a certificate with \ClAdaptRange{} mitigations, where the
+greedy and coverage heuristics need \ClAdaptGreedy; and it chose to stop in every regime
+that no portfolio can certify, but only after deploying \ClUncertDeployed{} mitigations on
+average.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -51,7 +57,8 @@ about patient harm during hospital cyberattacks~\cite{straw2025cipher}.
 guaranteed/possible certificate for $k$-of-$n$ clinical outage; (ii) a closed-form
 adaptive adversary that makes the range dynamic while keeping the certificate exact;
 (iii) a benchmark of four reference defenders across \RangeRegimes{} regimes, including
-their optimality gap against an exact optimiser.
+their optimality gap against an exact optimiser; (iv) a first evaluation of a
+language-model defender through the same interface, scored by the same certificate.
 
 \section{The range}
 A defender chooses a \emph{control portfolio}: a set of ATT\&CK mitigations
@@ -154,9 +161,12 @@ $\varepsilon$ & $k$ & Optimal & Greedy & Coverage & Random\\\midrule
 \end{table}
 
 
-\section{A language-model defender}
-To test the interface with an actual language-model agent, we run an open-weight model
-locally (served by Ollama, no external API) as a defender. Each turn it sees the regime
+\section{A language-model defender}\label{sec:llm}
+To test the interface with an actual language-model agent, we run Claude Sonnet~5 as a
+defender through the Claude Code command-line interface, each turn a single call with no
+tools, no settings, an empty working directory and our system prompt, so the model sees
+only the episode transcript; the same harness runs open-weight models locally through
+Ollama. Each turn it sees the regime
 (adversary, $k$, $\varepsilon$), the catalog of mitigations with the techniques and
 stages each covers, what it has deployed, and the certified worst-case bound; it replies
 with one JSON action (add, remove, or stop). It is told to reach the target with as few
@@ -165,15 +175,15 @@ reachability floor is not revealed. Invalid replies are no-ops and are counted. 
 protocol was fixed before any model was run: \LlmTypical{} typical and \LlmAdaptive{}
 adaptive regimes (assumed degradation), the adaptive ones one certifiable
 ($\varepsilon{=}0.10$, $k{=}3$) and three that no portfolio can certify;
-\LlmSeeds{} seeds each at temperature \LlmTemperature{} (\LlmEpisodes{} episodes); at
-most \LlmMaxSteps{} turns; a \LlmContext-token context. The metrics are the share of
+\LlmSeeds{} repeats each (\LlmEpisodes{} episodes; for local models, seeds at temperature
+\LlmTemperature{} and a \LlmContext-token context); at most \LlmMaxSteps{} turns. The metrics are the share of
 episodes certified, the cost at first certification against the exact optimum and the
 greedy defender, whether the agent stops on uncertifiable regimes rather than deploying
 until the turn limit, and the rate of invalid actions. Replaying the greedy defender
 through the same text interface reproduces its benchmark costs exactly, which checks the
 harness.
 
-\IfFileExists{range_llm_numbers.tex}{\input{range_llm_numbers}
+\IfFileExists{range_llm_numbers.tex}{%
 \begin{table*}[t]\centering\footnotesize
 \caption{Language-model defenders per regime: the reference costs (exact optimum,
 greedy), episodes certified, mean portfolio size when certified, episodes in which the
@@ -187,10 +197,9 @@ Model & Adversary & $\varepsilon$ & $k$ & Optimal & Greedy & Certified & Mean si
 \input{llm_findings}}{}
 
 \section{Roadmap}
-The next step is the one this draft does not yet take: evaluating learning and
-language-model defenders. The interface already exposes a textual observation (named
-mitigations, techniques covered, stages touched) and a discrete action space, so an LLM
-agent can act through it without changes to the scorer. We plan to report each agent's
+Next we will evaluate open-weight models on the same protocol (the harness already runs
+them locally), more repeats per regime, and agents given tools such as a what-if scorer.
+We plan to report each agent's
 certified risk as a multiple of the fully-defended floor, which separates what an agent
 failed to do from what ATT\&CK does not allow; to add adversaries that learn rather than
 best-respond in closed form; and to add further impact models beyond the hospital.
@@ -204,10 +213,12 @@ ownable here is the provable score and the adaptive-adversary reachability floor
 exposes, not the idea of scoring defenders on ATT\&CK. It is realistically a
 work-in-progress contribution---not a new theorem (interval-corner certificates and the
 $k$-of-$n$ bound are standard) and not a validated real-world defense.
-Most pointedly for an agentic-defense venue, the defenders evaluated here are
-classical search procedures, not autonomous agents: the contribution is the
-evaluation environment and the guarantee it enforces, and the agent-agnostic API is
-the intended bridge, but no agentic defender is evaluated in this draft.
+The language-model evaluation is small: one closed model, \ClEpisodes{} episodes, three
+repeats per regime at the interface's default sampling, and one prompt. The model belongs
+to the family that assisted with this work's code, and the evaluation reflects the model
+version current at the time of the run. The protocol's temperature and seeds could not be
+set through the command-line interface, and a spending cap ended the run two episodes
+short of the planned \LlmEpisodes{} (Section~\ref{sec:llm}).
 MITRE ATT\&CK and the CIPHER harm corpus are real; the hospital is synthetic, since
 real hospital maps and per-incident telemetry are not public. Effectiveness and
 degradation are analyst-prior intervals anchored to published figures, never incident
@@ -225,8 +236,9 @@ the same guarantee.
 \paragraph{Reproducibility and AI use} All numbers are generated from committed tables; the
 benchmark is deterministic (a single fixed seed for the random policy) and carries a
 provenance manifest recording the SHA-256 of every input and output over the pinned
-ATT\&CK bundle and the CIPHER corpus. No LLM or network access is used by the range or
-the defenders. Code and data will be released on publication. The code and draft text
+ATT\&CK bundle and the CIPHER corpus. The range and the reference defenders use no LLM;
+the language-model run records every prompt, reply and cost. Code, data and transcripts
+will be released on publication. The code and draft text
 were produced with the assistance of an AI system (Claude); all results are reproduced
 by automated tests.
 

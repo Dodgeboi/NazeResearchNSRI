@@ -1,0 +1,18 @@
+% Written from the committed results in data/llm_defender/claude-sonnet-5 (numbers are generated macros).
+\paragraph{Results} Table~\ref{tab:llm}. The run used \ClEpisodes{} episodes: a spending
+cap of about eight US dollars stopped it before the last two repeats of two uncertifiable
+regimes (total cost \$\ClCost{}). Against the typical adversary Claude certified
+\ClTypCert{} episodes, with \ClTypMean{} mitigations on average against \ClTypGreedyMean{}
+for the greedy defender, \ClTypCoverageMean{} for the coverage heuristic and
+\ClTypOptMean{} for the exact optimum (\ClTypRatio{} times the optimum per episode). Its
+stated reasons show a coverage-first strategy: it adds the mitigations covering the most
+techniques, and its portfolios resemble the coverage heuristic's. Against the adaptive
+adversary the picture reverses. In the one regime that admits a certificate it certified
+\ClAdaptCert{} episodes with \ClAdaptRange{} mitigations, where the greedy and coverage
+heuristics need \ClAdaptGreedy{} and the exact optimum is \ClAdaptOpt. In the regimes no
+portfolio can certify it never claimed success (it cannot: the score is a certificate),
+and it chose to stop in \ClUncertStop{} episodes, but only after \ClUncertSteps{} turns on
+average and with \ClUncertDeployed{} mitigations deployed, so it recognised impossibility
+late. It made \ClInvalidCount{} invalid action in \ClSteps{} turns. With three repeats per
+regime these are descriptive results about one model, not estimates for language-model
+defenders in general.

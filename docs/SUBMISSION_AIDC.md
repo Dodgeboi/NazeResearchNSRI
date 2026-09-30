@@ -24,17 +24,19 @@ They are distinct contributions and cite each other only anonymously.
 | Source / PDF | `docs/attack_gaps/main.tex` / `main.pdf` | `docs/defense_range/main.tex` / `main.pdf` |
 | Contribution | Measurement of ATT&CK mitigation gaps over 15 releases, the certification ceiling they impose on any defender, documented ransomware use, gap persistence, minimal repair, greedy reference defender | Evaluation environment scoring defenders with provable certificates; typical vs adaptive adversary; four reference defenders and their optimality gap |
 | Template | IEEEtran conference+compsoc, US Letter (612×792 pt) | same |
-| Length | 8 pages including references and appendix (limit 12 excluding them) | 3 pages including references (limit 6) |
+| Length | 8 pages including references and appendix (limit 12 excluding them) | 4 pages including references (limit 6) |
 | Anonymized | Author block "Anonymous Author(s)", no repository paths or links, empty PDF author metadata | same; Paper A cited as "Anonymous, concurrent submission" |
 | AI-use statement | Yes (Limitations, "Artifact and AI use") | Yes ("Reproducibility and AI use") |
 
 ## What only you can do
 
-0. **Run the LLM defender on your computer** (free, about 1–3 hours) following
-   [`docs/LLM_DEFENDER_RUN.md`](LLM_DEFENDER_RUN.md) and push `data/llm_defender`. Paper B
-   has a pre-declared protocol section; its results table and findings appear only once
-   real results are pushed, and Claude then writes the findings and updates the abstract
-   and limitations. Do not submit Paper B without this step, or remove the section.
+0. **Deadline status (checked 2026-09-30):** the AIDC deadline was 2026-09-25 AoE and no
+   extension was found. Use these versions for a camera-ready (if accepted; notification
+   2026-10-16) or for the next venue.
+   **LLM defender:** done with Claude Sonnet 5 (22 episodes, $7.37, results in Paper B).
+   Optionally add a free open-weight model by following
+   [`docs/LLM_DEFENDER_RUN.md`](LLM_DEFENDER_RUN.md) and pushing `data/llm_defender`;
+   it appears next to Claude in the same table.
 1. Create or confirm HotCRP accounts and register both submissions before the deadline.
 2. Enter the real author lists and conflicts in HotCRP (not in the PDFs).
 3. Decide whether to keep the AI-use statements, and check ACSAC's AI policy.

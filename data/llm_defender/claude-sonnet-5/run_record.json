@@ -1,0 +1,51 @@
+{
+  "model": "claude-sonnet-5",
+  "agent": "claude",
+  "interface": {
+    "interface": "Claude Code CLI (claude -p), no tools, no settings, empty cwd",
+    "cli_version": "2.1.285 (Claude Code)",
+    "model": "claude-sonnet-5",
+    "sampling": "CLI defaults (temperature and seed not settable)"
+  },
+  "total_cost_usd": 7.3704,
+  "budget_usd": 7.0,
+  "budget_hit": true,
+  "temperature": null,
+  "seeds": [
+    1,
+    2,
+    3
+  ],
+  "max_steps": 30,
+  "num_ctx": 16384,
+  "quick": false,
+  "dry_run": false,
+  "regimes": [
+    "typical|assumed|eps=0.10|k=1",
+    "typical|assumed|eps=0.05|k=1",
+    "typical|assumed|eps=0.05|k=2",
+    "typical|assumed|eps=0.01|k=4",
+    "adaptive|assumed|eps=0.10|k=3",
+    "adaptive|assumed|eps=0.10|k=2",
+    "adaptive|assumed|eps=0.05|k=3",
+    "adaptive|assumed|eps=0.05|k=1"
+  ],
+  "git_commit": "053f85bb2b3ed2961c7b7cf5d6d5acd493f45a46",
+  "python": "3.12.3",
+  "platform": "Linux",
+  "system_prompt_sha256": "9083804743faff09090caea6ea6ecbe5717f936b112e7a6d03f77c74381513b6",
+  "inputs": {
+    "scripts/run_llm_defender.py": "69b1313b2dece4e1d80828ca917cfd489811cc6fa1011f91b192accfc9ff8549",
+    "src/grrc/range/llm_agent.py": "d485e00a4e0b4c758ba0539848a9434c286f65b8b7b32a9d09089ea3142e276f",
+    "src/grrc/range/environment.py": "d97fd60654f269b462c2200bc4090ebc3f3656ff68cecbf6a553309d4a2cfbf6",
+    "src/grrc/range/adversary.py": "4e44573dc4a25b6016be56e279b358250d82d4ac59dc29179582163b5ab261f8",
+    "src/grrc/range/regimes.py": "2d3b686db5d2552c6c8e068e52f359bb2ed64b51c66a1e33ba07d3728afe6942",
+    "data/attack/raw/enterprise-attack-17.1.json.gz": "522b09c7db81ce61887baa19dde98ea06ee4045420fe3c42f5f58f3e3382c597",
+    "data/defense_range/optimality_gap.csv": "898b604edf55e26aa1cb72c5c61a5ebf6d1198ddf2f4b5c45bb5db52ce24a09d"
+  },
+  "outputs": {
+    "data/llm_defender/claude-sonnet-5/episodes.jsonl": "cdac21d840b399a146c318ee47346ba2c022074360b3b5f6c9362ed0cd80ebea",
+    "data/llm_defender/claude-sonnet-5/summary.csv": "da41f15ce95780049cd5656f0b0b4390c9599ee6fd52d0a3549a0a0d945e6ff0"
+  },
+  "notes": "Annotation added after the run: the run was executed in two invocations. Episodes 1-15 ran first (Claude Code CLI 2.1.281, harness commit b9259ae) and stopped at the session's background time limit; episodes 16-22 ran on resume (CLI 2.1.285; the recorded git_commit 053f85b differs from b9259ae only by data checkpoints). The resumed invocation used a $7 start limit so that total spend stayed near the agreed $8 cap; the last two seed-3 episodes (adaptive eps=0.05, k=3 and k=1) were therefore not run."
+}

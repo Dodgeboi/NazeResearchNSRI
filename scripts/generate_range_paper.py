@@ -148,6 +148,19 @@ def _llm_macros(prefix, df, record):
         prefix + "UncertSteps": f"{uncert.steps.mean():.1f}" if len(uncert) else "n/a",
         prefix + "Invalid": f"{df.invalid_actions.sum() / max(df.steps.sum(), 1) * 100:.1f}",
         prefix + "Cost": f"{df.cost_usd.sum():.2f}" if "cost_usd" in df else "0.00",
+        prefix + "TypMean": f"{typ_ok.cost_to_certify.mean():.1f}" if len(typ_ok) else "n/a",
+        prefix + "TypGreedyMean": f"{typ.greedy_cost.mean():.1f}",
+        prefix + "TypCoverageMean": f"{typ.coverage_cost.mean():.1f}",
+        prefix + "TypOptMean": f"{typ.optimal_size.mean():.1f}",
+        prefix + "AdaptRange": (f"{int(ok_adapt.cost_to_certify.min())}--{int(ok_adapt.cost_to_certify.max())}"
+                                if len(ok_adapt) else "none"),
+        prefix + "AdaptGreedy": str(int(cert_adapt.greedy_cost.iloc[0])) if len(cert_adapt) else "n/a",
+        prefix + "AdaptCoverage": str(int(cert_adapt.coverage_cost.iloc[0])) if len(cert_adapt) else "n/a",
+        prefix + "AdaptOpt": str(int(cert_adapt.optimal_size.iloc[0])) if len(cert_adapt) else "n/a",
+        prefix + "UncertDeployed": f"{uncert.final_cost.mean():.1f}" if len(uncert) else "n/a",
+        prefix + "UncertMaxSteps": str(int(uncert.steps.max())) if len(uncert) else "n/a",
+        prefix + "Steps": str(int(df.steps.sum())),
+        prefix + "InvalidCount": str(int(df.invalid_actions.sum())),
     }
 
 
