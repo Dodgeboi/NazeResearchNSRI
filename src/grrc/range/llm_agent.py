@@ -221,8 +221,9 @@ class ClaudeCLIAgent:
     A failed call returns an empty reply, which the episode counts as an invalid action."""
 
     def __init__(self, model="claude-sonnet-5", workdir=None, executable="claude",
-                 max_call_usd=0.25, timeout=300, retries=2):
+                 max_call_usd=0.25, timeout=300, retries=2, system_prompt=None):
         self.model, self.executable = model, executable
+        self.system_prompt = SYSTEM_PROMPT if system_prompt is None else system_prompt
         # An empty directory outside any repository, so no project files or memory load.
         self.workdir = Path(workdir) if workdir else Path(tempfile.mkdtemp(prefix="llm-defender-"))
         self.max_call_usd, self.timeout, self.retries = max_call_usd, timeout, retries
@@ -230,7 +231,7 @@ class ClaudeCLIAgent:
     def command(self):
         return [self.executable, "-p", "--tools", "", "--strict-mcp-config",
                 "--setting-sources", "", "--disable-slash-commands",
-                "--system-prompt", SYSTEM_PROMPT, "--model", self.model,
+                "--system-prompt", self.system_prompt, "--model", self.model,
                 "--output-format", "json", "--no-session-persistence",
                 "--max-budget-usd", f"{self.max_call_usd:g}"]
 

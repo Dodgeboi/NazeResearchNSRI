@@ -113,7 +113,11 @@ class ChampionAgent:
 
     name = "champion-ppo"
 
-    def __init__(self, cardiff_dir=CARDIFF):
+    def __init__(self, cardiff_dir=CARDIFF, fallback="sleep"):
+        """``fallback`` is what the agent loads when the fingerprint matches neither known
+        attacker: ``"sleep"`` (the original behaviour) or ``"bline"`` (a one-line
+        repair: assume the more aggressive attacker)."""
+        self.fallback = fallback
         self.ckpt = {"bline": Path(cardiff_dir) / "Models/bline/model.pth",
                      "meander": Path(cardiff_dir) / "Models/meander/model.pth"}
         self.end_episode()
@@ -139,6 +143,8 @@ class ChampionAgent:
                 self.agent, self.loaded = PPOAgent(self.ckpt["meander"]), "meander"
             elif total == 2:
                 self.agent, self.loaded = PPOAgent(self.ckpt["bline"]), "bline"
+            elif self.fallback == "bline":
+                self.agent, self.loaded = PPOAgent(self.ckpt["bline"]), "bline-fallback"
             else:
                 self.agent, self.loaded = None, "sleep"
             self.agent_loaded = True
