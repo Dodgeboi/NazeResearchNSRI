@@ -115,6 +115,28 @@ def content():
             t + "Minutes": f1(r.seconds.mean() / 60),
         })
     v["CgLlmCost"] = f"{total_cost:.2f}"
+    paired = pd.read_csv(DATA / "paired.csv")
+    for d in llm_present:
+        t = LLM_TAGS[d]
+        g = s[s.defender == d]
+        v[t + "Max"] = str(int(g.n.max()))
+        v[t + "Breaches"] = str(int(round((g.breach_mean * g.n).sum())))
+        # cost of certifying at the winner's precision: as many episodes per fixed attacker
+        records = []
+        for p_ in sorted((DATA / "llm" / d).glob("*.jsonl")):
+            records += [json.loads(line) for line in p_.read_text().splitlines()]
+        per_ep = pd.DataFrame(records).cost_usd.mean()
+        v[t + "CertCost"] = f"{per_ep * params['episodes'] * len(FIXED):.0f}"
+        v[t + "CertHours"] = f"{pd.DataFrame(records).seconds.mean() * params['episodes'] * len(FIXED) / 3600:.0f}"
+        row = paired[(paired.defender == d) & (paired.reference == "champion")
+                     & (paired.attacker == "delayed_b_line")]
+        if not row.empty:
+            r = row.iloc[0]
+            v[t + "PairN"] = str(int(r.n))
+            v[t + "PairOnlyChamp"] = str(int(r.only_reference))
+            v[t + "PairOnlyLlm"] = str(int(r.only_llm))
+            v[t + "PairP"] = f"{r.sign_test_p:.3f}"
+            v[t + "PairVerdict"] = str(r.verdict)
 
     gen = {"cage_numbers.tex": "% Generated; do not edit.\n" + "".join(
         "\\newcommand{\\" + k + "}{" + val + "}\n" for k, val in sorted(v.items()))}

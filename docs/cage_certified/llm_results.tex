@@ -1,0 +1,22 @@
+% LLM-defender results; every number is a generated macro (cage_numbers.tex).
+Claude Haiku~4.5 without extended thinking (\HnPer{} episodes per attacker; \$\HnCostEp{}
+and \HnMinutes{} minutes per episode) was breached in \HnBlineBreach\% of B\_line
+episodes and \HnDelayedBreach\% of delayed-B\_line episodes, and never by Meander or
+Meander$\to$B\_line. Unlike the winner it does not act on a guess of which attacker it
+faces, and the delay did not raise its breach rate. On the \HnPairN{} shared seeds
+against delayed B\_line, the winner alone was breached in \HnPairOnlyChamp{} and Haiku
+alone in \HnPairOnlyLlm; a conventional fixed-sample sign test gives $p=\HnPairP$, but at
+this sample size the time-uniform bound does not yet certify the difference. Claude
+Sonnet~5 without thinking (\SnPer--\SnMax{} episodes per attacker, \$\SnCostEp{} per
+episode) was breached in \SnBreaches{} of \SnEpisodes{} episodes, against every attacker
+including the delayed one, with a mean reward of \SnSeenReward{} on the seen attackers
+(winner \CgChampSeenReward, React-restore \CgRestoreSeenReward). Extended thinking did not
+help Haiku: with it (\HtPer--\HtMax{} episodes per attacker) each episode cost \$\HtCostEp{}
+and took \HtMinutes{} minutes, and it was breached in \HtBlineBreach\% of B\_line
+episodes. Invalid replies were rare (\HnInvalid{} of \HnCalls{} calls for Haiku,
+\SnInvalid{} of \SnCalls{} for Sonnet). These results are descriptive: with so few
+episodes the certified worst-case breach bounds remain wide (Haiku \HnAllBreachCert,
+Sonnet \SnAllBreachCert). Certifying an LLM defender to the precision we certify the
+winner (\CgEpisodes{} episodes per attacker) would cost about \$\HnCertCost{} and
+\HnCertHours{} hours with Haiku and \$\SnCertCost{} and \SnCertHours{} hours with Sonnet
+through this interface; the whole LLM study cost \$\CgLlmCost.
