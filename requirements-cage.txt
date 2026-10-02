@@ -1,0 +1,12 @@
+# Separate environment for the CAGE Challenge 2 study (CybORG needs the old gym API).
+# Python 3.12; installed by scripts/setup_cage.sh.
+gym==0.26.2
+numpy==2.3.5
+pandas==3.0.1
+scipy==1.18.0
+matplotlib==3.11.0
+pyyaml==6.0.3
+prettytable==3.17.0
+paramiko==4.0.0
+docutils==0.22.2
+pytest==9.1.1

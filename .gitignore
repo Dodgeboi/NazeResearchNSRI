@@ -53,3 +53,7 @@ data/multiobjective/confirmatory/multiobjective_confirmatory_results.csv
 
 # Raw ATT&CK release bundles (re-fetched and hash-verified by scripts/fetch_attack_history.py)
 data/attack_history/cache/
+
+# CAGE study: separate environment and pinned third-party code (scripts/setup_cage.sh)
+.venv-cage/
+vendor/cage/
