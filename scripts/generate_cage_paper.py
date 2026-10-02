@@ -1,0 +1,170 @@
+#!/usr/bin/env python3
+"""Generate the CAGE-2 certified-evaluation paper's numbers and tables from committed CSVs."""
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+
+import pandas as pd
+
+from grrc.provenance import verify_manifest
+
+ROOT = Path(__file__).resolve().parents[1]
+DATA = ROOT / "data/cage"
+PAPER = ROOT / "docs/cage_certified"
+FIXED = ["b_line", "meander", "delayed_b_line", "meander_then_b_line"]
+BASELINES = ["sleep", "react-remove", "react-restore", "champion", "champion+fallback"]
+LLM_TAGS = {"claude-haiku-4-5-nothink": "Hn", "claude-sonnet-5-nothink": "Sn",
+            "claude-haiku-4-5": "Ht"}
+NAMES = {"sleep": "Sleep", "react-remove": "React-remove", "react-restore": "React-restore",
+         "champion": "Challenge winner", "champion+fallback": "Winner + fallback",
+         "claude-haiku-4-5-nothink": "Haiku 4.5", "claude-sonnet-5-nothink": "Sonnet 5",
+         "claude-haiku-4-5": "Haiku 4.5 + thinking"}
+
+
+def f2(x):
+    return f"{float(x):.2f}"
+
+
+def f1(x):
+    return f"{float(x):.1f}"
+
+
+def pct(x):
+    return f"{100 * float(x):.0f}"
+
+
+def content():
+    verify_manifest(DATA / "cage_certified_manifest.json")
+    verify_manifest(DATA / "cage_eval_manifest.json")
+    params = json.loads((DATA / "cage_eval_manifest.json").read_text())["parameters"]
+    s = pd.read_csv(DATA / "certified_summary.csv")
+    w = pd.read_csv(DATA / "worst_case.csv")
+    rk = pd.read_csv(DATA / "rankings.csv").set_index("defender")
+    stop = pd.read_csv(DATA / "stopping.csv")
+    eps = pd.read_csv(DATA / "episodes.csv")
+
+    def cell(d, a, col):
+        return s[(s.defender == d) & (s.attacker == a)].iloc[0][col]
+
+    def worst(d, scope, col):
+        return w[(w.defender == d) & (w.scope == scope)].iloc[0][col]
+
+    champ_adapt = eps[(eps.defender == "champion") & (eps.attacker == "adaptive")]
+    base_stop = stop[stop.defender.isin(BASELINES) & (stop.resolved_at > 0)]
+    v = {
+        "CgEpisodes": str(params["episodes"]), "CgSteps": str(params["steps"]),
+        "CgStepBound": f1(-params["step_bound"]),
+        "CgEpisodeBound": f"{-params['step_bound'] * params['steps']:.0f}",
+        "CgDefenders": str(len(BASELINES)),
+        "CgChampSeenReward": f1(worst("champion", "seen", "reward_mean_seen")),
+        "CgChampSeenBreachUp": f2(worst("champion", "seen", "breach_certified")),
+        "CgChampDelayedReward": f1(cell("champion", "delayed_b_line", "reward_mean")),
+        "CgChampDelayedBreach": pct(cell("champion", "delayed_b_line", "breach_mean")),
+        "CgChampDelayedLow": f2(cell("champion", "delayed_b_line", "breach_lower")),
+        "CgChampDelayedUp": f2(cell("champion", "delayed_b_line", "breach_upper")),
+        "CgChampAllBreachCert": f2(worst("champion", "all", "breach_certified")),
+        "CgChampAdaptBreach": pct(cell("champion", "adaptive", "breach_mean")),
+        "CgChampAdaptUp": f2(cell("champion", "adaptive", "breach_upper")),
+        "CgChampAdaptDelayed": str(int((champ_adapt.strategy == "delayed_b_line").sum())),
+        "CgFixDelayedReward": f1(cell("champion+fallback", "delayed_b_line", "reward_mean")),
+        "CgFixAllBreachCert": f2(worst("champion+fallback", "all", "breach_certified")),
+        "CgFixAdaptUp": f2(cell("champion+fallback", "adaptive", "breach_upper")),
+        "CgRestoreAllBreachCert": f2(worst("react-restore", "all", "breach_certified")),
+        "CgRemoveAllBreachCert": f2(worst("react-remove", "all", "breach_certified")),
+        "CgRestoreSeenReward": f1(worst("react-restore", "seen", "reward_mean_seen")),
+        "CgChampRankMean": str(int(rk.loc["champion", "rank_mean_seen"])),
+        "CgChampRankCert": str(int(rk.loc["champion", "rank_certified_all"])),
+        "CgStopMin": str(int(base_stop.resolved_at.min())),
+        "CgStopMax": str(int(base_stop.resolved_at.max())),
+        "CgStopMedian": f"{base_stop.resolved_at.median():.0f}",
+        "CgStopResolved": str(len(base_stop)),
+        "CgStopPairs": str(int(stop.defender.isin(BASELINES).sum())),
+    }
+    val = DATA / "champion_validation.csv"
+    if val.exists():
+        cv = pd.read_csv(val).set_index("attacker")
+        v.update({"CgValMeanderPort": f2(cv.loc["meander", "port_mean"]),
+                  "CgValMeanderPub": f2(cv.loc["meander", "published_mean"]),
+                  "CgValBlinePort": f2(cv.loc["b_line", "port_mean"]),
+                  "CgValBlinePub": f2(cv.loc["b_line", "published_mean"]),
+                  "CgValEpisodes": str(int(cv.episodes.iloc[0]))})
+
+    llm_present = [d for d in LLM_TAGS if d in set(s.defender)]
+    total_cost = 0.0
+    for d in llm_present:
+        t = LLM_TAGS[d]
+        g = s[s.defender == d]
+        records = []
+        for p in sorted((DATA / "llm" / d).glob("*.jsonl")):
+            records += [json.loads(line) for line in p.read_text().splitlines()]
+        r = pd.DataFrame(records)
+        total_cost += r.cost_usd.sum()
+        have_all = set(FIXED) <= set(g.attacker)
+        v.update({
+            t + "Per": str(int(g.n.min())),
+            t + "Episodes": str(int(g.n.sum())),
+            t + "SeenReward": f1(r[r.attacker.isin(["b_line", "meander"])].reward.mean()),
+            t + "DelayedReward": f1(cell(d, "delayed_b_line", "reward_mean")),
+            t + "DelayedBreach": pct(cell(d, "delayed_b_line", "breach_mean")),
+            t + "BlineBreach": pct(cell(d, "b_line", "breach_mean")),
+            t + "AllBreachCert": f2(worst(d, "all", "breach_certified")) if have_all else "n/a",
+            t + "Invalid": str(int(r.invalid.sum())), t + "Calls": str(int(r.calls.sum())),
+            t + "CostEp": f"{r.cost_usd.mean():.2f}", t + "Cost": f"{r.cost_usd.sum():.2f}",
+            t + "Minutes": f1(r.seconds.mean() / 60),
+        })
+    v["CgLlmCost"] = f"{total_cost:.2f}"
+
+    gen = {"cage_numbers.tex": "% Generated; do not edit.\n" + "".join(
+        "\\newcommand{\\" + k + "}{" + val + "}\n" for k, val in sorted(v.items()))}
+
+    rows = []
+    for d in BASELINES + llm_present:
+        row = [NAMES[d]]
+        for a in FIXED + ["adaptive"]:
+            m = s[(s.defender == d) & (s.attacker == a)]
+            if m.empty:
+                row.append("--")
+                continue
+            m = m.iloc[0]
+            row.append(f"{f2(m.breach_mean)} ({f2(m.breach_upper)})")
+        row.append(str(int(s[s.defender == d].n.min())))
+        rows.append(row)
+    gen["table_cage_breach_rows.tex"] = "% Generated from certified_summary.csv.\n" + "".join(
+        " & ".join(r) + " \\\\\n" for r in rows)
+
+    rows = []
+    for d in BASELINES + llm_present:
+        if d not in set(w.defender) or d not in rk.index:
+            continue
+        rows.append([NAMES[d], f1(worst(d, "seen", "reward_mean_seen")),
+                     str(int(rk.loc[d, "rank_mean_seen"])),
+                     f2(worst(d, "seen", "breach_certified")), f2(worst(d, "all", "breach_certified")),
+                     str(int(rk.loc[d, "rank_certified_all"])),
+                     str(worst(d, "all", "breach_worst_attacker")).replace("_", "\\_")])
+    gen["table_cage_rank_rows.tex"] = "% Generated from worst_case.csv and rankings.csv.\n" + "".join(
+        " & ".join(r) + " \\\\\n" for r in rows)
+    return gen
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--check", action="store_true")
+    args = parser.parse_args()
+    gen = content()
+    PAPER.mkdir(parents=True, exist_ok=True)
+    if args.check:
+        for name, value in gen.items():
+            if (PAPER / name).read_text(encoding="utf-8") != value:
+                raise AssertionError("stale generated TeX: " + name)
+        print("CAGE paper values verified")
+        return 0
+    for name, value in gen.items():
+        (PAPER / name).write_text(value, encoding="utf-8", newline="\n")
+    print(f"wrote {len(gen)} generated files")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

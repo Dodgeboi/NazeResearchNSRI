@@ -1,0 +1,284 @@
+\documentclass[conference,compsoc]{IEEEtran}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm,booktabs,graphicx,array}
+\usepackage[hidelinks,pdfauthor={},pdftitle={Certified Evaluation of Autonomous Cyber Defenders}]{hyperref}
+\usepackage{microtype}
+\usepackage{placeins}
+\makeatletter\let\tableinput\@@input\makeatother
+\input{cage_numbers}
+\newtheorem{proposition}{Proposition}
+
+\begin{document}
+\title{Certified Evaluation of Autonomous Cyber Defenders:\\
+A Five-Step Delay Breaks the CAGE-2 Champion}
+\author{\IEEEauthorblockN{Anonymous Author(s)}\IEEEauthorblockA{Anonymized for double-blind review}}
+\maketitle
+
+\begin{abstract}
+Autonomous cyber defenders, from reinforcement-learning (RL) agents to language-model
+agents, are compared by their mean reward over a fixed number of episodes against the
+scripted attackers they were built for. Such scores carry no guarantee and say nothing
+about attackers outside that set. We propose a \emph{certified evaluation} protocol:
+distribution-free confidence bounds on a defender's reward and on the probability that
+the mission-critical server is breached, valid simultaneously at every number of
+episodes (so evaluation may stop as soon as a verdict is reached), valid against an
+attacker that adapts across episodes, and combined into a joint worst case over a set of
+attackers that includes ones the defender has not seen. Applied to CAGE Challenge~2,
+the protocol shows that the challenge's winning RL agent, which is never breached by
+the two official attackers (certified breach rate at most \CgChampSeenBreachUp), is
+breached in \CgChampDelayedBreach\% of episodes when the official B\_line attacker
+simply waits one to five steps before starting: its attacker fingerprint misfires and it
+falls back to doing nothing. An adaptive attacker finds this on its own. The winner ranks
+first of \CgDefenders{} defenders by mean reward and \CgChampRankCert{}th by certified worst case, and
+a one-line change, which the certificate pointed to, restores a certified breach rate of
+at most \CgFixAllBreachCert{} on every attacker. Claude Haiku~4.5 as a defender is
+breached in \HnDelayedBreach\% of delayed-attacker episodes, but certifying language-model
+defenders to the same precision requires far more episodes than such studies usually
+run; we quantify that cost.
+\end{abstract}
+
+\begin{IEEEkeywords}
+autonomous cyber defense, CybORG, CAGE challenge, LLM agents, reinforcement learning,
+evaluation, anytime-valid inference, robustness
+\end{IEEEkeywords}
+
+\section{Introduction}
+Autonomous defense agents are now trained and benchmarked in cyber-operations
+simulators~\cite{standen2021cyborg}, and language-model (LLM) agents have joined the
+reinforcement-learning (RL) agents that dominate the leaderboards~\cite{castro2025llm}.
+The CAGE challenges rank submissions by mean reward against the same rule-based
+attackers used during development, which rewards solutions fitted to known
+adversaries~\cite{king2025graph}. Reported scores are means and standard deviations over
+a fixed number of episodes; they carry no guarantee, and they are silent about what an
+attacker outside the evaluation set would do.
+
+We ask what a defender can be \emph{certified} to achieve. Our protocol gives, for each
+defender and attacker, confidence bounds on the expected episode reward and on the
+probability that the operational server is breached that are distribution-free (they use
+only the known range of the outcome), valid simultaneously at every number of episodes
+(the evaluator may look after every episode and stop as soon as the answer is settled),
+and, for an attacker that adapts across episodes, valid for the running average of what
+the attacker achieves. A defender's certified worst case is the least favourable bound
+over a set of attackers that deliberately includes ones it was not built against.
+
+\paragraph{Contributions}
+(i) A certified evaluation protocol for autonomous defenders with time-uniform,
+distribution-free bounds, a martingale variant for adaptive attackers, and a joint worst
+case over attackers (Section~\ref{sec:protocol}). (ii) A faithful, framework-free port
+of the CAGE Challenge~2 winning agent and two unseen attackers that only re-sequence the
+official attackers' actions (Section~\ref{sec:setup}). (iii) The finding that the
+winner's guarantees do not transfer: a delay of one to five steps defeats it, an
+adaptive attacker discovers this unaided, the certified ranking reverses, and a one-line
+repair restores the guarantee (Section~\ref{sec:results}). (iv) Claude defenders
+evaluated under the same protocol, with and without extended thinking, and the episode
+and dollar cost of certifying an LLM defender. Code, data and transcripts will be
+released.
+
+\section{Background and related work}
+CybORG~\cite{standen2021cyborg} is a cyber-operations gym; CAGE Challenge~2 (Scenario~2)
+defends an enterprise and operational network against the scripted attackers B\_line,
+which heads directly for the operational server, and Meander, which explores the network
+first. The winning entry~\cite{hannay2022cardiff} combines PPO policies trained against
+each attacker with greedy decoy placement and selects a policy by fingerprinting the
+attacker from early scans. Later work studies optimal CAGE-2 strategies with causal
+models and tree search~\cite{hammar2024optimal}, generalisation of graph-based RL
+defenders to new topologies and attackers~\cite{king2025graph}, empirical game-theoretic
+evaluation of autonomous defenders~\cite{palmer2025egta}, and LLM defenders in CybORG's CAGE-4 scenario, which perform comparably to RL agents
+while being slower~\cite{castro2025llm}. These
+studies report empirical means; none certifies a defender or reports a worst case with
+guarantees. Our bounds build on betting confidence
+sequences~\cite{waudbysmith2023betting} and time-uniform martingale
+bounds~\cite{howard2021timeuniform}.
+
+\section{Certified evaluation}\label{sec:protocol}
+An episode against attacker $a$ yields bounded outcomes: the reward $R\in[r_{\min},0]$
+with $r_{\min}=-\CgEpisodeBound$ for a \CgSteps-step Scenario-2 episode (at most
+\CgStepBound{} lost per step: every host fully compromised, the operational server
+impacted and a restore paid for), and the breach indicator $B\in\{0,1\}$ (the attacker
+successfully impacted the operational server at least once).
+
+\paragraph{Fixed attacker}
+Episodes are i.i.d. For outcomes rescaled to $[0,1]$ and each betting fraction $\lambda$
+on a fixed grid, $K_t(m)=\prod_{s\le t}(1+\lambda(y_s-m))$ is a non-negative martingale
+when the mean equals $m$; their average over the grid is too. By Ville's inequality,
+$\{m: K_t(m)<1/\alpha\}$ is a confidence set valid for all $t$ at once with probability
+$1-\alpha$~\cite{waudbysmith2023betting}. We report two-sided bounds at $\alpha=0.05$.
+
+\paragraph{Adaptive attacker}
+If the attacker's choice for episode $t$ depends on past outcomes, the target is the
+running average $\bar\mu_t$ of the conditional means. With increments in $[0,1]$,
+$\sum_{s\le t}(y_s-\mu_s)$ is a martingale with $1/4$-sub-Gaussian increments, and the
+normal-mixture boundary $\sqrt{2(t/4+\rho)\log(\sqrt{(t/4+\rho)/\rho}/\alpha)}$ holds for
+all $t$~\cite{howard2021timeuniform}.
+
+\paragraph{Worst case and stopping}
+The certified worst case over attackers $A$ is the least favourable bound with
+$\alpha/|A|$ per attacker, so it holds jointly. Because all bounds are time-uniform, an
+evaluator may stop at the first episode at which a bound settles a question (for example,
+whether the breach rate is below 0.2) without invalidating the result. Simulation tests
+confirm the stated coverage under per-episode peeking and under an adaptive adversary.
+
+\section{Setup}\label{sec:setup}
+\paragraph{Environment}
+CybORG Scenario~2 at the official CAGE-2 commit, \CgSteps-step episodes, seeded so that
+every (defender, attacker, seed) triple is reproducible and episodes are paired across
+defenders.
+
+\paragraph{Attackers}
+The official B\_line and Meander (\emph{seen}); two \emph{unseen} re-sequencings of their
+own actions: \emph{delayed B\_line}, which sleeps for a uniformly random one to five
+steps first, and \emph{Meander$\to$B\_line}, which explores like Meander for four steps
+and then follows B\_line; and an \emph{adaptive} attacker that picks among these four
+before each episode by EXP3~\cite{auer2002exp3}, rewarded by the damage it did.
+
+\paragraph{Defenders}
+Sleep (no action); the official React-remove and React-restore agents; the challenge
+winner~\cite{hannay2022cardiff}, ported to NumPy from its released checkpoints (a
+restricted unpickler reads the weights without PyTorch), which reproduces its published
+Meander score (\CgValMeanderPort{} against \CgValMeanderPub{} over
+\CgValEpisodes{} episodes); against B\_line it scores \CgValBlinePort{} against the
+published \CgValBlinePub, consistent with an unpublished change to CybORG's host model
+that the authors describe; we evaluate the agent on the unmodified official environment.
+\emph{Winner + fallback} differs in one line: when the fingerprint matches neither known
+attacker it loads the B\_line policy instead of sleeping.
+
+\paragraph{LLM defenders}
+Each step, Claude receives the step number, CybORG's Blue table (per host: subnet,
+activity seen this step, estimated compromise) and its last five actions with their
+outcomes, and replies with one JSON action (Sleep, Monitor, Analyse, Remove, Restore or
+Decoy on a host); invalid replies become Sleep and are counted. Calls are stateless and
+made through the Claude Code command-line interface with no tools, no settings and an
+empty working directory. We evaluate Claude Haiku~4.5 and Claude Sonnet~5 without
+extended thinking and Haiku~4.5 with it, on the same seeds as the other defenders.
+
+\section{Results}\label{sec:results}
+\paragraph{The winner's guarantee does not transfer}
+Table~\ref{tab:breach} and Figure~\ref{fig:breach}. Against the attackers it was built
+for, the challenge winner is never breached in \CgEpisodes{} episodes each (certified
+breach rate at most \CgChampSeenBreachUp; mean reward \CgChampSeenReward). Against
+delayed B\_line it is breached in \CgChampDelayedBreach\% of episodes (certified
+interval \CgChampDelayedLow--\CgChampDelayedUp; mean reward \CgChampDelayedReward):
+the delay changes the scan pattern its fingerprint expects, it classifies the attacker as
+neither, and it falls back to its sleep policy. Meander$\to$B\_line does not fool it.
+The adaptive attacker discovers the weakness without being told: it chose the delayed
+strategy in \CgChampAdaptDelayed{} of \CgEpisodes{} episodes and breached the winner in
+\CgChampAdaptBreach\% (certified running-average bound \CgChampAdaptUp).
+Figure~\ref{fig:anytime} shows the certificates as episodes accumulate: the failure is
+certified (breach rate above 0.2) after a few dozen episodes.
+
+\paragraph{Rankings reverse}
+Table~\ref{tab:rank}. By mean reward on the seen attackers, the winner ranks
+\CgChampRankMean{} of \CgDefenders; by certified worst case over all four fixed attackers it
+ranks \CgChampRankCert{}, behind React-restore (worst-case breach bound
+\CgRestoreAllBreachCert) and even React-remove (\CgRemoveAllBreachCert), with a bound of
+\CgChampAllBreachCert.
+
+\paragraph{The certificate points to a one-line repair}
+Because the worst case names the attacker and the episodes, the failure is easy to
+localise. Loading the B\_line policy when the fingerprint is ambiguous gives a certified
+breach rate of at most \CgFixAllBreachCert{} on every fixed attacker (mean reward
+\CgFixDelayedReward{} against delayed B\_line) and at most \CgFixAdaptUp{} against the
+adaptive attacker.
+
+\paragraph{LLM defenders}
+\input{llm_results}
+
+\paragraph{The cost of certification}
+With time-uniform bounds the evaluator can stop early: for the non-LLM defenders,
+\CgStopResolved{} of \CgStopPairs{} breach questions (rate below or above 0.2) were settled
+after a median of \CgStopMedian{} episodes (range \CgStopMin--\CgStopMax), against the
+\CgEpisodes{} we ran and the 1,000 used by the challenge. Settling a question takes few
+episodes when the breach rate is near 0 or far from the threshold and many when it is
+close, which matters for LLM defenders whose episodes cost money and minutes.
+
+\begin{figure}[t]\centering
+\includegraphics[width=\linewidth]{figure_breach_intervals.pdf}
+\caption{Breach rate of the operational server per defender and attacker, with the
+time-uniform 95\% certified interval. Non-LLM defenders: \CgEpisodes{} episodes per
+attacker; LLM defenders: fewer (Table~\ref{tab:breach}), hence wider
+intervals.}\label{fig:breach}
+\end{figure}
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.95\linewidth]{figure_anytime.pdf}
+\caption{The challenge winner's certified breach-rate interval as episodes accumulate,
+against a seen attacker and against delayed B\_line. Bounds hold at every episode
+count, so the evaluation may stop as soon as an interval clears the threshold.}\label{fig:anytime}
+\end{figure}
+
+\begin{table*}[t]\centering\footnotesize
+\caption{Breach rate of the operational server: mean, and in parentheses the
+time-uniform 95\% certified upper bound, per defender and attacker; $n$ episodes per
+attacker. The adaptive attacker's bound is for the running average of its conditional
+breach probabilities.}\label{tab:breach}
+\begin{tabular}{@{}lrrrrrr@{}}\toprule
+Defender & B\_line & Meander & Delayed B\_line & Meander$\to$B\_line & Adaptive & $n$\\\midrule
+\tableinput table_cage_breach_rows.tex
+\bottomrule\end{tabular}
+\end{table*}
+
+\begin{table}[t]\centering\footnotesize
+\caption{Mean reward on the seen attackers and its rank, versus the certified worst-case
+breach bound over the seen and over all fixed attackers and its rank (non-LLM defenders,
+equal sample sizes), with the attacker attaining the worst case.}\label{tab:rank}
+\begin{tabular}{@{}lrrrrrl@{}}\toprule
+Defender & Mean & Rk & Seen & All & Rk & Worst\\\midrule
+\tableinput table_cage_rank_rows.tex
+\bottomrule\end{tabular}
+\end{table}
+
+\FloatBarrier
+\section{Discussion}
+Leaderboards that score agents against the attackers they were tuned on can certify
+little about deployment: delaying an official attacker by one to five steps, using only
+its own actions, defeats the strongest CAGE-2 agent. Certified worst-case evaluation over a
+deliberately broadened attacker set catches this, names the failing attacker, and
+measures whether a fix works. For LLM defenders the protocol makes a second point
+concrete: their per-episode cost makes the number of episodes the binding constraint,
+and time-uniform bounds let an evaluator spend only what a verdict requires.
+
+\section{Limitations}
+\paragraph{Simulation} CybORG Scenario~2 is a stylised network; results concern that
+environment. \paragraph{Worst case over a set} Certificates hold over the attackers we
+include, not all attackers; our unseen attackers are deliberately simple. \paragraph{Port}
+The winner is evaluated through our NumPy port; it reproduces the published Meander
+score but not the B\_line score, which we attribute to the authors' unpublished
+environment change. \paragraph{LLM evaluation} Few episodes per attacker, one prompt, the
+command-line interface's default sampling, and models of the family that assisted with
+this work's code; the LLM results are descriptive and their certified bounds are wide.
+\paragraph{Price of anytime validity} Time-uniform bounds are wider than fixed-sample
+tests at small $n$; we report conventional paired tests alongside where relevant.
+
+\paragraph{Artifact and AI use} Third-party code (CybORG, the winning agent) is fetched at
+pinned commits with hash-checked weights. All numbers are generated from committed
+tables; LLM transcripts and costs are recorded per episode. The analysis code and draft
+text were produced with the assistance of an AI system (Claude); results are reproduced
+by automated tests.
+
+\begin{thebibliography}{99}
+\bibitem{standen2021cyborg} M.~Standen, M.~Lucas, D.~Bowman, T.~J. Richer, J.~Kim, and
+D.~Marriott. CybORG: A gym for the development of autonomous cyber agents.
+arXiv:2108.09118, 2021.
+\bibitem{castro2025llm} S.~R. Castro, R.~Campbell, N.~Lau, O.~Villalobos, J.~Duan, and
+A.~A. Cardenas. Large language models are autonomous cyber defenders. In \emph{IEEE
+Conference on Artificial Intelligence (CAI)}, 2025. arXiv:2505.04843.
+\bibitem{king2025graph} I.~J. King, B.~Bowman, and H.~H. Huang. Automated cyber defense
+with generalizable graph-based reinforcement learning agents. arXiv:2509.16151, 2025.
+\bibitem{hannay2022cardiff} J.~Hannay. CAGE Challenge 2 winning agent: PPO with greedy
+decoys. Source code and report, 2022.
+\bibitem{hammar2024optimal} K.~Hammar, N.~Dhir, and R.~Stadler. Optimal defender
+strategies for CAGE-2 using causal modeling and tree search. arXiv:2407.11070, 2024.
+\bibitem{palmer2025egta} G.~Palmer, L.~Swaby, D.~J.~B. Harrold, M.~Stewart, A.~Hiles,
+C.~Willis, I.~Miles, and S.~Farmer. An empirical game-theoretic analysis of autonomous
+cyber-defence agents. arXiv:2501.19206, 2025.
+\bibitem{waudbysmith2023betting} I.~Waudby-Smith and A.~Ramdas. Estimating means of
+bounded random variables by betting. \emph{Journal of the Royal Statistical Society
+Series B}, 2023.
+\bibitem{howard2021timeuniform} S.~R. Howard, A.~Ramdas, J.~McAuliffe, and J.~Sekhon.
+Time-uniform, nonparametric, nonasymptotic confidence sequences. \emph{Annals of
+Statistics}, 2021.
+\bibitem{auer2002exp3} P.~Auer, N.~Cesa-Bianchi, Y.~Freund, and R.~E. Schapire. The
+nonstochastic multiarmed bandit problem. \emph{SIAM Journal on Computing}, 2002.
+\end{thebibliography}
+
+\end{document}

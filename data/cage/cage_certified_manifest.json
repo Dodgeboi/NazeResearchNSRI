@@ -2,13 +2,26 @@
   "code": {
     "available": true,
     "branch": "claude/stoic-galileo-81yrtm",
-    "commit": "b18350a1b340b9bcadb5bf14861d9bf8d5d1e4c0",
+    "commit": "40487f7ed2c44f51de7cf842e43404d6dda3a73a",
     "dirty": true,
     "dirty_paths": [
-      "scripts/analyze_cage.py"
+      "data/cage/cage_certified_manifest.json",
+      "data/cage/certified_summary.csv",
+      "data/cage/llm/claude-haiku-4-5-nothink/b_line.jsonl",
+      "data/cage/llm/claude-haiku-4-5-nothink/delayed_b_line.jsonl",
+      "data/cage/llm/claude-haiku-4-5-nothink/meander.jsonl",
+      "data/cage/llm/claude-haiku-4-5-nothink/meander_then_b_line.jsonl",
+      "data/cage/paired.csv",
+      "data/cage/stopping.csv",
+      "data/cage/worst_case.csv",
+      "docs/cage_certified/",
+      "scripts/analyze_cage.py",
+      "scripts/generate_cage_paper.py",
+      "scripts/plot_cage.py",
+      "scripts/validate_champion.py"
     ]
   },
-  "created_at": "2026-10-02T03:49:46+00:00",
+  "created_at": "2026-10-02T12:12:41+00:00",
   "description": "Certified (time-uniform, distribution-free) evaluation of CAGE Challenge 2 defenders, including language-model defenders, against fixed, unseen and adaptive attackers.",
   "environment": {
     "implementation": "CPython",
@@ -36,9 +49,49 @@
       "sha256": "75724cdfc1adcc736d8ffbae1cc88d21411a5b6474bddbbf101383b8d8345669"
     },
     {
-      "bytes": 7452,
+      "bytes": 260016,
+      "path": "data/cage/llm/claude-haiku-4-5-nothink/b_line.jsonl",
+      "sha256": "1f22bb39c6f95f06b34fb9c7bffe37a4c9f1b879488303b53f96d3c73f24c780"
+    },
+    {
+      "bytes": 263126,
+      "path": "data/cage/llm/claude-haiku-4-5-nothink/delayed_b_line.jsonl",
+      "sha256": "e489984afe0592d43e8da3beaa01f0704cafdf9b8569ad26bd9dbc5b1f1eed84"
+    },
+    {
+      "bytes": 261404,
+      "path": "data/cage/llm/claude-haiku-4-5-nothink/meander.jsonl",
+      "sha256": "545334e46b73814cd22bd0002b8e39999768589c131bf775a4776a696fec4de2"
+    },
+    {
+      "bytes": 262240,
+      "path": "data/cage/llm/claude-haiku-4-5-nothink/meander_then_b_line.jsonl",
+      "sha256": "ef6280f93335e33b5996105e69defcdd83e99b96a569e70bfb2b02e85f96e386"
+    },
+    {
+      "bytes": 42508,
+      "path": "data/cage/llm/claude-haiku-4-5/b_line.jsonl",
+      "sha256": "1093a138ca3f31aebeabc88e033f88cf632bbe08f150c4cf45c8fd333763d107"
+    },
+    {
+      "bytes": 27928,
+      "path": "data/cage/llm/claude-haiku-4-5/delayed_b_line.jsonl",
+      "sha256": "bea7ddfd5539766542571a899cdf412022378180f6bbdf52c3cf37ae8723c977"
+    },
+    {
+      "bytes": 42045,
+      "path": "data/cage/llm/claude-haiku-4-5/meander.jsonl",
+      "sha256": "edcc03bf23dc54f777cc1784afbd833cd1e909c54894b5020be3d51b4cbe557b"
+    },
+    {
+      "bytes": 27949,
+      "path": "data/cage/llm/claude-haiku-4-5/meander_then_b_line.jsonl",
+      "sha256": "22d060d881e6d24727a18b7211be752eed5e817c00b33f21f95aad1996fe0d31"
+    },
+    {
+      "bytes": 10391,
       "path": "scripts/analyze_cage.py",
-      "sha256": "966cb75685555ab91a1c27e427d51f3b3eca9db65f882d305a00895d73710620"
+      "sha256": "0d57c78a8360fba882e68cafee586c0b14046c640166485e9c9b3fe92366eb38"
     },
     {
       "bytes": 6144,
@@ -68,9 +121,14 @@
   ],
   "outputs": [
     {
-      "bytes": 3055,
+      "bytes": 3906,
       "path": "data/cage/certified_summary.csv",
-      "sha256": "4977915b58b183030d5140f8adc0e62876fae3003f684af409d1352035507640"
+      "sha256": "a6a1add66886d74db39aeb2f35ec0f53a942ea49289feb5d09c259b26749e35c"
+    },
+    {
+      "bytes": 1470,
+      "path": "data/cage/paired.csv",
+      "sha256": "8ff2d6f028ed1f8a683e7a778287af9be2f8ea27df5bfeb74b5bd547deeec441"
     },
     {
       "bytes": 332,
@@ -78,14 +136,14 @@
       "sha256": "e1cdf359df7c14b1adfb64fdc8e6db599e13f7b0f07babd62d534503cd691e5d"
     },
     {
-      "bytes": 886,
+      "bytes": 1294,
       "path": "data/cage/stopping.csv",
-      "sha256": "156ea6f904defff941cf2685d76a62261a157a3218dc3eb4ee47d59a3d87f23a"
+      "sha256": "e8f96ed2cace8c43919a909522f9ba181a0819d39ff053cfee2380374ea2e18e"
     },
     {
-      "bytes": 847,
+      "bytes": 1129,
       "path": "data/cage/worst_case.csv",
-      "sha256": "559aae3307dffe817ec9d3380a060e0347e9b2d9bc8338a353cc79e6d54329ad"
+      "sha256": "1ca799b5d3f4d22435bdebb40382777aae428e36358e156fe8773709f75c79b8"
     }
   ],
   "parameters": {

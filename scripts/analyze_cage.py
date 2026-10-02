@@ -12,7 +12,9 @@ Reads the committed episodes (``data/cage/episodes.csv`` for non-LLM defenders,
 - ``rankings.csv``: each defender's rank by mean reward on the seen attackers versus by
   certified worst case over all attackers;
 - ``stopping.csv``: for each pair, the first episode at which the time-uniform bounds
-  settle whether the breach rate is below a threshold, versus the fixed sample size.
+  settle whether the breach rate is below a threshold, versus the fixed sample size;
+- ``paired.csv``: language-model defenders against reference defenders on shared seeds
+  (paired differences in breach and reward, with time-uniform bounds).
 
 Deterministic; writes a provenance manifest.
 """
@@ -23,6 +25,7 @@ import json
 from pathlib import Path
 
 import pandas as pd
+from scipy.stats import binomtest
 
 from grrc.cage.certify import bounds, episodes_to_resolve, worst_case
 from grrc.provenance import build_manifest, git_state, write_manifest
@@ -35,6 +38,8 @@ STEP_BOUND = -15.8
 SEEN = ("b_line", "meander")
 FIXED = ("b_line", "meander", "delayed_b_line", "meander_then_b_line")
 BREACH_THRESHOLD = 0.2
+BASELINES = ("sleep", "react-remove", "react-restore", "champion", "champion+fallback")
+REFERENCES = ("champion", "react-restore")
 
 
 def load():
@@ -97,7 +102,9 @@ def main():
                               reward_mean_seen=g[g.attacker.isin(SEEN)].reward.mean()))
     worst = pd.DataFrame(worst)
 
-    ranks = worst[worst.scope == "all"][["defender", "reward_certified", "breach_certified"]].copy()
+    # Ranks only among the non-LLM defenders, which share the same number of episodes.
+    ranks = worst[(worst.scope == "all") & worst.defender.isin(BASELINES)][
+        ["defender", "reward_certified", "breach_certified"]].copy()
     seen_mean = worst[worst.scope == "seen"].set_index("defender").reward_mean_seen
     ranks["reward_mean_seen"] = ranks.defender.map(seen_mean)
     ranks["rank_mean_seen"] = ranks.reward_mean_seen.rank(ascending=False, method="min").astype(int)
@@ -115,9 +122,48 @@ def main():
                                                         ALPHA)[1] < BREACH_THRESHOLD else "above")))
     stopping = pd.DataFrame(stopping)
 
+    # Paired comparisons on shared seeds, per attacker. Breach: among discordant seeds
+    # (exactly one defender breached), the share where only the reference was breached;
+    # under "no difference" it is 1/2, so a time-uniform lower bound above 1/2 certifies
+    # that the language-model defender is breached less often (and an upper bound below
+    # 1/2 the reverse). Discordant pairs are i.i.d. because episodes are. Reward: the
+    # mean paired difference, descriptive only (its declared range is too wide to bound
+    # usefully at these sample sizes).
+    paired = []
+    fixed = df[~df.adaptive.astype(bool)]
+    for d in sorted(set(fixed.defender) - set(BASELINES)):
+        for ref in REFERENCES:
+            for a in FIXED:
+                llm = fixed[(fixed.defender == d) & (fixed.attacker == a)].set_index("seed")
+                base = fixed[(fixed.defender == ref) & (fixed.attacker == a)].set_index("seed")
+                seeds = llm.index.intersection(base.index)
+                if len(seeds) < 2:
+                    continue
+                lb = llm.loc[seeds, "breached"].astype(bool)
+                rb = base.loc[seeds, "breached"].astype(bool)
+                only_ref, only_llm = int((rb & ~lb).sum()), int((lb & ~rb).sum())
+                disc = only_ref + only_llm
+                if disc >= 2:
+                    y = [1.0] * only_ref + [0.0] * only_llm
+                    lo, hi = bounds(y, 0, 1, ALPHA)
+                else:
+                    lo, hi = 0.0, 1.0
+                verdict = ("llm breached less" if lo > 0.5 else
+                           "reference breached less" if hi < 0.5 else "unresolved")
+                paired.append(dict(defender=d, reference=ref, attacker=a, n=len(seeds),
+                                   llm_breaches=int(lb.sum()), reference_breaches=int(rb.sum()),
+                                   only_reference=only_ref, only_llm=only_llm,
+                                   share_lower=lo, share_upper=hi, verdict=verdict,
+                                   # Conventional fixed-sample comparison (not time-uniform).
+                                   sign_test_p=(binomtest(only_ref, disc, 0.5).pvalue
+                                                if disc else 1.0),
+                                   reward_difference=float((llm.loc[seeds, "reward"]
+                                                            - base.loc[seeds, "reward"]).mean())))
+    paired = pd.DataFrame(paired)
+
     outputs = []
     for name, frame in (("certified_summary", summary), ("worst_case", worst),
-                        ("rankings", ranks), ("stopping", stopping)):
+                        ("rankings", ranks), ("stopping", stopping), ("paired", paired)):
         path = DATA / f"{name}.csv"
         write_csv(frame, path)
         outputs.append(path)
