@@ -2,30 +2,11 @@
   "code": {
     "available": true,
     "branch": "claude/stoic-galileo-81yrtm",
-    "commit": "5aeca8d2d9ac01ab6265322480541f874ab0243f",
-    "dirty": true,
-    "dirty_paths": [
-      "data/cage/attacker/claude-sonnet-5/",
-      "data/cage/attacker_strategy.csv",
-      "data/cage/attacker_summary.csv",
-      "data/cage/cage_certified_manifest.json",
-      "data/cage/certified_summary.csv",
-      "data/cage/paired.csv",
-      "data/cage/stopping.csv",
-      "data/cage/worst_case.csv",
-      "docs/cage_certified/cage_numbers.tex",
-      "docs/cage_certified/figure_attacker.pdf",
-      "docs/cage_certified/figure_breach_intervals.pdf",
-      "docs/cage_certified/main.pdf",
-      "docs/cage_certified/main.tex",
-      "docs/cage_certified/table_cage_attacker_rows.tex",
-      "docs/cage_certified/table_cage_breach_rows.tex",
-      "scripts/analyze_cage.py",
-      "scripts/generate_cage_paper.py",
-      "scripts/plot_cage.py"
-    ]
+    "commit": "fdcf6ad7a6aa68e9704b157afc9707a15ab2dbba",
+    "dirty": false,
+    "dirty_paths": []
   },
-  "created_at": "2026-10-02T14:39:43+00:00",
+  "created_at": "2026-10-02T14:41:44+00:00",
   "description": "Certified (time-uniform, distribution-free) evaluation of CAGE Challenge 2 defenders, including language-model defenders, against fixed, unseen and adaptive attackers.",
   "environment": {
     "implementation": "CPython",
