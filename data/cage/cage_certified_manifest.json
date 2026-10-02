@@ -2,11 +2,25 @@
   "code": {
     "available": true,
     "branch": "claude/stoic-galileo-81yrtm",
-    "commit": "fdcf6ad7a6aa68e9704b157afc9707a15ab2dbba",
-    "dirty": false,
-    "dirty_paths": []
+    "commit": "fda03386493fd6e2e936b043706d6cee64422221",
+    "dirty": true,
+    "dirty_paths": [
+      "data/cage/cage_certified_manifest.json",
+      "data/cage/cage_eval_manifest.json",
+      "data/cage/env1b/",
+      "data/cage/env1b_summary.csv",
+      "data/cage/env1b_worst.csv",
+      "data/cage/family_summary.csv",
+      "data/cage/primitive_attacker/",
+      "data/cage/primitive_summary.csv",
+      "docs/cage_certified/figure_family.pdf",
+      "docs/cage_certified/main.tex",
+      "scripts/analyze_cage.py",
+      "scripts/generate_cage_paper.py",
+      "scripts/plot_cage.py"
+    ]
   },
-  "created_at": "2026-10-02T14:41:44+00:00",
+  "created_at": "2026-10-02T19:09:10+00:00",
   "description": "Certified (time-uniform, distribution-free) evaluation of CAGE Challenge 2 defenders, including language-model defenders, against fixed, unseen and adaptive attackers.",
   "environment": {
     "implementation": "CPython",
@@ -54,14 +68,34 @@
       "sha256": "83f5d20363628b370172509c595236af9ca5383576afdcf2d7ab995595644fad"
     },
     {
-      "bytes": 3078,
+      "bytes": 3533,
       "path": "data/cage/cage_eval_manifest.json",
-      "sha256": "159e6d4993bf091616e444d9a3a9d806815592d4570a82fcb21d0a5885c198d1"
+      "sha256": "c58aad383075c39a1bcc4c2afe0c3b80e02c2dd0f18ec08aebf6d1c11e7fc22c"
+    },
+    {
+      "bytes": 3140,
+      "path": "data/cage/cage_family_manifest.json",
+      "sha256": "81cac8dea8c6d4c4494f2bb3163cde0c03efb0c8c0adceba67b40afbd065a504"
+    },
+    {
+      "bytes": 3159,
+      "path": "data/cage/env1b/cage_env1b_manifest.json",
+      "sha256": "7b59af001ab9f7d6ec4b47c10fa6bd75d8d2d15ae745d4b62707b5c397507a53"
+    },
+    {
+      "bytes": 228152,
+      "path": "data/cage/env1b/episodes.csv",
+      "sha256": "4a671914004b729b1abd2275cbb3678c1305a94ec1905e84f1f907bdf8880f33"
     },
     {
       "bytes": 378078,
       "path": "data/cage/episodes.csv",
       "sha256": "75724cdfc1adcc736d8ffbae1cc88d21411a5b6474bddbbf101383b8d8345669"
+    },
+    {
+      "bytes": 196940,
+      "path": "data/cage/family.csv",
+      "sha256": "1e32879b74678fc5efbe48b5db2d5c7db7a8bec3d16db075ee8508288fa3bf50"
     },
     {
       "bytes": 365381,
@@ -124,9 +158,29 @@
       "sha256": "52aee04e4f588c2ba1651cd9af1337ce6d231f1b5cb40a0c6f08dddf8248c926"
     },
     {
-      "bytes": 13160,
+      "bytes": 13456,
+      "path": "data/cage/primitive_attacker/claude-haiku-4-5/champion+fallback.jsonl",
+      "sha256": "1c2bcf22659bc09bea71bdaef3fb8c9dcc86d832b6b8eb3921d2d1898804bf9c"
+    },
+    {
+      "bytes": 12852,
+      "path": "data/cage/primitive_attacker/claude-haiku-4-5/champion.jsonl",
+      "sha256": "d874b9d786746e029a1fe58b414e1d8c4b3ac6bf7f3b62a43bf69d541c0dbc8a"
+    },
+    {
+      "bytes": 13116,
+      "path": "data/cage/primitive_attacker/claude-haiku-4-5/react-restore.jsonl",
+      "sha256": "d72bc673fb52d1954f6841dafcaa4023e57d0ab96e1aac539a726a13e66b3836"
+    },
+    {
+      "bytes": 12423,
+      "path": "data/cage/primitive_attacker/claude-haiku-4-5/sleep.jsonl",
+      "sha256": "38c97db4bbb704f21b198349453bf39e465d0ef3c8bf971482a7b8d54d00a8f1"
+    },
+    {
+      "bytes": 17516,
       "path": "scripts/analyze_cage.py",
-      "sha256": "b9eca1852d11ef175ce9e4dd3602caab8f5963ad13120b48f41dfb4ff8f7b86a"
+      "sha256": "74a9e72189fbd54b662d1c87ceb6ac58e72be582298e922a98d2057297cb1238"
     },
     {
       "bytes": 6144,
@@ -171,9 +225,29 @@
       "sha256": "ee040aa04ab573c192bc54d4fa476bf9613a961d3d05cbe04375c9dc4723bfee"
     },
     {
+      "bytes": 1478,
+      "path": "data/cage/env1b_summary.csv",
+      "sha256": "0bd6e7ad4bf8d4348a008d33f63796669ce6468a983355acc8fe4ad227a0602a"
+    },
+    {
+      "bytes": 375,
+      "path": "data/cage/env1b_worst.csv",
+      "sha256": "fe760c2d9aa8d1a51feb29a8293e1afdd9e86e81ee071a970ac40ea9c0caa887"
+    },
+    {
+      "bytes": 2197,
+      "path": "data/cage/family_summary.csv",
+      "sha256": "5c8e1379d94c9e574fa2fa09f26bef9b4d752fc6f376193cc77225b58d757a74"
+    },
+    {
       "bytes": 2155,
       "path": "data/cage/paired.csv",
       "sha256": "f5c7c7fb47d004c48bf3071977a29e0526c5a64ffd5e9dcd9c27c4678dcf0796"
+    },
+    {
+      "bytes": 381,
+      "path": "data/cage/primitive_summary.csv",
+      "sha256": "f87b4106b697aa8f3691e5f3daac802caa98736a1e6bd7db66807c299d2725ac"
     },
     {
       "bytes": 332,

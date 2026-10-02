@@ -1,0 +1,5 @@
+model,defender,episodes,breaches,breach_rate,breach_lower,breach_upper,invalid_per_episode,cost_usd
+claude-haiku-4-5,champion+fallback,15,0,0,0,0.5711334655,0.6,0.872373
+claude-haiku-4-5,champion,15,2,0.1333333333,0,0.7507716892,1.333333333,0.875699
+claude-haiku-4-5,react-restore,15,0,0,0,0.5711334655,0,0.851438
+claude-haiku-4-5,sleep,15,8,0.5333333333,0,1,0.1333333333,0.888204

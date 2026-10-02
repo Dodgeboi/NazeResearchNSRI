@@ -1,0 +1,7 @@
+defender,scope,attackers,n_per_attacker,breach_certified,breach_worst_attacker,reward_mean_seen
+sleep,seen,2,200,1,b_line,-128.794
+sleep,all,4,200,1,b_line,-128.794
+react-remove,seen,2,200,0.7059360491,b_line,-56.4375
+react-remove,all,4,200,0.7123262715,b_line,-56.4375
+react-restore,seen,2,200,0.2089069895,b_line,-20.637
+react-restore,all,4,200,0.2156547047,b_line,-20.637

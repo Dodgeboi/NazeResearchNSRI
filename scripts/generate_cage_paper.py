@@ -163,6 +163,61 @@ def content():
         v["AtkCost"] = f"{atk.cost_usd.sum():.2f}"
         v["AtkModels"] = str(atk.model.nunique())
 
+    # Attacker family (delay sweep): the blind spot's threshold and range, and the repair.
+    fam_path = DATA / "family_summary.csv"
+    if fam_path.exists():
+        fam = pd.read_csv(fam_path)
+        ch = fam[(fam.defender == "champion") & (fam.base == "b_line")].set_index("delay")
+        fix = fam[(fam.defender == "champion+fallback") & (fam.base == "b_line")]
+        res = fam[(fam.defender == "react-restore") & (fam.base == "b_line")]
+        hi_delays = ch[ch.index >= 2]
+        v["FamChampDOne"] = f"{ch.loc[1, 'breach_rate']:.2f}" if 1 in ch.index else "n/a"
+        v["FamChampDOneUp"] = f"{ch.loc[1, 'breach_upper']:.2f}" if 1 in ch.index else "n/a"
+        v["FamChampDTwo"] = f"{ch.loc[2, 'breach_rate']:.2f}" if 2 in ch.index else "n/a"
+        v["FamChampDTwoLo"] = f"{ch.loc[2, 'breach_lower']:.2f}" if 2 in ch.index else "n/a"
+        v["FamChampMin"] = f"{hi_delays.breach_rate.min():.2f}"
+        v["FamChampMax"] = f"{hi_delays.breach_rate.max():.2f}"
+        v["FamChampHiMinLo"] = f"{hi_delays.breach_lower.min():.2f}"
+        v["FamDelays"] = str(int(ch.index.max()))
+        v["FamFixMax"] = f"{fix.breach_rate.max():.2f}"
+        v["FamFixMaxUp"] = f"{fix.breach_upper.max():.2f}"
+        v["FamRestoreMax"] = f"{res.breach_rate.max():.2f}"
+        mdr = fam[(fam.defender == "champion") & (fam.base == "meander")]
+        if not mdr.empty:
+            v["FamChampMeander"] = f"{mdr.breach_rate.iloc[0]:.2f}"
+            v["FamChampMeanderUp"] = f"{mdr.breach_upper.iloc[0]:.2f}"
+        v["FamEps"] = str(int(fam.n.iloc[0]))
+
+    # Primitive-action LLM attacker.
+    prim_path = DATA / "primitive_summary.csv"
+    if prim_path.exists():
+        prim = pd.read_csv(prim_path)
+        PTAG = {"sleep": "Sleep", "champion": "Champ", "champion+fallback": "Fix",
+                "react-restore": "Restore"}
+        for _, r in prim.iterrows():
+            t = "Prim" + PTAG.get(r.defender, r.defender)
+            v[t + "Breach"] = f"{r.breach_rate:.2f}"
+            v[t + "Lo"] = f"{r.breach_lower:.2f}"
+            v[t + "Hi"] = f"{r.breach_upper:.2f}"
+            v[t + "Eps"] = str(int(r.episodes))
+        v["PrimCost"] = f"{prim.cost_usd.sum():.2f}"
+        v["PrimInvalid"] = f"{prim.invalid_per_episode.mean():.2f}"
+        v["PrimModel"] = "Haiku~4.5" if (prim.model == "claude-haiku-4-5").any() else "n/a"
+
+    # Second environment (CAGE Challenge 1, Scenario1b).
+    e1b_path = DATA / "env1b_worst.csv"
+    if e1b_path.exists():
+        e1b = pd.read_csv(e1b_path)
+        allw = e1b[e1b.scope == "all"].set_index("defender")
+        E1 = {"sleep": "Sleep", "react-remove": "Remove", "react-restore": "Restore"}
+        for d, tag in E1.items():
+            if d in allw.index:
+                v["EnvB" + tag + "Cert"] = f"{allw.loc[d, 'breach_certified']:.2f}"
+        esum = DATA / "env1b_summary.csv"
+        if esum.exists():
+            v["EnvBEps"] = str(int(pd.read_csv(esum).n.max()))
+        v["EnvBDefenders"] = str(len(allw))
+
     gen = {"cage_numbers.tex": "% Generated; do not edit.\n" + "".join(
         "\\newcommand{\\" + k + "}{" + val + "}\n" for k, val in sorted(v.items()))}
 

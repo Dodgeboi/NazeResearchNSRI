@@ -2,25 +2,24 @@
   "code": {
     "available": true,
     "branch": "claude/stoic-galileo-81yrtm",
-    "commit": "fda03386493fd6e2e936b043706d6cee64422221",
+    "commit": "c506c513e748f0670c8e15cf3fec92b9de6d2413",
     "dirty": true,
     "dirty_paths": [
-      "data/cage/cage_certified_manifest.json",
-      "data/cage/env1b/",
-      "data/cage/env1b_summary.csv",
-      "data/cage/env1b_worst.csv",
-      "data/cage/family_summary.csv",
+      "data/cage/cage_family_manifest.json",
+      "data/cage/family.csv",
       "data/cage/primitive_attacker/",
-      "data/cage/primitive_summary.csv",
-      "docs/cage_certified/figure_family.pdf",
-      "docs/cage_certified/main.tex",
-      "scripts/analyze_cage.py",
-      "scripts/generate_cage_paper.py",
-      "scripts/plot_cage.py"
+      "scripts/run_cage_env1b.py",
+      "scripts/run_cage_family.py",
+      "scripts/run_cage_primitive_attacker.py",
+      "src/grrc/cage/agents.py",
+      "src/grrc/cage/attacker_env.py",
+      "src/grrc/cage/env.py",
+      "src/grrc/cage/llm_primitive_attacker.py",
+      "tests/test_cage_primitive.py"
     ]
   },
-  "created_at": "2026-10-02T19:08:47+00:00",
-  "description": "CAGE Challenge 2 episodes for non-LLM defenders against fixed, unseen and adaptive attackers (inputs for the certified evaluation).",
+  "created_at": "2026-10-02T18:36:49+00:00",
+  "description": "CAGE Challenge 1 (Scenario1b) episodes for the generic reference defenders against fixed, unseen and adaptive attackers -- a second environment for the certified-evaluation protocol.",
   "environment": {
     "implementation": "CPython",
     "machine": "x86_64",
@@ -42,9 +41,9 @@
       "sha256": "a64ab023df75b3f065c82328e70720b0dc22bf3b960aa39cfc4cf0f8b7463592"
     },
     {
-      "bytes": 4188,
-      "path": "scripts/run_cage_eval.py",
-      "sha256": "3d00f4fad51f377d4498ea0d17e65913cefa7aa578f49a30a25384ed6e510f71"
+      "bytes": 4328,
+      "path": "scripts/run_cage_env1b.py",
+      "sha256": "9bdc23e7f8c48b83513f493d76d1aed15df77c560207065e050d09c76e65a66c"
     },
     {
       "bytes": 1729,
@@ -62,19 +61,9 @@
       "sha256": "ecd6e7afc36c1900a788ee9d661b4b0d3fe18eb2307def17845d704c0f1de4cd"
     },
     {
-      "bytes": 6723,
-      "path": "src/grrc/cage/champion.py",
-      "sha256": "f2c15b936f03c3245a61552acf58efc4f5f5878d27a77229eadf38bf07cc5faf"
-    },
-    {
       "bytes": 4086,
       "path": "src/grrc/cage/env.py",
       "sha256": "456993b8f90e949bc0a4222b99d53dff7fff66967c7e5a87e42cad1f6b0f99b0"
-    },
-    {
-      "bytes": 2502,
-      "path": "src/grrc/cage/torchless.py",
-      "sha256": "7c3d323aa0171a8b3e87cebf6c10a66ace5d9d406eb49f672388211710909891"
     },
     {
       "bytes": 14389,
@@ -89,9 +78,9 @@
   ],
   "outputs": [
     {
-      "bytes": 378078,
-      "path": "data/cage/episodes.csv",
-      "sha256": "75724cdfc1adcc736d8ffbae1cc88d21411a5b6474bddbbf101383b8d8345669"
+      "bytes": 228152,
+      "path": "data/cage/env1b/episodes.csv",
+      "sha256": "4a671914004b729b1abd2275cbb3678c1305a94ec1905e84f1f907bdf8880f33"
     }
   ],
   "parameters": {
@@ -103,20 +92,18 @@
       "adaptive"
     ],
     "cage2_commit": "26ce1c1253fa9e2e73f25e6a7f2da32860c11257",
-    "champion_commit": "ddbf3e55d17484b1bdd62b02daff72b7774330df",
     "defenders": [
       "sleep",
       "react-remove",
-      "react-restore",
-      "champion",
-      "champion+fallback"
+      "react-restore"
     ],
     "episodes": 200,
+    "scenario": "Scenario1b",
     "seed0": 20261002,
     "step_bound": -15.8,
     "steps": 30
   },
   "protocol": null,
-  "run_id": "cage-eval",
+  "run_id": "cage-env1b",
   "stage": "analysis"
 }

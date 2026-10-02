@@ -115,6 +115,31 @@ def main():
         ax.legend(frameon=False, fontsize=7.5, ncol=2, loc="upper right")
         fig.tight_layout()
         fig.savefig(OUT / "figure_attacker.pdf", metadata={"CreationDate": None})
+
+    # Figure: breach rate vs fixed delay (the blind spot's threshold and range; the repair).
+    fam_path = DATA / "family_summary.csv"
+    if fam_path.exists():
+        fam = pd.read_csv(fam_path)
+        fam = fam[fam.base == "b_line"]
+        series = [("champion", "Challenge winner", "#D55E00", "o"),
+                  ("champion+fallback", "Winner + 1-line fallback", "#0072B2", "s"),
+                  ("react-restore", "React-restore", "#009E73", "^")]
+        fig, ax = plt.subplots(figsize=(5.2, 3.0))
+        for d, lab, col, mk in series:
+            g = fam[fam.defender == d].sort_values("delay")
+            if g.empty:
+                continue
+            ax.plot(g.delay, g.breach_rate, mk + "-", color=col, label=lab, ms=4, lw=1.3)
+            ax.fill_between(g.delay, g.breach_lower, g.breach_upper, color=col, alpha=0.15, lw=0)
+        ax.axhline(0.2, ls=":", color="#555555", lw=0.9, label="threshold 0.2")
+        ax.set_xlabel("attacker delay (steps before starting B\\_line)")
+        ax.set_ylabel("breach rate of Op_Server0"); ax.set_ylim(0, 1)
+        ax.set_title("The blind spot and its repair across the delay family", fontsize=9)
+        ax.grid(True, alpha=0.25, lw=0.6)
+        ax.legend(frameon=False, fontsize=7.5, loc="center right")
+        fig.tight_layout()
+        fig.savefig(OUT / "figure_family.pdf", metadata={"CreationDate": None})
+
     print(f"wrote figures to {OUT.relative_to(ROOT)}")
 
 

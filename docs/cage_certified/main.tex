@@ -35,7 +35,10 @@ at most \CgFixAllBreachCert{} on every attacker. A language-model attacker (Clau
 told only to find what breaches the defender, discovers the same blind spot unaided:
 against the winner it breaches \AhChampBreach{} of episodes --- matching the best fixed
 strategy in hindsight (\AhChampBest) and far above uniform choice (\AhChampRand) --- yet
-against the repaired winner it breaches \AhFixBreach. Language-model defenders do not share the
+against the repaired winner it breaches \AhFixBreach. Given instead CybORG's raw actions, a
+language model operates the full kill chain unaided but, attacking at once, rarely
+rediscovers the timing weakness the selector sought out; the blind spot holds across a whole delay family, and the
+protocol carries over to a second environment (CAGE Challenge~1). Language-model defenders do not share the
 winner's blind spot: Claude Sonnet~5 was breached in \SnBreaches{} of \SnEpisodes{} episodes
 and Claude Haiku~4.5 in \HnDelayedBreach\% of delayed-attacker episodes. Certifying them to
 the winner's precision, however, would take hundreds of dollars and tens of hours of
@@ -78,8 +81,11 @@ repair restores the guarantee (Section~\ref{sec:results}). (iv) Claude defenders
 evaluated under the same protocol, with and without extended thinking, and the episode
 and dollar cost of certifying an LLM defender. (v) A language-model attacker that, given
 only the goal of breaching the defender, autonomously finds and exploits the winner's
-blind spot yet is defeated by the one-line repair. Code, data and transcripts will be
-released.
+blind spot yet is defeated by the one-line repair; and a primitive-action variant that
+issues raw CybORG actions and operates the full kill chain unaided, separating operating
+an attack from discovering the timing weakness. (vi) Evidence the finding is robust: the
+blind spot holds across a parameterized delay family and the protocol carries over to a
+second environment (CAGE Challenge~1). Code, data and transcripts will be released.
 
 \section{Background and related work}
 CybORG~\cite{standen2021cyborg} is a cyber-operations gym; CAGE Challenge~2 (Scenario~2)
@@ -129,14 +135,21 @@ confirm the stated coverage under per-episode peeking and under an adaptive adve
 \paragraph{Environment}
 CybORG Scenario~2 at the official CAGE-2 commit, \CgSteps-step episodes, seeded so that
 every (defender, attacker, seed) triple is reproducible and episodes are paired across
-defenders.
+defenders. We also evaluate the generic defenders on CAGE Challenge~1 (Scenario1b) as a
+second environment.
 
 \paragraph{Attackers}
 The official B\_line and Meander (\emph{seen}); two \emph{unseen} re-sequencings of their
 own actions: \emph{delayed B\_line}, which sleeps for a uniformly random one to five
 steps first, and \emph{Meander$\to$B\_line}, which explores like Meander for four steps
 and then follows B\_line; and an \emph{adaptive} attacker that picks among these four
-before each episode by EXP3~\cite{auer2002exp3}, rewarded by the damage it did.
+before each episode by EXP3~\cite{auer2002exp3}, rewarded by the damage it did. A
+fixed-delay family sweeps the pause deterministically from one to \FamDelays{} steps. For
+the \emph{primitive-action} attacker we instead drive Red externally through CybORG's six
+native actions (discover systems, discover services, exploit, escalate privilege, impact,
+sleep), the target of each restricted to what the attacker has discovered; the defender
+keeps its own interface, and a scripted policy over this interface reaches and impacts the
+server, confirming the interface is faithful.
 
 \paragraph{Defenders}
 Sleep (no action); the official React-remove and React-restore agents; the challenge
@@ -187,6 +200,18 @@ breach rate of at most \CgFixAllBreachCert{} on every fixed attacker (mean rewar
 \CgFixDelayedReward{} against delayed B\_line) and at most \CgFixAdaptUp{} against the
 adaptive attacker.
 
+\paragraph{The blind spot is a threshold, not a lucky delay}
+Sweeping a fixed delay from one to \FamDelays{} steps (\FamEps{} episodes each,
+Figure~\ref{fig:family}) shows the weakness is not an artefact of the one-to-five-step
+choice. A one-step delay does not trigger it (breach \FamChampDOne, certified at most
+\FamChampDOneUp); from two steps on the fingerprint misfires and the winner is breached in
+\FamChampDTwo{} of episodes (certified at least \FamChampDTwoLo), and in
+\FamChampMin--\FamChampMax{} across every delay up to \FamDelays{} (certified at least
+\FamChampHiMinLo{} throughout). Delaying the \emph{explorer} instead does not fool it
+(\FamChampMeander, certified at most \FamChampMeanderUp), so the weakness is specific to a
+delayed \emph{direct} attack. The one-line repair holds across the whole family (breach at
+most \FamFixMaxUp{} at every delay), as does React-restore (\FamRestoreMax).
+
 \paragraph{LLM defenders}
 \input{llm_results}
 
@@ -209,9 +234,25 @@ delayed start in \AsChampShare\% of its \AsChampEps{} episodes against the winne
 less decisively, so it breaches only \AsChampBreach{} (certified \AsChampLo--\AsChampHi);
 at this episode count that interval does not clear uniform choice (\AsChampRand), where
 Haiku's does. Neither model breaches the repaired winner (\AsFixBreach{} of \AsFixEps).
-The whole attacker study cost \$\AtkCost. An attacker that does not pick from working strategies but issues
-every low-level action itself is left to future work; here the model supplies the
-adaptation, not the exploitation primitives.
+The whole attacker study cost \$\AtkCost.
+
+\paragraph{A primitive-action LLM attacker}
+The strategy selector chose among ready-made attacks; we also give a language model
+CybORG's \emph{raw} Red actions and have it operate itself, choosing one action and target
+per step from what it has discovered -- scan a subnet, scan and exploit a host, escalate,
+pivot, and finally Impact the operational server (Section~\ref{sec:setup}). As a gate, a
+scripted policy over the same interface breaches the undefended Sleep defender, so a failure
+to breach is the attacker's doing, not the interface's. Over \PrimSleepEps{} episodes each
+(results descriptive, with wide bounds at this size) Claude~\PrimModel{} drives the full
+kill chain unaided, breaching Sleep in \PrimSleepBreach{} of episodes. Against the winner it
+breaches far less, \PrimChampBreach{}, against the strategy selector's \AhChampBreach: usually
+attacking at once, it mostly meets exactly the fingerprint the winner was built for, and only
+occasionally wanders into a pause long enough to defeat it, rather than seeking that pause out
+as the selector (with the delayed attack on its menu) does. The repaired winner and
+React-restore are never breached (\PrimFixBreach{} and \PrimRestoreBreach). This separates
+\emph{operating} the kill chain, which the model does, from reliably \emph{discovering} the
+timing weakness, which needs either the scripted delay or a menu containing it. The primitive
+study cost \$\PrimCost.
 
 \paragraph{The cost of certification}
 With time-uniform bounds the evaluator can stop early: for the non-LLM defenders,
@@ -220,6 +261,17 @@ after a median of \CgStopMedian{} episodes (range \CgStopMin--\CgStopMax), again
 \CgEpisodes{} we ran and the 1,000 used by the challenge. Settling a question takes few
 episodes when the breach rate is near 0 or far from the threshold and many when it is
 close, which matters for LLM defenders whose episodes cost money and minutes.
+
+\paragraph{A second environment}
+To check the protocol is not specific to Scenario~2, we apply it unchanged to CAGE
+Challenge~1 (CybORG Scenario1b), a related network with the same operational-server
+objective, for the \EnvBDefenders{} generic defenders (the winner's policy is specific to
+Scenario~2) over \EnvBEps{} episodes per attacker. It yields certified rankings there too:
+over all fixed attackers React-restore is certified to a breach rate of at most
+\EnvBRestoreCert, ahead of React-remove (\EnvBRemoveCert) and Sleep (\EnvBSleepCert). The
+ordering, and React-restore's bound, match its standing on Scenario~2, so the certified
+score is stable across the two environments rather than an artefact of one. The winner's
+blind spot is specific to Scenario~2's agent and so has no analogue here.
 
 \begin{figure}[t]\centering
 \includegraphics[width=\linewidth]{figure_breach_intervals.pdf}
@@ -276,6 +328,14 @@ uniform-random choice. The model matches the best fixed strategy against the win
 is defeated by the one-line repair.}\label{fig:attacker}
 \end{figure}
 
+\begin{figure}[t]\centering
+\includegraphics[width=0.92\linewidth]{figure_family.pdf}
+\caption{Breach rate of the operational server against a B\_line that waits a fixed number
+of steps before starting, with 95\% certified bands. The winner is safe at a one-step delay
+but breached from two steps on, across the whole family; the one-line repair and
+React-restore stay near zero.}\label{fig:family}
+\end{figure}
+
 \FloatBarrier
 \section{Discussion}
 Leaderboards that score agents against the attackers they were tuned on can certify
@@ -291,7 +351,9 @@ and time-uniform bounds let an evaluator spend only what a verdict requires.
 
 \section{Limitations}
 \paragraph{Simulation} CybORG Scenario~2 is a stylised network; results concern that
-environment. \paragraph{Worst case over a set} Certificates hold over the attackers we
+environment. Our second environment, CAGE Challenge~1, shares CybORG's engine and so is a
+related rather than independent test of generality; a genuinely different simulator is
+future work. \paragraph{Worst case over a set} Certificates hold over the attackers we
 include, not all attackers; our unseen attackers are deliberately simple. \paragraph{Port}
 The winner is evaluated through our NumPy port; it reproduces the published Meander
 score but not the B\_line score, which we attribute to the authors' unpublished
@@ -305,10 +367,10 @@ attacker, is a Claude model from a single vendor -- the family that also assiste
 this work's code -- so nothing here speaks to how models from other families behave.
 \paragraph{Budget control} Parallel workers check a shared spending cap before each
 episode, so a run can exceed its cap by up to one episode per worker; the Sonnet run
-did. \paragraph{Attacker scope} The language-model attacker chooses among four working attack
-strategies and supplies the adaptation; it does not issue CybORG's low-level actions
-itself, so it tests strategic choice, not exploitation skill. A primitive-level LLM
-attacker is future work. \paragraph{Price of anytime validity} Time-uniform bounds are wider than fixed-sample
+did. \paragraph{Attacker scope} The two attackers test different things: the strategy selector
+supplies adaptation over ready-made attacks, and the primitive attacker operates the kill
+chain through CybORG's action abstraction -- still not raw network exploitation (no packet
+crafting or novel vulnerability discovery), which the simulator does not model. \paragraph{Price of anytime validity} Time-uniform bounds are wider than fixed-sample
 tests at small $n$; we report conventional paired tests alongside where relevant.
 
 \paragraph{Artifact and AI use} Third-party code (CybORG, the winning agent) is fetched at

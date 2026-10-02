@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
 
 import pandas as pd
@@ -204,11 +205,82 @@ def main():
     attacker = pd.DataFrame(attacker)
     attacker_strategy = pd.DataFrame(attacker_strategy)
 
+    # Attacker family: breach rate as a function of a fixed delay, certified. Shows the
+    # winner's blind spot across the whole family (not one hand-picked pause) and that the
+    # one-line repair holds for every delay.
+    family, family_inputs = [], []
+    fpath = DATA / "family.csv"
+    if fpath.exists():
+        family_inputs = [fpath, DATA / "cage_family_manifest.json"]
+        fam = pd.read_csv(fpath)
+        for (d, a), g in fam.groupby(["defender", "attacker"], sort=False):
+            bl, bh = bounds(g.breached.astype(float), 0, 1, ALPHA)
+            m = re.match(r"delay(\d+)_(\w+)", str(a))
+            family.append(dict(defender=d, attacker=a,
+                               base=(m.group(2) if m else a),
+                               delay=(int(m.group(1)) if m else -1), n=len(g),
+                               breach_rate=g.breached.mean(), breach_lower=bl, breach_upper=bh))
+    family = pd.DataFrame(family)
+
+    # Primitive-action LLM attacker: the model issues raw CybORG actions. We report the
+    # certified breach rate (its lower bound is an attacker-side guarantee) per defender.
+    primitive, primitive_inputs = [], []
+    for pth in sorted((DATA / "primitive_attacker").glob("*/*.jsonl")):
+        recs = [json.loads(line) for line in pth.read_text().splitlines()]
+        seen, rr = set(), []
+        for r in sorted(recs, key=lambda r: r["episode"]):
+            if r["episode"] not in seen:
+                seen.add(r["episode"]); rr.append(r)
+        if not rr:
+            continue
+        primitive_inputs.append(pth)
+        br = [bool(r["breached"]) for r in rr]
+        lo, hi = bounds([float(b) for b in br], 0, 1, ALPHA)
+        primitive.append(dict(model=rr[0]["model"], defender=rr[0]["defender"], episodes=len(rr),
+                              breaches=sum(br), breach_rate=sum(br) / len(br),
+                              breach_lower=lo, breach_upper=hi,
+                              invalid_per_episode=sum(r.get("invalid", 0) for r in rr) / len(rr),
+                              cost_usd=sum(r.get("cost_usd") or 0 for r in rr)))
+    primitive = pd.DataFrame(primitive)
+
+    # Second environment (CAGE Challenge 1, Scenario1b): the protocol applied to the generic
+    # defenders, certified, to show it is not specific to Scenario2.
+    env1b_summary, env1b_worst, env1b_inputs = [], [], []
+    e1b = DATA / "env1b/episodes.csv"
+    if e1b.exists():
+        env1b_inputs = [e1b, DATA / "env1b/cage_env1b_manifest.json"]
+        edf = pd.read_csv(e1b)
+        for (d, a), g in edf.groupby(["defender", "attacker"], sort=False):
+            adaptive = bool(g.adaptive.iloc[0])
+            bl, bh = bounds(g.breached.astype(float), 0, 1, ALPHA, adaptive)
+            rl, rh = bounds(g.reward, r_min, 0, ALPHA, adaptive)
+            env1b_summary.append(dict(defender=d, attacker=a, adaptive=adaptive, n=len(g),
+                                      reward_mean=g.reward.mean(), reward_lower=rl, reward_upper=rh,
+                                      breach_mean=g.breached.mean(), breach_lower=bl, breach_upper=bh))
+        for d, g in edf[~edf.adaptive.astype(bool)].groupby("defender", sort=False):
+            for scope, attackers in (("seen", SEEN), ("all", FIXED)):
+                have = [a for a in attackers if a in set(g.attacker)]
+                if len(have) < len(attackers):
+                    continue
+                bre = {a: (g[g.attacker == a].breached.astype(float).values, 0, 1, False) for a in have}
+                bv, ba, _ = worst_case(bre, ALPHA, higher_is_better=False)
+                env1b_worst.append(dict(defender=d, scope=scope, attackers=len(have),
+                                        n_per_attacker=int(g.groupby("attacker").size().min()),
+                                        breach_certified=bv, breach_worst_attacker=ba,
+                                        reward_mean_seen=g[g.attacker.isin(SEEN)].reward.mean()))
+    env1b_summary, env1b_worst = pd.DataFrame(env1b_summary), pd.DataFrame(env1b_worst)
+
     outputs = []
     frames = [("certified_summary", summary), ("worst_case", worst), ("rankings", ranks),
               ("stopping", stopping), ("paired", paired)]
     if not attacker.empty:
         frames += [("attacker_summary", attacker), ("attacker_strategy", attacker_strategy)]
+    if not family.empty:
+        frames += [("family_summary", family)]
+    if not primitive.empty:
+        frames += [("primitive_summary", primitive)]
+    if not env1b_summary.empty:
+        frames += [("env1b_summary", env1b_summary), ("env1b_worst", env1b_worst)]
     for name, frame in frames:
         path = DATA / f"{name}.csv"
         write_csv(frame, path)
@@ -216,7 +288,8 @@ def main():
     inputs = [Path(__file__), DATA / "episodes.csv", DATA / "cage_eval_manifest.json",
               ROOT / "src/grrc/cage/certify.py", ROOT / "src/grrc/betting.py",
               ROOT / "src/grrc/comparison.py", ROOT / "src/grrc/provenance.py",
-              ROOT / "src/grrc/utilities.py"] + llm_inputs + attacker_inputs
+              ROOT / "src/grrc/utilities.py"] + llm_inputs + attacker_inputs + \
+             family_inputs + primitive_inputs + env1b_inputs
     manifest = build_manifest(
         run_id="cage-certified", stage="analysis",
         description="Certified (time-uniform, distribution-free) evaluation of CAGE Challenge 2 "
