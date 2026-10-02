@@ -2,26 +2,11 @@
   "code": {
     "available": true,
     "branch": "claude/stoic-galileo-81yrtm",
-    "commit": "40487f7ed2c44f51de7cf842e43404d6dda3a73a",
-    "dirty": true,
-    "dirty_paths": [
-      "data/cage/cage_certified_manifest.json",
-      "data/cage/certified_summary.csv",
-      "data/cage/llm/claude-haiku-4-5-nothink/b_line.jsonl",
-      "data/cage/llm/claude-haiku-4-5-nothink/delayed_b_line.jsonl",
-      "data/cage/llm/claude-haiku-4-5-nothink/meander.jsonl",
-      "data/cage/llm/claude-haiku-4-5-nothink/meander_then_b_line.jsonl",
-      "data/cage/paired.csv",
-      "data/cage/stopping.csv",
-      "data/cage/worst_case.csv",
-      "docs/cage_certified/",
-      "scripts/analyze_cage.py",
-      "scripts/generate_cage_paper.py",
-      "scripts/plot_cage.py",
-      "scripts/validate_champion.py"
-    ]
+    "commit": "b3189a5bfe7f2a81bf30f3b144e1e46d5291525a",
+    "dirty": false,
+    "dirty_paths": []
   },
-  "created_at": "2026-10-02T12:12:41+00:00",
+  "created_at": "2026-10-02T13:21:15+00:00",
   "description": "Certified (time-uniform, distribution-free) evaluation of CAGE Challenge 2 defenders, including language-model defenders, against fixed, unseen and adaptive attackers.",
   "environment": {
     "implementation": "CPython",
@@ -39,9 +24,9 @@
   },
   "inputs": [
     {
-      "bytes": 3185,
+      "bytes": 3078,
       "path": "data/cage/cage_eval_manifest.json",
-      "sha256": "cb008ab8a66cd66e5939fe788188042f876d4159f6e0550a653e0263f924c772"
+      "sha256": "159e6d4993bf091616e444d9a3a9d806815592d4570a82fcb21d0a5885c198d1"
     },
     {
       "bytes": 378078,
@@ -69,24 +54,44 @@
       "sha256": "ef6280f93335e33b5996105e69defcdd83e99b96a569e70bfb2b02e85f96e386"
     },
     {
-      "bytes": 42508,
+      "bytes": 70314,
       "path": "data/cage/llm/claude-haiku-4-5/b_line.jsonl",
-      "sha256": "1093a138ca3f31aebeabc88e033f88cf632bbe08f150c4cf45c8fd333763d107"
+      "sha256": "8cf8a80bf26a2381ad6449d586aa6f2eea2bca9e0d4e200ad482f39fb25f25e8"
     },
     {
-      "bytes": 27928,
+      "bytes": 70803,
       "path": "data/cage/llm/claude-haiku-4-5/delayed_b_line.jsonl",
-      "sha256": "bea7ddfd5539766542571a899cdf412022378180f6bbdf52c3cf37ae8723c977"
+      "sha256": "461ee8fb407ccf94e2094d3db462724ef17d39d1672e91d8c9ab0fca6c03053a"
     },
     {
-      "bytes": 42045,
+      "bytes": 69737,
       "path": "data/cage/llm/claude-haiku-4-5/meander.jsonl",
-      "sha256": "edcc03bf23dc54f777cc1784afbd833cd1e909c54894b5020be3d51b4cbe557b"
+      "sha256": "d6fce9ff1eba09d2a0925698ed5e5d4728c70a33da4949991c895e0d48c7db8f"
     },
     {
-      "bytes": 27949,
+      "bytes": 71816,
       "path": "data/cage/llm/claude-haiku-4-5/meander_then_b_line.jsonl",
-      "sha256": "22d060d881e6d24727a18b7211be752eed5e817c00b33f21f95aad1996fe0d31"
+      "sha256": "d81bcf8e28911012987293ff54280ab65ab211e5e04813511f1d50b97112e13a"
+    },
+    {
+      "bytes": 111834,
+      "path": "data/cage/llm/claude-sonnet-5-nothink/b_line.jsonl",
+      "sha256": "f632b1bd72974ed234c8fb6a27befbfa05a05fed2538614f72373bb7046b3a5f"
+    },
+    {
+      "bytes": 110419,
+      "path": "data/cage/llm/claude-sonnet-5-nothink/delayed_b_line.jsonl",
+      "sha256": "145c2ff50db6dd63b49da6933caa6def7f26a278eac3769b97a2133e9053667a"
+    },
+    {
+      "bytes": 79454,
+      "path": "data/cage/llm/claude-sonnet-5-nothink/meander.jsonl",
+      "sha256": "458bd5ab69dd3c876b76c3707c5e62628ec4f4bb70b2a5ee4285bd7db1ea21e5"
+    },
+    {
+      "bytes": 78591,
+      "path": "data/cage/llm/claude-sonnet-5-nothink/meander_then_b_line.jsonl",
+      "sha256": "52aee04e4f588c2ba1651cd9af1337ce6d231f1b5cb40a0c6f08dddf8248c926"
     },
     {
       "bytes": 10391,
@@ -121,14 +126,14 @@
   ],
   "outputs": [
     {
-      "bytes": 3906,
+      "bytes": 4292,
       "path": "data/cage/certified_summary.csv",
-      "sha256": "a6a1add66886d74db39aeb2f35ec0f53a942ea49289feb5d09c259b26749e35c"
+      "sha256": "12779deb777451f8ed7207ff7ecb9405c63e216fccc7a62171094fd9308d7082"
     },
     {
-      "bytes": 1470,
+      "bytes": 2111,
       "path": "data/cage/paired.csv",
-      "sha256": "8ff2d6f028ed1f8a683e7a778287af9be2f8ea27df5bfeb74b5bd547deeec441"
+      "sha256": "daed90af5f999ba8726cfe180ea8ab54f84ecc1efd7b47919fcffededdc475c2"
     },
     {
       "bytes": 332,
@@ -136,14 +141,14 @@
       "sha256": "e1cdf359df7c14b1adfb64fdc8e6db599e13f7b0f07babd62d534503cd691e5d"
     },
     {
-      "bytes": 1294,
+      "bytes": 1510,
       "path": "data/cage/stopping.csv",
-      "sha256": "e8f96ed2cace8c43919a909522f9ba181a0819d39ff053cfee2380374ea2e18e"
+      "sha256": "6a00914cd2736cc51a024122ef87d69f74c5efe19ad868eba5fe72e0ce8b9d0e"
     },
     {
-      "bytes": 1129,
+      "bytes": 1248,
       "path": "data/cage/worst_case.csv",
-      "sha256": "1ca799b5d3f4d22435bdebb40382777aae428e36358e156fe8773709f75c79b8"
+      "sha256": "058f19aca7d89e14e3c6a0af2cc480372ba97496378bad28b39c831b1edca33b"
     }
   ],
   "parameters": {

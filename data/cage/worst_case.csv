@@ -3,10 +3,12 @@ champion,seen,2,200,-24.47252139,meander,0.03953994717,b_line,-5.57
 champion,all,4,200,-116.8217151,delayed_b_line,0.7567196349,delayed_b_line,-5.57
 champion+fallback,seen,2,200,-24.47252139,meander,0.03953994717,b_line,-5.57
 champion+fallback,all,4,200,-27.20900084,meander_then_b_line,0.04369440768,b_line,-5.57
-claude-haiku-4-5,seen,2,2,-474,b_line,1,b_line,-19.31666667
-claude-haiku-4-5,all,4,2,-474,b_line,1,b_line,-19.31666667
+claude-haiku-4-5,seen,2,5,-474,b_line,1,b_line,-16.4
+claude-haiku-4-5,all,4,5,-474,b_line,1,b_line,-16.4
 claude-haiku-4-5-nothink,seen,2,20,-238.0117376,b_line,0.6685562916,b_line,-15.97
 claude-haiku-4-5-nothink,all,4,20,-265.4700495,b_line,0.7241769023,b_line,-15.97
+claude-sonnet-5-nothink,seen,2,7,-474,b_line,1,b_line,-9.447058824
+claude-sonnet-5-nothink,all,4,7,-474,b_line,1,b_line,-9.447058824
 react-remove,seen,2,200,-117.7278021,b_line,0.7059360491,b_line,-56.4375
 react-remove,all,4,200,-119.7149524,b_line,0.7123262715,b_line,-56.4375
 react-restore,seen,2,200,-48.0052787,b_line,0.2089069895,b_line,-20.637
