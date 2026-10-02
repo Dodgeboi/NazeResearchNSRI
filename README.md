@@ -32,6 +32,21 @@ work-in-progress, not a new theorem or a validated real-world defense.
 - Core: [`grrc.range`](src/grrc/range) (environment, reference policies, regime sweep, runner)
 - Foundations it builds on: the [control-adequacy certificate](docs/control_certificate/main.tex), the [catastrophic k-of-n certificate](docs/catastrophic_certificate/main.tex), and the [proved closed-form k-of-n theorem](study/KOFN_THEOREM.md)
 
+## New paper: Certified Evaluation of Autonomous Cyber Defenders (CAGE Challenge 2)
+
+Time-uniform, distribution-free certificates on a defender's reward and breach risk, a
+joint worst case over attackers (including unseen and adaptive ones), and early stopping,
+applied to CybORG CAGE Challenge 2. The challenge's winning agent is never breached by
+the attackers it was built for but is breached in most episodes when B_line simply starts
+one to five steps late; a one-line fallback fixes it. Claude defenders (Haiku 4.5, Sonnet 5)
+are evaluated under the same protocol, with the cost of certifying them.
+
+- [Paper](docs/cage_certified/main.pdf) and [source](docs/cage_certified/main.tex)
+- [Data](data/cage) (episodes, certified tables, LLM transcripts and costs) with provenance manifests
+- Code: [`grrc.cage`](src/grrc/cage); setup with `bash scripts/setup_cage.sh` (pinned CybORG and
+  the winning agent, hash-checked weights), then `scripts/run_cage_eval.py`, `scripts/run_cage_llm.py`,
+  `scripts/analyze_cage.py`, `scripts/generate_cage_paper.py`
+
 ## New paper: Uncoverable by Design (ATT&CK mitigation gaps, 2019–2026)
 
 A measurement paper on real MITRE ATT&CK data across every comparable Enterprise

@@ -31,10 +31,11 @@ simply waits one to five steps before starting: its attacker fingerprint misfire
 falls back to doing nothing. An adaptive attacker finds this on its own. The winner ranks
 first of \CgDefenders{} defenders by mean reward and \CgChampRankCert{}th by certified worst case, and
 a one-line change, which the certificate pointed to, restores a certified breach rate of
-at most \CgFixAllBreachCert{} on every attacker. Claude Haiku~4.5 as a defender is
-breached in \HnDelayedBreach\% of delayed-attacker episodes, but certifying language-model
-defenders to the same precision requires far more episodes than such studies usually
-run; we quantify that cost.
+at most \CgFixAllBreachCert{} on every attacker. Language-model defenders do not share the
+winner's blind spot: Claude Sonnet~5 was breached in \SnBreaches{} of \SnEpisodes{} episodes
+and Claude Haiku~4.5 in \HnDelayedBreach\% of delayed-attacker episodes. Certifying them to
+the winner's precision, however, would take hundreds of dollars and tens of hours of
+evaluation per model; we quantify that cost.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -246,7 +247,9 @@ score but not the B\_line score, which we attribute to the authors' unpublished
 environment change. \paragraph{LLM evaluation} Few episodes per attacker, one prompt, the
 command-line interface's default sampling, and models of the family that assisted with
 this work's code; the LLM results are descriptive and their certified bounds are wide.
-\paragraph{Price of anytime validity} Time-uniform bounds are wider than fixed-sample
+\paragraph{Budget control} Parallel workers check a shared spending cap before each
+episode, so a run can exceed its cap by up to one episode per worker; the Sonnet run
+did. \paragraph{Price of anytime validity} Time-uniform bounds are wider than fixed-sample
 tests at small $n$; we report conventional paired tests alongside where relevant.
 
 \paragraph{Artifact and AI use} Third-party code (CybORG, the winning agent) is fetched at

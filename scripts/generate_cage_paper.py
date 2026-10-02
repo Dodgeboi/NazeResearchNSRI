@@ -17,6 +17,8 @@ FIXED = ["b_line", "meander", "delayed_b_line", "meander_then_b_line"]
 BASELINES = ["sleep", "react-remove", "react-restore", "champion", "champion+fallback"]
 LLM_TAGS = {"claude-haiku-4-5-nothink": "Hn", "claude-sonnet-5-nothink": "Sn",
             "claude-haiku-4-5": "Ht"}
+SHORT = {"b_line": "B\\_line", "meander": "Meander", "delayed_b_line": "Delayed",
+         "meander_then_b_line": "M$\\to$B"}
 NAMES = {"sleep": "Sleep", "react-remove": "React-remove", "react-restore": "React-restore",
          "champion": "Challenge winner", "champion+fallback": "Winner + fallback",
          "claude-haiku-4-5-nothink": "Haiku 4.5", "claude-sonnet-5-nothink": "Sonnet 5",
@@ -164,7 +166,7 @@ def content():
                      str(int(rk.loc[d, "rank_mean_seen"])),
                      f2(worst(d, "seen", "breach_certified")), f2(worst(d, "all", "breach_certified")),
                      str(int(rk.loc[d, "rank_certified_all"])),
-                     str(worst(d, "all", "breach_worst_attacker")).replace("_", "\\_")])
+                     SHORT[str(worst(d, "all", "breach_worst_attacker"))]])
     gen["table_cage_rank_rows.tex"] = "% Generated from worst_case.csv and rankings.csv.\n" + "".join(
         " & ".join(r) + " \\\\\n" for r in rows)
     return gen

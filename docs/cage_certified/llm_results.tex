@@ -10,7 +10,10 @@ this sample size the time-uniform bound does not yet certify the difference. Cla
 Sonnet~5 without thinking (\SnPer--\SnMax{} episodes per attacker, \$\SnCostEp{} per
 episode) was breached in \SnBreaches{} of \SnEpisodes{} episodes, against every attacker
 including the delayed one, with a mean reward of \SnSeenReward{} on the seen attackers
-(winner \CgChampSeenReward, React-restore \CgRestoreSeenReward). Extended thinking did not
+(winner \CgChampSeenReward, React-restore \CgRestoreSeenReward). On the \SnPairN{} seeds it
+shared with the winner against delayed B\_line, the winner alone was breached in
+\SnPairOnlyChamp{} and Sonnet alone in \SnPairOnlyLlm{} (conventional sign test
+$p=\SnPairP$). Extended thinking did not
 help Haiku: with it (\HtPer--\HtMax{} episodes per attacker) each episode cost \$\HtCostEp{}
 and took \HtMinutes{} minutes, and it was breached in \HtBlineBreach\% of B\_line
 episodes. Invalid replies were rare (\HnInvalid{} of \HnCalls{} calls for Haiku,
