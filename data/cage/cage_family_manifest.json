@@ -1,0 +1,111 @@
+{
+  "code": {
+    "available": true,
+    "branch": "claude/stoic-galileo-81yrtm",
+    "commit": "c506c513e748f0670c8e15cf3fec92b9de6d2413",
+    "dirty": true,
+    "dirty_paths": [
+      "scripts/run_cage_family.py",
+      "src/grrc/cage/agents.py"
+    ]
+  },
+  "created_at": "2026-10-02T18:06:39+00:00",
+  "description": "CAGE Challenge 2 episodes sweeping a fixed-delay attacker family against the winner, the repaired winner and React-restore (robustness of the blind spot and its repair).",
+  "environment": {
+    "implementation": "CPython",
+    "machine": "x86_64",
+    "packages": {
+      "matplotlib": "3.11.0",
+      "networkx": "not installed",
+      "numpy": "2.3.5",
+      "pandas": "3.0.1",
+      "scipy": "1.18.0",
+      "yaml": "6.0.3"
+    },
+    "platform": "Linux-6.18.44-fc-v51-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "inputs": [
+    {
+      "bytes": 290,
+      "path": "requirements-cage.txt",
+      "sha256": "a64ab023df75b3f065c82328e70720b0dc22bf3b960aa39cfc4cf0f8b7463592"
+    },
+    {
+      "bytes": 4601,
+      "path": "scripts/run_cage_family.py",
+      "sha256": "b35559aee46c78c4cd888924352082ef48a4d53ab8aa1ea281aa41d7ad1f0e61"
+    },
+    {
+      "bytes": 1729,
+      "path": "scripts/setup_cage.sh",
+      "sha256": "e322228083152c2719072c3075be85f1bd0c5e10f025a41215a81cdeffaab9c9"
+    },
+    {
+      "bytes": 5825,
+      "path": "src/grrc/cage/agents.py",
+      "sha256": "ecd6e7afc36c1900a788ee9d661b4b0d3fe18eb2307def17845d704c0f1de4cd"
+    },
+    {
+      "bytes": 6723,
+      "path": "src/grrc/cage/champion.py",
+      "sha256": "f2c15b936f03c3245a61552acf58efc4f5f5878d27a77229eadf38bf07cc5faf"
+    },
+    {
+      "bytes": 4013,
+      "path": "src/grrc/cage/env.py",
+      "sha256": "d89aa8109b5015ebd35561845901da692ea96fffc29c0b8f157c5bb51e00fa26"
+    },
+    {
+      "bytes": 2502,
+      "path": "src/grrc/cage/torchless.py",
+      "sha256": "7c3d323aa0171a8b3e87cebf6c10a66ace5d9d406eb49f672388211710909891"
+    },
+    {
+      "bytes": 14389,
+      "path": "src/grrc/provenance.py",
+      "sha256": "bc68c43d8d9367b0e6ce70dcfb4eb4d5a82e0c59e9a4676cae73ad9aeb664f02"
+    },
+    {
+      "bytes": 3518,
+      "path": "src/grrc/utilities.py",
+      "sha256": "3ee09640a09c3868b530c7937133334acf2897939c2349e6a7dd1bc1fc531afa"
+    }
+  ],
+  "outputs": [
+    {
+      "bytes": 196940,
+      "path": "data/cage/family.csv",
+      "sha256": "1e32879b74678fc5efbe48b5db2d5c7db7a8bec3d16db075ee8508288fa3bf50"
+    }
+  ],
+  "parameters": {
+    "attackers": [
+      "delay1_b_line",
+      "delay2_b_line",
+      "delay3_b_line",
+      "delay4_b_line",
+      "delay5_b_line",
+      "delay6_b_line",
+      "delay7_b_line",
+      "delay8_b_line",
+      "delay9_b_line",
+      "delay10_b_line",
+      "delay3_meander"
+    ],
+    "cage2_commit": "26ce1c1253fa9e2e73f25e6a7f2da32860c11257",
+    "champion_commit": "ddbf3e55d17484b1bdd62b02daff72b7774330df",
+    "defenders": [
+      "champion",
+      "champion+fallback",
+      "react-restore"
+    ],
+    "episodes": 100,
+    "max_delay": 10,
+    "seed0": 20261002,
+    "steps": 30
+  },
+  "protocol": null,
+  "run_id": "cage-family",
+  "stage": "analysis"
+}

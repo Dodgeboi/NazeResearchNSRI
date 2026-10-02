@@ -61,6 +61,44 @@ def delayed(base, max_delay=5):
     return Delayed
 
 
+def fixed_delay(base, d):
+    """``base`` after a fixed pause of exactly ``d`` steps. Unlike :func:`delayed` (random
+    1..max), the delay is deterministic, so a sweep over ``d`` certifies how a defender's
+    breach rate depends on how long the attacker waits -- a principled family rather than a
+    single hand-picked pause."""
+
+    class FixedDelayed(BaseAgent):
+        def __init__(self):
+            self.inner = base()
+            self.wait = d
+            self.initial = None
+
+        def get_action(self, observation, action_space):
+            if self.initial is None:
+                self.initial = observation
+            if self.wait > 0:
+                self.wait -= 1
+                return Sleep()
+            if self.wait == 0:
+                self.wait = -1
+                return self.inner.get_action(self.initial, action_space)
+            return self.inner.get_action(observation, action_space)
+
+        def train(self, results):
+            pass
+
+        def end_episode(self):
+            self.inner.end_episode()
+            self.wait = d
+            self.initial = None
+
+        def set_initial_values(self, action_space, observation):
+            pass
+
+    FixedDelayed.__name__ = f"Delay{d}{base.__name__}"
+    return FixedDelayed
+
+
 def switching(first=RedMeanderAgent, then=B_lineAgent, switch_at=4):
     """``first`` for ``switch_at`` steps, then ``then`` from its own start."""
 

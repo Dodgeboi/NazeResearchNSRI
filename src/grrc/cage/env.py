@@ -29,14 +29,14 @@ CARDIFF = ROOT / "vendor/cage/cardiff"
 SCENARIO = "Scenario2"
 
 
-def scenario_path():
+def scenario_path(scenario=SCENARIO):
     from CybORG import CybORG
-    return str(Path(inspect.getfile(CybORG)).parent / "Shared/Scenarios" / f"{SCENARIO}.yaml")
+    return str(Path(inspect.getfile(CybORG)).parent / "Shared/Scenarios" / f"{scenario}.yaml")
 
 
-def make_env(red_agent):
+def make_env(red_agent, scenario=SCENARIO):
     from CybORG import CybORG
-    return CybORG(scenario_path(), "sim", agents={"Red": red_agent})
+    return CybORG(scenario_path(scenario), "sim", agents={"Red": red_agent})
 
 
 def _challenge_wrapper(cyborg):
@@ -53,12 +53,12 @@ def _impact_succeeded(cyborg):
     return str(cyborg.get_observation("Red").get("success")) == "TRUE"
 
 
-def run_episode(defender, red_agent, steps, seed=None, reseed=True):
+def run_episode(defender, red_agent, steps, seed=None, reseed=True, scenario=SCENARIO):
     """Play one episode; returns a dict of outcomes plus the per-step trace."""
     if reseed and seed is not None:
         random.seed(seed)
         np.random.seed(seed)
-    cyborg = make_env(red_agent)
+    cyborg = make_env(red_agent, scenario)
     mode = getattr(defender, "interface", "vector")
     defender.end_episode()
     if mode == "vector":
