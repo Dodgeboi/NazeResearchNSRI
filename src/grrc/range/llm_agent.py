@@ -221,8 +221,11 @@ class ClaudeCLIAgent:
     A failed call returns an empty reply, which the episode counts as an invalid action."""
 
     def __init__(self, model="claude-sonnet-5", workdir=None, executable="claude",
-                 max_call_usd=0.25, timeout=300, retries=2, system_prompt=None):
+                 max_call_usd=0.25, timeout=300, retries=2, system_prompt=None,
+                 thinking=True):
         self.model, self.executable = model, executable
+        # thinking=False sets MAX_THINKING_TOKENS=0 for the CLI: no extended thinking.
+        self.thinking = thinking
         self.system_prompt = SYSTEM_PROMPT if system_prompt is None else system_prompt
         # An empty directory outside any repository, so no project files or memory load.
         self.workdir = Path(workdir) if workdir else Path(tempfile.mkdtemp(prefix="llm-defender-"))
@@ -241,8 +244,12 @@ class ClaudeCLIAgent:
         t0, cost, out = time.monotonic(), 0.0, {}
         for _ in range(self.retries + 1):
             try:
+                env = None
+                if not self.thinking:
+                    import os
+                    env = dict(os.environ, MAX_THINKING_TOKENS="0")
                 proc = subprocess.run(self.command(), input=prompt, capture_output=True,
-                                      text=True, cwd=self.workdir, timeout=self.timeout)
+                                      text=True, cwd=self.workdir, timeout=self.timeout, env=env)
                 out = json.loads(proc.stdout)
             except (subprocess.TimeoutExpired, json.JSONDecodeError, OSError):
                 out = {}

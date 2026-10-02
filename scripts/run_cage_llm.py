@@ -39,12 +39,12 @@ def _spent(folder):
 
 
 def _worker(args):
-    agent_kind, model, attacker, episodes, budget, host = args
+    agent_kind, model, attacker, episodes, budget, host, thinking = args
     from grrc.cage.agents import ATTACKERS
     from grrc.cage.env import run_episode
     from grrc.cage.llm_defender import SYSTEM_PROMPT, LLMDefender
     from grrc.range.llm_agent import ClaudeCLIAgent, OllamaAgent
-    folder = OUT / _slug(model)
+    folder = OUT / (_slug(model) + ("" if thinking else "-nothink"))
     path = folder / f"{attacker}.jsonl"
     done = {json.loads(line)["episode"] for line in path.read_text().splitlines()} if path.exists() else set()
     for i in range(episodes):
@@ -54,13 +54,15 @@ def _worker(args):
             print(f"{attacker}: budget reached before episode {i}", flush=True)
             return
         if agent_kind == "claude":
-            llm = ClaudeCLIAgent(model, system_prompt=SYSTEM_PROMPT, max_call_usd=0.10)
+            llm = ClaudeCLIAgent(model, system_prompt=SYSTEM_PROMPT, max_call_usd=0.10,
+                                 thinking=thinking)
         else:
             llm = OllamaAgent(model, host=host, temperature=0.7, seed=i, num_ctx=8192)
         defender = LLMDefender(llm, model)
         t0 = time.time()
         out, trace = run_episode(defender, ATTACKERS[attacker], STEPS, seed=SEED0 + i)
-        rec = dict(model=model, agent=agent_kind, attacker=attacker, episode=i, seed=SEED0 + i,
+        rec = dict(model=model + ("" if thinking else "-nothink"), agent=agent_kind,
+                   thinking=thinking, attacker=attacker, episode=i, seed=SEED0 + i,
                    seconds=round(time.time() - t0, 1), **out,
                    replies=defender.log, trace=trace)
         with path.open("a", encoding="utf-8") as fh:
@@ -79,15 +81,19 @@ def main():
                         help="Claude only: stop starting episodes once this much is spent")
     parser.add_argument("--attackers", nargs="*", default=None)
     parser.add_argument("--host", default="http://localhost:11434")
+    parser.add_argument("--no-thinking", action="store_true",
+                        help="Claude only: disable extended thinking (results go to <model>-nothink)")
     args = parser.parse_args()
     from grrc.cage.agents import ATTACKERS
     attackers = args.attackers or list(ATTACKERS)
-    (OUT / _slug(args.model)).mkdir(parents=True, exist_ok=True)
+    folder = OUT / (_slug(args.model) + ("-nothink" if args.no_thinking else ""))
+    folder.mkdir(parents=True, exist_ok=True)
     budget = args.budget_usd if args.agent == "claude" else None
-    jobs = [(args.agent, args.model, a, args.episodes, budget, args.host) for a in attackers]
+    jobs = [(args.agent, args.model, a, args.episodes, budget, args.host, not args.no_thinking)
+            for a in attackers]
     with mp.get_context("spawn").Pool(len(jobs)) as pool:
         pool.map(_worker, jobs)
-    print(f"total spent: ${_spent(OUT / _slug(args.model)):.2f}")
+    print(f"total spent: ${_spent(folder):.2f}")
 
 
 if __name__ == "__main__":
