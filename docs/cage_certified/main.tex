@@ -295,7 +295,10 @@ environment. \paragraph{Worst case over a set} Certificates hold over the attack
 include, not all attackers; our unseen attackers are deliberately simple. \paragraph{Port}
 The winner is evaluated through our NumPy port; it reproduces the published Meander
 score but not the B\_line score, which we attribute to the authors' unpublished
-environment change. \paragraph{LLM evaluation} Few episodes per attacker, one prompt, and the
+environment change. The delayed-start failure does not rest on that score: it is driven
+by the winner's own released attacker-selection rule -- the delay makes its early-scan
+fingerprint match neither trained policy, so it loads the sleep policy and does nothing --
+a property of the published decision logic, not of our port's absolute B\_line reward. \paragraph{LLM evaluation} Few episodes per attacker, one prompt, and the
 command-line interface's default sampling; the LLM results are descriptive and their
 certified bounds are wide. Every language model we evaluate, as defender and as
 attacker, is a Claude model from a single vendor -- the family that also assisted with

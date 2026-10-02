@@ -1,56 +1,67 @@
 # AIDC @ ACSAC 2026 — submission checklist
 
 Workshop: Agentic AI in Offensive and Defensive Cyber Operations (AIDC), with ACSAC 2026,
-Los Angeles, 7 December 2026. Requirements below were taken from the call for papers as
-indexed by web search on 2026-09-24 (the workshop site, aidcworkshop.github.io, was not
-reachable from the build environment). Confirm them on the site before uploading.
+Los Angeles, 7 December 2026. The workshop site (aidcworkshop.github.io) is not reachable
+from the build environment, so the rows below come from a web-indexed copy of the CFP plus
+the author-notified deadline extension. **Confirm every value on the live site and in
+HotCRP before uploading.**
 
 | Requirement (CFP) | Value |
 |---|---|
-| Deadline | **2026-09-25, Anywhere on Earth**; notification 2026-10-16 |
+| Deadline | **2026-10-02, Anywhere on Earth** (extended from 2026-09-25); notification 2026-10-16; camera-ready 2026-10-30 |
 | Format | Double-column IEEE conference, US Letter; `\documentclass[conference,compsoc]{IEEEtran}`, IEEEtran v1.8b |
-| Length | Regular ≤ 12 pages; short/WIP ≤ 6 pages; references and appendices excluded |
+| Length | Regular ≤ 12 pages; short / work-in-progress ≤ 6 pages; references and appendices excluded |
 | Review | Double-blind; submissions must be properly anonymized |
-| System | ACSAC HotCRP |
+| System | ACSAC HotCRP; WIP is a category selected at submission, not a title marker |
 | Presentation | At least one author registers and presents |
 
-## The two submissions
+## Primary submission (WIP) — submit this one
 
-They are distinct contributions and cite each other only anonymously.
+**Certified Evaluation of Autonomous Cyber Defenders: A Five-Step Delay Breaks the
+CAGE-2 Champion** — `docs/cage_certified/main.tex` / `main.pdf`.
+
+| | Value |
+|---|---|
+| Track | Work-in-progress / short (≤ 6 pp excluding references) |
+| Length | 6 pp total; body ≤ 6 pp excluding references (bibliography shares p. 6) |
+| Template | IEEEtran conference+compsoc, US Letter (612×792 pt) — verified `pdfinfo` |
+| Anonymized | Author block "Anonymous Author(s)"; empty PDF author metadata; no repository paths, URLs or names in the source or PDF (only third-party citations, e.g. Hannay, which do not identify the authors) |
+| Contribution | A certified evaluation protocol (time-uniform, distribution-free bounds; adaptive-attacker martingale variant; joint worst case over unseen attackers); a framework-free NumPy port of the CAGE-2 winner; the finding that a 1–5 step delay defeats the winner (certified), an adaptive attacker and a Claude attacker both find it unaided, the certified ranking reverses, and a one-line repair restores the guarantee; Claude defenders certified under the same protocol with the episode/dollar cost of certifying an LLM |
+| AI-use statement | Yes (Limitations, "Artifact and AI use") |
+| Reproducibility | Pinned CybORG + winner commits, hash-checked weights; all numbers generated macros; `generate_cage_paper.py --check` passes; byte-identical analysis re-run; tests + `run_full_audit.py` (9/9) green |
+
+## Also available (not required to submit)
+
+Two earlier, independently anonymized papers remain in the repo if you want to submit more
+than one. They are distinct contributions and cite each other only anonymously.
 
 | | Paper A (regular) | Paper B (WIP) |
 |---|---|---|
 | Title | Uncoverable by Design: The Ceiling that Seven Years of MITRE ATT&CK Mitigation Gaps Place on Autonomous Cyber Defense | A Certified Cyber Range for Automated Defenders: Provable Residual-Risk Scores Against an Adaptive Adversary |
 | Source / PDF | `docs/attack_gaps/main.tex` / `main.pdf` | `docs/defense_range/main.tex` / `main.pdf` |
-| Contribution | Measurement of ATT&CK mitigation gaps over 15 releases, the certification ceiling they impose on any defender, documented ransomware use, gap persistence, minimal repair, greedy reference defender | Evaluation environment scoring defenders with provable certificates; typical vs adaptive adversary; four reference defenders and their optimality gap |
-| Template | IEEEtran conference+compsoc, US Letter (612×792 pt) | same |
-| Length | 8 pages including references and appendix (limit 12 excluding them) | 4 pages including references (limit 6) |
-| Anonymized | Author block "Anonymous Author(s)", no repository paths or links, empty PDF author metadata | same; Paper A cited as "Anonymous, concurrent submission" |
-| AI-use statement | Yes (Limitations, "Artifact and AI use") | Yes ("Reproducibility and AI use") |
+| Length | 8 pp incl. refs+appendix (limit 12 excl.) | 4 pp incl. refs (limit 6) |
+
+The CAGE paper is the strongest fit for AIDC's agentic offence/defence scope; A and B
+overlap it in the certificate machinery, so submitting all three invites self-overlap
+review comments. If you submit only one, submit the CAGE paper.
 
 ## What only you can do
 
-0. **Deadline status (checked 2026-09-30):** the AIDC deadline was 2026-09-25 AoE and no
-   extension was found. Use these versions for a camera-ready (if accepted; notification
-   2026-10-16) or for the next venue.
-   **LLM defender:** done with Claude Sonnet 5 (22 episodes, $7.37, results in Paper B).
-   Optionally add a free open-weight model by following
-   [`docs/LLM_DEFENDER_RUN.md`](LLM_DEFENDER_RUN.md) and pushing `data/llm_defender`;
-   it appears next to Claude in the same table.
-1. Create or confirm HotCRP accounts and register both submissions before the deadline.
-2. Enter the real author lists and conflicts in HotCRP (not in the PDFs).
-3. Decide whether to keep the AI-use statements, and check ACSAC's AI policy.
-4. Check the double-blind policy on public preprints and repositories: this repository is
-   public and names the authors. If the policy forbids discoverable versions, make the
-   repository private until notification, or remove the papers from it.
-5. For the concurrent-submission citation, tell the chairs (HotCRP comment) that A and B
-   are related but distinct, if the form allows it.
-6. Upload `docs/attack_gaps/main.pdf` and `docs/defense_range/main.pdf`.
+1. Confirm the extended deadline, double-blind policy and WIP category on the live AIDC
+   site and in HotCRP before uploading.
+2. Create or confirm the ACSAC HotCRP account; register the submission; **select the
+   work-in-progress / short-paper category**.
+3. Enter the real author list and conflicts in HotCRP (never in the PDF).
+4. Keep or remove the AI-use statement per ACSAC's AI policy (it does not identify authors).
+5. Double-blind vs. this public repo: this repository is public and names the author. If
+   the policy forbids a discoverable version, make the repo private until notification, or
+   keep the paper source out of the public default branch. The PDF itself is anonymized.
+6. Upload `docs/cage_certified/main.pdf` (and A/B only if you chose to submit them).
 
-## Rebuild
+## Rebuild (CAGE paper)
 
-    python scripts/analyze_attack_history.py      # clean tree; or --allow-dirty
-    python scripts/generate_gaps_paper.py && python scripts/plot_attack_history.py
-    python scripts/generate_range_paper.py
-    (cd docs/attack_gaps && latexmk -pdf main.tex)
-    (cd docs/defense_range && latexmk -pdf main.tex)
+    source .venv/bin/activate
+    python scripts/analyze_cage.py                 # clean tree; or --allow-dirty
+    python scripts/generate_cage_paper.py && python scripts/plot_cage.py
+    (cd docs/cage_certified && latexmk -pdf main.tex)
+    python scripts/generate_cage_paper.py --check  # numbers match the committed tables
