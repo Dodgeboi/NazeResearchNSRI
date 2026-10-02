@@ -161,16 +161,58 @@ def main():
                                                             - base.loc[seeds, "reward"]).mean())))
     paired = pd.DataFrame(paired)
 
+    # Adaptive LLM attacker: did it learn to exploit the winner's blind spot? Each episode
+    # the model chose one scripted strategy; we compare its breach rate to the paired
+    # counterfactuals of always playing one fixed strategy (on the same seeds), to the
+    # best fixed strategy in hindsight, to uniform-random choice, and to the scripted EXP3
+    # adaptive attacker. Episodes are i.i.d. given the defender, so the breach bound holds.
+    attacker, attacker_strategy, attacker_inputs = [], [], []
+    scripted = df[~df.adaptive.astype(bool)].set_index(["defender", "attacker", "seed"]).breached
+    adaptive_breach = df[df.adaptive.astype(bool)].groupby("defender").breached.mean()
+    for pth in sorted((DATA / "attacker").glob("*/*.jsonl")):
+        recs = [json.loads(line) for line in pth.read_text().splitlines()]
+        if not recs:
+            continue
+        attacker_inputs.append(pth)
+        model, d = recs[0]["model"], recs[0]["defender"]
+        br = [bool(r["breached"]) for r in recs]
+        lo, hi = bounds([float(b) for b in br], 0, 1, ALPHA)
+        cf = {}  # counterfactual breach rate of always playing strategy s on these seeds
+        for s in FIXED:
+            vals = [scripted.get((d, s, r["seed"])) for r in recs]
+            vals = [bool(v) for v in vals if v is not None]
+            cf[s] = sum(vals) / len(vals) if vals else float("nan")
+        best = max(cf, key=cf.get)
+        from collections import Counter
+        chosen = Counter(r["strategy"] for r in recs)
+        attacker.append(dict(
+            model=model, defender=d, episodes=len(recs), breaches=sum(br),
+            breach_rate=sum(br) / len(br), breach_lower=lo, breach_upper=hi,
+            best_fixed_strategy=best, best_fixed_rate=cf[best],
+            random_rate=sum(cf[s] for s in FIXED) / len(FIXED),
+            exp3_rate=float(adaptive_breach.get(d, float("nan"))),
+            best_strategy_share=chosen[best] / len(recs),
+            invalid=sum(1 for r in recs if r["strategy"] not in FIXED),
+            cost_usd=sum(r.get("cost_usd") or 0 for r in recs)))
+        for s in FIXED:
+            attacker_strategy.append(dict(model=model, defender=d, strategy=s,
+                                          chosen=chosen[s], counterfactual_rate=cf[s]))
+    attacker = pd.DataFrame(attacker)
+    attacker_strategy = pd.DataFrame(attacker_strategy)
+
     outputs = []
-    for name, frame in (("certified_summary", summary), ("worst_case", worst),
-                        ("rankings", ranks), ("stopping", stopping), ("paired", paired)):
+    frames = [("certified_summary", summary), ("worst_case", worst), ("rankings", ranks),
+              ("stopping", stopping), ("paired", paired)]
+    if not attacker.empty:
+        frames += [("attacker_summary", attacker), ("attacker_strategy", attacker_strategy)]
+    for name, frame in frames:
         path = DATA / f"{name}.csv"
         write_csv(frame, path)
         outputs.append(path)
     inputs = [Path(__file__), DATA / "episodes.csv", DATA / "cage_eval_manifest.json",
               ROOT / "src/grrc/cage/certify.py", ROOT / "src/grrc/betting.py",
               ROOT / "src/grrc/comparison.py", ROOT / "src/grrc/provenance.py",
-              ROOT / "src/grrc/utilities.py"] + llm_inputs
+              ROOT / "src/grrc/utilities.py"] + llm_inputs + attacker_inputs
     manifest = build_manifest(
         run_id="cage-certified", stage="analysis",
         description="Certified (time-uniform, distribution-free) evaluation of CAGE Challenge 2 "
