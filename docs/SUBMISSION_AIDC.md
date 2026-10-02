@@ -15,20 +15,20 @@ HotCRP before uploading.**
 | System | ACSAC HotCRP; WIP is a category selected at submission, not a title marker |
 | Presentation | At least one author registers and presents |
 
-## Primary submission (WIP) — submit this one
+## Primary submission (regular paper) — submit this one
 
 **Certified Evaluation of Autonomous Cyber Defenders: A Five-Step Delay Breaks the
 CAGE-2 Champion** — `docs/cage_certified/main.tex` / `main.pdf`.
 
 | | Value |
 |---|---|
-| Track | Work-in-progress / short (≤ 6 pp excluding references) |
-| Length | 6 pp total; body ≤ 6 pp excluding references (bibliography shares p. 6) |
+| Track | Regular / full paper (≤ 12 pp excluding references) |
+| Length | 7 pp total (~6.5 pp body + references), within the 12 pp regular limit |
 | Template | IEEEtran conference+compsoc, US Letter (612×792 pt) — verified `pdfinfo` |
 | Anonymized | Author block "Anonymous Author(s)"; empty PDF author metadata; no repository paths, URLs or names in the source or PDF (only third-party citations, e.g. Hannay, which do not identify the authors) |
-| Contribution | A certified evaluation protocol (time-uniform, distribution-free bounds; adaptive-attacker martingale variant; joint worst case over unseen attackers); a framework-free NumPy port of the CAGE-2 winner; the finding that a 1–5 step delay defeats the winner (certified), an adaptive attacker and a Claude attacker both find it unaided, the certified ranking reverses, and a one-line repair restores the guarantee; Claude defenders certified under the same protocol with the episode/dollar cost of certifying an LLM |
+| Contribution | A certified evaluation protocol (time-uniform, distribution-free bounds; adaptive-attacker martingale variant; joint worst case over unseen attackers); a framework-free NumPy port of the CAGE-2 winner; the finding that a delayed start defeats the winner (certified across a whole delay family) while a one-line repair restores the guarantee and the certified ranking reverses; two LLM attackers (a strategy selector that finds the blind spot unaided, and a primitive-action attacker that operates raw CybORG actions but rarely rediscovers the timing weakness); Claude defenders certified with the dollar/episode cost of certifying an LLM; and the protocol replicated on a second environment (CAGE Challenge 1) |
 | AI-use statement | Yes (Limitations, "Artifact and AI use") |
-| Reproducibility | Pinned CybORG + winner commits, hash-checked weights; all numbers generated macros; `generate_cage_paper.py --check` passes; byte-identical analysis re-run; tests + `run_full_audit.py` (9/9) green |
+| Reproducibility | Pinned CybORG + winner commits, hash-checked weights; all numbers generated macros; `generate_cage_paper.py --check` passes; byte-identical analysis re-runs (episodes, family, second environment); tests + `run_full_audit.py` (9/9, 29 manifests) green |
 
 ## Also available (not required to submit)
 
@@ -50,7 +50,7 @@ review comments. If you submit only one, submit the CAGE paper.
 1. Confirm the extended deadline, double-blind policy and WIP category on the live AIDC
    site and in HotCRP before uploading.
 2. Create or confirm the ACSAC HotCRP account; register the submission; **select the
-   work-in-progress / short-paper category**.
+   regular / full-paper category** (the paper is ~6.5 pp of body, within the 12 pp limit).
 3. Enter the real author list and conflicts in HotCRP (never in the PDF).
 4. Keep or remove the AI-use statement per ACSAC's AI policy (it does not identify authors).
 5. Double-blind vs. this public repo: this repository is public and names the author. If
