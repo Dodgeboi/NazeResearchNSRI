@@ -1,0 +1,11 @@
+defender,scope,attackers,n_per_attacker,reward_certified,reward_worst_attacker,breach_certified,breach_worst_attacker,reward_mean_seen
+champion,seen,2,200,-24.47252139,meander,0.03953994717,b_line,-5.57
+champion,all,4,200,-116.8217151,delayed_b_line,0.7567196349,delayed_b_line,-5.57
+champion+fallback,seen,2,200,-24.47252139,meander,0.03953994717,b_line,-5.57
+champion+fallback,all,4,200,-27.20900084,meander_then_b_line,0.04369440768,b_line,-5.57
+react-remove,seen,2,200,-117.7278021,b_line,0.7059360491,b_line,-56.4375
+react-remove,all,4,200,-119.7149524,b_line,0.7123262715,b_line,-56.4375
+react-restore,seen,2,200,-48.0052787,b_line,0.2089069895,b_line,-20.637
+react-restore,all,4,200,-49.97653159,b_line,0.2156547047,b_line,-20.637
+sleep,seen,2,200,-236.5619333,b_line,1,b_line,-128.794
+sleep,all,4,200,-238.5318861,b_line,1,b_line,-128.794

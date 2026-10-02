@@ -1,0 +1,111 @@
+{
+  "code": {
+    "available": true,
+    "branch": "claude/stoic-galileo-81yrtm",
+    "commit": "b18350a1b340b9bcadb5bf14861d9bf8d5d1e4c0",
+    "dirty": true,
+    "dirty_paths": [
+      "scripts/analyze_cage.py"
+    ]
+  },
+  "created_at": "2026-10-02T03:49:46+00:00",
+  "description": "Certified (time-uniform, distribution-free) evaluation of CAGE Challenge 2 defenders, including language-model defenders, against fixed, unseen and adaptive attackers.",
+  "environment": {
+    "implementation": "CPython",
+    "machine": "x86_64",
+    "packages": {
+      "matplotlib": "3.11.0",
+      "networkx": "3.6.1",
+      "numpy": "2.3.5",
+      "pandas": "3.0.1",
+      "scipy": "1.18.0",
+      "yaml": "6.0.3"
+    },
+    "platform": "Linux-6.18.44-fc-v51-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "inputs": [
+    {
+      "bytes": 3185,
+      "path": "data/cage/cage_eval_manifest.json",
+      "sha256": "cb008ab8a66cd66e5939fe788188042f876d4159f6e0550a653e0263f924c772"
+    },
+    {
+      "bytes": 378078,
+      "path": "data/cage/episodes.csv",
+      "sha256": "75724cdfc1adcc736d8ffbae1cc88d21411a5b6474bddbbf101383b8d8345669"
+    },
+    {
+      "bytes": 7452,
+      "path": "scripts/analyze_cage.py",
+      "sha256": "966cb75685555ab91a1c27e427d51f3b3eca9db65f882d305a00895d73710620"
+    },
+    {
+      "bytes": 6144,
+      "path": "src/grrc/betting.py",
+      "sha256": "a7c4c2ddf4c08f812cc3e77c5ce8f8d15d190ba29c7460dba89c933ecf006cd0"
+    },
+    {
+      "bytes": 4380,
+      "path": "src/grrc/cage/certify.py",
+      "sha256": "f08e1c8eac19fd7d111cfd490b0aa65c6c284f1c0ca6743385b0a9263267a538"
+    },
+    {
+      "bytes": 3895,
+      "path": "src/grrc/comparison.py",
+      "sha256": "5cbd8513518af68e8dedcf6ca0eceb156cd9ce845f105f8b587bd9a8aac9fb8a"
+    },
+    {
+      "bytes": 14389,
+      "path": "src/grrc/provenance.py",
+      "sha256": "bc68c43d8d9367b0e6ce70dcfb4eb4d5a82e0c59e9a4676cae73ad9aeb664f02"
+    },
+    {
+      "bytes": 3518,
+      "path": "src/grrc/utilities.py",
+      "sha256": "3ee09640a09c3868b530c7937133334acf2897939c2349e6a7dd1bc1fc531afa"
+    }
+  ],
+  "outputs": [
+    {
+      "bytes": 3055,
+      "path": "data/cage/certified_summary.csv",
+      "sha256": "4977915b58b183030d5140f8adc0e62876fae3003f684af409d1352035507640"
+    },
+    {
+      "bytes": 332,
+      "path": "data/cage/rankings.csv",
+      "sha256": "e1cdf359df7c14b1adfb64fdc8e6db599e13f7b0f07babd62d534503cd691e5d"
+    },
+    {
+      "bytes": 886,
+      "path": "data/cage/stopping.csv",
+      "sha256": "156ea6f904defff941cf2685d76a62261a157a3218dc3eb4ee47d59a3d87f23a"
+    },
+    {
+      "bytes": 847,
+      "path": "data/cage/worst_case.csv",
+      "sha256": "559aae3307dffe817ec9d3380a060e0347e9b2d9bc8338a353cc79e6d54329ad"
+    }
+  ],
+  "parameters": {
+    "alpha": 0.05,
+    "breach_threshold": 0.2,
+    "fixed": [
+      "b_line",
+      "meander",
+      "delayed_b_line",
+      "meander_then_b_line"
+    ],
+    "seen": [
+      "b_line",
+      "meander"
+    ],
+    "step_bound": -15.8,
+    "steps": 30,
+    "worst_case": "joint over attackers, Bonferroni split of alpha"
+  },
+  "protocol": null,
+  "run_id": "cage-certified",
+  "stage": "analysis"
+}

@@ -1,0 +1,143 @@
+#!/usr/bin/env python3
+"""Certified evaluation tables for the CAGE Challenge 2 study.
+
+Reads the committed episodes (``data/cage/episodes.csv`` for non-LLM defenders,
+``data/cage/llm/<model>/<attacker>.jsonl`` for language-model defenders) and writes:
+
+- ``certified_summary.csv``: per (defender, attacker), the mean reward, breach rate and
+  impacted fraction with time-uniform 95% bounds (betting for fixed attackers, the
+  martingale bound for the adaptive one);
+- ``worst_case.csv``: per defender, the joint worst case over the attackers it was built
+  for (``seen``) and over all fixed attackers (``all``), with the attacker attaining it;
+- ``rankings.csv``: each defender's rank by mean reward on the seen attackers versus by
+  certified worst case over all attackers;
+- ``stopping.csv``: for each pair, the first episode at which the time-uniform bounds
+  settle whether the breach rate is below a threshold, versus the fixed sample size.
+
+Deterministic; writes a provenance manifest.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+
+import pandas as pd
+
+from grrc.cage.certify import bounds, episodes_to_resolve, worst_case
+from grrc.provenance import build_manifest, git_state, write_manifest
+from grrc.utilities import write_csv
+
+ROOT = Path(__file__).resolve().parents[1]
+DATA = ROOT / "data/cage"
+ALPHA = 0.05
+STEP_BOUND = -15.8
+SEEN = ("b_line", "meander")
+FIXED = ("b_line", "meander", "delayed_b_line", "meander_then_b_line")
+BREACH_THRESHOLD = 0.2
+
+
+def load():
+    frames = [pd.read_csv(DATA / "episodes.csv")]
+    llm_inputs = sorted((DATA / "llm").glob("*/*.jsonl"))
+    rows = []
+    for p in llm_inputs:
+        for line in p.read_text().splitlines():
+            r = json.loads(line)
+            rows.append(dict(defender=r["model"], attacker=r["attacker"], adaptive=False,
+                             episode=r["episode"], seed=r["seed"], strategy=r["attacker"],
+                             reward=r["reward"], impacts=r["impacts"], steps=r["steps"],
+                             impact_fraction=r["impact_fraction"], breached=r["breached"],
+                             invalid=r.get("invalid"), cost_usd=r.get("cost_usd")))
+    if rows:
+        frames.append(pd.DataFrame(rows))
+    df = pd.concat(frames, ignore_index=True).sort_values(["defender", "attacker", "episode"])
+    return df.reset_index(drop=True), llm_inputs
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--allow-dirty", action="store_true")
+    args = parser.parse_args()
+    state = git_state()
+    if (not state.get("available") or state["dirty"]) and not args.allow_dirty:
+        raise SystemExit("Commit source and inputs before generation.")
+    df, llm_inputs = load()
+    steps = int(df.steps.iloc[0])
+    r_min = STEP_BOUND * steps
+
+    summary = []
+    for (d, a), g in df.groupby(["defender", "attacker"], sort=False):
+        adaptive = bool(g.adaptive.iloc[0])
+        rl, rh = bounds(g.reward, r_min, 0, ALPHA, adaptive)
+        bl, bh = bounds(g.breached.astype(float), 0, 1, ALPHA, adaptive)
+        il, ih = bounds(g.impact_fraction, 0, 1, ALPHA, adaptive)
+        summary.append(dict(defender=d, attacker=a, adaptive=adaptive, n=len(g),
+                            reward_mean=g.reward.mean(), reward_lower=rl, reward_upper=rh,
+                            breach_mean=g.breached.mean(), breach_lower=bl, breach_upper=bh,
+                            impact_mean=g.impact_fraction.mean(), impact_lower=il, impact_upper=ih,
+                            invalid_per_episode=g["invalid"].mean() if "invalid" in g else None,
+                            cost_usd=g["cost_usd"].sum() if "cost_usd" in g else None))
+    summary = pd.DataFrame(summary)
+
+    worst = []
+    for d, g in df[~df.adaptive.astype(bool)].groupby("defender", sort=False):
+        for scope, attackers in (("seen", SEEN), ("all", FIXED)):
+            have = [a for a in attackers if a in set(g.attacker)]
+            if len(have) < len(attackers):
+                continue
+            rew = {a: (g[g.attacker == a].reward.values, r_min, 0, False) for a in have}
+            bre = {a: (g[g.attacker == a].breached.astype(float).values, 0, 1, False) for a in have}
+            rv, ra, _ = worst_case(rew, ALPHA, higher_is_better=True)
+            bv, ba, _ = worst_case(bre, ALPHA, higher_is_better=False)
+            worst.append(dict(defender=d, scope=scope, attackers=len(have),
+                              n_per_attacker=int(g.groupby("attacker").size().min()),
+                              reward_certified=rv, reward_worst_attacker=ra,
+                              breach_certified=bv, breach_worst_attacker=ba,
+                              reward_mean_seen=g[g.attacker.isin(SEEN)].reward.mean()))
+    worst = pd.DataFrame(worst)
+
+    ranks = worst[worst.scope == "all"][["defender", "reward_certified", "breach_certified"]].copy()
+    seen_mean = worst[worst.scope == "seen"].set_index("defender").reward_mean_seen
+    ranks["reward_mean_seen"] = ranks.defender.map(seen_mean)
+    ranks["rank_mean_seen"] = ranks.reward_mean_seen.rank(ascending=False, method="min").astype(int)
+    ranks["rank_certified_all"] = ranks.breach_certified.rank(ascending=True, method="min").astype(int)
+    ranks = ranks.sort_values("rank_mean_seen")
+
+    stopping = []
+    for (d, a), g in df[~df.adaptive.astype(bool)].groupby(["defender", "attacker"], sort=False):
+        n = episodes_to_resolve(g.breached.astype(float).values, 0, 1, ALPHA, BREACH_THRESHOLD,
+                                higher_is_better=False)
+        stopping.append(dict(defender=d, attacker=a, n=len(g), threshold=BREACH_THRESHOLD,
+                             resolved_at=n if n is not None else -1,
+                             verdict=("unknown" if n is None else
+                                      "below" if bounds(g.breached.astype(float).values[:n], 0, 1,
+                                                        ALPHA)[1] < BREACH_THRESHOLD else "above")))
+    stopping = pd.DataFrame(stopping)
+
+    outputs = []
+    for name, frame in (("certified_summary", summary), ("worst_case", worst),
+                        ("rankings", ranks), ("stopping", stopping)):
+        path = DATA / f"{name}.csv"
+        write_csv(frame, path)
+        outputs.append(path)
+    inputs = [Path(__file__), DATA / "episodes.csv", DATA / "cage_eval_manifest.json",
+              ROOT / "src/grrc/cage/certify.py", ROOT / "src/grrc/betting.py",
+              ROOT / "src/grrc/comparison.py", ROOT / "src/grrc/provenance.py",
+              ROOT / "src/grrc/utilities.py"] + llm_inputs
+    manifest = build_manifest(
+        run_id="cage-certified", stage="analysis",
+        description="Certified (time-uniform, distribution-free) evaluation of CAGE Challenge 2 "
+                    "defenders, including language-model defenders, against fixed, unseen and "
+                    "adaptive attackers.",
+        inputs=inputs, outputs=outputs, source_state=state,
+        parameters=dict(alpha=ALPHA, step_bound=STEP_BOUND, steps=steps, seen=list(SEEN),
+                        fixed=list(FIXED), breach_threshold=BREACH_THRESHOLD,
+                        worst_case="joint over attackers, Bonferroni split of alpha"))
+    write_manifest(manifest, DATA / "cage_certified_manifest.json")
+    print(worst.round(3).to_string(index=False))
+    print(ranks.round(3).to_string(index=False))
+
+
+if __name__ == "__main__":
+    main()
