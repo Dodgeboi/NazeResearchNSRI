@@ -2,11 +2,30 @@
   "code": {
     "available": true,
     "branch": "claude/stoic-galileo-81yrtm",
-    "commit": "b3189a5bfe7f2a81bf30f3b144e1e46d5291525a",
-    "dirty": false,
-    "dirty_paths": []
+    "commit": "5aeca8d2d9ac01ab6265322480541f874ab0243f",
+    "dirty": true,
+    "dirty_paths": [
+      "data/cage/attacker/claude-sonnet-5/",
+      "data/cage/attacker_strategy.csv",
+      "data/cage/attacker_summary.csv",
+      "data/cage/cage_certified_manifest.json",
+      "data/cage/certified_summary.csv",
+      "data/cage/paired.csv",
+      "data/cage/stopping.csv",
+      "data/cage/worst_case.csv",
+      "docs/cage_certified/cage_numbers.tex",
+      "docs/cage_certified/figure_attacker.pdf",
+      "docs/cage_certified/figure_breach_intervals.pdf",
+      "docs/cage_certified/main.pdf",
+      "docs/cage_certified/main.tex",
+      "docs/cage_certified/table_cage_attacker_rows.tex",
+      "docs/cage_certified/table_cage_breach_rows.tex",
+      "scripts/analyze_cage.py",
+      "scripts/generate_cage_paper.py",
+      "scripts/plot_cage.py"
+    ]
   },
-  "created_at": "2026-10-02T13:21:15+00:00",
+  "created_at": "2026-10-02T14:39:43+00:00",
   "description": "Certified (time-uniform, distribution-free) evaluation of CAGE Challenge 2 defenders, including language-model defenders, against fixed, unseen and adaptive attackers.",
   "environment": {
     "implementation": "CPython",
@@ -24,6 +43,36 @@
   },
   "inputs": [
     {
+      "bytes": 19053,
+      "path": "data/cage/attacker/claude-haiku-4-5/champion+fallback.jsonl",
+      "sha256": "e9b20159ba58da6ec65fa910aa63fdd032446cb63f26434711976edc7fd649e3"
+    },
+    {
+      "bytes": 19619,
+      "path": "data/cage/attacker/claude-haiku-4-5/champion.jsonl",
+      "sha256": "ad209e30a4771110cd25cef9b6013f7eccc31a0e7f990177b3302e9347601390"
+    },
+    {
+      "bytes": 18986,
+      "path": "data/cage/attacker/claude-haiku-4-5/react-restore.jsonl",
+      "sha256": "85fee971cd0aa3795a277c9e438f677825874d36c385ad2fd5bb23e20a559671"
+    },
+    {
+      "bytes": 14682,
+      "path": "data/cage/attacker/claude-sonnet-5/champion+fallback.jsonl",
+      "sha256": "47422b10567b27c41f2b2476698b0b39a8f9b388e60276a86b6c3dc448fc5df3"
+    },
+    {
+      "bytes": 13313,
+      "path": "data/cage/attacker/claude-sonnet-5/champion.jsonl",
+      "sha256": "92d0cc729c784f84c278f940025ae2ecafb6898185e10c72bc69fc982dcd5e8e"
+    },
+    {
+      "bytes": 12914,
+      "path": "data/cage/attacker/claude-sonnet-5/react-restore.jsonl",
+      "sha256": "83f5d20363628b370172509c595236af9ca5383576afdcf2d7ab995595644fad"
+    },
+    {
       "bytes": 3078,
       "path": "data/cage/cage_eval_manifest.json",
       "sha256": "159e6d4993bf091616e444d9a3a9d806815592d4570a82fcb21d0a5885c198d1"
@@ -34,24 +83,24 @@
       "sha256": "75724cdfc1adcc736d8ffbae1cc88d21411a5b6474bddbbf101383b8d8345669"
     },
     {
-      "bytes": 260016,
+      "bytes": 365381,
       "path": "data/cage/llm/claude-haiku-4-5-nothink/b_line.jsonl",
-      "sha256": "1f22bb39c6f95f06b34fb9c7bffe37a4c9f1b879488303b53f96d3c73f24c780"
+      "sha256": "3a70f647eb895940f6b7e6a3cd7077886171be8cb09fdc45e4a1ae72d72f9a27"
     },
     {
-      "bytes": 263126,
+      "bytes": 366432,
       "path": "data/cage/llm/claude-haiku-4-5-nothink/delayed_b_line.jsonl",
-      "sha256": "e489984afe0592d43e8da3beaa01f0704cafdf9b8569ad26bd9dbc5b1f1eed84"
+      "sha256": "fea9a21ad70d146a73b8ef187bd1ee45f9bf73b807226dc02dc8af517ad0446c"
     },
     {
-      "bytes": 261404,
+      "bytes": 352973,
       "path": "data/cage/llm/claude-haiku-4-5-nothink/meander.jsonl",
-      "sha256": "545334e46b73814cd22bd0002b8e39999768589c131bf775a4776a696fec4de2"
+      "sha256": "3e8c7dd3f6b96870e4d39a400da4dd54c901ca876a97f9506b7f6b6d57e67c19"
     },
     {
-      "bytes": 262240,
+      "bytes": 354656,
       "path": "data/cage/llm/claude-haiku-4-5-nothink/meander_then_b_line.jsonl",
-      "sha256": "ef6280f93335e33b5996105e69defcdd83e99b96a569e70bfb2b02e85f96e386"
+      "sha256": "9ec3a2c81fb7297f44161a644969c17ac2140fe83080a87b281b98764c1629a8"
     },
     {
       "bytes": 70314,
@@ -94,9 +143,9 @@
       "sha256": "52aee04e4f588c2ba1651cd9af1337ce6d231f1b5cb40a0c6f08dddf8248c926"
     },
     {
-      "bytes": 10391,
+      "bytes": 13160,
       "path": "scripts/analyze_cage.py",
-      "sha256": "0d57c78a8360fba882e68cafee586c0b14046c640166485e9c9b3fe92366eb38"
+      "sha256": "b9eca1852d11ef175ce9e4dd3602caab8f5963ad13120b48f41dfb4ff8f7b86a"
     },
     {
       "bytes": 6144,
@@ -126,14 +175,24 @@
   ],
   "outputs": [
     {
-      "bytes": 4292,
-      "path": "data/cage/certified_summary.csv",
-      "sha256": "12779deb777451f8ed7207ff7ecb9405c63e216fccc7a62171094fd9308d7082"
+      "bytes": 1226,
+      "path": "data/cage/attacker_strategy.csv",
+      "sha256": "73ace0dee3a7eb284c3e694ad2ca9304759eb92da1627ed84b465b085249dbc3"
     },
     {
-      "bytes": 2111,
+      "bytes": 792,
+      "path": "data/cage/attacker_summary.csv",
+      "sha256": "f8a631adebe5ce36ac7ecf9ea75dddad7c3e12238ad0b457f9b09e55794d052b"
+    },
+    {
+      "bytes": 4338,
+      "path": "data/cage/certified_summary.csv",
+      "sha256": "ee040aa04ab573c192bc54d4fa476bf9613a961d3d05cbe04375c9dc4723bfee"
+    },
+    {
+      "bytes": 2155,
       "path": "data/cage/paired.csv",
-      "sha256": "daed90af5f999ba8726cfe180ea8ab54f84ecc1efd7b47919fcffededdc475c2"
+      "sha256": "f5c7c7fb47d004c48bf3071977a29e0526c5a64ffd5e9dcd9c27c4678dcf0796"
     },
     {
       "bytes": 332,
@@ -143,12 +202,12 @@
     {
       "bytes": 1510,
       "path": "data/cage/stopping.csv",
-      "sha256": "6a00914cd2736cc51a024122ef87d69f74c5efe19ad868eba5fe72e0ce8b9d0e"
+      "sha256": "5f133441ef37029c3aebffb036f7cfed11db1d39079924fb17953d8bf2b77332"
     },
     {
-      "bytes": 1248,
+      "bytes": 1282,
       "path": "data/cage/worst_case.csv",
-      "sha256": "058f19aca7d89e14e3c6a0af2cc480372ba97496378bad28b39c831b1edca33b"
+      "sha256": "54fdc91738793753a704742ed3a356fdb44746dcf63b7573cfcf1395fa6434e3"
     }
   ],
   "parameters": {

@@ -31,7 +31,11 @@ simply waits one to five steps before starting: its attacker fingerprint misfire
 falls back to doing nothing. An adaptive attacker finds this on its own. The winner ranks
 first of \CgDefenders{} defenders by mean reward and \CgChampRankCert{}th by certified worst case, and
 a one-line change, which the certificate pointed to, restores a certified breach rate of
-at most \CgFixAllBreachCert{} on every attacker. Language-model defenders do not share the
+at most \CgFixAllBreachCert{} on every attacker. A language-model attacker (Claude Haiku~4.5),
+told only to find what breaches the defender, discovers the same blind spot unaided:
+against the winner it breaches \AhChampBreach{} of episodes --- matching the best fixed
+strategy in hindsight (\AhChampBest) and far above uniform choice (\AhChampRand) --- yet
+against the repaired winner it breaches \AhFixBreach. Language-model defenders do not share the
 winner's blind spot: Claude Sonnet~5 was breached in \SnBreaches{} of \SnEpisodes{} episodes
 and Claude Haiku~4.5 in \HnDelayedBreach\% of delayed-attacker episodes. Certifying them to
 the winner's precision, however, would take hundreds of dollars and tens of hours of
@@ -72,7 +76,9 @@ winner's guarantees do not transfer: a delay of one to five steps defeats it, an
 adaptive attacker discovers this unaided, the certified ranking reverses, and a one-line
 repair restores the guarantee (Section~\ref{sec:results}). (iv) Claude defenders
 evaluated under the same protocol, with and without extended thinking, and the episode
-and dollar cost of certifying an LLM defender. Code, data and transcripts will be
+and dollar cost of certifying an LLM defender. (v) A language-model attacker that, given
+only the goal of breaching the defender, autonomously finds and exploits the winner's
+blind spot yet is defeated by the one-line repair. Code, data and transcripts will be
 released.
 
 \section{Background and related work}
@@ -184,6 +190,29 @@ adaptive attacker.
 \paragraph{LLM defenders}
 \input{llm_results}
 
+\paragraph{An LLM attacker finds the blind spot}
+We turn the language model on the offensive side. Each episode it chooses one of the four
+attack strategies to launch against a fixed defender, sees whether that breached the
+operational server, and adapts -- the role the scripted EXP3 adversary played, but with
+the model, not a bandit algorithm, deciding. It is told only to find and exploit whatever
+breaches the defender; the winner's fingerprint weakness is never mentioned.
+Table~\ref{tab:attacker} and Figure~\ref{fig:attacker}: against the winner, Claude
+Haiku~4.5 breaches \AhChampBreach{} of \AhChampEps{} episodes (certified
+\AhChampLo--\AhChampHi), choosing the delayed-start attack in \AhChampShare\% of
+episodes. That matches the best fixed strategy in hindsight (\AhChampBest), far exceeds
+uniform choice (\AhChampRand), and exceeds even the scripted EXP3 adversary
+(\AhChampExpThree), which keeps exploring where the model commits once it finds the weakness.
+Against the one-line-repaired winner the model breaches \AhFixBreach{} despite trying the
+delayed attack, and against React-restore it settles on the direct attack and breaches
+\AhRestoreBreach{} (best fixed \AhRestoreBest). Claude Sonnet~5 leans the same way --
+delayed start in \AsChampShare\% of its \AsChampEps{} episodes against the winner -- but
+less decisively, so it breaches only \AsChampBreach{} (certified \AsChampLo--\AsChampHi);
+at this episode count that interval does not clear uniform choice (\AsChampRand), where
+Haiku's does. Neither model breaches the repaired winner (\AsFixBreach{} of \AsFixEps).
+The whole attacker study cost \$\AtkCost. An attacker that does not pick from working strategies but issues
+every low-level action itself is left to future work; here the model supplies the
+adaptation, not the exploitation primitives.
+
 \paragraph{The cost of certification}
 With time-uniform bounds the evaluator can stop early: for the non-LLM defenders,
 \CgStopResolved{} of \CgStopPairs{} breach questions (rate below or above 0.2) were settled
@@ -228,13 +257,35 @@ Defender & Mean & Rk & Seen & All & Rk & Worst\\\midrule
 \bottomrule\end{tabular}
 \end{table}
 
+\begin{table*}[t]\centering\footnotesize
+\caption{LLM adaptive attacker: breach rate of the operational server (with the
+time-uniform 95\% interval) against each defender, versus the best fixed strategy in
+hindsight, uniform-random choice and the scripted EXP3 adversary, and the share of
+episodes the model chose the best strategy.}\label{tab:attacker}
+\begin{tabular}{@{}llrlrrrr@{}}\toprule
+Model & Defender & $n$ & Breach (95\%) & Best & Rand. & EXP3 & Best-chosen\\\midrule
+\tableinput table_cage_attacker_rows.tex
+\bottomrule\end{tabular}
+\end{table*}
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.92\linewidth]{figure_attacker.pdf}
+\caption{LLM attacker (Haiku~4.5) breach rate per defender, with its 95\% certified
+interval, next to the best fixed strategy in hindsight, the scripted EXP3 adversary and
+uniform-random choice. The model matches the best fixed strategy against the winner and
+is defeated by the one-line repair.}\label{fig:attacker}
+\end{figure}
+
 \FloatBarrier
 \section{Discussion}
 Leaderboards that score agents against the attackers they were tuned on can certify
 little about deployment: delaying an official attacker by one to five steps, using only
 its own actions, defeats the strongest CAGE-2 agent. Certified worst-case evaluation over a
 deliberately broadened attacker set catches this, names the failing attacker, and
-measures whether a fix works. For LLM defenders the protocol makes a second point
+measures whether a fix works. The same lens applies to the offence: a language model
+told only to breach the defender rediscovers the winner's blind spot on its own and
+exploits it harder than the scripted adaptive adversary, while the certified repair stops
+it -- offence and defence judged on one scale. For LLM defenders the protocol makes a second point
 concrete: their per-episode cost makes the number of episodes the binding constraint,
 and time-uniform bounds let an evaluator spend only what a verdict requires.
 
@@ -244,12 +295,17 @@ environment. \paragraph{Worst case over a set} Certificates hold over the attack
 include, not all attackers; our unseen attackers are deliberately simple. \paragraph{Port}
 The winner is evaluated through our NumPy port; it reproduces the published Meander
 score but not the B\_line score, which we attribute to the authors' unpublished
-environment change. \paragraph{LLM evaluation} Few episodes per attacker, one prompt, the
-command-line interface's default sampling, and models of the family that assisted with
-this work's code; the LLM results are descriptive and their certified bounds are wide.
+environment change. \paragraph{LLM evaluation} Few episodes per attacker, one prompt, and the
+command-line interface's default sampling; the LLM results are descriptive and their
+certified bounds are wide. Every language model we evaluate, as defender and as
+attacker, is a Claude model from a single vendor -- the family that also assisted with
+this work's code -- so nothing here speaks to how models from other families behave.
 \paragraph{Budget control} Parallel workers check a shared spending cap before each
 episode, so a run can exceed its cap by up to one episode per worker; the Sonnet run
-did. \paragraph{Price of anytime validity} Time-uniform bounds are wider than fixed-sample
+did. \paragraph{Attacker scope} The language-model attacker chooses among four working attack
+strategies and supplies the adaptation; it does not issue CybORG's low-level actions
+itself, so it tests strategic choice, not exploitation skill. A primitive-level LLM
+attacker is future work. \paragraph{Price of anytime validity} Time-uniform bounds are wider than fixed-sample
 tests at small $n$; we report conventional paired tests alongside where relevant.
 
 \paragraph{Artifact and AI use} Third-party code (CybORG, the winning agent) is fetched at

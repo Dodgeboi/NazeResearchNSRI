@@ -11,10 +11,10 @@ claude-haiku-4-5,b_line,5,0.2,-1,unknown
 claude-haiku-4-5,delayed_b_line,5,0.2,-1,unknown
 claude-haiku-4-5,meander,5,0.2,-1,unknown
 claude-haiku-4-5,meander_then_b_line,5,0.2,-1,unknown
-claude-haiku-4-5-nothink,b_line,20,0.2,-1,unknown
-claude-haiku-4-5-nothink,delayed_b_line,20,0.2,-1,unknown
-claude-haiku-4-5-nothink,meander,20,0.2,-1,unknown
-claude-haiku-4-5-nothink,meander_then_b_line,20,0.2,-1,unknown
+claude-haiku-4-5-nothink,b_line,28,0.2,-1,unknown
+claude-haiku-4-5-nothink,delayed_b_line,28,0.2,-1,unknown
+claude-haiku-4-5-nothink,meander,27,0.2,-1,unknown
+claude-haiku-4-5-nothink,meander_then_b_line,27,0.2,-1,unknown
 claude-sonnet-5-nothink,b_line,10,0.2,-1,unknown
 claude-sonnet-5-nothink,delayed_b_line,10,0.2,-1,unknown
 claude-sonnet-5-nothink,meander,7,0.2,-1,unknown

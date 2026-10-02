@@ -91,6 +91,30 @@ def main():
     ax.set_title("Challenge winner: certified interval over time", fontsize=9)
     fig.tight_layout()
     fig.savefig(OUT / "figure_anytime.pdf", metadata={"CreationDate": None})
+
+    atk_path = DATA / "attacker_summary.csv"
+    if atk_path.exists():
+        atk = pd.read_csv(atk_path)
+        atk = atk[atk.model == "claude-haiku-4-5"]
+        order = ["champion", "champion+fallback", "react-restore"]
+        labels = {"champion": "Challenge\nwinner", "champion+fallback": "Winner +\nfallback",
+                  "react-restore": "React-\nrestore"}
+        atk = atk.set_index("defender").reindex([d for d in order if d in set(atk.defender)])
+        x = np.arange(len(atk)); w = 0.2
+        fig, ax = plt.subplots(figsize=(5.2, 3.0))
+        yerr = np.vstack([atk.breach_rate - atk.breach_lower, atk.breach_upper - atk.breach_rate])
+        ax.bar(x - 1.5 * w, atk.breach_rate, w, yerr=yerr, capsize=3, color="#D55E00",
+               label="LLM attacker")
+        ax.bar(x - 0.5 * w, atk.best_fixed_rate, w, color="#0072B2", label="best fixed (hindsight)")
+        ax.bar(x + 0.5 * w, atk.exp3_rate, w, color="#009E73", label="EXP3 adaptive")
+        ax.bar(x + 1.5 * w, atk.random_rate, w, color="#999999", label="uniform random")
+        ax.set_xticks(x); ax.set_xticklabels([labels[d] for d in atk.index], fontsize=8)
+        ax.set_ylabel("breach rate of Op_Server0"); ax.set_ylim(0, 1)
+        ax.set_title("LLM attacker vs defenders (Haiku 4.5)", fontsize=9)
+        ax.grid(True, axis="y", alpha=0.25, lw=0.6)
+        ax.legend(frameon=False, fontsize=7.5, ncol=2, loc="upper right")
+        fig.tight_layout()
+        fig.savefig(OUT / "figure_attacker.pdf", metadata={"CreationDate": None})
     print(f"wrote figures to {OUT.relative_to(ROOT)}")
 
 

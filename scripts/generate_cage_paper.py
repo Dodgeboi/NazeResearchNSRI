@@ -140,6 +140,29 @@ def content():
             v[t + "PairP"] = f"{r.sign_test_p:.3f}"
             v[t + "PairVerdict"] = str(r.verdict)
 
+    # LLM attacker (strategy selector).
+    atk_path = DATA / "attacker_summary.csv"
+    if atk_path.exists():
+        atk = pd.read_csv(atk_path)
+        AMODEL = {"claude-haiku-4-5": "Ah", "claude-sonnet-5": "As"}
+        for m, tag in AMODEL.items():
+            for dname, dtag in (("champion", "Champ"), ("champion+fallback", "Fix"),
+                                ("react-restore", "Restore")):
+                row = atk[(atk.model == m) & (atk.defender == dname)]
+                if row.empty:
+                    continue
+                r = row.iloc[0]
+                v[tag + dtag + "Breach"] = f"{r.breach_rate:.2f}"
+                v[tag + dtag + "Lo"] = f"{r.breach_lower:.2f}"
+                v[tag + dtag + "Hi"] = f"{r.breach_upper:.2f}"
+                v[tag + dtag + "Best"] = f"{r.best_fixed_rate:.2f}"
+                v[tag + dtag + "Rand"] = f"{r.random_rate:.2f}"
+                v[tag + dtag + "ExpThree"] = f"{r.exp3_rate:.2f}"
+                v[tag + dtag + "Share"] = f"{100 * r.best_strategy_share:.0f}"
+                v[tag + dtag + "Eps"] = str(int(r.episodes))
+        v["AtkCost"] = f"{atk.cost_usd.sum():.2f}"
+        v["AtkModels"] = str(atk.model.nunique())
+
     gen = {"cage_numbers.tex": "% Generated; do not edit.\n" + "".join(
         "\\newcommand{\\" + k + "}{" + val + "}\n" for k, val in sorted(v.items()))}
 
@@ -169,6 +192,23 @@ def content():
                      SHORT[str(worst(d, "all", "breach_worst_attacker"))]])
     gen["table_cage_rank_rows.tex"] = "% Generated from worst_case.csv and rankings.csv.\n" + "".join(
         " & ".join(r) + " \\\\\n" for r in rows)
+    if atk_path.exists():
+        NAME = {"claude-haiku-4-5": "Haiku 4.5", "claude-sonnet-5": "Sonnet 5"}
+        DN = {"champion": "Challenge winner", "champion+fallback": "Winner + fallback",
+              "react-restore": "React-restore"}
+        rows = []
+        for m in ("claude-haiku-4-5", "claude-sonnet-5"):
+            for dname in ("champion", "champion+fallback", "react-restore"):
+                row = atk[(atk.model == m) & (atk.defender == dname)]
+                if row.empty:
+                    continue
+                r = row.iloc[0]
+                rows.append([NAME.get(m, m), DN[dname], str(int(r.episodes)),
+                             f"{r.breach_rate:.2f} ({r.breach_lower:.2f}--{r.breach_upper:.2f})",
+                             f"{r.best_fixed_rate:.2f}", f"{r.random_rate:.2f}", f"{r.exp3_rate:.2f}",
+                             f"{100 * r.best_strategy_share:.0f}\\%"])
+        gen["table_cage_attacker_rows.tex"] = "% Generated from attacker_summary.csv.\n" + "".join(
+            " & ".join(r) + " \\\\\n" for r in rows)
     return gen
 
 

@@ -1,0 +1,7 @@
+model,defender,episodes,breaches,breach_rate,breach_lower,breach_upper,best_fixed_strategy,best_fixed_rate,random_rate,exp3_rate,best_strategy_share,invalid,cost_usd
+claude-haiku-4-5,champion+fallback,40,0,0,0,0.187821121,b_line,0,0,0,0.1,0,0.213005
+claude-haiku-4-5,champion,40,27,0.675,0.3927634284,0.9308282454,delayed_b_line,0.7,0.175,0.235,0.975,0,0.148263
+claude-haiku-4-5,react-restore,40,7,0.175,0,0.4404343758,b_line,0.175,0.075,0.085,0.875,0,0.171535
+claude-sonnet-5,champion+fallback,30,0,0,0,0.2570130732,b_line,0,0,0,0.2666666667,0,0.225024
+claude-sonnet-5,champion,30,9,0.3,0,0.645271102,delayed_b_line,0.6666666667,0.1666666667,0.235,0.5666666667,0,0.222304
+claude-sonnet-5,react-restore,30,5,0.1666666667,0,0.4943774659,b_line,0.1666666667,0.075,0.085,0.8333333333,0,0.219764

@@ -170,7 +170,11 @@ def main():
     scripted = df[~df.adaptive.astype(bool)].set_index(["defender", "attacker", "seed"]).breached
     adaptive_breach = df[df.adaptive.astype(bool)].groupby("defender").breached.mean()
     for pth in sorted((DATA / "attacker").glob("*/*.jsonl")):
-        recs = [json.loads(line) for line in pth.read_text().splitlines()]
+        raw = [json.loads(line) for line in pth.read_text().splitlines()]
+        seen, recs = set(), []           # keep one record per episode (guards against re-runs)
+        for r in sorted(raw, key=lambda r: r["episode"]):
+            if r["episode"] not in seen:
+                seen.add(r["episode"]); recs.append(r)
         if not recs:
             continue
         attacker_inputs.append(pth)
